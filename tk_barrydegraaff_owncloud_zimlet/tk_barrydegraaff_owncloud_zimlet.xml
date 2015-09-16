@@ -1,0 +1,40 @@
+<!--
+Zimbra OpenPGP Zimlet
+
+   https://github.com/barrydegraaff/owncloud-zimlet
+   https://www.indiegogo.com/projects/zimbra-owncloud-extension-zimlet
+
+Copyright (C) 2015  Barry de Graaff
+
+Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see http://www.gnu.org/licenses/.
+
+-->
+<zimlet name="tk_barrydegraaff_owncloud_zimlet"
+        version="0.0.1"
+        target="main compose-window view-window"
+        label="ownCloud"
+        description="Attach from and save to ownCloud">
+    <include>tk_barrydegraaff_owncloud_zimlet.js</include>
+    <includeCSS>tk_barrydegraaff_owncloud_zimlet.css</includeCSS>
+    <zimletPanelItem label="ownCloud" icon="ownCloud-panelIcon">
+      <dragSource type="ZmConv" />
+		<dragSource type="ZmMailMsg" />
+      <contextMenu>
+         <menuItem icon="ownCloud-panelIcon" label="Preferences" id="preferences" />
+      </contextMenu>
+   </zimletPanelItem>
+    <handlerObject>tk_barrydegraaff_owncloud_zimlet_HandlerObject</handlerObject>
+</zimlet>
