@@ -1,5 +1,5 @@
 var client = new davlib.DavClient();
-client.initialize('192.168.200.241', 443, 'https', 'admin', 'IeQu9aro');
+client.initialize(location.hostname, 443, 'https', 'admin', 'IeQu9aro');
 
 
 function writeToDiv(line, emphasize) {
@@ -73,7 +73,7 @@ function wrapContinueHandler(currname, handler, expected_status) {
     return wrapped;
 };
 
-var basedir = '/owncloud/remote.php/webdav/';
+var basedir = '/davproxy/';
 var folder1 = 'Documentos/';
 var folder2 = 'Photoos/';
 var file = 'bar.txt'

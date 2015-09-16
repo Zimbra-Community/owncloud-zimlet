@@ -15,6 +15,21 @@ If you find Zimbra ownCloud Zimlet useful and want to support its continued deve
 
 ========================================================================
 
+### Installing
+
+To avoid JavaScript same origin policy problems we configure ownCloud or the WebDAV server of your choice to be inside the same domain as your Zimbra server.
+
+    Add to the bottom of /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template before the final }
+    location /davproxy/ {
+      proxy_pass https://owncloudserver.example.com/owncloud/remote.php/webdav/;
+    }
+
+Then as Zimbra user: zmproxyctl restart
+
+This will add ownCloud under the same domain as your Zimbra server: https://zimbraserver.example.com/owncloud/ 
+
+========================================================================
+
 ### License
 
 Copyright (C) 2014-2015  Barry de Graaff
