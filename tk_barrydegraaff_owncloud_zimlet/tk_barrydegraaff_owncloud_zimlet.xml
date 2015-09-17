@@ -43,5 +43,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
       <property type="string" label="" name="owncloud_zimlet_username" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_password" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_dav_uri" rows="1"/>
+      <property type="string" label="" name="owncloud_zimlet_default_folder" rows="1"/>
    </userProperties>
 </zimlet>

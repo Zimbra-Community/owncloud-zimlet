@@ -45,7 +45,9 @@ com_zimbra_dnd under the following license:
 
 
 function tk_barrydegraaff_owncloud_zimlet_HandlerObject() {
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings = {};
 };
+
 tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype = new ZmZimletBase();
 tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype.constructor = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
@@ -54,17 +56,27 @@ ownCloudZimlet.prototype.init = function () {
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_username"))
    {
-      this.setUserProperty("owncloud_zimlet_username", '', true);
+      this.setUserProperty("owncloud_zimlet_username", '', true);   
    }
+   
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_password"))
    {
       this.setUserProperty("owncloud_zimlet_password", '', true);
    }
+   
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = this.getUserProperty("owncloud_zimlet_password");
+   
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_dav_uri"))
    {
       this.setUserProperty("owncloud_zimlet_dav_uri", '/owncloud/remote.php/webdav/', true);
+   }
+   
+   //Set default value
+   if(!this.getUserProperty("owncloud_zimlet_default_folder"))
+   {
+      this.setUserProperty("owncloud_zimlet_default_folder", 'Zimbra emails', true);
    }
    
    this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
@@ -132,11 +144,63 @@ function(itemId) {
    }
 };
 
+/* doDrop handler
+ * */
+ownCloudZimlet.prototype.doDrop =
+function(zmObject) { 
+   var url = [];
+   var i = 0;
+   var proto = location.protocol;
+   var port = Number(location.port);
+   url[i++] = proto;
+   url[i++] = "//";
+   url[i++] = location.hostname;
+   if (port && ((proto == ZmSetting.PROTO_HTTP && port != ZmSetting.HTTP_DEFAULT_PORT) 
+      || (proto == ZmSetting.PROTO_HTTPS && port != ZmSetting.HTTPS_DEFAULT_PORT))) {
+      url[i++] = ":";
+      url[i++] = port;
+   }
+   url[i++] = "/home/";
+   url[i++]= AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name);
+   url[i++] = "/message.txt?fmt=txt&id=";
+   url[i++] = zmObject.id * -1;
+
+   var getUrl = url.join(""); 
+
+   //Now make an ajax request and read the contents of this mail, including all attachments as text
+   //it should be base64 encoded
+   var xmlHttp = null;   
+   xmlHttp = new XMLHttpRequest();
+   xmlHttp.open( "GET", getUrl, false );
+   xmlHttp.send( null );
+   
+   ownCloudZimlet.prototype.createFolder(this);
+
+   var client = new davlib.DavClient();
+   client.initialize(location.hostname, 443, 'https', this.getUserProperty("owncloud_zimlet_username"), tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+   client.PUT(this.getUserProperty("owncloud_zimlet_dav_uri") + "/" + this.getUserProperty("owncloud_zimlet_default_folder") + "/" + zmObject.srcObj.subject + '.eml', xmlHttp.response,  ownCloudZimlet.prototype.createFolderCallback);
+};
+
+ownCloudZimlet.prototype.createFolder =
+function(zimlet) {
+   var client = new davlib.DavClient();
+   client.initialize(location.hostname, 443, 'https', zimlet.getUserProperty("owncloud_zimlet_username"), tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+   client.MKCOL(zimlet.getUserProperty("owncloud_zimlet_dav_uri") + "/" + zimlet.getUserProperty("owncloud_zimlet_default_folder"), ownCloudZimlet.prototype.createFolderCallback);
+}   
+
+ownCloudZimlet.prototype.createFolderCallback =
+function(status) {
+   //201 == created
+   //405 == already there
+   //Other status codes are not a good sign
+   console.log('DAV response: ' + status);
+};
+
 ownCloudZimlet.prototype.appLaunch =
 function(appName) {
    var req = new XMLHttpRequest();
    req.open('GET', '/owncloud', true);
-   req.setRequestHeader("Authorization", "Basic " + string.encodeBase64(this.getUserProperty("owncloud_zimlet_username") + ":" + this.getUserProperty("owncloud_zimlet_password"))); 
+   req.setRequestHeader("Authorization", "Basic " + string.encodeBase64(this.getUserProperty("owncloud_zimlet_username") + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])); 
    req.send('');
    
    req.onload = function(e) 
@@ -156,11 +220,12 @@ function(id, title, message) {
    case 1:
       //Default dialog
       this._dialog = new ZmDialog( { title:title, parent:this.getShell(), standardButtons:[DwtDialog.OK_BUTTON,DwtDialog.CANCEL_BUTTON], disposeOnPopDown:true } );
-      html = "<div style='width:350px; height: 150px;'>To store an email or attachment in ownCloud, drag it onto the ownCloud icon.<br><br><table>"+      
+      html = "<div style='width:500px; height: 200px;'>To store an email or attachment in ownCloud, drag it onto the ownCloud icon.<br><br><table>"+      
       "<tr><td>Username:&nbsp;</td><td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+this.getUserProperty("owncloud_zimlet_username")+"'></td></tr>" +
       "<tr><td>Password:</td><td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+this.getUserProperty("owncloud_zimlet_password")+"'></td></tr>" +
       "<tr><td>URL:</td><td><input style='width:98%' type='text' id='owncloud_zimlet_dav_uri' value='"+this.getUserProperty("owncloud_zimlet_dav_uri")+"'></td></tr>" +
-      "</table></div>";
+      "<tr><td>Default folder:</td><td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+this.getUserProperty("owncloud_zimlet_default_folder")+"'></td></tr>" +
+      "</table><br>If you enter your password above it is stored in plain text in the Zimbra LDAP. If you do not store your password the server will ask you to provide it for each session.</div>";
       this._dialog.setContent(html);
       this._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.prefSaveBtn));
       this._dialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(this, this.cancelBtn));
@@ -189,6 +254,9 @@ function() {
    this.setUserProperty("owncloud_zimlet_username", document.getElementById('owncloud_zimlet_username').value, true);
    this.setUserProperty("owncloud_zimlet_password", document.getElementById('owncloud_zimlet_password').value, true);
    this.setUserProperty("owncloud_zimlet_dav_uri", document.getElementById('owncloud_zimlet_dav_uri').value, true);
+   this.setUserProperty("owncloud_zimlet_default_folder", document.getElementById('owncloud_zimlet_default_folder').value, true);
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('owncloud_zimlet_password').value;
+   ownCloudZimlet.prototype.createFolder(this);
    this.cancelBtn();
 };
 
