@@ -23,3 +23,9 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
     height: 16px;
     overflow: hidden;
 }
+.ImgownCloud-help {
+ background: url("help.png") no-repeat 0 0;
+ width: 18px;
+ height: 18px;
+ overflow: hidden;
+}

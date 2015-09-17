@@ -28,13 +28,20 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
         label="ownCloud"
         description="Attach from and save to ownCloud">
     <include>tk_barrydegraaff_owncloud_zimlet.js</include>
+    <include>davclient.js</include>
     <includeCSS>tk_barrydegraaff_owncloud_zimlet.css</includeCSS>
     <zimletPanelItem label="ownCloud" icon="ownCloud-panelIcon">
       <dragSource type="ZmConv" />
 		<dragSource type="ZmMailMsg" />
       <contextMenu>
          <menuItem icon="ownCloud-panelIcon" label="Preferences" id="preferences" />
+         <menuItem icon="ownCloud-help" label="Help" id="help" />
       </contextMenu>
    </zimletPanelItem>
-    <handlerObject>tk_barrydegraaff_owncloud_zimlet_HandlerObject</handlerObject>
+   <handlerObject>tk_barrydegraaff_owncloud_zimlet_HandlerObject</handlerObject>
+   <userProperties>
+      <property type="string" label="" name="owncloud_zimlet_username" rows="1"/>
+      <property type="string" label="" name="owncloud_zimlet_password" rows="1"/>
+      <property type="string" label="" name="owncloud_zimlet_dav_uri" rows="1"/>
+   </userProperties>
 </zimlet>

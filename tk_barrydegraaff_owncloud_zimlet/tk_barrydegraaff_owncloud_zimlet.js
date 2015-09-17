@@ -51,6 +51,23 @@ tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype.constructor = tk_barryd
 var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 
 ownCloudZimlet.prototype.init = function () {
+   //Set default value
+   if(!this.getUserProperty("owncloud_zimlet_username"))
+   {
+      this.setUserProperty("owncloud_zimlet_username", '', true);
+   }
+   //Set default value
+   if(!this.getUserProperty("owncloud_zimlet_password"))
+   {
+      this.setUserProperty("owncloud_zimlet_password", '', true);
+   }
+   //Set default value
+   if(!this.getUserProperty("owncloud_zimlet_dav_uri"))
+   {
+      this.setUserProperty("owncloud_zimlet_dav_uri", '/owncloud/remote.php/webdav/', true);
+   }
+   
+   this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
 };
 
 /* Called by framework when attach popup called
@@ -98,9 +115,82 @@ ownCloudZimlet.prototype.doubleClicked = function() {
 /* Called when the panel is single-clicked.
  */
 ownCloudZimlet.prototype.singleClicked = function() {
-   // do nothing 
+   this.displayDialog(1, 'Preferences', null); 
 };
 
+/* Context menu handler
+ * */
+ownCloudZimlet.prototype.menuItemSelected =
+function(itemId) {
+   switch (itemId) {
+   case "preferences":
+      this.displayDialog(1, 'Preferences', null);
+      break;    
+   case "help":
+      window.open("https://github.com/barrydegraaff/owncloud-zimlet");
+      break;
+   }
+};
+
+ownCloudZimlet.prototype.appLaunch =
+function(appName) {
+   var req = new XMLHttpRequest();
+   req.open('GET', '/owncloud', true);
+   req.setRequestHeader("Authorization", "Basic " + string.encodeBase64(this.getUserProperty("owncloud_zimlet_username") + ":" + this.getUserProperty("owncloud_zimlet_password"))); 
+   req.send('');
+   
+   req.onload = function(e) 
+   {
+      var app = appCtxt.getApp(appName);
+      app.setContent('<iframe style="width:100%; height:100%; border:0px;" src="/owncloud">');
+   }
+};
+
+
+
+/* displays dialogs.
+ */
+ownCloudZimlet.prototype.displayDialog =
+function(id, title, message) {
+   switch(id) {
+   case 1:
+      //Default dialog
+      this._dialog = new ZmDialog( { title:title, parent:this.getShell(), standardButtons:[DwtDialog.OK_BUTTON,DwtDialog.CANCEL_BUTTON], disposeOnPopDown:true } );
+      html = "<div style='width:350px; height: 150px;'>To store an email or attachment in ownCloud, drag it onto the ownCloud icon.<br><br><table>"+      
+      "<tr><td>Username:&nbsp;</td><td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+this.getUserProperty("owncloud_zimlet_username")+"'></td></tr>" +
+      "<tr><td>Password:</td><td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+this.getUserProperty("owncloud_zimlet_password")+"'></td></tr>" +
+      "<tr><td>URL:</td><td><input style='width:98%' type='text' id='owncloud_zimlet_dav_uri' value='"+this.getUserProperty("owncloud_zimlet_dav_uri")+"'></td></tr>" +
+      "</table></div>";
+      this._dialog.setContent(html);
+      this._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.prefSaveBtn));
+      this._dialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(this, this.cancelBtn));
+      break;
+   }
+   this._dialog._setAllowSelection();
+   this._dialog.popup();
+};
+
+/* This method is called when the dialog "CANCEL" button is clicked
+ */
+ownCloudZimlet.prototype.cancelBtn =
+function() {
+   try{
+      this._dialog.setContent('');
+      this._dialog.popdown();
+   }
+      catch (err) {
+  }
+};
+
+/* This method is called when the dialog "OK" button is clicked in preferences
+ */
+ownCloudZimlet.prototype.prefSaveBtn =
+function() {
+   this.setUserProperty("owncloud_zimlet_username", document.getElementById('owncloud_zimlet_username').value, true);
+   this.setUserProperty("owncloud_zimlet_password", document.getElementById('owncloud_zimlet_password').value, true);
+   this.setUserProperty("owncloud_zimlet_dav_uri", document.getElementById('owncloud_zimlet_dav_uri').value, true);
+   this.cancelBtn();
+};
 
 /**
  * @class
