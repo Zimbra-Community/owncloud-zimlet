@@ -206,10 +206,39 @@ function(appName) {
    req.onload = function(e) 
    {
       var app = appCtxt.getApp(appName);
-      app.setContent('<iframe style="width:100%; height:100%; border:0px;" src="/owncloud">');
+      app.setContent('<div style="position: fixed; left:0; width:100%; height:100%; border:0px;"><iframe style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="/owncloud"></div>');
+      var overview = app.getOverview(); // returns ZmOverview
+      overview.setContent("&nbsp;");
+      var child = document.getElementById(overview._htmlElId);
+      child.parentNode.removeChild(child);            
    }
 };
 
+/**
+ * This method gets called by the Zimlet framework each time the application is opened or closed.
+ *  
+ * @param	{String}	appName		the application name
+ * @param	{Boolean}	active		if true, the application status is open; otherwise, false
+ */
+ownCloudZimlet.prototype.appActive =
+function(appName, active) {
+	if (active)
+   {
+      document.getElementById('z_sash').style.display = "none";    
+      try {
+         var cal = document.getElementsByClassName("DwtCalendar")
+         cal[0].style.display = "none";
+      } catch (err) { }
+   }
+   else
+   {
+      document.getElementById('z_sash').style.display = "block";
+      try {
+         var cal = document.getElementsByClassName("DwtCalendar")
+         cal[0].style.display = "block";
+      } catch (err) { }
+   }   
+};
 
 
 /* displays dialogs.
