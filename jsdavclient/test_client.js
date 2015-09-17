@@ -73,7 +73,7 @@ function wrapContinueHandler(currname, handler, expected_status) {
     return wrapped;
 };
 
-var basedir = '/davproxy/';
+var basedir = '/owncloud/remote.php/webdav/';
 var folder1 = 'Documentos/';
 var folder2 = 'Photoos/';
 var file = 'bar.txt'
