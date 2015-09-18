@@ -127,9 +127,6 @@ ownCloudZimlet.prototype.doubleClicked = function() {
 /* Called when the panel is single-clicked.
  */
 ownCloudZimlet.prototype.singleClicked = function() {
-   var client = new davlib.DavClient();
-   client.initialize(location.hostname, 443, 'https', this.getUserProperty("owncloud_zimlet_username"), tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-   client.PROPFIND(this.getUserProperty("owncloud_zimlet_dav_uri"),  ownCloudZimlet.prototype.readFolderCallback, this, 1);
    this.displayDialog(1, 'Preferences', null); 
 };
 
@@ -326,9 +323,6 @@ ownCloudTabView.prototype.toString = function() {
  */
 ownCloudTabView.prototype._createHtml1 =
 function(zimlet) {
-   //hierzo
-   ZmAttachDialog
- 
    try{
       var ZmAttachDialog = document.getElementsByClassName("ZmAttachDialog");
       ZmAttachDialog[0].style.width = "700px";
@@ -341,15 +335,13 @@ function(zimlet) {
    var client = new davlib.DavClient();
    client.initialize(location.hostname, 443, 'https', zimlet.getUserProperty("owncloud_zimlet_username"), tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
    client.PROPFIND(zimlet.getUserProperty("owncloud_zimlet_dav_uri"),  ownCloudZimlet.prototype.readFolderCallback, zimlet, 1);
-   html = '<b>Select file from ownCloud</b><table width="100%" style="margin-bottom:5px">' + 
-   '<tr><td><input type=\'text\' id=\'file\' value="https://192.168.201.62/service/zimlet/com_zimbra_email/img/EmailZimlet_busy.gif">"</td></tr></table><br><textarea contenteditable="true" style="width:650px; height: 200px; overflow-x: hidden; overflow-y: scroll; padding:2px;" id="davBrowser"></textarea>';   
+   // /??????? verwijder input file  hierzo
+   html = '<b>Select file from ownCloud</b><input style="display:none"  type=\'text\' id=\'file\' value="https://myzimbra.com/service/zimlet/com_zimbra_email/img/EmailZimlet_busy.gif"><div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
    this.setContent(html);
 };
 
 ownCloudZimlet.prototype.readFolderCallback =
 function(status, statusstr, content) {
-   //console.log(content);
-   //document.getElementById('davBrowser').innerHTML = content;
    var rawDavResponse = content.split('<d:response>');
    var davResult = [];
    var resultCount = 0;
@@ -362,6 +354,7 @@ function(status, statusstr, content) {
          }
          var href = response.match(/<d:href>.*<\/d:href>/);
          davResult[resultCount]['href'] = href[0].replace(/(<d:href>|<\/d:href>)/gm,"");;
+         davResult[resultCount]['isDirectory'] = "false";
          
          var getcontentlength = response.match(/<d:getcontentlength>.*<\/d:getcontentlength>/);
          if(!getcontentlength)
@@ -369,11 +362,42 @@ function(status, statusstr, content) {
             //This is a directory
             getcontentlength = [];
             getcontentlength[0]="0";
+            if(response.indexOf('<d:resourcetype><d:collection/></d:resourcetype>') > -1)
+            {
+               davResult[resultCount]['isDirectory'] = "true";
+            }   
          }
          davResult[resultCount]['getcontentlength'] = getcontentlength[0].replace(/(<d:getcontentlength>|<\/d:getcontentlength>)/gm,"");;
       }
       resultCount++;
    });
+   
+   var html = "";
+   var zimlet = this;
+   
+   //handle folders
+   davResult.forEach(function(item) {
+      if(item['isDirectory']=="true")
+      {
+         if(unescape(item['href'].replace(zimlet.getUserProperty("owncloud_zimlet_dav_uri"),"").replace("/","")))
+         {
+            html += "<div style=\"display: inline-block; width:99%; padding:2px\"><img style=\"vertical-align: middle;\" src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/folder.png\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+unescape(item['href'].replace(zimlet.getUserProperty("owncloud_zimlet_dav_uri"),"").replace("/",""))+"</span></div>";
+         }
+      }
+   });
+
+   //handle files
+   davResult.forEach(function(item) {
+      if(item['isDirectory']=="false")
+      {
+         if(unescape(item['href'].replace(zimlet.getUserProperty("owncloud_zimlet_dav_uri"),"").replace("/","")))
+         {
+            html += "<div style=\"display: inline-block; width:99%; padding:2px\"><input style=\"vertical-align: middle;\" class=\"ownCloudSelect\" type=\"checkbox\" value=\""+item['href']+"\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+unescape(item['href'].replace(zimlet.getUserProperty("owncloud_zimlet_dav_uri"),"").replace("/",""))+"</span></div>";
+         }
+      }
+   });
+   
+   document.getElementById('davBrowser').innerHTML = html;
    console.log(davResult); 
    console.log(this.getUserProperty("owncloud_zimlet_username"));   
    //201 == created
@@ -387,30 +411,38 @@ function(status, statusstr, content) {
 ownCloudTabView.prototype._uploadFiles = 
 function(attachmentDlg) 
 {
-   console.log(document.getElementById('file').value);
-   var xhr = ZmownCloudController.prototype.createCORSRequest('GET', document.getElementById('file').value);
-   if (!xhr) {
-      throw new Error('CORS not supported');
+   
+   var ownCloudSelect = document.getElementsByClassName("ownCloudSelect");
+   console.log(ownCloudSelect);
+   //ownCloudSelect.forEach(function(file) {   
+   for (index = 0; index < ownCloudSelect.length; index++) {
+      if(ownCloudSelect[index].checked)
+      {
+         var oCreq = new XMLHttpRequest();
+         oCreq.open('GET', ownCloudSelect[index].value, true);
+         oCreq.setRequestHeader("Authorization", "Basic " + "admin:IeQu9aro"); //need something else here
+         oCreq.send('');
+         
+         oCreq.onload = function(e) 
+         {
+            var req = new XMLHttpRequest();
+            var fileName = oCreq.responseURL.replace('https://myzimbra.com/owncloud/remote.php/webdav/',""); //need something else here
+            
+            req.open("POST", "/service/upload?fmt=extended,raw", true);        
+            req.setRequestHeader("Cache-Control", "no-cache");
+            req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            req.setRequestHeader("Content-Type",  "application/octet-stream" + ";");
+            req.setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
+            req.setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName + '"');
+            var tempThis = req;
+            req.onreadystatechange = AjxCallback.simpleClosure(ownCloudTabView.prototype._handleResponse, this, tempThis);
+            
+            req.send(oCreq.response);
+            //delete req;
+         };
+      }
    }
-   xhr.onload = function() 
-   {
-      var req = new XMLHttpRequest();
-      var fileName = 'barry.gif'; //get this from OC API
-      
-      req.open("POST", "/service/upload?fmt=extended,raw", true);        
-      req.setRequestHeader("Cache-Control", "no-cache");
-      req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-      req.setRequestHeader("Content-Type",  "application/octet-stream" + ";");
-      req.setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
-      req.setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName + '"');
-      var tempThis = req;
-      req.onreadystatechange = AjxCallback.simpleClosure(ownCloudTabView.prototype._handleResponse, this, tempThis);
-      
-      req.send(xhr.response);
-      delete req;
-      attachmentDlg.popdown();
-   };
-   xhr.send();
+   attachmentDlg.popdown();   
 };
 
 ownCloudTabView.prototype._handleErrorResponse = 
@@ -479,34 +511,3 @@ ZmownCloudController.prototype._resetToolbarOperations =
 function() {
    // override to avoid js expn although we do not have a toolbar per se
 };
-
-
-/* Cross-Origin Resource Sharing (CORS) is a W3C spec that allows 
- * cross-domain communication from the browser. By building on top of the 
- * XMLHttpRequest object, CORS allows developers to work with the same 
- * idioms as same-domain requests. 
- * http://www.html5rocks.com/en/tutorials/cors/
- */
-ZmownCloudController.prototype.createCORSRequest =
-function(method, url) {
-   var xhr = new XMLHttpRequest();
-   if ("withCredentials" in xhr) {
-      // Check if the XMLHttpRequest object has a "withCredentials" property.
-      // "withCredentials" only exists on XMLHTTPRequest2 objects.
-      xhr.open(method, url, true);
-      
-   } 
-   else if (typeof XDomainRequest != "undefined") 
-   {
-      // Otherwise, check if XDomainRequest.
-      // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
-      xhr = new XDomainRequest();
-      xhr.open(method, url);      
-   } else 
-   { 
-      // Otherwise, CORS is not supported by the browser.
-      xhr = null;   
-   }
-   xhr.responseType = "blob";
-   return xhr;
-}; 
