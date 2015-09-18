@@ -79,7 +79,10 @@ ownCloudZimlet.prototype.init = function () {
       this.setUserProperty("owncloud_zimlet_default_folder", 'Zimbra emails', true);
    }
    
-   this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
+   try {
+      //Throws exception when opening for example eml attachments in a new window 
+      this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
+   } catch (err) { }   
 };
 
 /* Called by framework when attach popup called
@@ -163,7 +166,15 @@ function(zmObject) {
    url[i++] = "/home/";
    url[i++]= AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name);
    url[i++] = "/message.txt?fmt=txt&id=";
-   url[i++] = zmObject.id * -1;
+   if (zmObject.id < 0)
+   {
+      var id = zmObject.id * -1;
+   }
+   else
+   {
+      var id = zmObject.id;
+   }
+   url[i++] = id;
 
    var getUrl = url.join(""); 
 
@@ -175,10 +186,21 @@ function(zmObject) {
    xmlHttp.send( null );
    
    ownCloudZimlet.prototype.createFolder(this);
-
-   var client = new davlib.DavClient();
-   client.initialize(location.hostname, 443, 'https', this.getUserProperty("owncloud_zimlet_username"), tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-   client.PUT(this.getUserProperty("owncloud_zimlet_dav_uri") + "/" + this.getUserProperty("owncloud_zimlet_default_folder") + "/" + zmObject.srcObj.subject + '.eml', xmlHttp.response,  ownCloudZimlet.prototype.createFolderCallback);
+   //xmlHttp.onload = function(e) 
+      var client = new davlib.DavClient();
+      client.initialize(location.hostname, 443, 'https', this.getUserProperty("owncloud_zimlet_username"), tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+      if (zmObject.name)
+      {
+         //file from briefcase
+         //to-do
+         //client.PUT(this.getUserProperty("owncloud_zimlet_dav_uri") + "/" + zimlet.getUserProperty("owncloud_zimlet_default_folder") + "/" + zmObject.name, xmlHttp.response,  ownCloudZimlet.prototype.createFolderCallback);
+      }
+      else
+      {
+         //email
+         client.PUT(this.getUserProperty("owncloud_zimlet_dav_uri") + "/" + this.getUserProperty("owncloud_zimlet_default_folder") + "/" + zmObject.srcObj.subject + '.eml', xmlHttp.response,  ownCloudZimlet.prototype.createFolderCallback);
+      }
+   //};
 };
 
 ownCloudZimlet.prototype.createFolder =
@@ -193,7 +215,6 @@ function(status) {
    //201 == created
    //405 == already there
    //Other status codes are not a good sign
-   console.log('DAV response: ' + status);
 };
 
 ownCloudZimlet.prototype.appLaunch =
@@ -237,7 +258,7 @@ function(appName, active) {
          var cal = document.getElementsByClassName("DwtCalendar");
          cal[0].style.display = "block";
       } catch (err) { }
-   }   
+   }
 };
 
 
@@ -335,8 +356,7 @@ function(zimlet) {
    var client = new davlib.DavClient();
    client.initialize(location.hostname, 443, 'https', zimlet.getUserProperty("owncloud_zimlet_username"), tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
    client.PROPFIND(zimlet.getUserProperty("owncloud_zimlet_dav_uri"),  ownCloudZimlet.prototype.readFolderCallback, zimlet, 1);
-   // /??????? verwijder input file  hierzo
-   html = '<b>Select file from ownCloud</b><input style="display:none"  type=\'text\' id=\'file\' value="https://myzimbra.com/service/zimlet/com_zimbra_email/img/EmailZimlet_busy.gif"><div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
+   html = '<b>Select file from ownCloud</b><div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
    this.setContent(html);
 };
 
@@ -398,48 +418,41 @@ function(status, statusstr, content) {
    });
    
    document.getElementById('davBrowser').innerHTML = html;
-   console.log(davResult); 
-   console.log(this.getUserProperty("owncloud_zimlet_username"));   
-   //201 == created
-   //405 == already there
-   //Other status codes are not a good sign
-   console.log('DAV response: ' + status);
+   //ugly but don't know how to pass zimlet object to _uploadFiles
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.oCzimlet = zimlet;
 };
 
 /* Uploads the files.
  */
 ownCloudTabView.prototype._uploadFiles = 
 function(attachmentDlg) 
-{
+{   
+   //ugly but don't know how to pass zimlet object to _uploadFiles
+   var zimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject.oCzimlet;
    
    var ownCloudSelect = document.getElementsByClassName("ownCloudSelect");
-   console.log(ownCloudSelect);
-   //ownCloudSelect.forEach(function(file) {   
    for (index = 0; index < ownCloudSelect.length; index++) {
       if(ownCloudSelect[index].checked)
       {
          var oCreq = new XMLHttpRequest();
          oCreq.open('GET', ownCloudSelect[index].value, true);
-         oCreq.setRequestHeader("Authorization", "Basic " + "admin:IeQu9aro"); //need something else here
+         oCreq.setRequestHeader("Authorization", "Basic " + zimlet.getUserProperty("owncloud_zimlet_username") + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
          oCreq.responseType = "blob";
          oCreq.send('');
          
          oCreq.onload = function(e) 
          {
             var req = new XMLHttpRequest();
-            var fileName = oCreq.responseURL.replace('https://myzimbra.com/owncloud/remote.php/webdav/',""); //need something else here
-            
+            var fileName = oCreq.responseURL.match(/(?:[^/][\d\w\.]+)+$/);
+            fileName = decodeURI(fileName[0]);
             req.open("POST", "/service/upload?fmt=extended,raw", true);        
             req.setRequestHeader("Cache-Control", "no-cache");
             req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
             req.setRequestHeader("Content-Type",  "application/octet-stream" + ";");
             req.setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
             req.setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName + '"');
-            var tempThis = req;
-            req.onreadystatechange = AjxCallback.simpleClosure(ownCloudTabView.prototype._handleResponse, this, tempThis);
-            
+            req.onreadystatechange = AjxCallback.simpleClosure(ownCloudTabView.prototype._handleResponse, this, req);            
             req.send(oCreq.response);
-            //delete req;
          };
       }
    }
@@ -465,7 +478,6 @@ function(respCode) {
 
 ownCloudTabView.prototype._handleResponse = 
 function(req) {
-   console.log('req'+req);
    ownCloudTabView.attachment_ids = [];
    if(req) {
       if(req.readyState == 4 && req.status == 200) 
