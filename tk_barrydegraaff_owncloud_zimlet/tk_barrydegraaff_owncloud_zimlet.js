@@ -340,7 +340,7 @@ function(zimlet) {
    
    var client = new davlib.DavClient();
    client.initialize(location.hostname, 443, 'https', zimlet.getUserProperty("owncloud_zimlet_username"), tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-   client.PROPFIND(zimlet.getUserProperty("owncloud_zimlet_dav_uri"),  ownCloudZimlet.prototype.readFolderCallback, this, 1);
+   client.PROPFIND(zimlet.getUserProperty("owncloud_zimlet_dav_uri"),  ownCloudZimlet.prototype.readFolderCallback, zimlet, 1);
    html = '<b>Select file from ownCloud</b><table width="100%" style="margin-bottom:5px">' + 
    '<tr><td><input type=\'text\' id=\'file\' value="https://192.168.201.62/service/zimlet/com_zimbra_email/img/EmailZimlet_busy.gif">"</td></tr></table><br><textarea contenteditable="true" style="width:650px; height: 200px; overflow-x: hidden; overflow-y: scroll; padding:2px;" id="davBrowser"></textarea>';   
    this.setContent(html);
@@ -374,7 +374,8 @@ function(status, statusstr, content) {
       }
       resultCount++;
    });
-   console.log(davResult);   
+   console.log(davResult); 
+   console.log(this.getUserProperty("owncloud_zimlet_username"));   
    //201 == created
    //405 == already there
    //Other status codes are not a good sign
