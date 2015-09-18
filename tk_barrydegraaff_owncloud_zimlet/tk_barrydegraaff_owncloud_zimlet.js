@@ -421,6 +421,7 @@ function(attachmentDlg)
          var oCreq = new XMLHttpRequest();
          oCreq.open('GET', ownCloudSelect[index].value, true);
          oCreq.setRequestHeader("Authorization", "Basic " + "admin:IeQu9aro"); //need something else here
+         oCreq.responseType = "blob";
          oCreq.send('');
          
          oCreq.onload = function(e) 
