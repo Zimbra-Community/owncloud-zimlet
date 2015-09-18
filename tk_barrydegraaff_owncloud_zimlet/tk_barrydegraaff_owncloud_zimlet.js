@@ -127,6 +127,9 @@ ownCloudZimlet.prototype.doubleClicked = function() {
 /* Called when the panel is single-clicked.
  */
 ownCloudZimlet.prototype.singleClicked = function() {
+   var client = new davlib.DavClient();
+   client.initialize(location.hostname, 443, 'https', this.getUserProperty("owncloud_zimlet_username"), tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+   client.PROPFIND(this.getUserProperty("owncloud_zimlet_dav_uri"),  ownCloudZimlet.prototype.readFolderCallback, this, 1);
    this.displayDialog(1, 'Preferences', null); 
 };
 
@@ -226,7 +229,7 @@ function(appName, active) {
    {
       document.getElementById('z_sash').style.display = "none";    
       try {
-         var cal = document.getElementsByClassName("DwtCalendar")
+         var cal = document.getElementsByClassName("DwtCalendar");
          cal[0].style.display = "none";
       } catch (err) { }
    }
@@ -234,7 +237,7 @@ function(appName, active) {
    {
       document.getElementById('z_sash').style.display = "block";
       try {
-         var cal = document.getElementsByClassName("DwtCalendar")
+         var cal = document.getElementsByClassName("DwtCalendar");
          cal[0].style.display = "block";
       } catch (err) { }
    }   
@@ -309,7 +312,7 @@ function(parent, zimlet, className) {
       return;
    }
    this.prevAccount = acct;
-   this._createHtml1();
+   this._createHtml1(zimlet);
 };
 
 ownCloudTabView.prototype = new DwtComposite;
@@ -322,10 +325,60 @@ ownCloudTabView.prototype.toString = function() {
 /* Creates HTML for for the attach ownCloud tab UI.
  */
 ownCloudTabView.prototype._createHtml1 =
-function() {
+function(zimlet) {
+   //hierzo
+   ZmAttachDialog
+ 
+   try{
+      var ZmAttachDialog = document.getElementsByClassName("ZmAttachDialog");
+      ZmAttachDialog[0].style.width = "700px";
+      
+      var WindowInnerContainer = document.getElementsByClassName("WindowInnerContainer");
+      WindowInnerContainer[0].style.width = "700px";
+      
+   } catch (err) { }
+   
+   var client = new davlib.DavClient();
+   client.initialize(location.hostname, 443, 'https', zimlet.getUserProperty("owncloud_zimlet_username"), tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+   client.PROPFIND(zimlet.getUserProperty("owncloud_zimlet_dav_uri"),  ownCloudZimlet.prototype.readFolderCallback, this, 1);
    html = '<b>Select file from ownCloud</b><table width="100%" style="margin-bottom:5px">' + 
-   '<tr><td><input type=\'text\' id=\'file\' value="https://192.168.201.62/service/zimlet/com_zimbra_email/img/EmailZimlet_busy.gif">"</td></tr></table>';   
+   '<tr><td><input type=\'text\' id=\'file\' value="https://192.168.201.62/service/zimlet/com_zimbra_email/img/EmailZimlet_busy.gif">"</td></tr></table><br><textarea contenteditable="true" style="width:650px; height: 200px; overflow-x: hidden; overflow-y: scroll; padding:2px;" id="davBrowser"></textarea>';   
    this.setContent(html);
+};
+
+ownCloudZimlet.prototype.readFolderCallback =
+function(status, statusstr, content) {
+   //console.log(content);
+   //document.getElementById('davBrowser').innerHTML = content;
+   var rawDavResponse = content.split('<d:response>');
+   var davResult = [];
+   var resultCount = 0;
+   rawDavResponse.forEach(function(response) {
+      if (resultCount > 0 )
+      {
+         if (!davResult[resultCount])
+         {
+            davResult[resultCount] = [];
+         }
+         var href = response.match(/<d:href>.*<\/d:href>/);
+         davResult[resultCount]['href'] = href[0].replace(/(<d:href>|<\/d:href>)/gm,"");;
+         
+         var getcontentlength = response.match(/<d:getcontentlength>.*<\/d:getcontentlength>/);
+         if(!getcontentlength)
+         {
+            //This is a directory
+            getcontentlength = [];
+            getcontentlength[0]="0";
+         }
+         davResult[resultCount]['getcontentlength'] = getcontentlength[0].replace(/(<d:getcontentlength>|<\/d:getcontentlength>)/gm,"");;
+      }
+      resultCount++;
+   });
+   console.log(davResult);   
+   //201 == created
+   //405 == already there
+   //Other status codes are not a good sign
+   console.log('DAV response: ' + status);
 };
 
 /* Uploads the files.
