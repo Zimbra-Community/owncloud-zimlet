@@ -445,6 +445,7 @@ function(attachmentDlg)
    var oCreq = [];
    var req = [];
    var fileName = [];
+   ownCloudTabView.attachment_ids = "";
    
    for (index = 0; index < ownCloudSelect.length; index++) {
       if(ownCloudSelect[index].checked)
