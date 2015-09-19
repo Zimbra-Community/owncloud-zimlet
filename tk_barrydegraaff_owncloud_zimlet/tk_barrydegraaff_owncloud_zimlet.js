@@ -360,13 +360,21 @@ function(zimlet) {
       WindowInnerContainer[0].style.width = "700px";
       
    } catch (err) { }
+
+   html = '<b>Select file from ownCloud</b><div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
+   this.setContent(html);
    
    var client = new davlib.DavClient();
    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-   client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],  ownCloudZimlet.prototype.readFolderCallback, zimlet, 1);
-   html = '<b>Select file from ownCloud</b><div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
-   this.setContent(html);
+   client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],  ownCloudZimlet.prototype.readFolderCallback, document.getElementById('davBrowser'), 1);
 };
+
+ownCloudZimlet.prototype.readSubFolder =
+function(divId) {
+   var client = new davlib.DavClient();
+   client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+   client.PROPFIND(divId,  ownCloudZimlet.prototype.readFolderCallback, document.getElementById(divId), 1);   
+}
 
 ownCloudZimlet.prototype.readFolderCallback =
 function(status, statusstr, content) {
@@ -401,15 +409,13 @@ function(status, statusstr, content) {
    });
    
    var html = "";
-   var zimlet = this;
-   
    //handle folders
    davResult.forEach(function(item) {
       if(item['isDirectory']=="true")
       {
          if(unescape(item['href'].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"").replace("/","")))
          {
-            html += "<div style=\"display: inline-block; width:99%; padding:2px\"><img style=\"vertical-align: middle;\" src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/folder.png\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+unescape(item['href'].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"").replace("/",""))+"</span></div>";
+            html += "<div id=\""+item['href']+"\" onclick=\"ownCloudZimlet.prototype.readSubFolder('"+item['href']+"')\"style=\"display: inline-block; width:99%; padding:2px\"><img style=\"vertical-align: middle;\" src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/folder.png\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+unescape(item['href'].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"").replace("/",""))+"</span></div>";
          }
       }
    });
@@ -420,14 +426,14 @@ function(status, statusstr, content) {
       {
          if(unescape(item['href'].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"").replace("/","")))
          {
-            html += "<div style=\"display: inline-block; width:99%; padding:2px\"><input style=\"vertical-align: middle;\" class=\"ownCloudSelect\" type=\"checkbox\" value=\""+item['href']+"\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+unescape(item['href'].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"").replace("/",""))+"</span></div>";
+            var fileName = item['href'].match(/(?:[^/][\d\w\.]+)+$/);
+            fileName = decodeURI(fileName[0]);
+            html += "<div style=\"display: inline-block; width:99%; padding:2px\"><input style=\"vertical-align: middle;\" class=\"ownCloudSelect\" type=\"checkbox\" value=\""+item['href']+"\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+fileName+"</span></div>";
          }
       }
    });
-   
-   document.getElementById('davBrowser').innerHTML = html;
-   //ugly but don't know how to pass zimlet object to _uploadFiles
-   tk_barrydegraaff_owncloud_zimlet_HandlerObject.oCzimlet = zimlet;
+   this.onclick = null;
+   this.innerHTML = html;
 };
 
 /* Uploads the files.
@@ -435,9 +441,6 @@ function(status, statusstr, content) {
 ownCloudTabView.prototype._uploadFiles = 
 function(attachmentDlg) 
 {   
-   //ugly but don't know how to pass zimlet object to _uploadFiles
-   var zimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject.oCzimlet;
-   
    var ownCloudSelect = document.getElementsByClassName("ownCloudSelect");
    for (index = 0; index < ownCloudSelect.length; index++) {
       if(ownCloudSelect[index].checked)
