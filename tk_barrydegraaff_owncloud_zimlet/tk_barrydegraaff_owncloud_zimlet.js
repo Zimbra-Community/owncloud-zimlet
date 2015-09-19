@@ -361,7 +361,7 @@ function(zimlet) {
       
    } catch (err) { }
 
-   html = '<b>Select file from ownCloud</b><div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
+   html = '<div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
    this.setContent(html);
    
    var client = new davlib.DavClient();
@@ -442,32 +442,51 @@ ownCloudTabView.prototype._uploadFiles =
 function(attachmentDlg) 
 {   
    var ownCloudSelect = document.getElementsByClassName("ownCloudSelect");
+   var oCreq = [];
+   var req = [];
+   var fileName = [];
+   
    for (index = 0; index < ownCloudSelect.length; index++) {
       if(ownCloudSelect[index].checked)
       {
-         var oCreq = new XMLHttpRequest();
-         oCreq.open('GET', ownCloudSelect[index].value, true);
-         oCreq.setRequestHeader("Authorization", "Basic " + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-         oCreq.responseType = "blob";
-         oCreq.send('');
+         console.log('deze:' + ownCloudSelect[index].value);
+         oCreq[ownCloudSelect[index].value] = new XMLHttpRequest();
+         oCreq[ownCloudSelect[index].value].open('GET', ownCloudSelect[index].value, true);
+         oCreq[ownCloudSelect[index].value].setRequestHeader("Authorization", "Basic " + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+         oCreq[ownCloudSelect[index].value].responseType = "blob";
+         oCreq[ownCloudSelect[index].value].send('');
+         tk_barrydegraaff_owncloud_zimlet_HandlerObject.uploadPending = true;
          
-         oCreq.onload = function(e) 
+         oCreq[ownCloudSelect[index].value].onload = function(e) 
          {
-            var req = new XMLHttpRequest();
-            var fileName = oCreq.responseURL.match(/(?:[^/][\d\w\.]+)+$/);
-            fileName = decodeURI(fileName[0]);
-            req.open("POST", "/service/upload?fmt=extended,raw", true);        
-            req.setRequestHeader("Cache-Control", "no-cache");
-            req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-            req.setRequestHeader("Content-Type",  "application/octet-stream" + ";");
-            req.setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
-            req.setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName + '"');
-            req.onreadystatechange = AjxCallback.simpleClosure(ownCloudTabView.prototype._handleResponse, this, req);            
-            req.send(oCreq.response);
+            req[this.responseURL] = new XMLHttpRequest();
+            fileName[this.responseURL] = this.responseURL.match(/(?:[^/][\d\w\.]+)+$/);
+            fileName[this.responseURL] = decodeURI(fileName[this.responseURL][0]);
+            req[this.responseURL].open("POST", "/service/upload?fmt=extended,raw", true);        
+            req[this.responseURL].setRequestHeader("Cache-Control", "no-cache");
+            req[this.responseURL].setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            req[this.responseURL].setRequestHeader("Content-Type",  "application/octet-stream" + ";");
+            req[this.responseURL].setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
+            req[this.responseURL].setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName[this.responseURL] + '"');
+            req[this.responseURL].onreadystatechange = AjxCallback.simpleClosure(ownCloudTabView.prototype._handleResponse, this, req[this.responseURL]);            
+            req[this.responseURL].send(this.response);
+            tk_barrydegraaff_owncloud_zimlet_HandlerObject.uploadPending = false;
          };
       }
+      
+      function waitForUploadToComplete() 
+      {
+         // your code here
+         console.log('waiting...');
+         if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.uploadPending)
+         {
+            return;
+         }
+         setTimeout(waitForUploadToComplete, 1000);
+      }
+      waitForUploadToComplete();
    }
-   attachmentDlg.popdown();   
+   //attachmentDlg.popdown();   
 };
 
 ownCloudTabView.prototype._handleErrorResponse = 
@@ -489,10 +508,13 @@ function(respCode) {
 
 ownCloudTabView.prototype._handleResponse = 
 function(req) {
-   ownCloudTabView.attachment_ids = [];
+   if (!ownCloudTabView.attachment_ids)
+   {
+       ownCloudTabView.attachment_ids = [];
+   }    
    if(req) {
       if(req.readyState == 4 && req.status == 200) 
-      {
+      {  console.log(req);
          var resp = eval("["+req.responseText+"]");
          
          ownCloudTabView.prototype._handleErrorResponse(resp[0]);
@@ -508,13 +530,11 @@ function(req) {
                }
             }
             
-            // if(ownCloudTabView.attachment_ids.length > 0 && ownCloudTabView.attachment_ids.length == ownCloudTabView.flength) {
             // locate the compose controller and set up the callback handler
             var cc = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
             var callback = new AjxCallback (cc,cc._handleResponseSaveDraftListener);
             attachment_list = ownCloudTabView.attachment_ids.join(",");
             cc.sendMsg(attachment_list,ZmComposeController.DRAFT_TYPE_MANUAL,callback);
-            //}
          }
       }
    }
