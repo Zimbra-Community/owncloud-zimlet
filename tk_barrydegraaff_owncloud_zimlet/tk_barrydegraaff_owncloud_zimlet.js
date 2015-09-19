@@ -482,11 +482,12 @@ function(attachmentDlg)
          {
             return;
          }
-         setTimeout(waitForUploadToComplete, 1000);
+         setTimeout(waitForUploadToComplete, 100);
       }
       waitForUploadToComplete();
+      
    }
-   //attachmentDlg.popdown();   
+   attachmentDlg.popdown();   
 };
 
 ownCloudTabView.prototype._handleErrorResponse = 
@@ -511,10 +512,11 @@ function(req) {
    if (!ownCloudTabView.attachment_ids)
    {
        ownCloudTabView.attachment_ids = [];
-   }    
+   } 
+   
    if(req) {
       if(req.readyState == 4 && req.status == 200) 
-      {  console.log(req);
+      {
          var resp = eval("["+req.responseText+"]");
          
          ownCloudTabView.prototype._handleErrorResponse(resp[0]);
@@ -533,8 +535,8 @@ function(req) {
             // locate the compose controller and set up the callback handler
             var cc = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
             var callback = new AjxCallback (cc,cc._handleResponseSaveDraftListener);
-            attachment_list = ownCloudTabView.attachment_ids.join(",");
-            cc.sendMsg(attachment_list,ZmComposeController.DRAFT_TYPE_MANUAL,callback);
+            //attachment_list = ownCloudTabView.attachment_ids.join(",");
+            cc.sendMsg(ownCloudTabView.attachment_ids.join(","),ZmComposeController.DRAFT_TYPE_MANUAL,callback);
          }
       }
    }
