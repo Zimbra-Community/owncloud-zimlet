@@ -188,6 +188,12 @@ function(itemId) {
  * */
 ownCloudZimlet.prototype.doDrop =
 function(zmObject) {
+    //If selected multiple items, only take one for now.
+    if(zmObject[0])
+    {
+       zmObject = zmObject[0];
+    }
+    
     //if its a conversation i.e. "ZmConv" object, get the first loaded message "ZmMailMsg" object within that.
     if (zmObject.TYPE == "ZmConv") {
       var msgObj = zmObject.srcObj;//get access to source-object
@@ -200,6 +206,7 @@ function(zmObject) {
       this.displayDialog(1, 'Preferences', null);
       return;
    } 
+   
    var url = [];
    var i = 0;
    var proto = location.protocol;
@@ -245,7 +252,7 @@ function(zmObject) {
       var client = new davlib.DavClient();
       client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
       if (zmObject.name)
-      {console.log('hierzo');
+      {
          //file from briefcase
          client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + zmObject.name, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
       }
