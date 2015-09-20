@@ -16,9 +16,23 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses/.
- 
 
-This program contains parts from com_zimbra_attachmail by Raja Rao and 
+************************************************************************
+
+License and third party FOSS libraries
+
+davclient.js - Low-level JavaScript WebDAV client implementation
+Copyright (C) Sven vogler under terms of the 
+GNU General Public License version 2
+
+Icons
+Icons where taken from the tango-icon-theme package and where released to 
+the Public Domain by the Tango Desktop Project.
+
+ownCloud and the ownCloud Logo is a registered trademark of ownCloud, Inc. 
+https://owncloud.org/trademarks/
+
+This Zimlet contains parts from com_zimbra_attachmail by Raja Rao and 
 com_zimbra_dnd under the following license:
 */
 
@@ -41,7 +55,7 @@ com_zimbra_dnd under the following license:
  * The Initial Developer of the Original Code is Zimbra, Inc. 
  * All portions of the code are Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
  * ***** END LICENSE BLOCK *****
- */
+*/
 
 
 function tk_barrydegraaff_owncloud_zimlet_HandlerObject() {
@@ -80,10 +94,22 @@ ownCloudZimlet.prototype.init = function () {
       this.setUserProperty("owncloud_zimlet_default_folder", 'Zimbra emails', true);
    }
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");   
+
+   //Set default value
+   if(!this.getUserProperty("owncloud_zimlet_store_pass"))
+   {
+      this.setUserProperty("owncloud_zimlet_store_pass", 'false', true);
+   }
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_store_pass'] = this.getUserProperty("owncloud_zimlet_store_pass");
    
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.tabInit = false;
    try {
-      //Throws exception when opening for example eml attachments in a new window 
-      this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
+      //Throws exception when opening for example eml attachments in a new window
+      if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'].length > 0)
+      { 
+         this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
+         tk_barrydegraaff_owncloud_zimlet_HandlerObject.tabInit = true;
+      }   
    } catch (err) { }   
 };
 
@@ -152,7 +178,12 @@ function(itemId) {
 /* doDrop handler
  * */
 ownCloudZimlet.prototype.doDrop =
-function(zmObject) { 
+function(zmObject) {
+   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+   {
+      this.displayDialog(1, 'Preferences', null);
+      return;
+   } 
    var url = [];
    var i = 0;
    var proto = location.protocol;
@@ -223,7 +254,7 @@ function(status) {
 };
 
 ownCloudZimlet.prototype.appLaunch =
-function(appName) {
+function(appName) { 
    var req = new XMLHttpRequest();
    req.open('GET', '/owncloud', true);
    req.setRequestHeader("Authorization", "Basic " + string.encodeBase64(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])); 
@@ -275,12 +306,15 @@ function(id, title, message) {
    case 1:
       //Default dialog
       this._dialog = new ZmDialog( { title:title, parent:this.getShell(), standardButtons:[DwtDialog.OK_BUTTON,DwtDialog.CANCEL_BUTTON], disposeOnPopDown:true } );
+      var username = appCtxt.getActiveAccount().name.match(/.*@/);
+      username = username[0].replace('@','');
       html = "<div style='width:500px; height: 200px;'>To store an email or attachment in ownCloud, drag it onto the ownCloud icon.<br><br><table>"+      
-      "<tr><td>Username:&nbsp;</td><td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+this.getUserProperty("owncloud_zimlet_username")+"'></td></tr>" +
-      "<tr><td>Password:</td><td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+this.getUserProperty("owncloud_zimlet_password")+"'></td></tr>" +
+      "<tr><td>Username:&nbsp;</td><td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+(this.getUserProperty("owncloud_zimlet_username") ? this.getUserProperty("owncloud_zimlet_username") : username)+"'></td></tr>" +
+      "<tr><td>Password:</td><td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(this.getUserProperty("owncloud_zimlet_password") ? this.getUserProperty("owncloud_zimlet_password") : tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])+"'></td></tr>" +
+      "<tr><td>Store password:</td><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (this.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td></tr>" +
       "<tr><td>URL:</td><td><input style='width:98%' type='text' id='owncloud_zimlet_dav_uri' value='"+this.getUserProperty("owncloud_zimlet_dav_uri")+"'></td></tr>" +
       "<tr><td>Default folder:</td><td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+this.getUserProperty("owncloud_zimlet_default_folder")+"'></td></tr>" +
-      "</table><br>If you enter your password above it is stored in plain text in the Zimbra LDAP. If you do not store your password the server will ask you to provide it for each session.</div>";
+      "</table><br>If you check Store Password above it is stored in plain text in the Zimbra LDAP. If you do not store your password you have to provide it for each session.</div>";
       this._dialog.setContent(html);
       this._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.prefSaveBtn));
       this._dialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(this, this.cancelBtn));
@@ -306,15 +340,32 @@ function() {
  */
 ownCloudZimlet.prototype.prefSaveBtn =
 function() {
-   this.setUserProperty("owncloud_zimlet_username", document.getElementById('owncloud_zimlet_username').value, true);
-   this.setUserProperty("owncloud_zimlet_password", document.getElementById('owncloud_zimlet_password').value, true);
-   this.setUserProperty("owncloud_zimlet_dav_uri", document.getElementById('owncloud_zimlet_dav_uri').value, true);
-   this.setUserProperty("owncloud_zimlet_default_folder", document.getElementById('owncloud_zimlet_default_folder').value, true);
+   this.setUserProperty("owncloud_zimlet_username", document.getElementById('owncloud_zimlet_username').value, false);
+   
+   if(document.getElementById("owncloud_zimlet_store_pass").checked)
+   {
+      this.setUserProperty("owncloud_zimlet_password", document.getElementById('owncloud_zimlet_password').value, false);
+   }
+   else
+   {
+      this.setUserProperty("owncloud_zimlet_password", "", false);
+   }   
+   this.setUserProperty("owncloud_zimlet_dav_uri", document.getElementById('owncloud_zimlet_dav_uri').value, false);
+   this.setUserProperty("owncloud_zimlet_default_folder", document.getElementById('owncloud_zimlet_default_folder').value, false);
+   this.setUserProperty("owncloud_zimlet_store_pass", (document.getElementById("owncloud_zimlet_store_pass").checked ? 'true' : 'false'), true);
+   
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = document.getElementById('owncloud_zimlet_username').value;
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('owncloud_zimlet_password').value;
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = document.getElementById('owncloud_zimlet_dav_uri').value;
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = document.getElementById('owncloud_zimlet_default_folder').value;
    ownCloudZimlet.prototype.createFolder(this);
+
+   if((tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'].length > 0) && (tk_barrydegraaff_owncloud_zimlet_HandlerObject.tabInit == false))
+   { 
+      this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.tabInit = true;
+   } 
+   
    this.cancelBtn();
 };
 
@@ -338,6 +389,12 @@ function(parent, zimlet, className) {
       return;
    }
    this.prevAccount = acct;
+   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+   {
+      zimlet.displayDialog(1, 'Preferences', null);
+      this.popdown();
+      return;
+   }
    this._createHtml1(zimlet);
 };
 
@@ -428,13 +485,29 @@ function(status, statusstr, content) {
          {
             var fileName = item['href'].match(/(?:[^/][\d\w\.]+)+$/);
             fileName = decodeURI(fileName[0]);
-            html += "<div style=\"display: inline-block; width:99%; padding:2px\"><input style=\"vertical-align: middle;\" class=\"ownCloudSelect\" type=\"checkbox\" value=\""+item['href']+"\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+fileName+"</span></div>";
+            html += "<div style=\"display: inline-block; width:99%; padding:2px\"><input onclick=\"ownCloudTabView.prototype._disableMultiSelect('"+item['href']+"')\"  style=\"vertical-align: middle;\" class=\"ownCloudSelect\" type=\"checkbox\" id=\""+item['href']+"\" value=\""+item['href']+"\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+fileName+"</span></div>";
          }
       }
    });
    this.onclick = null;
    this.innerHTML = html;
    ownCloudTabView.attachment_ids = [];
+};
+
+/* The ownCloud Zimlet is designed for multiselect but that does not play well with ZmComposeController.sendMsg and ZmComposeController.saveDraft,
+ * See: https://github.com/barrydegraaff/owncloud-zimlet/issues/4
+ * This function disables multi-select.
+ */
+ownCloudTabView.prototype._disableMultiSelect = 
+function(select) 
+{
+   var ownCloudSelectSingle = document.getElementsByClassName("ownCloudSelect");
+   for (var index = 0; index < ownCloudSelectSingle.length; index++) {
+      if(ownCloudSelectSingle[index].id !== select)
+      {
+         ownCloudSelectSingle[index].checked = false;
+      }
+   }
 };
 
 /* Uploads the files.
@@ -450,7 +523,7 @@ function(attachmentDlg)
    
    var ownCloudSelectSelected = [];
    var indexNew = 0;
-   for (index = 0; index < ownCloudSelect.length; index++) {
+   for (var index = 0; index < ownCloudSelect.length; index++) {
       if(ownCloudSelect[index].checked)
       {
          ownCloudSelectSelected[indexNew] = ownCloudSelect[index];
@@ -458,23 +531,19 @@ function(attachmentDlg)
       }
    }   
    ownCloudSelect = ownCloudSelectSelected;
-   //console.log(ownCloudSelect);
-   
-   //for (index = 0; index < ownCloudSelect.length; index++) {
-   var index = 0;
-   if (ownCloudSelect[index])
+
+   if (ownCloudSelect[0])
    {
-      if(ownCloudSelect[index].checked)
+      if(ownCloudSelect[0].checked)
       {
-         ownCloudSelect[index].checked = false;
-         //console.log('deze:' + ownCloudSelect[index].value);
-         oCreq[ownCloudSelect[index].value] = new XMLHttpRequest();
-         oCreq[ownCloudSelect[index].value].open('GET', ownCloudSelect[index].value, true);
-         oCreq[ownCloudSelect[index].value].setRequestHeader("Authorization", "Basic " + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-         oCreq[ownCloudSelect[index].value].responseType = "blob";
-         oCreq[ownCloudSelect[index].value].send('');
+         ownCloudSelect[0].checked = false;
+         oCreq[ownCloudSelect[0].value] = new XMLHttpRequest();
+         oCreq[ownCloudSelect[0].value].open('GET', ownCloudSelect[0].value, true);
+         oCreq[ownCloudSelect[0].value].setRequestHeader("Authorization", "Basic " + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+         oCreq[ownCloudSelect[0].value].responseType = "blob";
+         oCreq[ownCloudSelect[0].value].send('');
          
-         oCreq[ownCloudSelect[index].value].onload = function(e) 
+         oCreq[ownCloudSelect[0].value].onload = function(e) 
          {
             req[this.responseURL] = new XMLHttpRequest();
             fileName[this.responseURL] = this.responseURL.match(/(?:[^/][\d\w\.]+)+$/);
@@ -489,8 +558,6 @@ function(attachmentDlg)
             req[this.responseURL].send(this.response);
             req[this.responseURL].onload = function(e)
             {
-               //console.log('uploadReady again fires in 3 seconds....');
-               //setTimeout(ownCloudTabView.prototype._uploadFiles(), 100);
                ownCloudTabView.prototype._uploadFiles();
             }
          };
@@ -505,30 +572,19 @@ function(attachmentDlg)
 
 ownCloudTabView.prototype._handleErrorResponse = 
 function(respCode) {
-   var warngDlg = appCtxt.getMsgDialog();
-   var style = DwtMessageDialog.CRITICAL_STYLE;
-   if (respCode == '200') {
-      return true;
-   } 
-   else if(respCode == '413') {
-      warngDlg.setMessage(ZmMsg.errorAttachmentTooBig, style);
-   } 
-   else {
-      var msg = AjxMessageFormat.format(ZmMsg.errorAttachment, (respCode || AjxPost.SC_NO_CONTENT));
-      warngDlg.setMessage(msg, style);
-   }
-   warngDlg.popup();
+
 };
 
+/* The ownCloud Zimlet is designed for multiselect but that does not play well with ZmComposeController.sendMsg and ZmComposeController.saveDraft,
+ * See: https://github.com/barrydegraaff/owncloud-zimlet/issues/4
+ * This function attaches uploaded attachments to the email.
+ */
 ownCloudTabView.prototype._handleResponse = 
 function(req, controller) { 
-   //console.log(controller);
-/*   
-   if(req) {
+   /*if(req) {
       if(req.readyState == 4 && req.status == 200) 
       {
          var resp = eval("["+req.responseText+"]");
-         
          ownCloudTabView.prototype._handleErrorResponse(resp[0]);
          
          if(resp.length > 2) 
@@ -551,37 +607,27 @@ function(req, controller) {
       }
    }*/
    if(req) 
-   {//console.log('req:'+req);
+   {
       if(req.readyState == 4 && req.status == 200) 
-      {//console.log('reqrdy');
+      {
          var resp = eval("["+req.responseText+"]");
          
          if(resp.length > 2) {
-            //console.log('reqrdyLEN');
-            var respObj = resp[2];
-            //console.log(respObj);
+            var respObj = resp[2];;
             for (var i = 0; i < respObj.length; i++) {
                if(respObj[i].aid != "undefined") {
-                  //console.log('undefinedAID?');
                   ownCloudTabView.attachment_ids.push(respObj[i].aid);
-                  console.log('id1:'+ownCloudTabView.attachment_ids);
                   this.upLoadC = this.upLoadC - 1;
                }
             }
             
-            //if(true) {
-               //console.log('reqrdyDRAFTbegin');
-               var attachment_list = ownCloudTabView.attachment_ids.join(",");
-               console.log('id2:'+attachment_list);
-               ownCloudTabView.attachment_ids = [];
-               var viewType = appCtxt.getCurrentViewType();
-               if (viewType == ZmId.VIEW_COMPOSE) {
-                  //console.log('reqrdyDRAFTstart');
-                  var controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
-                  //console.log('controller>'+controller);
-                  controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, attachment_list);
-               }
-            //}
+            var attachment_list = ownCloudTabView.attachment_ids.join(",");
+            ownCloudTabView.attachment_ids = [];
+            var viewType = appCtxt.getCurrentViewType();
+            if (viewType == ZmId.VIEW_COMPOSE) {
+               var controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
+               controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, attachment_list);
+            }
          }
       }
    } 
