@@ -544,7 +544,12 @@ function(attachmentDlg)
          oCreq[ownCloudSelect[0].value].send('');
          
          oCreq[ownCloudSelect[0].value].onload = function(e) 
-         {
+         {   
+            //Patch for Internet Explorer that does not implement responseURL in XMLHttpRequest
+            if (!this.responseURL)
+            {
+               this.responseURL = ownCloudSelect[0].value;
+            }
             req[this.responseURL] = new XMLHttpRequest();
             fileName[this.responseURL] = this.responseURL.match(/(?:[^/][\d\w\.]+)+$/);
             fileName[this.responseURL] = decodeURI(fileName[this.responseURL][0]);
