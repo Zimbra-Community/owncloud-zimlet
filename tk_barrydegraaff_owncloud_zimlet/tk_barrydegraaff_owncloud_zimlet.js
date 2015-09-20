@@ -130,6 +130,12 @@ function(contentDiv) {
 
 ownCloudZimlet.prototype.showAttachmentDialog =
 function() {
+   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+   {
+      this.displayDialog(1, 'Preferences', null);
+      return;
+   }
+
    var attachDialog = this._attachDialog = appCtxt.getAttachDialog();
    attachDialog.setTitle('Attach from ownCloud');
    this.removePrevAttDialogContent(attachDialog._getContentDiv().firstChild);
@@ -389,12 +395,6 @@ function(parent, zimlet, className) {
       return;
    }
    this.prevAccount = acct;
-   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-   {
-      zimlet.displayDialog(1, 'Preferences', null);
-      this.popdown();
-      return;
-   }
    this._createHtml1(zimlet);
 };
 
