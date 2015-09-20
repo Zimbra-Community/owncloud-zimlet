@@ -32,6 +32,9 @@ the Public Domain by the Tango Desktop Project.
 ownCloud and the ownCloud Logo is a registered trademark of ownCloud, Inc. 
 https://owncloud.org/trademarks/
 
+Build with knowledge shared by the Mozilla Developers Network 
+https://developer.mozilla.org
+
 This Zimlet contains parts from com_zimbra_attachmail by Raja Rao and 
 com_zimbra_dnd under the following license:
 */
@@ -185,6 +188,13 @@ function(itemId) {
  * */
 ownCloudZimlet.prototype.doDrop =
 function(zmObject) {
+    //if its a conversation i.e. "ZmConv" object, get the first loaded message "ZmMailMsg" object within that.
+    if (zmObject.TYPE == "ZmConv") {
+      var msgObj = zmObject.srcObj;//get access to source-object
+      msgObj  = msgObj.getFirstHotMsg();
+      zmObject.id = msgObj.id;
+    }
+
    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
    {
       this.displayDialog(1, 'Preferences', null);
@@ -222,7 +232,12 @@ function(zmObject) {
    var xmlHttp = null;   
    xmlHttp = new XMLHttpRequest();
    xmlHttp.open( "GET", getUrl, true );
-   xmlHttp.responseType = "blob";
+   
+   //Doc from briefcase is a binary
+   if (zmObject.name)
+   {
+      xmlHttp.responseType = "blob";
+   }   
    xmlHttp.send( null );
 
    ownCloudZimlet.prototype.createFolder(this);
@@ -240,10 +255,70 @@ function(zmObject) {
          if (zmObject.srcObj)
          {
             client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + zmObject.srcObj.subject + '.eml', xmlHttp.response,  ownCloudZimlet.prototype.createFolderCallback);
-         }   
+            
+            var boundary = xmlHttp.response.match(/boundary="([^"\\]*(?:\\.[^"\\]*)*)"/i);
+            if (!boundary)
+            {
+               return;
+            }
+            boundary[1] = '--'+boundary[1];
+            var multipart = xmlHttp.response.split(boundary[1]);
+            multipart.forEach(function(part) {
+               if(multipart[0].indexOf('Content-Type: multipart/mixed;') < 0)
+               {
+                  return;
+               }   
+            
+               var partArr = part.split('\r\n\r\n');   
+               if(partArr[0].indexOf('Content-Disposition: attachment')> 0)
+               {
+                  var filename = partArr[0].match(/filename.*/i);
+                  filename = filename[0].replace('"',"").replace('filename=',"").replace('"',"");
+                  var dataBin = ownCloudZimlet.prototype.base64DecToArr(partArr[1]);
+                  var blob = new Blob([dataBin], { type: 'octet/stream' });
+                  client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + filename, blob,  ownCloudZimlet.prototype.createFolderCallback);
+               }
+            });   
+         }
       }
    };
 };
+
+/* Base64 decode binary safe
+ https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
+*/
+ownCloudZimlet.prototype.b64ToUint6 = function (nChr) {
+  return nChr > 64 && nChr < 91 ?
+      nChr - 65
+    : nChr > 96 && nChr < 123 ?
+      nChr - 71
+    : nChr > 47 && nChr < 58 ?
+      nChr + 4
+    : nChr === 43 ?
+      62
+    : nChr === 47 ?
+      63
+    :
+      0;
+}
+
+ownCloudZimlet.prototype.base64DecToArr = function (sBase64, nBlocksSize) {
+  var
+    sB64Enc = sBase64.replace(/[^A-Za-z0-9\+\/]/g, ""), nInLen = sB64Enc.length,
+    nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2, taBytes = new Uint8Array(nOutLen);
+
+  for (var nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
+    nMod4 = nInIdx & 3;
+    nUint24 |= ownCloudZimlet.prototype.b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
+    if (nMod4 === 3 || nInLen - nInIdx === 1) {
+      for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
+        taBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255;
+      }
+      nUint24 = 0;
+    }
+  }
+  return taBytes;
+}
 
 ownCloudZimlet.prototype.createFolder =
 function(zimlet) {
@@ -287,11 +362,14 @@ ownCloudZimlet.prototype.appActive =
 function(appName, active) {
 	if (active)
    {
-      document.getElementById('z_sash').style.display = "none";    
+      //In the ownCloud Zimbra tab hide the left menu bar that is displayed by default in Zimbra, also hide the mini calendar
+      document.getElementById('z_sash').style.display = "none";   
+      //Users that click the ownCloud tab directly after logging in, will still be served with the calendar, as it is normal
+      //it takes some time to be displayed, so if that occurs, try to remove the calender again after 10 seconds.
       try {
          var cal = document.getElementsByClassName("DwtCalendar");
          cal[0].style.display = "none";
-      } catch (err) { }
+      } catch (err) { setTimeout(function(){var cal = document.getElementsByClassName("DwtCalendar"); cal[0].style.display = "none"; }, 10000); }
    }
    else
    {
