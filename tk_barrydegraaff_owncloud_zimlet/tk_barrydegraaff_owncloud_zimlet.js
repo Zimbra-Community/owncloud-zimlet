@@ -245,16 +245,16 @@ function(zmObject) {
       var client = new davlib.DavClient();
       client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
       if (zmObject.name)
-      {
+      {console.log('hierzo');
          //file from briefcase
-         client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + zmObject.name, xmlHttp.response,  ownCloudZimlet.prototype.createFolderCallback);
+         client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + zmObject.name, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
       }
       else
       {
          //email
          if (zmObject.srcObj)
          {
-            client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + zmObject.srcObj.subject + '.eml', xmlHttp.response,  ownCloudZimlet.prototype.createFolderCallback);
+            client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + zmObject.srcObj.subject + '.eml', xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
             
             var boundary = xmlHttp.response.match(/boundary="([^"\\]*(?:\\.[^"\\]*)*)"/i);
             if (!boundary)
@@ -276,7 +276,7 @@ function(zmObject) {
                   filename = filename[0].replace('"',"").replace('filename=',"").replace('"',"");
                   var dataBin = ownCloudZimlet.prototype.base64DecToArr(partArr[1]);
                   var blob = new Blob([dataBin], { type: 'octet/stream' });
-                  client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + filename, blob,  ownCloudZimlet.prototype.createFolderCallback);
+                  client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + filename, blob,  ownCloudZimlet.prototype.createFileCallback);
                }
             });   
          }
@@ -327,11 +327,23 @@ function(zimlet) {
    client.MKCOL(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'], ownCloudZimlet.prototype.createFolderCallback);
 }   
 
-ownCloudZimlet.prototype.createFolderCallback =
-function(status) {
+ownCloudZimlet.prototype.createFileCallback =
+function(status, statusstr) {
    //201 == created
    //405 == already there
    //Other status codes are not a good sign
+   console.log('------------------------------------- DAV response: ' + status  + " " + statusstr);
+};
+
+ownCloudZimlet.prototype.createFolderCallback =
+function(status, statusstr) {
+   //201 == created
+   //405 == already there
+   //Other status codes are not a good sign
+   if (status !== '405')
+   {
+      console.log('------------------------------------- DAV response: ' + status  + " " + statusstr);
+   }
 };
 
 ownCloudZimlet.prototype.appLaunch =
