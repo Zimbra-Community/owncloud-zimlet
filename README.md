@@ -44,12 +44,34 @@ In the ownCloud server, comment a line in the css so the Deleted Items menu beco
     .nav-trashbin {
     /*	position: fixed !important; */
 
+========================================================================
+
+### Installation of ownCloud in a custom location
+
+If your ownCloud is configured in a location other than /owncloud for example /oc you will have to alter a few lines in the source. And install in _dev:
+    su zimbra
+    zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet
+    cd /tmp
+    rm pgp-zimlet -Rf
+    git clone https://github.com/barrydegraaff/owncloud-zimlet
+
+Now in /tmp/owncloud-zimlet/tk_barrydegraaff_owncloud_zimlet/tk_barrydegraaff_owncloud_zimlet.js and look for the comment: /*custom location set here*/ after this comment you find a line where you should replace /owncloud with /oc or whatever your location is. Then install the Zimlet using:    
+    mkdir $HOME/zimlets-deployed/_dev
+    mv /tmp/pgp-zimlet/tk_barrydegraaff_owncloud_zimlet $HOME/zimlets-deployed/_dev/
+
+Also you should alter the proxy configuration to match your location:
+
+    Add to the bottom of /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template before the final }
+    location /oc/ {
+        proxy_pass https://owncloud.example.com/oc/;
+    }
+
 
 ========================================================================
 
 ### License
 
-Copyright (C) 2014-2015  Barry de Graaff
+Copyright (C) 2015  Barry de Graaff
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
