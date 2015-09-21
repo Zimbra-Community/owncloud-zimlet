@@ -21,7 +21,7 @@ To avoid JavaScript same origin policy problems we configure ownCloud or the Web
 
     Add to the bottom of /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template before the final }
     location /owncloud/ {
-        proxy_pass https://192.168.200.241/owncloud/;
+        proxy_pass https://owncloud.example.com/owncloud/;
     }
 
 Then as Zimbra user: zmproxyctl restart
