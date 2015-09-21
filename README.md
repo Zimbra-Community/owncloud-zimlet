@@ -17,6 +17,16 @@ If you find Zimbra ownCloud Zimlet useful and want to support its continued deve
 
 ### Installing
 
+    su zimbra
+    cd /tmp
+    rm tk_barrydegraaff_owncloud_zimlet*
+    wget https://github.com/barrydegraaff/owncloud-zimlet-binaries/raw/master/0.0.1/tk_barrydegraaff_owncloud_zimlet.zip
+    zmzimletctl deploy tk_barrydegraaff_owncloud_zimlet.zip
+    (wait 15 minutes for the deploy to propagate; or zmprov fc all && zmmailboxdctl restart)
+    
+    Modify the default COS to expand the Zimlets menu by default:
+    zmprov mc default zimbraPrefZimletTreeOpen TRUE
+
 To avoid JavaScript same origin policy problems we configure ownCloud or the WebDAV server of your choice to be inside the same domain as your Zimbra server.
 
     Add to the bottom of /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template before the final }
@@ -27,10 +37,6 @@ To avoid JavaScript same origin policy problems we configure ownCloud or the Web
 Then as Zimbra user: zmproxyctl restart
 
 This will add ownCloud under the same domain as your Zimbra server: https://zimbraserver.example.com/owncloud/ 
-
-Modify the default COS to expand the Zimlets menu by default:
-zmprov mc default zimbraPrefZimletTreeOpen TRUE
-
 
 In the ownCloud server, comment a line in the css so the Deleted Items menu becomes visible in Zimbra:
 
