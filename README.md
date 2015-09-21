@@ -28,9 +28,15 @@ Then as Zimbra user: zmproxyctl restart
 
 This will add ownCloud under the same domain as your Zimbra server: https://zimbraserver.example.com/owncloud/ 
 
-
 Modify the default COS to expand the Zimlets menu by default:
 zmprov mc default zimbraPrefZimletTreeOpen TRUE
+
+
+In the ownCloud server, comment a line in the css so the Deleted Items menu becomes visible in Zimbra:
+
+    /var/www/html/owncloud/apps/files/css/files.css
+    .nav-trashbin {
+    /*	position: fixed !important; */
 
 
 ========================================================================
