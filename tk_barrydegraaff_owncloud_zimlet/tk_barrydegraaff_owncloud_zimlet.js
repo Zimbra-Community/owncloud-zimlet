@@ -87,7 +87,7 @@ ownCloudZimlet.prototype.init = function () {
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_dav_uri"))
    {
-      /*custom location set here*/
+      /*'custom location set here'*/
       this.setUserProperty("owncloud_zimlet_dav_uri", '/owncloud/remote.php/webdav/', true);
    }
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = this.getUserProperty("owncloud_zimlet_dav_uri");
@@ -357,7 +357,7 @@ function(status, statusstr) {
 ownCloudZimlet.prototype.appLaunch =
 function(appName) { 
    var req = new XMLHttpRequest();
-   /*custom location set here*/
+   /*'custom location set here'*/
    req.open('GET', '/owncloud', true);
    req.setRequestHeader("Authorization", "Basic " + string.encodeBase64(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])); 
    req.send('');
@@ -365,7 +365,7 @@ function(appName) {
    req.onload = function(e) 
    {
       var app = appCtxt.getApp(appName);
-      /*custom location set here*/
+      /*'custom location set here'*/
       app.setContent('<div style="position: fixed; left:0; width:100%; height:100%; border:0px;"><iframe style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="/owncloud"></div>');
       var overview = app.getOverview(); // returns ZmOverview
       overview.setContent("&nbsp;");

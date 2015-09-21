@@ -56,7 +56,7 @@ If your ownCloud is configured in a location other than /owncloud for example /o
     rm owncloud-zimlet -Rf
     git clone https://github.com/barrydegraaff/owncloud-zimlet
 
-Now in /tmp/owncloud-zimlet/tk_barrydegraaff_owncloud_zimlet/tk_barrydegraaff_owncloud_zimlet.js and look for the comment: /*custom location set here*/ after this comment you find a line where you should replace /owncloud with /oc or whatever your location is. Then install the Zimlet using:    
+Now open /tmp/owncloud-zimlet/tk_barrydegraaff_owncloud_zimlet/tk_barrydegraaff_owncloud_zimlet.js and look for the comment: 'custom location set here' after this comment you find a line where you should replace /owncloud with /oc or whatever your location is. Then install the Zimlet using:    
 
     mkdir $HOME/zimlets-deployed/_dev
     mv /tmp/owncloud-zimlet/tk_barrydegraaff_owncloud_zimlet $HOME/zimlets-deployed/_dev/
