@@ -637,7 +637,7 @@ function(status, statusstr, content) {
             {
                displayFolder = displayFolder[1];
             }
-            html += "<div id=\""+item['href']+"\" onclick=\"ownCloudZimlet.prototype.readSubFolder('"+item['href']+"')\"style=\"display: inline-block; width:99%; padding:2px; padding-left:"+(2 +(item['level']*6))+"px;\"><img style=\"vertical-align: middle;\" src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/folder.png\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+displayFolder+"</span></div>";
+            html += "<div id=\""+item['href']+"\" onclick=\"ownCloudZimlet.prototype.readSubFolder('"+item['href']+"')\"style=\"display: inline-block; ;width:99%; padding:2px;\"><img style=\"vertical-align: middle; margin-left:"+item['level']*16+"px\" src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/folder.png\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+displayFolder+"</span></div>";
             
          }
       }
@@ -651,7 +651,7 @@ function(status, statusstr, content) {
          {
             var fileName = item['href'].match(/(?:[^/][\d\w\.]+)+$/);
             fileName = decodeURI(fileName[0]);
-            html += "<div style=\"display: inline-block; width:99%; padding:2px;padding-left:"+(2 +(item['level']*6))+"px;\"><input onclick=\"ownCloudTabView.prototype._disableMultiSelect('"+item['href']+"')\"  style=\"vertical-align: middle;\" class=\"ownCloudSelect\" type=\"checkbox\" id=\""+item['href']+"\" value=\""+item['href']+"\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+fileName+"</span></div>";
+            html += "<div style=\"display: inline-block; ;width:99%; padding:2px;\"><input onclick=\"ownCloudTabView.prototype._disableMultiSelect('"+item['href']+"')\"  style=\"vertical-align: middle; margin-left:"+(2+item['level']*16)+"px\" class=\"ownCloudSelect\" type=\"checkbox\" id=\""+item['href']+"\" value=\""+item['href']+"\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+fileName+"</span></div>";
          }
       }
    });
