@@ -28,6 +28,9 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 WARNING: proxy_location AND dav_path MUST NOT CONTAIN SPACES, UNICODE,
 ESCAPE CHARACTERS and so on or this Zimlet may OVERWRITE your files!
 
+Also keep the / slash signs as they appear in the example below and
+do not add additional ones!  
+
 
 
 -->
