@@ -628,7 +628,17 @@ function(status, statusstr, content) {
       {
          if(unescape(item['href'].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"").replace("/","")))
          {
-            html += "<div id=\""+item['href']+"\" onclick=\"ownCloudZimlet.prototype.readSubFolder('"+item['href']+"')\"style=\"display: inline-block; width:99%; padding:2px; padding-left:"+(2 +(item['level']*6))+"px;\"><img style=\"vertical-align: middle;\" src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/folder.png\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+unescape(item['href'].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],""))+"</span></div>";
+            var displayFolder = unescape(item['href'].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"")).match(/.*\/([^\/]+)\/[^\/]*$/);            
+            if(!displayFolder)
+            {
+               displayFolder = unescape(item['href'].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"")).replace("/","");
+            }
+            else
+            {
+               displayFolder = displayFolder[1];
+            }
+            html += "<div id=\""+item['href']+"\" onclick=\"ownCloudZimlet.prototype.readSubFolder('"+item['href']+"')\"style=\"display: inline-block; width:99%; padding:2px; padding-left:"+(2 +(item['level']*6))+"px;\"><img style=\"vertical-align: middle;\" src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/folder.png\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+displayFolder+"</span></div>";
+            
          }
       }
    });
