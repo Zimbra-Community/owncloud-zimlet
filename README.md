@@ -19,12 +19,14 @@ If you find Zimbra ownCloud Zimlet useful and want to support its continued deve
 
     su zimbra
     cd /tmp
-    rm tk_barrydegraaff_owncloud_zimlet*
+    rm -f tk_barrydegraaff_owncloud_zimlet*
     wget https://github.com/barrydegraaff/owncloud-zimlet-binaries/raw/master/0.0.3/tk_barrydegraaff_owncloud_zimlet.zip
     zmzimletctl deploy tk_barrydegraaff_owncloud_zimlet.zip
-    (wait 15 minutes for the deploy to propagate; or zmprov fc all && zmmailboxdctl restart)
     
-    Modify the default COS to expand the Zimlets menu by default:
+Wait 15 minutes for the deploy to propagate; or run ```zmprov fc all && zmmailboxdctl restart```.
+    
+Modify the default COS to expand the Zimlets menu by default:
+
     zmprov mc default zimbraPrefZimletTreeOpen TRUE
 
 To avoid JavaScript same origin policy problems we configure ownCloud or the WebDAV server of your choice to be inside the same domain as your Zimbra server.
@@ -34,7 +36,7 @@ To avoid JavaScript same origin policy problems we configure ownCloud or the Web
         proxy_pass https://owncloud.example.com/owncloud/;
     }
 
-Then as Zimbra user: zmproxyctl restart
+Then as Zimbra user: ```zmproxyctl restart```
 
 This will add ownCloud under the same domain as your Zimbra server: https://zimbraserver.example.com/owncloud/ 
 
@@ -51,7 +53,7 @@ In the ownCloud server, comment a line in the css so the Deleted Items menu beco
 If your ownCloud is configured in a location other than /owncloud for example /oc you will have to configure the global configuration:
 
     su zimbra
-    zmzimletctl getConfigTemplate tk_barrydegraaff_owncloud_zimlet.zip
+    zmzimletctl getConfigTemplate tk_barrydegraaff_owncloud_zimlet.zip > config_template.xml
 
 Make changes to config_template.xml then:
 
