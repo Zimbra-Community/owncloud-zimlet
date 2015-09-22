@@ -20,7 +20,7 @@ If you find Zimbra ownCloud Zimlet useful and want to support its continued deve
     su zimbra
     cd /tmp
     rm tk_barrydegraaff_owncloud_zimlet*
-    wget https://github.com/barrydegraaff/owncloud-zimlet-binaries/raw/master/0.0.2/tk_barrydegraaff_owncloud_zimlet.zip
+    wget https://github.com/barrydegraaff/owncloud-zimlet-binaries/raw/master/0.0.3/tk_barrydegraaff_owncloud_zimlet.zip
     zmzimletctl deploy tk_barrydegraaff_owncloud_zimlet.zip
     (wait 15 minutes for the deploy to propagate; or zmprov fc all && zmmailboxdctl restart)
     
