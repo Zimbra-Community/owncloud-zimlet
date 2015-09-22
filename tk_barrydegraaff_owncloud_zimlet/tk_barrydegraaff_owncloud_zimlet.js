@@ -184,108 +184,114 @@ function(itemId) {
 /* doDrop handler
  * */
 ownCloudZimlet.prototype.doDrop =
-function(zmObject) {
-    //If selected multiple items, only take one for now.
-    if(zmObject[0])
+function(zmObjects) {
+    /* Single selects result in an object passed,
+    Multi selects results in an array of objects passed.
+    Always make it an array */    
+    if(!zmObjects[0])
     {
-       zmObject = zmObject[0];
+       zmObjects = [zmObjects];
     }
     
-    //if its a conversation i.e. "ZmConv" object, get the first loaded message "ZmMailMsg" object within that.
-    if (zmObject.TYPE == "ZmConv") {
-      var msgObj = zmObject.srcObj;//get access to source-object
-      msgObj  = msgObj.getFirstHotMsg();
-      zmObject.id = msgObj.id;
-    }
-
-   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-   {
-      this.displayDialog(1, 'Preferences', null);
-      return;
-   } 
+    zmObjects.forEach(function(zmObject)
+    {        
+       //if its a conversation i.e. "ZmConv" object, get the first loaded message "ZmMailMsg" object within that.
+       if (zmObject.TYPE == "ZmConv") {
+         var msgObj = zmObject.srcObj;//get access to source-object
+         msgObj  = msgObj.getFirstHotMsg();
+         zmObject.id = msgObj.id;
+       }
    
-   var url = [];
-   var i = 0;
-   var proto = location.protocol;
-   var port = Number(location.port);
-   url[i++] = proto;
-   url[i++] = "//";
-   url[i++] = location.hostname;
-   if (port && ((proto == ZmSetting.PROTO_HTTP && port != ZmSetting.HTTP_DEFAULT_PORT) 
-      || (proto == ZmSetting.PROTO_HTTPS && port != ZmSetting.HTTPS_DEFAULT_PORT))) {
-      url[i++] = ":";
-      url[i++] = port;
-   }
-   url[i++] = "/home/";
-   url[i++]= AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name);
-   url[i++] = "/message.txt?fmt=txt&id=";
-   if (zmObject.id < 0)
-   {
-      var id = zmObject.id * -1;
-   }
-   else
-   {
-      var id = zmObject.id;
-   }
-   url[i++] = id;
-
-   var getUrl = url.join(""); 
-
-   //Now make an ajax request and read the contents of this mail, including all attachments as text
-   //it should be base64 encoded
-   var xmlHttp = null;   
-   xmlHttp = new XMLHttpRequest();
-   xmlHttp.open( "GET", getUrl, true );
-   
-   //Doc from briefcase is a binary
-   if (zmObject.name)
-   {
-      xmlHttp.responseType = "blob";
-   }   
-   xmlHttp.send( null );
-
-   ownCloudZimlet.prototype.createFolder(this);
-   xmlHttp.onload = function(e) {
-      var client = new davlib.DavClient();
-      client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-      if (zmObject.name)
+      if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
       {
-         //file from briefcase
-         client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + zmObject.name, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
+         this.displayDialog(1, 'Preferences', null);
+         return;
+      } 
+      
+      var url = [];
+      var i = 0;
+      var proto = location.protocol;
+      var port = Number(location.port);
+      url[i++] = proto;
+      url[i++] = "//";
+      url[i++] = location.hostname;
+      if (port && ((proto == ZmSetting.PROTO_HTTP && port != ZmSetting.HTTP_DEFAULT_PORT) 
+         || (proto == ZmSetting.PROTO_HTTPS && port != ZmSetting.HTTPS_DEFAULT_PORT))) {
+         url[i++] = ":";
+         url[i++] = port;
+      }
+      url[i++] = "/home/";
+      url[i++]= AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name);
+      url[i++] = "/message.txt?fmt=txt&id=";
+      if (zmObject.id < 0)
+      {
+         var id = zmObject.id * -1;
       }
       else
       {
-         //email
-         if (zmObject.srcObj)
+         var id = zmObject.id;
+      }
+      url[i++] = id;
+   
+      var getUrl = url.join(""); 
+   
+      //Now make an ajax request and read the contents of this mail, including all attachments as text
+      //it should be base64 encoded
+      var xmlHttp = null;   
+      xmlHttp = new XMLHttpRequest();
+      xmlHttp.open( "GET", getUrl, true );
+      
+      //Doc from briefcase is a binary
+      if (zmObject.name)
+      {
+         xmlHttp.responseType = "blob";
+      }   
+      xmlHttp.send( null );
+   
+      ownCloudZimlet.prototype.createFolder(this);
+      
+      xmlHttp.onload = function(e) {
+         var client = new davlib.DavClient();
+         client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+         if (zmObject.name)
          {
-            client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + zmObject.srcObj.subject + '.eml', xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
-            
-            var boundary = xmlHttp.response.match(/boundary="([^"\\]*(?:\\.[^"\\]*)*)"/i);
-            if (!boundary)
+            //file from briefcase
+            client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + zmObject.name, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
+         }
+         else
+         {
+            //email
+            if (zmObject.srcObj)
             {
-               return;
-            }
-            boundary[1] = '--'+boundary[1];
-            var multipart = xmlHttp.response.split(boundary[1]);
-            multipart.forEach(function(part) {
-               if(multipart[0].indexOf('Content-Type: multipart/mixed;') < 0)
+               client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + zmObject.srcObj.subject + '.eml', xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
+               
+               var boundary = xmlHttp.response.match(/boundary="([^"\\]*(?:\\.[^"\\]*)*)"/i);
+               if (!boundary)
                {
                   return;
-               }   
-            
-               var partArr = part.split('\r\n\r\n');   
-               if(partArr[0].indexOf('Content-Disposition: attachment')> 0)
-               {
-                  var filename = partArr[0].match(/filename.*/i);
-                  filename = filename[0].replace('"',"").replace('filename=',"").replace('"',"");
-                  var dataBin = ownCloudZimlet.prototype.base64DecToArr(partArr[1]);
-                  var blob = new Blob([dataBin], { type: 'octet/stream' });
-                  client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + filename, blob,  ownCloudZimlet.prototype.createFileCallback);
                }
-            });   
+               boundary[1] = '--'+boundary[1];
+               var multipart = xmlHttp.response.split(boundary[1]);
+               multipart.forEach(function(part) {
+                  if(multipart[0].indexOf('Content-Type: multipart/mixed;') < 0)
+                  {
+                     return;
+                  }   
+               
+                  var partArr = part.split('\r\n\r\n');   
+                  if(partArr[0].indexOf('Content-Disposition: attachment')> 0)
+                  {
+                     var filename = partArr[0].match(/filename.*/i);
+                     filename = filename[0].replace('"',"").replace('filename=',"").replace('"',"");
+                     var dataBin = ownCloudZimlet.prototype.base64DecToArr(partArr[1]);
+                     var blob = new Blob([dataBin], { type: 'octet/stream' });
+                     client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + filename, blob,  ownCloudZimlet.prototype.createFileCallback);
+                  }
+               });   
+            }
          }
-      }
-   };
+      };
+   });   
 };
 
 /* Base64 decode binary safe
