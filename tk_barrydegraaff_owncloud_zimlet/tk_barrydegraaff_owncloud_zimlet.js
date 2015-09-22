@@ -70,6 +70,10 @@ tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype.constructor = tk_barryd
 var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 
 ownCloudZimlet.prototype.init = function () {
+   //Set global config
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] = this._zimletContext.getConfig("proxy_location");
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = this._zimletContext.getConfig("proxy_location") + this._zimletContext.getConfig("dav_path");   
+
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_username"))
    {
@@ -83,15 +87,7 @@ ownCloudZimlet.prototype.init = function () {
       this.setUserProperty("owncloud_zimlet_password", '', true);
    }
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = this.getUserProperty("owncloud_zimlet_password");
-   
-   //Set default value
-   if(!this.getUserProperty("owncloud_zimlet_dav_uri"))
-   {
-      /*'custom location set here'*/
-      this.setUserProperty("owncloud_zimlet_dav_uri", '/owncloud/remote.php/webdav/', true);
-   }
-   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = this.getUserProperty("owncloud_zimlet_dav_uri");
-   
+     
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_default_folder"))
    {
@@ -357,16 +353,14 @@ function(status, statusstr) {
 ownCloudZimlet.prototype.appLaunch =
 function(appName) { 
    var req = new XMLHttpRequest();
-   /*'custom location set here'*/
-   req.open('GET', '/owncloud', true);
+   req.open('GET', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'], true);
    req.setRequestHeader("Authorization", "Basic " + string.encodeBase64(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])); 
    req.send('');
    
    req.onload = function(e) 
    {
       var app = appCtxt.getApp(appName);
-      /*'custom location set here'*/
-      app.setContent('<div style="position: fixed; left:0; width:100%; height:100%; border:0px;"><iframe style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="/owncloud"></div>');
+      app.setContent('<div style="position: fixed; left:0; width:100%; height:100%; border:0px;"><iframe style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+'"></div>');
       var overview = app.getOverview(); // returns ZmOverview
       overview.setContent("&nbsp;");
       var child = document.getElementById(overview._htmlElId);
@@ -418,7 +412,6 @@ function(id, title, message) {
       "<tr><td>Username:&nbsp;</td><td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+(this.getUserProperty("owncloud_zimlet_username") ? this.getUserProperty("owncloud_zimlet_username") : username)+"'></td></tr>" +
       "<tr><td>Password:</td><td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(this.getUserProperty("owncloud_zimlet_password") ? this.getUserProperty("owncloud_zimlet_password") : tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])+"'></td></tr>" +
       "<tr><td>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (this.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>" +
-      "<tr><td>URL:</td><td><input style='width:98%' type='text' id='owncloud_zimlet_dav_uri' value='"+this.getUserProperty("owncloud_zimlet_dav_uri")+"'></td></tr>" +
       "<tr><td>Default folder:</td><td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+this.getUserProperty("owncloud_zimlet_default_folder")+"'></td></tr>" +
       "<tr><td colspan=\"2\"><br><table><tr><td><img src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/dialog-warning.png\"></td><td style=\"padding-left:2px; font-size:12px; font-weight:700\">If you save files with the same name as files already in Default folder they will be replaced without confirmation!</td></tr></table></td></td></tr>"
       "</table></div>";
@@ -457,13 +450,11 @@ function() {
    {
       this.setUserProperty("owncloud_zimlet_password", "", false);
    }   
-   this.setUserProperty("owncloud_zimlet_dav_uri", document.getElementById('owncloud_zimlet_dav_uri').value, false);
    this.setUserProperty("owncloud_zimlet_default_folder", document.getElementById('owncloud_zimlet_default_folder').value, false);
    this.setUserProperty("owncloud_zimlet_store_pass", (document.getElementById("owncloud_zimlet_store_pass").checked ? 'true' : 'false'), true);
    
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = document.getElementById('owncloud_zimlet_username').value;
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('owncloud_zimlet_password').value;
-   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = document.getElementById('owncloud_zimlet_dav_uri').value;
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = document.getElementById('owncloud_zimlet_default_folder').value;
    ownCloudZimlet.prototype.createFolder(this);
 

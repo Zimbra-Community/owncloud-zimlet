@@ -1,5 +1,6 @@
 <!--
-Zimbra OpenPGP Zimlet
+
+Zimbra ownCloud Zimlet
 
    https://github.com/barrydegraaff/owncloud-zimlet
    https://www.indiegogo.com/projects/zimbra-owncloud-extension-zimlet
@@ -42,7 +43,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
    <userProperties>
       <property type="string" label="" name="owncloud_zimlet_username" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_password" rows="1"/>
-      <property type="string" label="" name="owncloud_zimlet_dav_uri" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_default_folder" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_store_pass" rows="1"/>
    </userProperties>
