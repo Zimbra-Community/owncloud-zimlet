@@ -324,8 +324,6 @@ function(zmObjects) {
 };
 
 ownCloudZimlet.prototype.fileName = function (existingItems, fileName) {
-   console.log(existingItems);
-   console.log(fileName);
    if(existingItems[fileName]==fileName)   
    {
       //fileName already exists, generate a different one
