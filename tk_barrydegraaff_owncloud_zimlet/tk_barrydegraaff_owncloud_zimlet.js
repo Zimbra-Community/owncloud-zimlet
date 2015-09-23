@@ -414,7 +414,14 @@ ownCloudZimlet.prototype.fileName = function (existingItems, fileName) {
       {
          //newFileName = fileName + x;
          var dot = fileName.lastIndexOf(".");
-         newFileName = fileName.substr(0,dot) + x + fileName.substr(dot);
+         if(dot < 0)
+         {
+            newFileName = fileName + x;
+         }
+         else
+         {
+            newFileName = fileName.substr(0,dot) + x + fileName.substr(dot);
+         }   
          x++;
       }
       return newFileName;
