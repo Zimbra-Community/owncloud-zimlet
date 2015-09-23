@@ -278,6 +278,13 @@ function(itemId) {
  * */
 ownCloudZimlet.prototype.doDrop =
 function(zmObjects) {
+   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+   {
+      this.displayDialog(1, 'Preferences', null);
+      return;
+   }
+   this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);   
+   
    ownCloudZimlet.prototype.createFolder(this);
    
    var client = new davlib.DavClient();
@@ -317,13 +324,7 @@ function(zmObjects) {
               msgObj  = msgObj.getFirstHotMsg();
               zmObject.id = msgObj.id;
             }
-        
-            if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-            {
-               this.displayDialog(1, 'Preferences', null);
-               return;
-            } 
-           
+                 
             var url = [];
             var i = 0;
             var proto = location.protocol;
