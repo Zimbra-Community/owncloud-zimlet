@@ -650,29 +650,13 @@ function(status, statusstr, content) {
          {
             var fileName = item['href'].match(/(?:[^/][\d\w\.]+)+$/);
             fileName = decodeURI(fileName[0]);
-            html += "<div style=\"display: inline-block; ;width:99%; padding:2px;\"><input onclick=\"ownCloudTabView.prototype._disableMultiSelect('"+item['href']+"')\"  style=\"vertical-align: middle; margin-left:"+(2+item['level']*16)+"px\" class=\"ownCloudSelect\" type=\"checkbox\" id=\""+item['href']+"\" value=\""+item['href']+"\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+fileName+"</span></div>";
+            html += "<div style=\"display: inline-block; ;width:99%; padding:2px;\"><input style=\"vertical-align: middle; margin-left:"+(2+item['level']*16)+"px\" class=\"ownCloudSelect\" type=\"checkbox\" id=\""+item['href']+"\" value=\""+item['href']+"\"><span style=\"vertical-align: middle;  display: inline-block;\">&nbsp;"+fileName+"</span></div>";
          }
       }
    });
    this.onclick = null;
    this.innerHTML = html;
    ownCloudTabView.attachment_ids = [];
-};
-
-/* The ownCloud Zimlet is designed for multiselect but that does not play well with ZmComposeController.sendMsg and ZmComposeController.saveDraft,
- * See: https://github.com/barrydegraaff/owncloud-zimlet/issues/4
- * This function disables multi-select.
- */
-ownCloudTabView.prototype._disableMultiSelect = 
-function(select) 
-{
-   var ownCloudSelectSingle = document.getElementsByClassName("ownCloudSelect");
-   for (var index = 0; index < ownCloudSelectSingle.length; index++) {
-      if(ownCloudSelectSingle[index].id !== select)
-      {
-         ownCloudSelectSingle[index].checked = false;
-      }
-   }
 };
 
 /* Uploads the files.
@@ -683,7 +667,7 @@ function(attachmentDlg)
    var ownCloudSelect = document.getElementsByClassName("ownCloudSelect");
    
    var oCreq = [];
-   var req = [];
+   var req = "";
    var fileName = [];
    
    var ownCloudSelectSelected = [];
@@ -715,22 +699,41 @@ function(attachmentDlg)
             {
                this.responseURL = ownCloudSelect[0].value;
             }
-            req[this.responseURL] = new XMLHttpRequest();
+            req = new XMLHttpRequest();
             fileName[this.responseURL] = this.responseURL.match(/(?:[^/][\d\w\.]+)+$/);
             fileName[this.responseURL] = decodeURI(fileName[this.responseURL][0]);
-            req[this.responseURL].open("POST", "/service/upload?fmt=extended,raw", true);        
-            req[this.responseURL].setRequestHeader("Cache-Control", "no-cache");
-            req[this.responseURL].setRequestHeader("X-Requested-With", "XMLHttpRequest");
-            req[this.responseURL].setRequestHeader("Content-Type",  "application/octet-stream" + ";");
-            req[this.responseURL].setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
-            req[this.responseURL].setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName[this.responseURL] + '"');
-            req[this.responseURL].onreadystatechange = AjxCallback.simpleClosure(ownCloudTabView.prototype._handleResponse, this, req[this.responseURL]);            
-            req[this.responseURL].send(this.response);
-            req[this.responseURL].onload = function(e)
+            req.open("POST", "/service/upload?fmt=extended,raw", true);        
+            req.setRequestHeader("Cache-Control", "no-cache");
+            req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            req.setRequestHeader("Content-Type",  "application/octet-stream" + ";");
+            req.setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
+            req.setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName[this.responseURL] + '"');
+            req.onload = function(e)
             {
+               var resp = eval("["+req.responseText+"]");
+               var respObj = resp[2];
+               var attId = "";
+               for (var i = 0; i < respObj.length; i++) 
+               {
+                  if(respObj[i].aid != "undefined") {
+                     ownCloudTabView.attachment_ids.push(respObj[i].aid);
+                  }
+               }
                ownCloudTabView.prototype._uploadFiles();
             }
+            req.send(this.response);
          };
+      }
+   }
+   else
+   {
+      //If there are no more attachments to upload to Zimbra, attach them to the draft message
+      var attachment_list = ownCloudTabView.attachment_ids.join(",");
+      var viewType = appCtxt.getCurrentViewType();
+      if (viewType == ZmId.VIEW_COMPOSE) 
+      {
+         var controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
+         controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, attachment_list);
       }
    }
    //This function is called via the Attach Dialog once passing attachmentDlg, 
@@ -738,69 +741,6 @@ function(attachmentDlg)
    try {
       attachmentDlg.popdown();   
    } catch (err) {}   
-};
-
-ownCloudTabView.prototype._handleErrorResponse = 
-function(respCode) {
-
-};
-
-/* The ownCloud Zimlet is designed for multiselect but that does not play well with ZmComposeController.sendMsg and ZmComposeController.saveDraft,
- * See: https://github.com/barrydegraaff/owncloud-zimlet/issues/4
- * This function attaches uploaded attachments to the email.
- */
-ownCloudTabView.prototype._handleResponse = 
-function(req, controller) { 
-   /*if(req) {
-      if(req.readyState == 4 && req.status == 200) 
-      {
-         var resp = eval("["+req.responseText+"]");
-         ownCloudTabView.prototype._handleErrorResponse(resp[0]);
-         
-         if(resp.length > 2) 
-         {
-            var respObj = resp[2];
-            for (var i = 0; i < respObj.length; i++) 
-            {
-               if(respObj[i].aid != "undefined") 
-               {
-                  ownCloudTabView.attachment_ids.push(respObj[i].aid);
-               }
-            }
-            
-            // locate the compose controller and set up the callback handler
-            var cc = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
-            var callback = new AjxCallback (cc,cc._handleResponseSaveDraftListener);
-            var attachment_list = ownCloudTabView.attachment_ids.join(",");
-            cc.sendMsg(attachment_list,ZmComposeController.DRAFT_TYPE_MANUAL,callback);
-         }
-      }
-   }*/
-   if(req) 
-   {
-      if(req.readyState == 4 && req.status == 200) 
-      {
-         var resp = eval("["+req.responseText+"]");
-         
-         if(resp.length > 2) {
-            var respObj = resp[2];;
-            for (var i = 0; i < respObj.length; i++) {
-               if(respObj[i].aid != "undefined") {
-                  ownCloudTabView.attachment_ids.push(respObj[i].aid);
-                  this.upLoadC = this.upLoadC - 1;
-               }
-            }
-            
-            var attachment_list = ownCloudTabView.attachment_ids.join(",");
-            ownCloudTabView.attachment_ids = [];
-            var viewType = appCtxt.getCurrentViewType();
-            if (viewType == ZmId.VIEW_COMPOSE) {
-               var controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
-               controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, attachment_list);
-            }
-         }
-      }
-   } 
 };
 
 ZmownCloudController = function(view) {
