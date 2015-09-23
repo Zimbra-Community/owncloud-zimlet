@@ -153,10 +153,17 @@ function(attachment) {
 	return html;
 };
 
+/* status method show a Zimbra status message
+ * */
+ownCloudZimlet.prototype.status = function(text, type) {
+   var transitions = [ ZmToast.FADE_IN, ZmToast.PAUSE, ZmToast.FADE_OUT ];
+   appCtxt.getAppController().setStatusMsg(text, type, null, transitions);
+}; 
+
 ownCloudZimlet.prototype.saveAttachment = 
 function(name, url) {
    ownCloudZimlet.prototype.createFolder(this);
-   
+   this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);   
    var client = new davlib.DavClient();
    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
    client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],  function(status, statusstr, content) 
