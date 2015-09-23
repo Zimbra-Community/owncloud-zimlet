@@ -30,6 +30,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
         description="Attach from and save to ownCloud">
     <include>tk_barrydegraaff_owncloud_zimlet.js</include>
     <include>davclient.js</include>
+    <include>mime.js</include>
     <includeCSS>tk_barrydegraaff_owncloud_zimlet.css</includeCSS>
     <zimletPanelItem label="ownCloud" icon="ownCloud-panelIcon">
       <dragSource type="ZmConv" />

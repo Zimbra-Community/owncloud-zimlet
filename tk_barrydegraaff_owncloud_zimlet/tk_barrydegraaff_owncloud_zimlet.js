@@ -111,6 +111,87 @@ ownCloudZimlet.prototype.init = function () {
          tk_barrydegraaff_owncloud_zimlet_HandlerObject.tabInit = true;
       }   
    } catch (err) { }   
+
+	if (appCtxt.get(ZmSetting.MAIL_ENABLED)) {
+		AjxPackage.require({name:"MailCore", callback:new AjxCallback(this, this.addAttachmentHandler)});
+	}
+};
+
+ownCloudZimlet.prototype.addAttachmentHandler = function(mime)
+{
+	this._msgController = AjxDispatcher.run("GetMsgController");
+	var viewType = appCtxt.getViewTypeFromId(ZmId.VIEW_MSG);
+	this._msgController._initializeView(viewType);
+
+   //Load 1000 mime-types
+   ownCloudZimlet.prototype.mime();
+   ownCloudZimlet.mime.forEach(function(mime) 
+   {
+      var MISSMIME = 'ownCloudZimlet'+mime.replace("/","_");
+      ZmMimeTable.MISSMIME=mime;
+      ZmMimeTable._table[ZmMimeTable.MISSMIME]={desc:ZmMsg.unknownBinaryType,image:"UnknownDoc",imageLarge:"UnknownDoc_48"};      
+   });
+
+	for (var mimeType in ZmMimeTable._table) {
+		this._msgController._listView[viewType].addAttachmentLinkHandler(mimeType,"ownCloud",this.addownCloudLink);
+	}
+};
+
+ownCloudZimlet.prototype.addownCloudLink = 
+function(attachment) {
+	var html =
+			"<a href='#' class='AttLink' style='text-decoration:underline;' " +
+					"onClick=\"ownCloudZimlet.prototype.saveAttachment('" + attachment.label + "','" + attachment.url + "')\">"+
+					"ownCloud" +
+					"</a>";
+               
+	return html;
+};
+
+ownCloudZimlet.prototype.saveAttachment = 
+function(name, url) {
+   ownCloudZimlet.prototype.createFolder(this);
+   
+   var client = new davlib.DavClient();
+   client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+   client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],  function(status, statusstr, content) 
+   {
+      if(status == 207)
+      {
+         var rawDavResponse = content.split('<d:response>');
+         var existingItems = [];
+
+         rawDavResponse.forEach(function(response) 
+         {
+
+            var href = response.match(/<d:href>.*<\/d:href>/);
+            if(href)
+            {
+               href = href[0].replace(/(<d:href>|<\/d:href>)/gm,"");
+               href = href.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ escape(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']),'').replace('/','').replace('/','');
+               existingItems[href] = href;
+            }                                                
+         });  
+              
+         //Now make an ajax request and read the contents of this mail, including all attachments as text
+         //it should be base64 encoded
+         var xmlHttp = null;   
+         xmlHttp = new XMLHttpRequest();
+         xmlHttp.open( "GET", url, true );        
+         xmlHttp.responseType = "blob";
+         xmlHttp.send( null );
+        
+         xmlHttp.onload = function(e) 
+         {
+            var client = new davlib.DavClient();
+            client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+
+            var fileName = ownCloudZimlet.prototype.fileName(existingItems, name);
+            client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
+            existingItems[fileName] = fileName;
+         };
+      }   
+   }, this, 1);   
 };
 
 /* Called by framework when attach popup called
