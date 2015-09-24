@@ -102,14 +102,8 @@ ownCloudZimlet.prototype.init = function () {
    }
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_store_pass'] = this.getUserProperty("owncloud_zimlet_store_pass");
    
-   tk_barrydegraaff_owncloud_zimlet_HandlerObject.tabInit = false;
    try {
-      //Throws exception when opening for example eml attachments in a new window
-      if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'].length > 0)
-      { 
-         this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
-         tk_barrydegraaff_owncloud_zimlet_HandlerObject.tabInit = true;
-      }   
+      this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
    } catch (err) { }   
 
 	if (appCtxt.get(ZmSetting.MAIL_ENABLED)) {
@@ -163,13 +157,13 @@ ownCloudZimlet.prototype.status = function(text, type) {
 ownCloudZimlet.prototype.saveAttachment = 
 function(name, url) {
    ownCloudZimlet.prototype.createFolder(this);
-   this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);   
    var client = new davlib.DavClient();
    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
    client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],  function(status, statusstr, content) 
    {
       if(status == 207)
       {
+         this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);   
          var rawDavResponse = content.split('<d:response>');
          var existingItems = [];
 
@@ -202,6 +196,10 @@ function(name, url) {
             client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
             existingItems[fileName] = fileName;
          };
+      }
+      else
+      {
+         ownCloudZimlet.prototype.status(statusstr, ZmStatusView.LEVEL_CRITICAL);
       }   
    }, this, 1);   
 };
@@ -223,12 +221,6 @@ function(contentDiv) {
 
 ownCloudZimlet.prototype.showAttachmentDialog =
 function() {
-   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-   {
-      this.displayDialog(1, 'Preferences', null);
-      return;
-   }
-
    var attachDialog = this._attachDialog = appCtxt.getAttachDialog();
    attachDialog.setTitle('Attach from ownCloud');
    this.removePrevAttDialogContent(attachDialog._getContentDiv().firstChild);
@@ -278,13 +270,6 @@ function(itemId) {
  * */
 ownCloudZimlet.prototype.doDrop =
 function(zmObjects) {
-   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-   {
-      this.displayDialog(1, 'Preferences', null);
-      return;
-   }
-   this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);   
-   
    ownCloudZimlet.prototype.createFolder(this);
    
    var client = new davlib.DavClient();
@@ -293,6 +278,7 @@ function(zmObjects) {
    {
       if(status == 207)
       {
+         this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);   
          var rawDavResponse = content.split('<d:response>');
          var existingItems = [];
 
@@ -413,6 +399,10 @@ function(zmObjects) {
                }
             };
          });   
+      } 
+      else
+      {
+         ownCloudZimlet.prototype.status(statusstr, ZmStatusView.LEVEL_CRITICAL);
       }   
    }, this, 1);
 };
@@ -614,13 +604,7 @@ function() {
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('owncloud_zimlet_password').value;
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = document.getElementById('owncloud_zimlet_default_folder').value;
    ownCloudZimlet.prototype.createFolder(this);
-
-   if((tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'].length > 0) && (tk_barrydegraaff_owncloud_zimlet_HandlerObject.tabInit == false))
-   { 
-      this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
-      tk_barrydegraaff_owncloud_zimlet_HandlerObject.tabInit = true;
-   } 
-   
+  
    this.cancelBtn();
 };
 
