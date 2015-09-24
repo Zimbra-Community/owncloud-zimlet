@@ -221,23 +221,41 @@ function(contentDiv) {
 
 ownCloudZimlet.prototype.showAttachmentDialog =
 function() {
-   var attachDialog = this._attachDialog = appCtxt.getAttachDialog();
-   attachDialog.setTitle('Attach from ownCloud');
-   this.removePrevAttDialogContent(attachDialog._getContentDiv().firstChild);
-   if (!this.AttachContactsView || !this.AttachContactsView.attachDialog){
-      this.AMV = new ownCloudTabView(this._attachDialog, this);
+   var zimlet = this;
+   var xmlHttp = null;   
+   xmlHttp = new XMLHttpRequest();
+   xmlHttp.open( "GET", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'], true );
+   xmlHttp.setRequestHeader("Authorization", "Basic " + string.encodeBase64(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])); 
+   xmlHttp.send( null );
+  
+   xmlHttp.onload = function(e) 
+   {
+      if(xmlHttp.status == 401)
+      {
+         zimlet.displayDialog(1, 'Preferences', null);
+         return;
+      }
+      else
+      {
+         var attachDialog = zimlet._attachDialog = appCtxt.getAttachDialog();
+         attachDialog.setTitle('Attach from ownCloud');
+         zimlet.removePrevAttDialogContent(attachDialog._getContentDiv().firstChild);
+         if (!zimlet.AttachContactsView || !zimlet.AttachContactsView.attachDialog){
+            zimlet.AMV = new ownCloudTabView(zimlet._attachDialog, this);
+         }
+         
+         zimlet.AMV.reparentHtmlElement(attachDialog._getContentDiv().childNodes[0], 0);
+         zimlet.AMV.attachDialog = attachDialog;
+         attachDialog.setOkListener(new AjxCallback(zimlet.AMV, zimlet.AMV._uploadFiles));
+         
+         var view = appCtxt.getCurrentView();
+         var callback = new AjxCallback(view, view._attsDoneCallback, [true]);
+         attachDialog.setUploadCallback(callback);
+         
+         zimlet.AMV.attachDialog.popup();
+         zimlet._addedToMainWindow = true;
+      }
    }
-   
-   this.AMV.reparentHtmlElement(attachDialog._getContentDiv().childNodes[0], 0);
-   this.AMV.attachDialog = attachDialog;
-   attachDialog.setOkListener(new AjxCallback(this.AMV, this.AMV._uploadFiles));
-   
-   var view = appCtxt.getCurrentView();
-   var callback = new AjxCallback(view, view._attsDoneCallback, [true]);
-   attachDialog.setUploadCallback(callback);
-   
-   this.AMV.attachDialog.popup();
-   this._addedToMainWindow = true;
 };
 
 /* Called when the panel is double-clicked.
