@@ -50,14 +50,19 @@ In the ownCloud server, comment a line in the css so the Deleted Items menu beco
 
 ### Installation of ownCloud in a custom location
 
-If your ownCloud is configured in a location other than /owncloud for example /oc you will have to configure the global configuration:
+If your ownCloud is configured in a location other than /owncloud for example /oc you will have to configure the global configuration and install in _dev:
 
     su zimbra
-    zmzimletctl getConfigTemplate tk_barrydegraaff_owncloud_zimlet.zip > config_template.xml
+    zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet
+    cd /tmp
+    rm owncloud-zimlet -Rf
+    git clone https://github.com/barrydegraaff/owncloud-zimlet
+    mkdir $HOME/zimlets-deployed/_dev
+    mv /tmp/owncloud-zimlet/tk_barrydegraaff_owncloud_zimlet $HOME/zimlets-deployed/_dev/
 
-Make changes to config_template.xml then:
+Make changes to config_template.xml the global configuration (please read the instructions in the file):
 
-    zmzimletctl configure config_template.xml 
+    nano $HOME/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
 
 Also you should alter the proxy configuration to match your location:
 
@@ -66,6 +71,10 @@ Also you should alter the proxy configuration to match your location:
         proxy_pass https://owncloud.example.com/oc/;
     }
 
+After this make sure to restart proxy and flush the cache:
+
+    zmprov fc all
+    zmproxyctl restart
 
 ========================================================================
 
