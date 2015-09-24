@@ -402,7 +402,15 @@ function(zmObjects) {
       } 
       else
       {
-         ownCloudZimlet.prototype.status(statusstr, ZmStatusView.LEVEL_CRITICAL);
+         if((!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) && (status == 401))
+         {
+            this.displayDialog(1, 'Preferences', null);
+            return;
+         }
+         else
+         {
+            ownCloudZimlet.prototype.status(statusstr, ZmStatusView.LEVEL_CRITICAL);
+         }   
       }   
    }, this, 1);
 };
