@@ -109,11 +109,6 @@ ownCloudZimlet.prototype.init = function () {
 	if (appCtxt.get(ZmSetting.MAIL_ENABLED)) {
 		AjxPackage.require({name:"MailCore", callback:new AjxCallback(this, this.addAttachmentHandler)});
 	}
-   var ownCloudProgressDiv = document.createElement('div');
-   ownCloudProgressDiv.id = 'ownCloudProgressDiv';
-   ownCloudProgressDiv.style.cssText = 'position:absolute; display:none; padding:5px;z-index:666;background:#ffffff; font-size:15px;';  
-   ownCloudProgressDiv.innerHTML = 'Working: <progress id="ownCloudProgress" style="height:15px"></progress></div>';
-   document.body.appendChild(ownCloudProgressDiv);
 };
 
 ownCloudZimlet.prototype.addAttachmentHandler = function(mime)
@@ -791,7 +786,12 @@ function(attachmentDlg)
       }
    }   
    ownCloudSelect = ownCloudSelectSelected;
-   document.getElementById('ownCloudProgressDiv').style.display = "block";
+
+   var attBubble = document.getElementsByClassName("attBubbleContainer");
+   attBubble[0].style.backgroundImage = 'url(\'/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/progressround.gif\')';
+   attBubble[0].style.backgroundRepeat = "no-repeat";
+   attBubble[0].style.backgroundPosition = "right";    
+   
    if (ownCloudSelect[0])
    {
       if(ownCloudSelect[0].checked)
@@ -846,7 +846,9 @@ function(attachmentDlg)
          var controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
          controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, attachment_list);
       }
-      document.getElementById('ownCloudProgressDiv').style.display = "none";
+
+      var attBubble = document.getElementsByClassName("attBubbleContainer");
+      attBubble[0].style.backgroundImage = 'url(\'\')';
    }
    //This function is called via the Attach Dialog once passing attachmentDlg, 
    //subsequent calls when handling multiple selects don't pass attachmentDlg.
