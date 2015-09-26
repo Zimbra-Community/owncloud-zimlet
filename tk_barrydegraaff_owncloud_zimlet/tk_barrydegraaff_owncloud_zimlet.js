@@ -706,7 +706,7 @@ function(zimlet) {
       
    } catch (err) { }
 
-   html = '<div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
+   html = '<select id="shareType"><option value="attach">Send as attachment</option><option value="1">Share read only link</option><option value="2">Share read/write link</option></select> <div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
    this.setContent(html);
    
    var client = new davlib.DavClient();
@@ -821,68 +821,103 @@ function(attachmentDlg)
    }   
    ownCloudSelect = ownCloudSelectSelected;
 
-   var attBubble = document.getElementsByClassName("attBubbleContainer");
-   attBubble[0].style.backgroundImage = 'url(\'/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/progressround.gif\')';
-   attBubble[0].style.backgroundRepeat = "no-repeat";
-   attBubble[0].style.backgroundPosition = "right";    
-   
-   if (ownCloudSelect[0])
+   if(document.getElementById('shareType').value == 'attach')
    {
-      if(ownCloudSelect[0].checked)
+      var attBubble = document.getElementsByClassName("attBubbleContainer");
+      attBubble[0].style.backgroundImage = 'url(\'/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/progressround.gif\')';
+      attBubble[0].style.backgroundRepeat = "no-repeat";
+      attBubble[0].style.backgroundPosition = "right";    
+      
+      if (ownCloudSelect[0])
       {
-         ownCloudSelect[0].checked = false;
-         oCreq[ownCloudSelect[0].value] = new XMLHttpRequest();
-         oCreq[ownCloudSelect[0].value].open('GET', ownCloudSelect[0].value, true);
-         oCreq[ownCloudSelect[0].value].setRequestHeader("Authorization", "Basic " + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-         oCreq[ownCloudSelect[0].value].responseType = "blob";
-         oCreq[ownCloudSelect[0].value].send('');
-         
-         oCreq[ownCloudSelect[0].value].onload = function(e) 
-         {   
-            //Patch for Internet Explorer that does not implement responseURL in XMLHttpRequest
-            if (!this.responseURL)
-            {
-               this.responseURL = ownCloudSelect[0].value;
-            }
-            req = new XMLHttpRequest();
-            fileName[this.responseURL] = this.responseURL.match(/(?:[^/][\d\w\.]+)+$/);
-            fileName[this.responseURL] = decodeURI(fileName[this.responseURL][0]);
-            req.open("POST", "/service/upload?fmt=extended,raw", true);        
-            req.setRequestHeader("Cache-Control", "no-cache");
-            req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-            req.setRequestHeader("Content-Type",  "application/octet-stream" + ";");
-            req.setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
-            req.setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName[this.responseURL] + '"');
-            req.onload = function(e)
-            {
-               var resp = eval("["+req.responseText+"]");
-               var respObj = resp[2];
-               var attId = "";
-               for (var i = 0; i < respObj.length; i++) 
+         if(ownCloudSelect[0].checked)
+         {
+            ownCloudSelect[0].checked = false;
+            oCreq[ownCloudSelect[0].value] = new XMLHttpRequest();
+            oCreq[ownCloudSelect[0].value].open('GET', ownCloudSelect[0].value, true);
+            oCreq[ownCloudSelect[0].value].setRequestHeader("Authorization", "Basic " + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+            oCreq[ownCloudSelect[0].value].responseType = "blob";
+            oCreq[ownCloudSelect[0].value].send('');
+            
+            oCreq[ownCloudSelect[0].value].onload = function(e) 
+            {   
+               //Patch for Internet Explorer that does not implement responseURL in XMLHttpRequest
+               if (!this.responseURL)
                {
-                  if(respObj[i].aid != "undefined") {
-                     ownCloudTabView.attachment_ids.push(respObj[i].aid);
-                  }
+                  this.responseURL = ownCloudSelect[0].value;
                }
-               ownCloudTabView.prototype._uploadFiles();
-            }
-            req.send(this.response);
-         };
+               req = new XMLHttpRequest();
+               fileName[this.responseURL] = this.responseURL.match(/(?:[^/][\d\w\.]+)+$/);
+               fileName[this.responseURL] = decodeURI(fileName[this.responseURL][0]);
+               req.open("POST", "/service/upload?fmt=extended,raw", true);        
+               req.setRequestHeader("Cache-Control", "no-cache");
+               req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+               req.setRequestHeader("Content-Type",  "application/octet-stream" + ";");
+               req.setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
+               req.setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName[this.responseURL] + '"');
+               req.onload = function(e)
+               {
+                  var resp = eval("["+req.responseText+"]");
+                  var respObj = resp[2];
+                  var attId = "";
+                  for (var i = 0; i < respObj.length; i++) 
+                  {
+                     if(respObj[i].aid != "undefined") {
+                        ownCloudTabView.attachment_ids.push(respObj[i].aid);
+                     }
+                  }
+                  ownCloudTabView.prototype._uploadFiles();
+               }
+               req.send(this.response);
+            };
+         }
+      }
+      else
+      {
+         //If there are no more attachments to upload to Zimbra, attach them to the draft message
+         var attachment_list = ownCloudTabView.attachment_ids.join(",");
+         var viewType = appCtxt.getCurrentViewType();
+         if (viewType == ZmId.VIEW_COMPOSE) 
+         {
+            var controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
+            controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, attachment_list);
+         }
+   
+         var attBubble = document.getElementsByClassName("attBubbleContainer");
+         attBubble[0].style.backgroundImage = 'url(\'\')';
       }
    }
    else
-   {
-      //If there are no more attachments to upload to Zimbra, attach them to the draft message
-      var attachment_list = ownCloudTabView.attachment_ids.join(",");
-      var viewType = appCtxt.getCurrentViewType();
-      if (viewType == ZmId.VIEW_COMPOSE) 
+   {//hierzo
+      console.log(document.getElementById('shareType').value);
+      console.log(ownCloudSelect);
+       
+      var composeView = appCtxt.getCurrentView();   
+      
+      //I hate the Zimbra compose controller
+      var content = composeView.getHtmlEditor().getContent();
+      console.log(content);
+      if(content.indexOf('<hr id="') > 0)
       {
-         var controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
-         controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, attachment_list);
+         content = content.replace('<hr id="','barry at work!!!<hr id="');
       }
-
-      var attBubble = document.getElementsByClassName("attBubbleContainer");
-      attBubble[0].style.backgroundImage = 'url(\'\')';
+      else if(content.indexOf('<div id="') > 0)
+      {
+         content = content.replace('<div id="','barry at work!!!<div id="');
+      }
+      else if(content.indexOf('</body') > 0)
+      {
+         content = content.replace('</body','barry at work!!!</body');
+      }
+      else if(content.indexOf('----') > 0)
+      {
+         content = content.replace('----','barry at work!!!\r\n----');
+      }
+      else
+      {
+         content = content + 'barry at work!!!';
+      }
+      composeView.getHtmlEditor().setContent(content);
    }
    //This function is called via the Attach Dialog once passing attachmentDlg, 
    //subsequent calls when handling multiple selects don't pass attachmentDlg.
