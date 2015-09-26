@@ -283,9 +283,8 @@ function(itemId) {
 ownCloudZimlet.prototype.getShareLink =
 function(uri, password) {
    var xmlHttp = new XMLHttpRequest();
-   xmlHttp.open("POST","/ocs/v1.php/apps/files_sharing/api/v1/shares",true, tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-   xmlHttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-   xmlHttp.send("path="+uri+"&shareType=3&password="+password+"&permissions=1");
+   xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+ "/ocs/zcs.php?proxy_location=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] + "&zcsuser="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + "&zcspass=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] + "&path="+uri+"&shareType=3&password="+password+"&permissions=1");
+   xmlHttp.send( null );
    xmlHttp.onload = function(e) 
    {
       var url = xmlHttp.response.match(/(<url>)([^]+)(<\/url>)/);
@@ -293,7 +292,6 @@ function(uri, password) {
       if((statuscode[2] == 100) && (url[2]))
       {
          url = url[2];
-         console.log(url);
          return url;
       }
    }
