@@ -278,6 +278,42 @@ function(itemId) {
       break;
    }
 };
+/* Creates a public share via ownCloud API
+ */
+ownCloudZimlet.prototype.getShareLink =
+function(uri, password) {
+   var xmlHttp = new XMLHttpRequest();
+   xmlHttp.open("POST","/ocs/v1.php/apps/files_sharing/api/v1/shares",true, tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+   xmlHttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+   xmlHttp.send("path="+uri+"&shareType=3&password="+password+"&permissions=1");
+   xmlHttp.onload = function(e) 
+   {
+      var url = xmlHttp.response.match(/(<url>)([^]+)(<\/url>)/);
+      var statuscode = xmlHttp.response.match(/(<statuscode>)([^]+)(<\/statuscode>)/);
+      if((statuscode[2] == 100) && (url[2]))
+      {
+         url = url[2];
+         console.log(url);
+         return url;
+      }
+   }
+};
+
+/* This method generates a password
+ */
+ownCloudZimlet.prototype.pwgen =
+function ()
+{
+   chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+   pass = "";
+
+   for(x=0;x<25;x++)
+   {
+      i = Math.floor(Math.random() * 62);
+      pass += chars.charAt(i);
+   }
+   return pass;
+}
 
 /* doDrop handler
  * */

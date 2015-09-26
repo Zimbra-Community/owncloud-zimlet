@@ -35,6 +35,9 @@ To avoid JavaScript same origin policy problems we configure ownCloud or the Web
     location /owncloud/ {
         proxy_pass https://owncloud.example.com/owncloud/;
     }
+    location /ocs/ {
+        proxy_pass https://owncloud.example.com/owncloud/ocs/;
+    }
 
 Then as Zimbra user: ```zmproxyctl restart```
 
@@ -69,6 +72,9 @@ Also you should alter the proxy configuration to match your location:
     Add to the bottom of /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template before the final }
     location /oc/ {
         proxy_pass https://owncloud.example.com/oc/;
+    }
+    location /ocs/ {
+        proxy_pass https://owncloud.example.com/oc/ocs/;
     }
 
 After this make sure to restart proxy and flush the cache:
