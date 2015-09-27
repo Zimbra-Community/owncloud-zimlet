@@ -52,6 +52,11 @@ Also if you want to enable link sharing add a php file to you ownCloud installat
     cd /var/www/html/owncloud/ocs/
     wget https://raw.githubusercontent.com/barrydegraaff/owncloud-zimlet/master/php/zcs.php
 
+If your ownCloud server does not return the correct domain when using the public share api, you have to set your domain in  /owncloud/config/config.php   
+
+    'overwritehost' => 'yourdomain.com',    
+
+
 ========================================================================
 
 ### Installation of ownCloud in a custom location
