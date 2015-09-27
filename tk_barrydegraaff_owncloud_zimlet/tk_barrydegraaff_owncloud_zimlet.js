@@ -306,7 +306,7 @@ function(zmObjects) {
             {
                href = href[0].replace(/(<d:href>|<\/d:href>)/gm,"");
                href = href.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ escape(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']),'').replace('/','').replace('/','');
-               existingItems[href] = href;
+               existingItems[unescape(href)] = unescape(href);
             }                                                
          });  
        
@@ -432,6 +432,9 @@ function(zmObjects) {
 };
 
 ownCloudZimlet.prototype.fileName = function (existingItems, fileName) {
+   console.log(existingItems);
+   console.log(fileName);
+   
    if(existingItems[fileName]==fileName)   
    {
       //fileName already exists, generate a different one
