@@ -109,6 +109,9 @@ ownCloudZimlet.prototype.init = function () {
 	if (appCtxt.get(ZmSetting.MAIL_ENABLED)) {
 		AjxPackage.require({name:"MailCore", callback:new AjxCallback(this, this.addAttachmentHandler)});
 	}
+   
+   //Create the default folder, and create an active session with ownCloud
+   ownCloudZimlet.prototype.createFolder(this);
 };
 
 ownCloudZimlet.prototype.addAttachmentHandler = function(mime)
@@ -521,20 +524,12 @@ function(status, statusstr) {
 
 ownCloudZimlet.prototype.appLaunch =
 function(appName) { 
-   var req = new XMLHttpRequest();
-   req.open('GET', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'], true);
-   req.setRequestHeader("Authorization", "Basic " + string.encodeBase64(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])); 
-   req.send('');
-   
-   req.onload = function(e) 
-   {
-      var app = appCtxt.getApp(appName);
-      app.setContent('<div style="position: fixed; left:0; width:100%; height:100%; border:0px;"><iframe style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+'"></div>');
-      var overview = app.getOverview(); // returns ZmOverview
-      overview.setContent("&nbsp;");
-      var child = document.getElementById(overview._htmlElId);
-      child.parentNode.removeChild(child);            
-   }
+   var app = appCtxt.getApp(appName);
+   app.setContent('<div style="position: fixed; left:0; width:100%; height:100%; border:0px;"><iframe style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+'"></div>');
+   var overview = app.getOverview(); // returns ZmOverview
+   overview.setContent("&nbsp;");
+   var child = document.getElementById(overview._htmlElId);
+   child.parentNode.removeChild(child);
 };
 
 /**
