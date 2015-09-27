@@ -46,20 +46,33 @@ $url = "https://".$_SERVER['SERVER_NAME']."/".$_GET['proxy_location']."/ocs/v1.p
  * https://192.168.1.18/owncloud/ocs/zcs.php?proxy_location=/owncloud&zcsuser=admin&zcspass=IeQu9aro&path=0.jpg&shareType=3&permissions=1&password=blaat
  */
 
-$ch = curl_init();
+error_reporting(0);
+$paths = json_decode($_GET['path']);
+if($_GET['sep']=="rn")
+{
+   $_GET['sep']="\r\n";
+}
+$server_output = "";
+$result = "";
 
-curl_setopt($ch, CURLOPT_URL,$url);
-curl_setopt($ch, CURLOPT_USERPWD, urlencode($_GET['zcsuser']) . ":" . urlencode($_GET['zcspass']));
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($ch, CURLOPT_POSTFIELDS, "path=".urlencode($_GET['path'])."&shareType=".urlencode($_GET['shareType'])."&password=".urlencode($_GET['password'])."&permissions=".urlencode($_GET['permissions']));
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+foreach ($paths as $path)
+{
+   $ch = curl_init();
+   curl_setopt($ch, CURLOPT_URL,$url);
+   curl_setopt($ch, CURLOPT_USERPWD, urlencode($_GET['zcsuser']) . ":" . urlencode($_GET['zcspass']));
+   curl_setopt($ch, CURLOPT_POST, 1);
+   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+   curl_setopt($ch, CURLOPT_POSTFIELDS, "path=".urlencode($path)."&shareType=".urlencode($_GET['shareType'])."&password=".urlencode($_GET['password'])."&permissions=".urlencode($_GET['permissions']));
+   curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   $server_output = curl_exec ($ch);
+   $xml=simplexml_load_string($server_output)or die;
+   $result .= $xml->data->url . $_GET['sep'];
+   curl_close ($ch);
+}
 
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-$server_output = curl_exec ($ch);
-
-curl_close ($ch);
-
-header("Content-type: text/xml");
-echo $server_output;
+if($result)
+{
+   echo "Use " . $_GET['password'] . " for: ".$_GET['sep'];
+   echo $result;
+}

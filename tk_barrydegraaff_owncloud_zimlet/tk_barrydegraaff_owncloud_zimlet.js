@@ -278,40 +278,6 @@ function(itemId) {
       break;
    }
 };
-/* Creates a public share via ownCloud API
- */
-ownCloudZimlet.prototype.getShareLink =
-function(uri, password) {
-   var xmlHttp = new XMLHttpRequest();
-   xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+ "/ocs/zcs.php?proxy_location=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] + "&zcsuser="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + "&zcspass=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] + "&path="+uri+"&shareType=3&password="+password+"&permissions=1");
-   xmlHttp.send( null );
-   xmlHttp.onload = function(e) 
-   {
-      var url = xmlHttp.response.match(/(<url>)([^]+)(<\/url>)/);
-      var statuscode = xmlHttp.response.match(/(<statuscode>)([^]+)(<\/statuscode>)/);
-      if((statuscode[2] == 100) && (url[2]))
-      {
-         url = url[2];
-         return url;
-      }
-   }
-};
-
-/* This method generates a password
- */
-ownCloudZimlet.prototype.pwgen =
-function ()
-{
-   chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-   pass = "";
-
-   for(x=0;x<25;x++)
-   {
-      i = Math.floor(Math.random() * 62);
-      pass += chars.charAt(i);
-   }
-   return pass;
-}
 
 /* doDrop handler
  * */
@@ -706,7 +672,16 @@ function(zimlet) {
       
    } catch (err) { }
 
-   html = '<select id="shareType"><option value="attach">Send as attachment</option><option value="1">Share read only link</option><option value="2">Share read/write link</option></select> <div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
+   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+   {
+      var prompt = '<span style="display:none" id=\'passpromptOuter\'>Your password is required for sharing links: <input type=\'password\' id=\'passprompt\'></span>';
+   }
+   else
+   {
+      var prompt = '<span style="display:none" id=\'passpromptOuter\'></span>';
+   }
+   
+   html = '<select onclick="if(this.value != \'attach\'){document.getElementById(\'passpromptOuter\').style.display = \'block\';} else { document.getElementById(\'passpromptOuter\').style.display = \'none\' }" id="shareType"><option value="attach">Send as attachment</option><option value="1">Share read only link</option><option value="2">Share read/write link</option></select> '+prompt+' <div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
    this.setContent(html);
    
    var client = new davlib.DavClient();
@@ -888,36 +863,60 @@ function(attachmentDlg)
       }
    }
    else
-   {//hierzo
-      console.log(document.getElementById('shareType').value);
-      console.log(ownCloudSelect);
-       
-      var composeView = appCtxt.getCurrentView();   
+   {        
+      //Create share links
+      if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+      {
+         tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('passprompt').value;
+      }
       
-      //I hate the Zimbra compose controller
-      var content = composeView.getHtmlEditor().getContent();
-      console.log(content);
-      if(content.indexOf('<hr id="') > 0)
+      var jsonArray = [];
+      for(var x=0; x < ownCloudSelect.length; x++)
       {
-         content = content.replace('<hr id="','barry at work!!!<hr id="');
-      }
-      else if(content.indexOf('<div id="') > 0)
+         jsonArray.push(unescape(ownCloudSelect[x].value.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"")));
+      }   
+      var jsonString = JSON.stringify(jsonArray);
+      var xmlHttp = new XMLHttpRequest();
+      var password = ownCloudZimlet.prototype.pwgen();
+      var composeMode = appCtxt.getCurrentView().getHtmlEditor().getMode(); 
+      if(composeMode == 'text/plain')
       {
-         content = content.replace('<div id="','barry at work!!!<div id="');
-      }
-      else if(content.indexOf('</body') > 0)
-      {
-         content = content.replace('</body','barry at work!!!</body');
-      }
-      else if(content.indexOf('----') > 0)
-      {
-         content = content.replace('----','barry at work!!!\r\n----');
+         var sep = "rn";
       }
       else
       {
-         content = content + 'barry at work!!!';
+         var sep = "<br>";
       }
-      composeView.getHtmlEditor().setContent(content);
+      xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+ "/ocs/zcs.php?proxy_location=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] + "&zcsuser="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + "&zcspass=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] + "&path="+jsonString+"&shareType=3&password="+password+"&permissions="+document.getElementById('shareType').value+"&sep="+sep);
+      xmlHttp.send( null );
+      xmlHttp.onload = function(e) 
+      {             
+         var url = xmlHttp.response; 
+         var composeView = appCtxt.getCurrentView();  
+         //I hate the Zimbra compose controller
+         var content = composeView.getHtmlEditor().getContent();
+         if(content.indexOf('<hr id="') > 0)
+         {
+            content = content.replace('<hr id="',url + '<br><hr id="');
+         }
+         else if(content.indexOf('<div id="') > 0)
+         {
+            content = content.replace('<div id="',url + '<br><div id="');
+         }
+         else if(content.indexOf('</body') > 0)
+         {
+            content = content.replace('</body',url + '<br></body');
+         }
+         else if(content.indexOf('----') > 0)
+         {
+            content = content.replace('----',url + '\r\n----');
+         }
+         else
+         {
+            content = content + url + '';
+         }
+         composeView.getHtmlEditor().setContent(content);
+      }           
    }
    //This function is called via the Attach Dialog once passing attachmentDlg, 
    //subsequent calls when handling multiple selects don't pass attachmentDlg.
@@ -925,6 +924,22 @@ function(attachmentDlg)
       attachmentDlg.popdown();   
    } catch (err) {}   
 };
+
+/* This method generates a password
+ */
+ownCloudZimlet.prototype.pwgen =
+function ()
+{
+   chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+   pass = "";
+
+   for(x=0;x<10;x++)
+   {
+      i = Math.floor(Math.random() * 62);
+      pass += chars.charAt(i);
+   }
+   return pass;
+}
 
 ZmownCloudController = function(view) {
    if (arguments.length == 0) { return; }
