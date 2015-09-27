@@ -47,6 +47,7 @@ In the ownCloud server, comment a line in the css so the Deleted Items menu beco
     /*	position: fixed !important; */
     
 Also if you want to enable link sharing add a php file to you ownCloud installation:
+
     #cd to you owncloud/ocs folder, for example:
     cd /var/www/html/owncloud/ocs/
     wget https://raw.githubusercontent.com/barrydegraaff/owncloud-zimlet/master/php/zcs.php
