@@ -676,7 +676,7 @@ function(zimlet) {
       var prompt = '<span style="display:none" id=\'passpromptOuter\'></span>';
    }
    
-   html = '<select onclick="if(this.value != \'attach\'){document.getElementById(\'passpromptOuter\').style.display = \'block\';} else { document.getElementById(\'passpromptOuter\').style.display = \'none\' }" id="shareType"><option value="attach">Send as attachment</option><option value="1">Share read only link</option><option value="2">Share read/write link</option></select> '+prompt+' <div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
+   html = '<select onclick="if(this.value != \'attach\'){document.getElementById(\'passpromptOuter\').style.display = \'block\';} else { document.getElementById(\'passpromptOuter\').style.display = \'none\' }" id="shareType"><option value="attach">Send as attachment</option><option value="1">Share as link</option></select> '+prompt+' <div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
    this.setContent(html);
    
    var client = new davlib.DavClient();
