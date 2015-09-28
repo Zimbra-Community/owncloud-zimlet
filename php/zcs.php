@@ -59,7 +59,7 @@ foreach ($paths as $path)
 {
    $ch = curl_init();
    curl_setopt($ch, CURLOPT_URL,$url);
-   curl_setopt($ch, CURLOPT_USERPWD, urlencode($_GET['zcsuser']) . ":" . urlencode($_GET['zcspass']));
+   curl_setopt($ch, CURLOPT_USERPWD, $_GET['zcsuser'] . ":" . $_GET['zcspass']);
    curl_setopt($ch, CURLOPT_POST, 1);
    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
    curl_setopt($ch, CURLOPT_POSTFIELDS, "path=".urlencode($path)."&shareType=".urlencode($_GET['shareType'])."&password=".urlencode($_GET['password'])."&permissions=".urlencode($_GET['permissions']));
