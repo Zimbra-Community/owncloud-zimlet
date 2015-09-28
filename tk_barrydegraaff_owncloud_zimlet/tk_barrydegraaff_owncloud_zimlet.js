@@ -860,6 +860,11 @@ function(attachmentDlg)
    else
    {        
       //Create share links
+      var attBubble = document.getElementsByClassName("attBubbleContainer");
+      attBubble[0].style.backgroundImage = 'url(\'/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/progressround.gif\')';
+      attBubble[0].style.backgroundRepeat = "no-repeat";
+      attBubble[0].style.backgroundPosition = "right"; 
+      
       if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
       {
          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('passprompt').value;
@@ -911,7 +916,9 @@ function(attachmentDlg)
             content = content + url + '';
          }
          composeView.getHtmlEditor().setContent(content);
-      }           
+         var attBubble = document.getElementsByClassName("attBubbleContainer");
+         attBubble[0].style.backgroundImage = 'url(\'\')';      
+      }     
    }
    //This function is called via the Attach Dialog once passing attachmentDlg, 
    //subsequent calls when handling multiple selects don't pass attachmentDlg.
