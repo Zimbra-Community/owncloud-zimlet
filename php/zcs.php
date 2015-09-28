@@ -43,7 +43,7 @@ $url = "https://".$_SERVER['SERVER_NAME']."/".$_GET['proxy_location']."/ocs/v1.p
  * https://doc.owncloud.org/server/6.0/developer_manual/core/ocs-share-api.html
  * 
  * Example:
- * https://192.168.1.18/owncloud/ocs/zcs.php?proxy_location=/owncloud&zcsuser=admin&zcspass=IeQu9aro&path=0.jpg&shareType=3&permissions=1&password=blaat
+ * https://192.168.201.62/owncloud/ocs/zcs.php?proxy_location=/owncloud&zcsuser=admin&zcspass=IeQu9aro&path=["0.jpg"]&shareType=3&password=L1j9KpWein&permissions=1&sep=<br>
  */
 
 error_reporting(0);
