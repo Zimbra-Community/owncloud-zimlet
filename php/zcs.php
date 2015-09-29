@@ -42,37 +42,59 @@ $url = "https://".$_SERVER['SERVER_NAME']."/".$_GET['proxy_location']."/ocs/v1.p
  * See also:
  * https://doc.owncloud.org/server/6.0/developer_manual/core/ocs-share-api.html
  * 
- * Example:
+ * Examples:
  * https://192.168.201.62/owncloud/ocs/zcs.php?proxy_location=/owncloud&zcsuser=admin&zcspass=IeQu9aro&path=["0.jpg"]&shareType=3&password=L1j9KpWein&permissions=1&sep=<br>
+ * https://192.168.201.62/owncloud/ocs/zcs.php?proxy_location=/owncloud&zcsuser=admin&zcspass=IeQu9aro&path=getshares
  */
 
 error_reporting(0);
-$paths = json_decode($_GET['path']);
-if($_GET['sep']=="rn")
+if($_GET['path']=='getshares')
 {
-   $_GET['sep']="\r\n";
-}
-$server_output = "";
-$result = "";
-
-foreach ($paths as $path)
-{
+   $result="";
    $ch = curl_init();
    curl_setopt($ch, CURLOPT_URL,$url);
    curl_setopt($ch, CURLOPT_USERPWD, $_GET['zcsuser'] . ":" . $_GET['zcspass']);
-   curl_setopt($ch, CURLOPT_POST, 1);
    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-   curl_setopt($ch, CURLOPT_POSTFIELDS, "path=".urlencode($path)."&shareType=".urlencode($_GET['shareType'])."&password=".urlencode($_GET['password'])."&permissions=".urlencode($_GET['permissions']));
-   curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
    $server_output = curl_exec ($ch);
    $xml=simplexml_load_string($server_output)or die;
-   $result .= $xml->data->url . $_GET['sep'];
-   curl_close ($ch);
+   $shares = $xml->data->element;
+   foreach ($shares as $share)
+   {
+      $result[substr((string)$share->path,1)] = substr((string)$share->path,1);
+   }  
+   echo json_encode($result);
+   curl_close ($ch);   
 }
-
-if($result)
+else
 {
-   echo "Use " . $_GET['password'] . " for: ".$_GET['sep'];
-   echo $result;
+   $paths = json_decode($_GET['path']);
+   if($_GET['sep']=="rn")
+   {
+      $_GET['sep']="\r\n";
+   }
+   $server_output = "";
+   $result = "";
+   
+   foreach ($paths as $path)
+   {
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL,$url);
+      curl_setopt($ch, CURLOPT_USERPWD, $_GET['zcsuser'] . ":" . $_GET['zcspass']);
+      curl_setopt($ch, CURLOPT_POST, 1);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, "path=".urlencode($path)."&shareType=".urlencode($_GET['shareType'])."&password=".urlencode($_GET['password'])."&permissions=".urlencode($_GET['permissions']));
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      $server_output = curl_exec ($ch);
+      $xml=simplexml_load_string($server_output)or die;
+      $result .= $xml->data->url . $_GET['sep'];
+      curl_close ($ch);
+   }
+   
+   if($result)
+   {
+      echo "Use " . $_GET['password'] . " for: ".$_GET['sep'];
+      echo $result;
+   }
 }
