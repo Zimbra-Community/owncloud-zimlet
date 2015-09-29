@@ -701,7 +701,6 @@ function() {
    for (var share in existingShares) {
       if(document.getElementById(escape("/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].replace("/","")+share)+'-span'))
       {
-         //document.getElementById(escape("/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].replace("/","")+share)+'-span').style.backgroundColor = "red";
          if(document.getElementById(escape("/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].replace("/","")+share)+'-span').innerHTML.indexOf('/tk_barrydegraaff_owncloud_zimlet/exclam.png') < 1)
          {
             document.getElementById(escape("/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].replace("/","")+share)+'-span').innerHTML += " <img title=\"Existing share will be replaced and will no longer work!\"style=\"vertical-align: bottom;\" src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/exclam.png\">";
