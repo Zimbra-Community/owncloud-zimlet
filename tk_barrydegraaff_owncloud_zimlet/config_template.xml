@@ -38,6 +38,8 @@ do not add additional ones!
     <global>
         <property name="proxy_location">/owncloud</property>
         <property name="dav_path">/remote.php/webdav/</property>
+        <property name="disable_link_sharing">false</property>
+        <property name="disable_password_storing">false</property>
     </global>
 </zimletConfig>
 

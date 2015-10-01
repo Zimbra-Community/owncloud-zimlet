@@ -73,6 +73,8 @@ ownCloudZimlet.prototype.init = function () {
    //Set global config
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] = this._zimletContext.getConfig("proxy_location");
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = this._zimletContext.getConfig("proxy_location") + this._zimletContext.getConfig("dav_path");   
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_link_sharing'] = this._zimletContext.getConfig("disable_link_sharing");
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this._zimletContext.getConfig("disable_password_storing");
 
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_username"))
@@ -574,9 +576,18 @@ function(id, title, message) {
       username = username[0].replace('@','');
       html = "<div style='width:500px; height: 200px;'>To store an email or attachment in ownCloud, drag it onto the ownCloud icon.<br><br><table>"+      
       "<tr><td>Username:&nbsp;</td><td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+(this.getUserProperty("owncloud_zimlet_username") ? this.getUserProperty("owncloud_zimlet_username") : username)+"'></td></tr>" +
-      "<tr><td>Password:</td><td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(this.getUserProperty("owncloud_zimlet_password") ? this.getUserProperty("owncloud_zimlet_password") : tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])+"'></td></tr>" +
-      "<tr><td>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (this.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>" +
-      "<tr><td>Default folder:</td><td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+this.getUserProperty("owncloud_zimlet_default_folder")+"'></td></tr>" +
+      "<tr><td>Password:</td><td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(this.getUserProperty("owncloud_zimlet_password") ? this.getUserProperty("owncloud_zimlet_password") : tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])+"'></td></tr>";
+
+      if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
+      {
+         html += "<tr><td>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (this.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
+      }
+      else
+      {
+         html += "<tr><td style='color:#888888'>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true'  disabled></td><td><small style='color:#888888'>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
+      }     
+      
+      html += "<tr><td>Default folder:</td><td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+this.getUserProperty("owncloud_zimlet_default_folder")+"'></td></tr>" +
       "</table></div>";
       this._dialog.setContent(html);
       this._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.prefSaveBtn));
@@ -607,7 +618,10 @@ function() {
    
    if(document.getElementById("owncloud_zimlet_store_pass").checked)
    {
-      this.setUserProperty("owncloud_zimlet_password", document.getElementById('owncloud_zimlet_password').value, false);
+      if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
+      {
+         this.setUserProperty("owncloud_zimlet_password", document.getElementById('owncloud_zimlet_password').value, false);
+      }   
    }
    else
    {
@@ -676,7 +690,16 @@ function(zimlet) {
       var prompt = '<span style="display:none" id=\'passpromptOuter\'></span>';
    }
    
-   html = '<select onclick="if(this.value != \'attach\'){document.getElementById(\'passpromptOuter\').style.display = \'block\'; ownCloudZimlet.prototype.existingShares()} else { document.getElementById(\'passpromptOuter\').style.display = \'none\'; ownCloudZimlet.prototype.removeElementsByClass(\'ownCloudShareExists\');}" id="shareType"><option value="attach">Send as attachment</option><option value="1">Share as link</option></select> '+prompt+' <div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
+   if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_link_sharing']!=="false")
+   {
+      var disable_link_sharing = ' style="display:none" ';
+   }
+   else
+   {
+      var disable_link_sharing = '';
+   }
+   
+   html = '<select ' + disable_link_sharing + ' onclick="if(this.value != \'attach\'){document.getElementById(\'passpromptOuter\').style.display = \'block\'; ownCloudZimlet.prototype.existingShares()} else { document.getElementById(\'passpromptOuter\').style.display = \'none\'; ownCloudZimlet.prototype.removeElementsByClass(\'ownCloudShareExists\');}" id="shareType"><option value="attach">Send as attachment</option><option value="1">Share as link</option></select> '+prompt+' <div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';   
    this.setContent(html);
    
    var client = new davlib.DavClient();
