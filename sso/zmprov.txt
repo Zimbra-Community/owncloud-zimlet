@@ -1,0 +1,2 @@
+zmprov md myzimbra.com zimbraWebClientLoginURL https://myzimbra.com/login
+zmprov md myzimbra.com zimbraWebClientLogoutURL https://myzimbra.com/login?logoff=true
