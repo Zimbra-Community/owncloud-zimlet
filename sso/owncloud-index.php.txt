@@ -3,7 +3,7 @@ In ownCloud you have to change index.php, add the lines marked with +:
 	
    require_once 'lib/base.php';
 
-+   if($_GET['logoff']=='true')
++   if(@$_GET['logoff']=='true')
 +   {
 +      session_destroy();
 +   }
