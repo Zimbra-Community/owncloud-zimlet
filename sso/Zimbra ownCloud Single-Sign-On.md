@@ -9,7 +9,7 @@ Prerequisites:
   - ownCloud and Zimbra both authenticate to the same LDAP
 
 ### Configure your Zimbra Server
-Aad a reverse proxy on your Zimbra for SSO. The proxy in this example points to a location on your ownCloud server that we add later. Open the template file and add the /login location before the final `}`
+Add a reverse proxy on your Zimbra for SSO. The proxy in this example points to a location on your ownCloud server that we add later. Open the template file and add the /login location before the final `}`
 
         [root@myzimbra ~]# nano /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template
         location /login/ {
