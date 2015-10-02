@@ -7,7 +7,6 @@ Prerequisites:
   - A running ownCloud server
   - Zimbra ownCloud Zimlet is installed correctly and working without SSO
   - ownCloud and Zimbra both authenticate to the same LDAP
-  - ???
 
 ### Configure your Zimbra Server
 Aad a reverse proxy on your Zimbra for SSO. The proxy in this example points to a location on your ownCloud server that we add later. Open the template file and add the /login location before the final `}`
@@ -16,6 +15,9 @@ Aad a reverse proxy on your Zimbra for SSO. The proxy in this example points to 
         location /login/ {
             proxy_pass https://oc-server/login/;
         }
+        
+        [root@myzimbra ~]# nano /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
+        <property name="disable_password_storing">true</property>
 
 Generate a pre-auth key for your Zimbra domain:
 
