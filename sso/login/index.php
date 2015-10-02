@@ -1,3 +1,9 @@
+<?php
+if($_GET['logoff']=='true')
+{
+   header("HTTP/1.1 401 Unauthorized");
+}
+?>
 <!DOCTYPE html>
 <html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -83,7 +89,7 @@ function clearAuthenticationCache(page) {
       // Let's send the request to the server
       xmlhttp.send("");
       // Let's abort the request
-      xmlhttp.abort();
+      //??? xmlhttp.abort();
     }
   } catch(e) {
     // There was an error
