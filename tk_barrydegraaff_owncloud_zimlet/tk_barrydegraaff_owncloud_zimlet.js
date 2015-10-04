@@ -16,50 +16,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses/.
-
-************************************************************************
-
-License and third party FOSS libraries
-
-davclient.js - Low-level JavaScript WebDAV client implementation
-Copyright (C) Sven vogler under terms of the 
-GNU General Public License version 2
-
-Icons
-Icons where taken from the tango-icon-theme package and where released to 
-the Public Domain by the Tango Desktop Project.
-
-ownCloud and the ownCloud Logo is a registered trademark of ownCloud, Inc. 
-https://owncloud.org/trademarks/
-
-Build with knowledge shared by the Mozilla Developers Network 
-https://developer.mozilla.org
-
-This Zimlet contains parts from com_zimbra_attachmail by Raja Rao and 
-com_zimbra_dnd under the following license:
 */
-
-/*
- * ***** BEGIN LICENSE BLOCK *****
- * Zimbra Collaboration Suite Zimlets
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
- * 
- * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the "License");
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at: http://www.zimbra.com/license
- * The License is based on the Mozilla Public License Version 1.1 but Sections 14 and 15 
- * have been added to cover use of software over a computer network and provide for limited attribution 
- * for the Original Developer. In addition, Exhibit A has been modified to be consistent with Exhibit B. 
- * 
- * Software distributed under the License is distributed on an "AS IS" basis, 
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. 
- * See the License for the specific language governing rights and limitations under the License. 
- * The Original Code is Zimbra Open Source Web Client. 
- * The Initial Developer of the Original Code is Zimbra, Inc. 
- * All portions of the code are Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. 
- * ***** END LICENSE BLOCK *****
-*/
-
 
 function tk_barrydegraaff_owncloud_zimlet_HandlerObject() {
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings = {};
@@ -70,6 +27,7 @@ tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype.constructor = tk_barryd
 var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 
 ownCloudZimlet.prototype.init = function () {
+   ownCloudZimlet.version=this._zimletContext.version;
    //Set global config
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] = this._zimletContext.getConfig("proxy_location");
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = this._zimletContext.getConfig("proxy_location") + this._zimletContext.getConfig("dav_path");   
@@ -279,7 +237,7 @@ function(itemId) {
       this.displayDialog(1, 'Preferences', null);
       break;    
    case "help":
-      window.open("https://github.com/barrydegraaff/owncloud-zimlet");
+      window.open("/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/help/index.html");
       break;
    }
 };
@@ -527,11 +485,14 @@ function(status, statusstr) {
 ownCloudZimlet.prototype.appLaunch =
 function(appName) { 
    var app = appCtxt.getApp(appName);
-   app.setContent('<div style="position: fixed; left:0; width:100%; height:100%; border:0px;"><iframe style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+'"></div>');
+   app.setContent('<div style="position: fixed; left:0; width:100%; height:100%; border:0px;"><iframe id="ownCloudFrame" style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+'"></div>');
    var overview = app.getOverview(); // returns ZmOverview
    overview.setContent("&nbsp;");
    var child = document.getElementById(overview._htmlElId);
    child.parentNode.removeChild(child);
+
+   var toolbar = app.getToolbar(); // returns ZmToolBar
+   toolbar.setContent("<div style=\"padding:5px\"><button onclick=\"if(document.getElementById('ownCloudFrame').src.indexOf('"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+"') < 0){this.innerHTML='Help'; document.getElementById('ownCloudFrame').src = '"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+"'} else {this.innerHTML='Back to ownCloud'; document.getElementById('ownCloudFrame').src = '/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/help/index.html'}\">Help</button>&nbsp;&nbsp;<b>ownCloud Zimlet version: " + ownCloudZimlet.version + "</b></div>" );
 };
 
 /**
