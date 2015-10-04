@@ -45,67 +45,95 @@ border: 1px solid #888888;
 <h1>Zimbra ownCloud Zimlet User Help</h1>
 <h2>Contents</h2>
 <ul>
+<li><a href="#attach-from-owncloud">Sending attachments from ownCloud</a></li>
+<li><a href="#share-as-link">Sharing files with a public link</a></li>
+<li><a href="#emails-to-owncloud">Saving emails to ownCloud</a></li>
+<li><a href="#attachment-to-owncloud">Saving attachments to ownCloud</a></li>
+<li><a href="#briefcase-to-owncloud">Saving briefcase documents to ownCloud</a></li>
+<li><a href="#preferences">Configure ownCloud Zimlet</a></li>
 <li><a href="#about">About Zimbra ownCloud Zimlet</a></li>
 <li><a href="#licenses">License and third party FOSS libraries</a></li>
 </ul>
 <br>
 
-
-<br><br></section><section id="preferences">
-<h1>ownCloud Zimlet</h1>
-Find the ownCloud menu under Zimlets in your Zimbra web mail. Right click on ownCloud and select "???".   
-<br><img src="ownCloudTab.png" alt=""><br>
-<br><img src="preferences-menu.png" alt=""><br>
-<br><img src="preferences.png" alt=""><br>
-
-
 <br><br></section><section id="attach-from-owncloud">
-<h1>attach-from-owncloud</h1>
-content<br>
-<br><img src="attach-from-dialog.png" alt=""><br>
-<br><img src="attach-from-draft.png" alt=""><br>
+<h1>Sending attachments from ownCloud</h1>
+When composing email in Zimbra, you can attach files from ownCloud directly. Click the arrow next to <i>Attach</i>.<br>
 <br><img src="attach-menu.png" alt=""><br>
+<br>You can select files by checking them, also you can open folders by clicking on the blue folder icons. Click <i>Attach</i> when done.<br>
+<br><img src="attach-from-dialog.png" alt=""><br>
+<br>Attaching files may take some time, a progress round is displayed during this process. The message <i>Draft Saved</i> is displayed once your attachments are ready.<br>
+<br><img src="attach-from-draft.png" alt=""><br>
+
 <hr><br>
 
 
 <br><br></section><section id="share-as-link">
-<h1>share-as-link</h1>
-content<br>
-<br><img src="share-as-link-dialog2.png" alt=""><br>
+<h1>Sharing files with a public link</h1>
+Instead of sending files as attachments, you can also share file by means of a public link. This is convenient for files that are too large to be send via email. 
+<ul>
+<li>Link sharing does not work with <a target ="_blank" href="https://doc.owncloud.org/server/8.1/admin_manual/configuration_files/external_storage_configuration_gui.html">external storage</a> (Windows Shares)</li>
+<li>Link sharing may have been disabled by your administrator</li>
+<li>You can create only <a href="#link-share-exists">one public link for each file at a time</a></li>
+</ul>
+
+Click the arrow next to <i>Attach</i>.<br>
+<br><img src="attach-menu.png" alt=""><br>
+<br>Select <i>Share as link</i><br>
 <br><img src="share-as-link-dialog.png" alt=""><br>
+<br>You can select files by checking them, also you can open folders by clicking on the blue folder icons. Click <i>Attach</i> when done.<br>
+<br><img src="share-as-link-dialog2.png" alt=""><br>
+<br>The selected files are displayed as links in the email body.<br>
 <br><img src="share-as-link-result.png" alt=""><br>
-<br><img src="link-share-exists.png" alt=""><br>
+<section id="link-share-exists"><br>An exclamation mark appears for files that have already been shared with a public link. There can only be one public link defined for each file at a time. If you share the file again, a new link will be created, and the old link will no longer work.<br><br>  <img src="link-share-exists.png" alt=""><br></section
 <hr><br>
 
 
 <br><br></section><section id="emails-to-owncloud">
-<h1>emails-to-owncloud</h1>
-content<br>
-<br><img src="dodrop-result.png" alt=""><br>
-<br><img src="dodrop-saving.png" alt=""><br>
-<br><img src="drag-drop.png" alt=""><br>
+<h1>Saving emails to ownCloud</h1>
+You can save emails including attachments to ownCloud by selecting them in your mailbox and drag and drop them on to the ownCloud panel.<br> Tip: You can select multiple emails by using the CTRL or SHIFT keys on your keyboard.<br>
 <br><img src="multi-select.png" alt=""><br>
+<br><img src="drag-drop.png" alt=""><br>
 <br><img src="saving-multi-select.png" alt=""><br>
+<br>You can see the resulting files in ownCloud in the folder that is defined in your <a href="#preferences">preferences</a>. You can open EML files using an email client, for example Mozilla Thunderbird, Windows Essentials Mail or Apple Mail.<br>
+<br><img src="dodrop-result.png" alt=""><br>
 <hr><br>
 
 
 <br><br></section><section id="attachment-to-owncloud">
-<h1>attachment-to-owncloud</h1>
-content<br>
+<h1>Saving attachments to ownCloud</h1>
+You can save a single attachment by clicking on the <i>ownCloud</i> link that is displayed after each attachment in your inbox. The attachment is saved to ownCloud in the folder that is defined in your <a href="#preferences">preferences</a>.<br>
 <br><img src="save-attachment.png" alt=""><br>
 <hr><br>
 
 
 <br><br></section><section id="briefcase-to-owncloud">
-<h1>briefcase-to-owncloud</h1>
-content<br>
+<h1>Saving briefcase documents to ownCloud</h1>
+You can save briefcase documents to ownCloud by selecting them from your briefcase and drag and drop them on to the ownCloud panel.<br> Tip: You can select multiple documents by using the CTRL or SHIFT keys on your keyboard.<br>
 <br><img src="briefcase-drop.png" alt=""><br>
-<br><img src="briefcase.png" alt=""><br>
+<br>You can find your document in ownCloud in the folder that is defined in your <a href="#preferences">preferences</a>.<br>
 <br><img src="briefcase-result.png" alt=""><br>
 <hr><br>
 
 
-
+<br><br></section><section id="preferences">
+<h1>Configure ownCloud Zimlet</h1>
+Find the ownCloud menu under <i>Zimlets</i> in your Zimbra web mail. Right click on ownCloud and select <i>Preferences</i>. <br>
+<br><img src="preferences-menu.png" alt=""><br>
+<br>
+<table>
+<tr><td>Username<sup>1</sup></td><td>Your ownCloud username, is set to your Zimbra username by default</td></tr>
+<tr><td>Password<sup>1</sup></td><td>Your ownCloud password</td></tr>
+<tr><td>Store password<sup>2</sup></td><td>If checked, the password is stored in plain text in Zimbra LDAP. If not checked you have to provide password for each session</td></tr>
+<tr><td><b>Default folder</b></td><td><b>Destination folder in ownCloud when saving emails, attachments and documents from Zimbra</b>
+<br>The folder is automatically created when you click <i>OK</i>.</td></tr>
+</table>
+<br>
+<sup>1</sup> Your administrator may have configured <a href="https://github.com/barrydegraaff/owncloud-zimlet/blob/master/sso/Zimbra%20ownCloud%20Single-Sign-On.md">Single-Sign-On</a>, in that case you don't need to configure your username and password. <br>
+<sup>2</sup> <i>Store password</i> may have been disabled by your administrator.
+<br>
+<br><img src="preferences.png" alt=""><br>
+<br><img src="ownCloudTab.png" alt=""><br>
 
 <br><br></section><section id="about">
 <h1>Zimbra ownCloud Zimlet</h1>If you find Zimbra ownCloud Zimlet useful and want to support its continued development, you can make donations via:
