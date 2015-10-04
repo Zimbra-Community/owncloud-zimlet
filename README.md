@@ -7,6 +7,20 @@ If you find Zimbra ownCloud Zimlet useful and want to support its continued deve
 - PayPal: info@barrydegraaff.tk
 - Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A
 
+Demo video: https://www.youtube.com/watch?v=gfVLE22kJ6o
+
+User manual : http://barrydegraaff.github.io/owncloud/
+
+Integrating ownCloud in Zimbra Collaboration Suite, currently tested on:
+- Windows: Internet Explorer 11, Microsoft Edge, Google Chrome, Firefox
+- Linux: Google Chrome, Firefox
+
+This Zimlet is designed for Zimbra version 8.6.
+
+This Zimlet is not available for use in Zimbra Desktop.
+
+Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
+
 ========================================================================
 
 
