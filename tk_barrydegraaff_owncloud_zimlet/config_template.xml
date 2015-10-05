@@ -31,6 +31,10 @@ ESCAPE CHARACTERS and so on or this Zimlet may OVERWRITE your files!
 Also keep the / slash signs as they appear in the example below and
 do not add additional ones!  
 
+ 
+ 
+  *** proxy_location DOES NOT CONTAIN your domain or https:// ***
+     only /owncloud, /oc and so on is supported, see README.md
 
 
 -->
