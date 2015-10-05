@@ -1,4 +1,4 @@
-# Zimbra ownCloud Zimlet
+Zimbra ownCloud Zimlet
 ==========
 
 If you find Zimbra ownCloud Zimlet useful and want to support its continued development, you can make donations via:
