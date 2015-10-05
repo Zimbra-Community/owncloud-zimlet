@@ -21,7 +21,7 @@ Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 
 ========================================================================
 
-### Prerequisites before installation
+### Install prerequisites
   - A running Zimbra server with Zimbra Proxy
   - A running ownCloud server
   
