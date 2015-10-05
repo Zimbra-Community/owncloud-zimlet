@@ -29,14 +29,8 @@ Add a reverse proxy on your Zimbra to access ownCloud in the same domain. Open t
         proxy_pass https://owncloud.example.com/owncloud/;
     }
 
-In case your ownCloud is installed in a different location (not /owncloud), for example `/oc` or `/mycloud` use those locations **and configure the global configuration and install in config_template.xml.**
-
-    [root@myzimbra ~]# nano /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template
-    location /oc/ {
-        proxy_pass https://owncloud.example.com/oc/;
-    }
-    [root@myzimbra ~]# nano  /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
-    <property name="proxy_location">/oc</property>
+In case your ownCloud is installed in a different location (not /owncloud), for example `/oc` or `/mycloud` see 
+[https://github.com/barrydegraaff/owncloud-zimlet/wiki/ownCloud-in-a-different-location](https://github.com/barrydegraaff/owncloud-zimlet/wiki/ownCloud-in-a-different-location)
     
 ##### Install the ownCloud Zimlet
 The recommended method is to deploy using git. (I no longer support zmzimletctl, although that still works.)
