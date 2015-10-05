@@ -21,6 +21,13 @@ Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 
 ========================================================================
 
+### Prerequisites before installation
+  - A running Zimbra server with Zimbra Proxy
+  - A running ownCloud server
+  
+If you are not running Zimbra proxy, you can either install it OR run a seperate nginx, apache or other proxy server.
+
+
 ### Configure your Zimbra Server
 Add a reverse proxy on your Zimbra to access ownCloud in the same domain. Open the template file and add the /owncloud location before the final `}`. 
 
