@@ -1,8 +1,6 @@
 # Zimbra ownCloud Zimlet
 ==========
 
-Add ownCloud or any WebDAV server to your Zimbra webmail.
-
 If you find Zimbra ownCloud Zimlet useful and want to support its continued development, you can make donations via:
 - PayPal: info@barrydegraaff.tk
 - Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A
@@ -23,83 +21,59 @@ Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 
 ========================================================================
 
+### Configure your Zimbra Server
+Add a reverse proxy on your Zimbra to access ownCloud in the same domain. Open the template file and add the /owncloud location before the final `}`. 
 
-  - - - DO NOT INSTALL THIS ZIMLET AS IT IS NOT YET RELEASED - - -
-
-
-========================================================================
-
-### Installing
-
-    su zimbra
-    cd /tmp
-    rm -f tk_barrydegraaff_owncloud_zimlet*
-    wget https://github.com/barrydegraaff/owncloud-zimlet-binaries/raw/master/0.1.8/tk_barrydegraaff_owncloud_zimlet.zip
-    zmzimletctl deploy tk_barrydegraaff_owncloud_zimlet.zip
-    
-Wait 15 minutes for the deploy to propagate; or run ```zmprov fc all && zmmailboxdctl restart```.
-    
-Modify the default COS to expand the Zimlets menu by default:
-
-    zmprov mc default zimbraPrefZimletTreeOpen TRUE
-
-To avoid JavaScript same origin policy problems we configure ownCloud or the WebDAV server of your choice to be inside the same domain as your Zimbra server.
-
-    Add to the bottom of /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template before the final }
+    [root@myzimbra ~]# nano /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template
     location /owncloud/ {
         proxy_pass https://owncloud.example.com/owncloud/;
     }
 
-Then as Zimbra user: ```zmproxyctl restart```
+In case your ownCloud is installed in a different location (not /owncloud), for example `/oc` or `/mycloud` use those locations **and configure the global configuration and install in config_template.xml.**
 
-This will add ownCloud under the same domain as your Zimbra server: https://zimbraserver.example.com/owncloud/ 
+    [root@myzimbra ~]# nano /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template
+    location /oc/ {
+        proxy_pass https://owncloud.example.com/oc/;
+    }
+    [root@myzimbra ~]# nano  /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
+    <property name="proxy_location">/oc</property>
+    
+##### Install the ownCloud Zimlet
+The recommended method is to deploy using git. (I no longer support zmzimletctl, although that still works.)
 
-In the ownCloud server, comment a line in the css so the Deleted Items menu becomes visible in Zimbra:
+    [root@myzimbra ~]# yum install -y git 
+    [root@myzimbra ~]# apt-get -y install git
+    [root@myzimbra ~]# cd ~
+    [root@myzimbra ~]# rm owncloud-zimlet -Rf
+    [root@myzimbra ~]# git clone https://github.com/barrydegraaff/owncloud-zimlet
+    [root@myzimbra ~]# cd owncloud-zimlet
+    [root@myzimbra owncloud-zimlet]# git checkout 0.2.0
+    [root@myzimbra owncloud-zimlet]# chmod +rx install-dev.sh
+    [root@myzimbra owncloud-zimlet]# ./install-dev.sh
+    [root@myzimbra owncloud-zimlet]# su zimbra
+    [zimbra@myzimbra owncloud-zimlet] zmprov mc default zimbraPrefZimletTreeOpen TRUE
+    [zimbra@myzimbra owncloud-zimlet] zmcontrol restart
 
-    /var/www/html/owncloud/apps/files/css/files.css
+You should now be able to see your ownCloud login page under the same domain as your Zimbra server: https://zimbraserver.example.com/owncloud/ 
+
+### Configure your ownCloud Server
+
+Comment a line in the css so the `Deleted Items` menu becomes visible in Zimbra:
+
+    [root@owncloud1 ~]# nano /var/www/html/owncloud/apps/files/css/files.css
     .nav-trashbin {
     /*	position: fixed !important; */
     
 Also if you want to enable link sharing add a php file to you ownCloud installation:
 
-    #cd to you owncloud/ocs folder, for example:
-    cd /var/www/html/owncloud/ocs/
-    wget https://raw.githubusercontent.com/barrydegraaff/owncloud-zimlet/master/php/zcs.php
+    [root@owncloud1 ~]# cd /var/www/html/owncloud/ocs/
+    [root@owncloud1 ~]# rm -Rf zcs.php
+    [root@owncloud1 ~]# wget https://raw.githubusercontent.com/barrydegraaff/owncloud-zimlet/master/php/zcs.php
 
-If your ownCloud server does not return the correct domain when using the public share api, you have to set your domain in  /owncloud/config/config.php   
+If your ownCloud server does not return the correct domain when using the public share api, you have to set your domain in   
 
+    [root@owncloud1 ~]# nano /owncloud/config/config.php   
     'overwritehost' => 'yourdomain.com',    
-
-
-========================================================================
-
-### Installation of ownCloud in a custom location
-
-If your ownCloud is configured in a location other than /owncloud for example /oc you will have to configure the global configuration and install in _dev:
-
-    su zimbra
-    zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet
-    cd /tmp
-    rm owncloud-zimlet -Rf
-    git clone https://github.com/barrydegraaff/owncloud-zimlet
-    mkdir $HOME/zimlets-deployed/_dev
-    mv /tmp/owncloud-zimlet/tk_barrydegraaff_owncloud_zimlet $HOME/zimlets-deployed/_dev/
-
-Make changes to config_template.xml the global configuration (please read the instructions in the file):
-
-    nano $HOME/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
-
-Also you should alter the proxy configuration to match your location:
-
-    Add to the bottom of /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template before the final }
-    location /oc/ {
-        proxy_pass https://owncloud.example.com/oc/;
-    }
-
-After this make sure to restart proxy and flush the cache:
-
-    zmprov fc all
-    zmproxyctl restart
 
 ========================================================================
 
