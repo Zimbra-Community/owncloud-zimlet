@@ -53,8 +53,14 @@ $url = "https://".$_SERVER['SERVER_NAME']."/".$_GET['proxy_location']."/ocs/v1.p
 
 error_reporting(0);
 
+session_start();
 session_set_cookie_params(36000); //10 hours
-session_start(); 
+
+if(@$_GET['logoff']=='true')
+{
+   session_destroy();
+   die;
+}
  
 if ( (strlen($_POST['zcsuser']) > 0 ) && (strlen($_POST['zcspass']) > 0 ) ) 
 {      

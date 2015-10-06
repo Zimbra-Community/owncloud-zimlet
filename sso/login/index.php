@@ -76,6 +76,10 @@ var xmlHttp = new XMLHttpRequest();
 xmlHttp.open("GET","https://myzimbra.com/owncloud/index.php?logoff=true", false);
 xmlHttp.send( null );
 
+var xmlHttp = new XMLHttpRequest();
+xmlHttp.open("GET","https://myzimbra.com/owncloud/ocs/zcs.php?logoff=true", false);
+xmlHttp.send( null );
+
 clearAuthenticationCache(document.location.href);
 <?php
 }
@@ -86,6 +90,11 @@ var xmlHttp = new XMLHttpRequest();
 xmlHttp.open("GET","https://myzimbra.com/owncloud/remote.php/webdav/", false);
 xmlHttp.setRequestHeader("Authorization", "Basic " + btoa('<?php echo $_SERVER['PHP_AUTH_USER']?>:<?php echo $_SERVER['PHP_AUTH_PW']?>'));
 xmlHttp.send( null );
+
+var xmlHttp = new XMLHttpRequest();
+xmlHttp.open("POST", "https://myzimbra.com/owncloud/ocs/zcs.php", false);
+xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+xmlHttp.send("zcsuser=<?php echo $_SERVER['PHP_AUTH_USER']?>&zcspass=<?php echo $_SERVER['PHP_AUTH_PW']?>");
 
 document.location.href = '<?php echo $url?>';
 <?php
