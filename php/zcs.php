@@ -45,15 +45,59 @@ $url = "https://".$_SERVER['SERVER_NAME']."/".$_GET['proxy_location']."/ocs/v1.p
  * Examples:
  * https://192.168.201.62/owncloud/ocs/zcs.php?proxy_location=/owncloud&zcsuser=admin&zcspass=IeQu9aro&path=["0.jpg"]&shareType=3&password=L1j9KpWein&permissions=1&sep=<br>
  * https://192.168.201.62/owncloud/ocs/zcs.php?proxy_location=/owncloud&zcsuser=admin&zcspass=IeQu9aro&path=getshares
+ * 
+ * You can also POST zcsuser=username&zcspass=password to the above URL's and omit zcsuser and zcspass. To find out if a session exists:
+ * https://192.168.201.62/owncloud/ocs/zcs.php?path=havesession
+ * 
  */
 
 error_reporting(0);
+
+session_set_cookie_params(36000); //10 hours
+session_start(); 
+ 
+if ( (strlen($_POST['zcsuser']) > 0 ) && (strlen($_POST['zcspass']) > 0 ) ) 
+{      
+   $_SESSION['zcsuser'] = $_POST['zcsuser'];
+   $_SESSION['zcspass'] = $_POST['zcspass'];
+}
+
+if(strlen($_GET['zcsuser']) > 0 )
+{
+   $zcsuser = $_GET['zcsuser'];
+}
+else
+{
+   $zcsuser = $_SESSION['zcsuser'];
+}
+
+if(strlen($_GET['zcspass']) > 0 )
+{
+   $zcspass = $_GET['zcspass'];
+}
+else
+{
+   $zcspass = $_SESSION['zcspass'];
+}
+
+if($_GET['path']=='havesession')
+{
+   if(($zcsuser) && ($zcspass))
+   {
+      echo 'true'; die;
+   }
+   else
+   {
+      echo 'false'; die;
+   }
+}
+
 if($_GET['path']=='getshares')
 {
    $result="";
    $ch = curl_init();
    curl_setopt($ch, CURLOPT_URL,$url);
-   curl_setopt($ch, CURLOPT_USERPWD, $_GET['zcsuser'] . ":" . $_GET['zcspass']);
+   curl_setopt($ch, CURLOPT_USERPWD, $zcsuser . ":" . $zcspass);
    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
    $server_output = curl_exec ($ch);
@@ -80,7 +124,7 @@ else
    {
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL,$url);
-      curl_setopt($ch, CURLOPT_USERPWD, $_GET['zcsuser'] . ":" . $_GET['zcspass']);
+      curl_setopt($ch, CURLOPT_USERPWD, $zcsuser . ":" . $zcspass);
       curl_setopt($ch, CURLOPT_POST, 1);
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($ch, CURLOPT_POSTFIELDS, "path=".urlencode($path)."&shareType=".urlencode($_GET['shareType'])."&password=".urlencode($_GET['password'])."&permissions=".urlencode($_GET['permissions']));
