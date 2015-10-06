@@ -657,6 +657,13 @@ function(zimlet) {
    }
    else
    {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+"/ocs/zcs.php?path=havesession", false);
+      xmlHttp.send( null );
+      if(xmlHttp.response =='true')
+      {
+         var prompt = '<span style="display:none" id=\'passpromptOuter\'></span>';
+      }
       var disable_link_sharing = '';
    }
    
@@ -681,13 +688,16 @@ function() {
    xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+ "/ocs/zcs.php?proxy_location=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] + "&zcsuser="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + "&zcspass=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] + "&path=getshares", false);
    xmlHttp.send( null );
 
+   if(xmlHttp.response.length > 2)
+   {
    var existingShares = JSON.parse(xmlHttp.response);
-   for (var share in existingShares) {
-      if(document.getElementById(escape("/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].replace("/","")+share)+'-span'))
-      {
-         if(document.getElementById(escape("/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].replace("/","")+share)+'-span').innerHTML.indexOf('/tk_barrydegraaff_owncloud_zimlet/exclam.png') < 1)
+      for (var share in existingShares) {
+         if(document.getElementById(escape("/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].replace("/","")+share)+'-span'))
          {
-            document.getElementById(escape("/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].replace("/","")+share)+'-span').innerHTML += " <img class=\"ownCloudShareExists\"title=\"Existing share will be replaced and will no longer work!\"style=\"vertical-align: bottom;\" src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/exclam.png\">";
+            if(document.getElementById(escape("/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].replace("/","")+share)+'-span').innerHTML.indexOf('/tk_barrydegraaff_owncloud_zimlet/exclam.png') < 1)
+            {
+               document.getElementById(escape("/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].replace("/","")+share)+'-span').innerHTML += " <img class=\"ownCloudShareExists\"title=\"Existing share will be replaced and will no longer work!\"style=\"vertical-align: bottom;\" src=\"/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/exclam.png\">";
+            }
          }
       }
    }
@@ -696,7 +706,6 @@ function() {
 ownCloudZimlet.prototype.removeElementsByClass =
 function (className){
    var elements = document.getElementsByClassName(className);
-   console.log(elements);
    while(elements.length > 0){
       elements[0].parentNode.removeChild(elements[0]);
    }
@@ -883,7 +892,10 @@ function(attachmentDlg)
       
       if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
       {
-         tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('passprompt').value;
+         if(document.getElementById('passprompt'))
+         {
+            tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('passprompt').value;
+         }   
       }
       
       var jsonArray = [];
@@ -903,6 +915,7 @@ function(attachmentDlg)
       {
          var sep = "<br>";
       }
+
       xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+ "/ocs/zcs.php?proxy_location=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] + "&zcsuser="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + "&zcspass=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] + "&path="+jsonString+"&shareType=3&password="+password+"&permissions="+document.getElementById('shareType').value+"&sep="+sep);
       xmlHttp.send( null );
       xmlHttp.onload = function(e) 
