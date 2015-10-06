@@ -331,13 +331,28 @@ function(zmObjects) {
             {
                var client = new davlib.DavClient();
                client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-               if (zmObject.name)
+               if (zmObject.type == "BRIEFCASE_ITEM")
                {
                   //file from briefcase
                   var fileName = ownCloudZimlet.prototype.fileName(existingItems, zmObject.name);
                   client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
                   existingItems[fileName] = fileName;
                }
+               else if (zmObject.TYPE == "ZmContact") 
+               {
+                  //contacts
+                  var fileName = ownCloudZimlet.prototype.fileName(existingItems, (zmObject.email ? zmObject.email + '.vcf' : zmObject.id + '.vcf') );
+                  client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
+                  existingItems[fileName] = fileName;               
+               }
+               else if ((zmObject.TYPE == "ZmAppt") || (zmObject.TYPE == "TASK") )
+               {
+                  //appointment
+                  //Multi select is broken: https://bugzilla.zimbra.com/show_bug.cgi?id=101605
+                  var fileName = ownCloudZimlet.prototype.fileName(existingItems, zmObject.subject + '.ics');
+                  client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
+                  existingItems[fileName] = fileName;               
+               }               
                else
                {
                   //email
