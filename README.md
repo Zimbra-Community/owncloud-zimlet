@@ -48,7 +48,7 @@ The recommended method is to deploy using git. (I no longer support zmzimletctl,
     [root@myzimbra ~]# rm owncloud-zimlet -Rf
     [root@myzimbra ~]# git clone https://github.com/barrydegraaff/owncloud-zimlet
     [root@myzimbra ~]# cd owncloud-zimlet
-    [root@myzimbra owncloud-zimlet]# git checkout 0.2.0
+    [root@myzimbra owncloud-zimlet]# git checkout 0.1.9
     [root@myzimbra owncloud-zimlet]# chmod +rx install-dev.sh
     [root@myzimbra owncloud-zimlet]# ./install-dev.sh
     [root@myzimbra owncloud-zimlet]# su zimbra
