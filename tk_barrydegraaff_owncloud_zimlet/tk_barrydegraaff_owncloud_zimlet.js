@@ -246,6 +246,7 @@ function(itemId) {
  * */
 ownCloudZimlet.prototype.doDrop =
 function(zmObjects) {
+   console.log(zmObjects);
    ownCloudZimlet.prototype.createFolder(this);
    
    var client = new davlib.DavClient();
@@ -345,14 +346,21 @@ function(zmObjects) {
                   client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
                   existingItems[fileName] = fileName;               
                }
-               else if ((zmObject.TYPE == "ZmAppt") || (zmObject.TYPE == "TASK") )
+               else if (zmObject.TYPE == "ZmAppt")
                {
                   //appointment
                   //Multi select is broken: https://bugzilla.zimbra.com/show_bug.cgi?id=101605
                   var fileName = ownCloudZimlet.prototype.fileName(existingItems, zmObject.subject + '.ics');
                   client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
                   existingItems[fileName] = fileName;               
-               }               
+               }  
+               else if (zmObject.type == "TASK")
+               {
+                  //task
+                  var fileName = ownCloudZimlet.prototype.fileName(existingItems, zmObject.name + '.ics');
+                  client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
+                  existingItems[fileName] = fileName;               
+               }              
                else
                {
                   //email
