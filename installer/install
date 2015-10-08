@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+ZAL_VERSION=1.9
+
+ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | grep -oP "\d+.\d+.\d+")
+
+echo "  Downloading the correct ZAL Version (${ZAL_VERSION} for zimbra ${ZIMBRA_VERSION})..."
+wget "http://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION}-${ZIMBRA_VERSION}.jar"
+
+echo "  Installing files..."
+mkdir -p /opt/zimbra/lib/ext/ownCloud
+rm /opt/zimbra/lib/ext/ownCloud/*.jar
+cp "zal-${ZAL_VERSION}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
+cp "owncloud-extension.jar" /opt/zimbra/lib/ext/ownCloud/
+
+echo "  Deploying zimlet..."
+su - zimbra -c "zmzimletctl deploy $(pwd)/com_zextras_owncloud.zip"
+su - zimbra -c "zmprov fc all"
+
+echo -e "\n\n  Extension jar and zimlet deployed, restart your mailbox server to load the extension.\n\n"

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="zal-1.8-8.0.9">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/extension/lib/zal-1.8-8.0.9.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
