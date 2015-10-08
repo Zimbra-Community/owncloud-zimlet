@@ -84,6 +84,8 @@ xmlHttp.open("GET","https://myzimbra.com/owncloud/ocs/zcs.php?logoff=true", fals
 xmlHttp.send( null );
 
 clearAuthenticationCache(document.location.href);
+
+document.write("<h1>You have been logged out!</h1><a href=\"/login\">See you next time</a>");
 <?php
 }
 else
