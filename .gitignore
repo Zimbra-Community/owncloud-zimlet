@@ -1,0 +1,11 @@
+# Ignore IntelliJ IDEA workspace file
+.idea/workspace.xml
+# Ignore extension libraries
+extension/lib/**/*.jar
+# Ignore extension build files
+extension/build/
+# Ignore output files
+dist/
+extension/owncloud-extension.jar
+zimlet/com_zextras_owncloud.zip
+owncloud-extension.tar.gz
