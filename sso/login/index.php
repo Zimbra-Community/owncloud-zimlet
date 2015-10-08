@@ -24,6 +24,10 @@ if($_GET['logoff']=='true')
 {
    header("HTTP/1.1 401 Unauthorized");
 }
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 ?>
 <!DOCTYPE html>
 <html><head>
@@ -35,8 +39,7 @@ if($_GET['logoff']=='true')
 <?php
 
 $time = round(microtime(true) * 1000);
-$url = 'https://myzimbra.com/service/preauth?account='.$_SERVER['AUTHENTICATE_SAMACCOUNTNAME'].'@myzimbra.com&expires=0&timestamp='.$time.'&preauth='.hmac_sha1('YOUR ZIMBRA PRE AUTH KEY HERE',$_SERVER['AUTHENTICATE_SAMACCOUNTNAME'].'@myzimbra.com|name|0|'.$time);          
-/*header ("Location: ".$url);*/
+$url = 'https://myzimbra.com/service/preauth?account='.$_SERVER['AUTHENTICATE_SAMACCOUNTNAME'].'@myzimbra.com&expires=0&timestamp='.$time.'&preauth='.hmac_sha1('YOUR PRE-AUTH KEY HERE',$_SERVER['AUTHENTICATE_SAMACCOUNTNAME'].'@myzimbra.com|name|0|'.$time);          
 
 
 function hmac_sha1($key, $data)
@@ -86,20 +89,43 @@ clearAuthenticationCache(document.location.href);
 else
 {
 ?>
-var xmlHttp = new XMLHttpRequest();
-xmlHttp.open("GET","https://myzimbra.com/owncloud/remote.php/webdav/", false);
-xmlHttp.setRequestHeader("Authorization", "Basic " + btoa('<?php echo $_SERVER['PHP_AUTH_USER']?>:<?php echo $_SERVER['PHP_AUTH_PW']?>'));
-xmlHttp.send( null );
-
-var xmlHttp = new XMLHttpRequest();
-xmlHttp.open("POST", "https://myzimbra.com/owncloud/ocs/zcs.php", false);
-xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-xmlHttp.send("zcsuser=<?php echo $_SERVER['PHP_AUTH_USER']?>&zcspass=<?php echo $_SERVER['PHP_AUTH_PW']?>");
-
+window.ownCloudZimletTtl = 6;
+logon();
 document.location.href = '<?php echo $url?>';
 <?php
 }
 ?>
+function logon()
+{
+   var xmlHttp = new XMLHttpRequest();
+   xmlHttp.open("GET","https://myzimbra.com/owncloud/remote.php/webdav/", false);
+   xmlHttp.setRequestHeader("Authorization", "Basic " + btoa('<?php echo $_SERVER['PHP_AUTH_USER']?>:<?php echo $_SERVER['PHP_AUTH_PW']?>'));
+   xmlHttp.send( null );
+   
+   if(xmlHttp.status != 200)
+   {
+      window.ownCloudZimletTtl--;
+      if (window.ownCloudZimletTtl > 0)
+      {
+         setTimeout(logon(), 3000);
+      }   
+   }
+   
+   var xmlHttp = new XMLHttpRequest();
+   xmlHttp.open("POST", "https://myzimbra.com/owncloud/ocs/zcs.php", false);
+   xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+   xmlHttp.send("zcsuser=<?php echo $_SERVER['PHP_AUTH_USER']?>&zcspass=<?php echo $_SERVER['PHP_AUTH_PW']?>");
+   
+   if(xmlHttp.status != 200)
+   {
+      window.ownCloudZimletTtl--;
+      if (window.ownCloudZimletTtl > 0)
+      {
+         setTimeout(logon(), 3000);
+      }   
+   }   
+}
+
 //https://trac-hacks.org/wiki/TrueHttpLogoutPatch
 function clearAuthenticationCache(page) {
   // Default to a non-existing page (give error 500).
