@@ -376,7 +376,7 @@ global.davlib = new function() {
         request.setRequestHeader("Content-type", "text/xml,charset=UTF-8");
         if (locktoken) {
             request.setRequestHeader('If', '<' + locktoken + '>');
-        };
+        }
         request.send(content);
     };
     
@@ -408,7 +408,7 @@ global.davlib = new function() {
         var request = this._getRequest('DELETE', path, handler, context);
         if (locktoken) {
             request.setRequestHeader('If', '<' + locktoken + '>');
-        };
+        }
         //request.setRequestHeader("Depth", "Infinity");
         request.send('');
     };
@@ -422,7 +422,7 @@ global.davlib = new function() {
         var request = this._getRequest('MKCOL', path, handler, context);
         if (locktoken) {
             request.setRequestHeader('If', '<' + locktoken + '>');
-        };
+        }
         request.send('');
     };
 
@@ -440,10 +440,10 @@ global.davlib = new function() {
         request.setRequestHeader("Destination", tourl);
         if (overwrite) {
             request.setRequestHeader("Overwrite", "F");
-        };
+        }
         if (locktoken) {
             request.setRequestHeader('If', '<' + locktoken + '>');
-        };
+        }
         request.send('');
     };
 
@@ -461,10 +461,10 @@ global.davlib = new function() {
         request.setRequestHeader("Destination", tourl);
         if (overwrite) {
             request.setRequestHeader("Overwrite", "F");
-        };
+        }
         if (locktoken) {
             request.setRequestHeader('If', '<' + locktoken + '>');
-        };
+        }
         request.send('');
     };
 
@@ -500,9 +500,9 @@ global.davlib = new function() {
                     var content = request.responseText;
                     var statusstring = davlib.STATUS_CODES[status];
                     handler.call(context, status, statusstring, content, headers);
-                };
+                }
             };
-        };
+        }
         return (new HandlerWrapper().execute);
     };
 
@@ -512,7 +512,7 @@ global.davlib = new function() {
         var url = this.protocol + '://' + this.host;
         if (this.port) {
             url += ':' + this.port;
-        };
+        }
         url += path;
         return url;
     };
@@ -522,7 +522,7 @@ global.davlib = new function() {
     	  var tok = user + ':' + password;
     	  var hash = string.encodeBase64(tok);
     	  return "Basic " + hash;
-    }
+    };
 
 
     this.DavClient.prototype._parseHeaders = function(headerstring) {
@@ -532,7 +532,7 @@ global.davlib = new function() {
             var line = string.strip(lines[i]);
             if (!line) {
                 continue;
-            };
+            }
             var chunks = line.split(':');
             var key = string.strip(chunks.shift());
             var value = string.strip(chunks.join(':'));
@@ -542,11 +542,11 @@ global.davlib = new function() {
                     headers[lkey] = [headers[lkey, value]];
                 } else {
                     headers[lkey].push(value);
-                };
+                }
             } else {
                 headers[lkey] = value;
-            };
-        };
+            }
+        }
         return headers;
     };
 
@@ -562,12 +562,12 @@ global.davlib = new function() {
             return new XMLHttpRequest();
         } catch(e) {
             // not a Mozilla or Konqueror based browser
-        };
+        }
         try {
             return new ActiveXObject('Microsoft.XMLHTTP');
         } catch(e) {
             // not IE either...
-        };
+        }
         alert('Your browser does not support XMLHttpRequest, required for ' +
                 'WebDAV access.');
         throw('Browser not supported');
@@ -581,11 +581,10 @@ global.davlib = new function() {
         */
         if (!davlib.DEBUG) {
             return;
-        };
+        }
         var div = document.createElement('div');
         var text = document.createTextNode(text);
         div.appendChild(text);
         document.getElementsByTagName('body')[0].appendChild(div);
     };
 }();
-

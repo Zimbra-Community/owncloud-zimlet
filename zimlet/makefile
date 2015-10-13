@@ -1,9 +1,19 @@
 all: zimlet
 
 zimlet: clean
-	zip -j com_zextras_owncloud.zip src/com_zextras_owncloud.js src/DavConnector.js com_zextras_owncloud.css com_zextras_owncloud.xml
+	zip -j tk_barrydegraaff_owncloud_zimlet.zip \
+		src/tk_barrydegraaff_owncloud_zimlet.js \
+		src/DavConnector.js \
+		src/davclient.js \
+		src/mime.js \
+		tk_barrydegraaff_owncloud_zimlet.css \
+		config_template.xml \
+		assets/*.* \
+		tk_barrydegraaff_owncloud_zimlet.xml
+	zip -u tk_barrydegraaff_owncloud_zimlet.zip \
+		help/*.*
 
 clean:
-	rm -f com_zextras_owncloud.zip
+	rm -f tk_barrydegraaff_owncloud_zimlet.zip
 
 .PHONY: all zimlet

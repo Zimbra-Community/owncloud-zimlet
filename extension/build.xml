@@ -1,4 +1,4 @@
-<project name="owncloud-extension" default="jar" basedir=".">
+<project name="dav-soap-connector-extension" default="jar" basedir=".">
     <description>
         Build file for the Zimbra Extension.
     </description>
@@ -15,7 +15,7 @@
     <property name="lib"   value="lib/"/>
     <property name="build" value="build/"/>
     <property name="src"   value="src/"/>
-    <property name="jar"   value="owncloud-extension.jar"/>
+    <property name="jar"   value="dav-soap-connector-extension.jar"/>
 
     <path id="libraries">
         <fileset dir="${lib}" >
@@ -50,7 +50,7 @@
              basedir="${build}">
             <manifest>
                 <attribute name="ZAL-Extension-Class" value="com.zextras.dav.DavExtension" />
-                <attribute name="ZAL-Extension-Name" value="ownCloud" />
+                <attribute name="ZAL-Extension-Name" value="davSoapConnector" />
                 <attribute name="ZAL-Required-Version" value="${zal-version-extended}" />
             </manifest>
             <fileset dir="${build}" />

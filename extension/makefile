@@ -4,6 +4,6 @@ extension:
 	ant jar
 
 clean:
-	rm -f owncloud-extension.jar
+	rm -f dav-soap-connector-extension.jar
 
 .PHONY: all extension

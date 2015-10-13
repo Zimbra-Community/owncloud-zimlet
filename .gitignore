@@ -6,6 +6,6 @@ extension/lib/**/zal-*.jar
 extension/build/
 # Ignore output files
 dist/
-extension/owncloud-extension.jar
-zimlet/com_zextras_owncloud.zip
+extension/dav-soap-connector-extension.jar
+zimlet/tk_barrydegraaff_owncloud_zimlet.zip
 owncloud-extension.tar.gz

@@ -20,6 +20,8 @@
 
 # This script does some checks and creates a zip file for zimlet release
 
+echo -e "\nThis script is deprecated, try to use 'make'.\nThis time i will do that for you ;)\n"
+
 # check number of parameters in command
 PARAMS=1
 if [ $# -ne "$PARAMS" ]
@@ -46,27 +48,5 @@ else
   exit 0
 fi
 
-echo "Make a copy of the source"
-rm -Rf /tmp/tk_barrydegraaff_owncloud_zimlet
-mkdir /tmp/tk_barrydegraaff_owncloud_zimlet
-cp -r -v tk_barrydegraaff_owncloud_zimlet /tmp/
-
-echo "Remove _dev prefix"
-grep -lZr -e "_dev/" "/tmp/tk_barrydegraaff_owncloud_zimlet/" | xargs -0 sed -i "s^_dev/^^g"
-
-echo "Build release zip"
-cd /tmp/tk_barrydegraaff_owncloud_zimlet
-rm -Rf /tmp/tk_barrydegraaff_owncloud_zimlet/lang
-zip -r tk_barrydegraaff_owncloud_zimlet.zip *
-
-rm /tmp/tk_barrydegraaff_owncloud_zimlet.zip
-mv /tmp/tk_barrydegraaff_owncloud_zimlet/tk_barrydegraaff_owncloud_zimlet.zip /tmp/tk_barrydegraaff_owncloud_zimlet.zip
-rm -Rf /tmp/tk_barrydegraaff_owncloud_zimlet
-
-echo 'All done, your release zip should be here: /tmp/tk_barrydegraaff_owncloud_zimlet.zip'
-
-
+make
 exit 0
-
-
-
