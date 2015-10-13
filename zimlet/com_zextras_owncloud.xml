@@ -1,6 +1,7 @@
 <zimlet name="com_zextras_owncloud" version="0.1"
         description="ownCloud integration for Zimbra">
 
+    <include>DavConnector.js</include>
     <include>com_zextras_owncloud.js</include>
     <includeCSS>com_zextras_owncloud.css</includeCSS>
 
