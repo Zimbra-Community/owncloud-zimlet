@@ -1,7 +1,7 @@
 # Ignore IntelliJ IDEA workspace file
 .idea/workspace.xml
 # Ignore extension libraries
-extension/lib/**/*.jar
+extension/lib/**/zal-*.jar
 # Ignore extension build files
 extension/build/
 # Ignore output files

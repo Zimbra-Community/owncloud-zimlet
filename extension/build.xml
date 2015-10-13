@@ -49,7 +49,7 @@
              compress="false"
              basedir="${build}">
             <manifest>
-                <attribute name="ZAL-Extension-Class" value="com.zextras.owncloud.OwnCloudExtension" />
+                <attribute name="ZAL-Extension-Class" value="com.zextras.dav.DavExtension" />
                 <attribute name="ZAL-Extension-Name" value="ownCloud" />
                 <attribute name="ZAL-Required-Version" value="${zal-version-extended}" />
             </manifest>
@@ -58,7 +58,7 @@
     </target>
 
     <target name="download-libs"
-        description="Downlad all the required libraries to build the extension">
+        description="Download all the required libraries to build the extension">
         <mkdir dir="${lib}"/>
         <get src="http://openzal.org/${zal-version}/zal-${zal-version}-${zimbra-version}.jar"
              dest="${lib}/zal-${zal-version}-${zimbra-version}.jar"/>

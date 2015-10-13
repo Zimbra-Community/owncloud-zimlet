@@ -5,6 +5,7 @@ package: clean zimlet extension
 	cp installer/install dist/owncloud-extension/
 	cp zimlet/com_zextras_owncloud.zip dist/owncloud-extension/
 	cp extension/owncloud-extension.jar dist/owncloud-extension/
+	cp extension/lib/[!z]*.jar dist/owncloud-extension/
 	tar --owner=root --group=root -czf owncloud-extension.tar.gz -C dist owncloud-extension
 
 extension:
@@ -18,6 +19,7 @@ clean:
 	rm -f owncloud-extension.tar.gz
 
 install:
+	sudo rm -rf /tmp/owncloud-extension
 	cp owncloud-extension.tar.gz /tmp/
 	sudo -u zimbra tar -xzf /tmp/owncloud-extension.tar.gz -C /tmp/
 	cd /tmp/owncloud-extension && sudo ./install
