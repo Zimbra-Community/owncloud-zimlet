@@ -7,10 +7,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.xml.namespace.QName;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ *
+ */
 public class DavSoapConnector
 {
   private final String mUrl;
@@ -82,12 +88,24 @@ public class DavSoapConnector
     return arrayResponse;
   }
 
-  public JSONObject get(String path)
+  public StringBuilder get(String path)
     throws IOException
   {
-    final JSONObject response = new JSONObject();
-    mSardine.get(buildUrl(path));
-    return response;
+    InputStream inputStream = mSardine.get(buildUrl(path));
+    BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+    StringBuilder sb = new StringBuilder();
+    String line;
+    while ((line = br.readLine()) != null) {
+      sb.append(line);
+    }
+    inputStream.close();
+    return sb;
   }
 
+  public boolean mkcol(String path)
+    throws IOException
+  {
+    mSardine.createDirectory(path);
+    return true;
+  }
 }

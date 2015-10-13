@@ -1,5 +1,8 @@
 package com.zextras.dav;
 
+/**
+ * Defines which commands are handled by the connector.
+ */
 public enum DavCommand
 {
   GET, PUT, PROPFIND, DELETE, MKCOL, COPY, MOVE, OPTIONS;

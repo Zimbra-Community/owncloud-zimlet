@@ -32,8 +32,6 @@ then
   exit 1
 fi
 
-
-
 if grep --quiet $1 README.md; then
   echo "OK version number found in README.md" 
 else
