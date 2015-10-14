@@ -5,7 +5,7 @@ package com.zextras.dav;
  */
 public enum DavCommand
 {
-  GET, PUT, PROPFIND, DELETE, MKCOL, COPY, MOVE, OPTIONS;
+  GET, PUT, PROPFIND, DELETE, MKCOL, COPY, MOVE;
 
   public static DavCommand fromString(String command)
   {

@@ -201,4 +201,22 @@ public class DavSoapConnector
     }
     return arrayResponse;
   }
+
+  /**
+   * Perform a PUT request.
+   * Save the contents of a resource to the server.
+   * @param path
+   * @param inputStream
+   * @param contentType
+   * @throws IOException
+   */
+  public void put(String path, InputStream inputStream, String contentType)
+    throws IOException
+  {
+    mSardine.put(
+      buildUrl(path),
+      inputStream,
+      contentType
+    );
+  }
 }

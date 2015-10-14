@@ -10,7 +10,8 @@
     GET: 'GET',
     MKCOL: 'MKCOL',
     MOVE: 'MOVE',
-    PROPFIND: 'PROPFIND'
+    PROPFIND: 'PROPFIND',
+    PUT: 'PUT'
   };
 
   /**
@@ -207,6 +208,23 @@
   };
 
   /**
+   * Perform a PUT request
+   * Read the metadata of a resource (optionally including its children)
+   * @param {string} path
+   * @param {string} data, control recursion default 0 (only returning the properties for the resource itself)
+   * @param {string} contentType
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  DavConnector.prototype.put = function(path, data, contentType, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
+    soapDoc.set('path', path);
+    soapDoc.set('data', data);
+    soapDoc.set('contentType', contentType);
+    DavConnector._sendRequest(DavAction.PUT, soapDoc, callback, errorCallback);
+  };
+
+  /**
    * Send the request to the server soap extension.
    * @param {string} action, one defined into {@see DavAction}
    * @param {AjxSoapDoc} soapDoc
@@ -289,6 +307,10 @@
         DavConnector._parsePropfind(response[action])
       );
       callback.run(entityArray);
+    }
+    else if(action === DavAction.PUT)
+    {
+      callback.run(response[action]);
     }
     else
     {

@@ -5,7 +5,9 @@ import org.json.JSONObject;
 import org.openzal.zal.soap.*;
 import org.openzal.zal.soap.QName;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * SOAP Handler to interface a class which act as a client, with the SOAP infrastructure.
@@ -53,9 +55,6 @@ public class DavSOAPHandler implements SoapHandler
     {
       switch (command)
       {
-        case OPTIONS:
-          soapResponse.setValue(command.name(), new JSONObject().toString());
-          break;
         case GET:
           soapResponse.setValue(
             "GET",
@@ -65,7 +64,18 @@ public class DavSOAPHandler implements SoapHandler
           );
           break;
         case PUT:
-          soapResponse.setValue(command.name(), new JSONObject().toString());
+          if (path == null)
+          {
+            throw new RuntimeException("Path not provided for PUT DAV action.");
+          }
+          String data = zimbraContext.getParameter("data", null);
+          String contentType = zimbraContext.getParameter("contentType", "text/xml,charset=UTF-8");
+          connector.put(
+            path,
+            new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)),
+            contentType
+          );
+          soapResponse.setValue(command.name(), true);
           break;
         case PROPFIND:
           soapResponse.setValue(
