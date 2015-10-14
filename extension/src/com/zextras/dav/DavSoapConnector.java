@@ -55,6 +55,41 @@ public class DavSoapConnector
   }
 
   /**
+   * Perform a GET request.
+   * Retrieve the contents of a resource.
+   * @param path The resource path.
+   * @return The content of the file, inside a StringBuilder.
+   * @throws IOException
+   */
+  public StringBuilder get(String path)
+    throws IOException
+  {
+    InputStream inputStream = mSardine.get(buildUrl(path));
+    BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+    StringBuilder sb = new StringBuilder();
+    String line;
+    while ((line = br.readLine()) != null) {
+      sb.append(line);
+    }
+    inputStream.close();
+    return sb;
+  }
+
+  /**
+   * Perform a MKCOL request.
+   * Create a collection.
+   * @param path The path which will be created.
+   * @return True if the request was handled correctly.
+   * @throws IOException
+   */
+  public boolean mkcol(String path)
+    throws IOException
+  {
+    mSardine.createDirectory(buildUrl(path));
+    return true;
+  }
+
+  /**
    * Perform a PROPFIND request.
    * Read the metadata of a resource (optionally including its children).
    * @param path The path of the resource.
@@ -111,40 +146,5 @@ public class DavSoapConnector
       arrayResponse.put(res);
     }
     return arrayResponse;
-  }
-
-  /**
-   * Perform a GET request.
-   * Retrieve the contents of a resource.
-   * @param path The resource path.
-   * @return The content of the file, inside a StringBuilder.
-   * @throws IOException
-   */
-  public StringBuilder get(String path)
-    throws IOException
-  {
-    InputStream inputStream = mSardine.get(buildUrl(path));
-    BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-    StringBuilder sb = new StringBuilder();
-    String line;
-    while ((line = br.readLine()) != null) {
-      sb.append(line);
-    }
-    inputStream.close();
-    return sb;
-  }
-
-  /**
-   * Perform a MKCOL request.
-   * Create a collection.
-   * @param path The path which will be created.
-   * @return True if the request was handled correctly.
-   * @throws IOException
-   */
-  public boolean mkcol(String path)
-    throws IOException
-  {
-    mSardine.createDirectory(buildUrl(path));
-    return true;
   }
 }
