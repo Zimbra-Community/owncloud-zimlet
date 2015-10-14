@@ -4,6 +4,7 @@
 extension/lib/**/zal-*.jar
 # Ignore extension build files
 extension/build/
+extension/docs/
 # Ignore output files
 dist/
 extension/dav-soap-connector-extension.jar

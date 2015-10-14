@@ -64,4 +64,26 @@
              dest="${lib}/zal-${zal-version-extended}-${zimbra-version}.jar"/>
     </target>
 
+    <target name="doc">
+        <javadoc
+            destdir="docs"
+            author="true"
+            version="true"
+            use="true"
+            windowtitle="DAV Extension">
+
+            <packageset dir="src" defaultexcludes="yes">
+                <include name="**"/>
+            </packageset>
+            <!--<doctitle><![CDATA[<h1>Test</h1>]]></doctitle>-->
+            <!--<bottom><![CDATA[<i>Copyright &#169; 2000 Dummy Corp. All Rights Reserved.</i>]]></bottom>-->
+            <tag name="todo" scope="all" description="To do:"/>
+            <group title="Sardine Packages" packages="com.github.sardine.*"/>
+            <group title="ZeXtras DAV Packages" packages="com.zextras.dav.*" />
+            <group title="JSON Packages" packages="org.json.*" />
+            <!--<link offline="true" href="http://docs.oracle.com/javase/7/docs/api/" packagelistLoc="C:\tmp"/>-->
+            <!--<link href="http://docs.oracle.com/javase/7/docs/api/"/>-->
+        </javadoc>
+    </target>
+
 </project>
