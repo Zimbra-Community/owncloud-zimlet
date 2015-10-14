@@ -5,48 +5,102 @@
    * @enum {string}
    */
   var DavAction = {
-    PROPFIND: 'PROPFIND',
     GET: 'GET',
-    MKCOL: 'MKCOL'
+    MKCOL: 'MKCOL',
+    PROPFIND: 'PROPFIND'
   };
 
   /**
    * Define an entity retrieved by the Dav Connector.
-   * @param {boolean} isDirectory
-   * @param {string} name
-   * @param {string} path
+   * @param {string} href
+   * @param {Date} creation
+   * @param {Date} modified
+   * @param {string} contentType
+   * @param {number} contentLength
+   * @param {string} etag
+   * @param {string} displayName
+   * @param {string[]} resourceTypes,
+   * @param {string} contentLanguage
+   * @param {string[]} supportedReports
+   * @param {{}} customProps
    * @constructor
    */
-  function DavEntity(isDirectory, name, path) {
-    /** @private {boolean} */ this._isDirectory = isDirectory;
-    /** @private {string} */ this._name = name;
-    /** @private {string} */ this._path = path;
+  function DavResource(
+    href,
+    creation,
+    modified,
+    contentType,
+    contentLength,
+    etag,
+    displayName,
+    resourceTypes,
+    contentLanguage,
+    supportedReports,
+    customProps
+  ) {
+    /** @private {string} */ this._href = href;
+    /** @private {Date} */ this._creation = creation;
+    /** @private {Date} */ this._modified = modified;
+    /** @private {string} */ this._contentType = contentType;
+    /** @private {number} */ this._contentLength = contentLength;
+    /** @private {string} */ this._etag = etag;
+    /** @private {string} */ this._displayName = displayName;
+    /** @private {string[]} */ this._resourceTypes = resourceTypes;
+    /** @private {string[]} */ this._contentLanguage = contentLanguage;
+    /** @private {string[]} */ this._supportedReports = supportedReports;
+    /** @private {{}} */ this._customProps = customProps;
   }
-  DavEntity.prototype = {};
-  DavEntity.prototype.constructor = DavEntity;
+  DavResource.prototype = {};
+  DavResource.prototype.constructor = DavResource;
+
+  /**
+   * Extract data from a raw json object and convert it to DAV Entity.
+   * @param {{}} rawEntity
+   * @return {DavResource}
+   * @static
+   */
+  DavResource.fromRawResource = function(rawEntity) {
+    return new DavResource(
+      rawEntity.href,
+      (!!rawEntity.created) ? new Date(rawEntity.created) : null,
+      (!!rawEntity.modified) ? new Date(rawEntity.modified) : null,
+      rawEntity.contentType,
+      rawEntity.contentLength,
+      rawEntity.etag,
+      rawEntity.displayName,
+      rawEntity.resourceTypes,
+      rawEntity.contentLanguage,
+      rawEntity.supportedReports,
+      rawEntity.customProps
+    );
+  };
 
   /**
    * Get if the entity is a directory.
    * @return {boolean}
    */
-  DavEntity.prototype.isDirectory = function() {
-    return this._isDirectory;
+  DavResource.prototype.isDirectory = function() {
+    return 'httpd/unix-directory' === this._contentType;
   };
 
   /**
-   * Get the entity name.
+   * Get the entity name (Last path component).
    * @return {string}
    */
-  DavEntity.prototype.getName = function() {
-    return this._name;
+  DavResource.prototype.getName = function() {
+    var path = this.getHref();
+    if (/\/$/.test(path)) {
+      path = path.substr(0, path.length - 1);
+    }
+    return path.substr(path.lastIndexOf('/') + 1);
   };
 
   /**
    * Get the path of the entity.
    * @return {string}
    */
-  DavEntity.prototype.getPath = function() {
-    return this._path;
+  DavResource.prototype.getHref = function() {
+    return this._href;
   };
 
 
@@ -84,6 +138,20 @@
     soapDoc.set('path', path);
     soapDoc.set('depth', depth);
     DavConnector._sendRequest(DavAction.PROPFIND, soapDoc, callback, errorCallback);
+  };
+
+  /**
+   * Perform a MKCOL request
+   * Create a collection
+   * @param {string} path
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  DavConnector.prototype.mkcol = function(path, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount'),
+      escapedPath = path.replace(' ', '%20');
+    soapDoc.set('path', escapedPath);
+    DavConnector._sendRequest(DavAction.MKCOL, soapDoc, callback, errorCallback);
   };
 
   /**
@@ -136,34 +204,30 @@
    * @static
    */
   DavConnector._parseResponse = function(action, callback, errorCallback, result) {
-    var response;
+    var response = result.getResponse().response;
     if (result.isException() && !!errorCallback) {
       errorCallback.run(result);
       return void 0;
     }
-    response = result.getResponse().response[action];
+    if (!!response.error) {
+      errorCallback.run(JSON.parse(response.error));
+      return void 0;
+    }
 
     if (action === DavAction.GET)
     {
-      callback.run(response);
+      callback.run(response[action]);
+    }
+    else if(action === DavAction.MKCOL)
+    {
+      callback.run(response[action]);
     }
     else if(action === DavAction.PROPFIND)
     {
-      var rawEntityArray = JSON.parse(response),
-        rawEntity,
-        entityArray = [],
-        i = 0;
-      for (i = 0; i < rawEntityArray.length; i += 1)
-      {
-        rawEntity = rawEntityArray[i];
-        entityArray.push(
-          new DavEntity(
-            rawEntity.isDirectory,
-            rawEntity.name,
-            rawEntity.path
-          )
-        );
-      }
+      callback.run(
+        DavConnector._parsePropfind(response[action])
+      );
+
       callback.run(entityArray);
     }
     else
@@ -173,12 +237,35 @@
   };
 
   /**
+   * Parse the response of the propfind request.
+   * @param {string} rawResponse
+   * @return {DavResource[]}
+   * @private
+   * @static
+   */
+  DavConnector._parsePropfind = function (rawResponse) {
+    var rawEntityArray = JSON.parse(rawResponse),
+      rawEntity,
+      entityArray = [],
+      i = 0;
+    for (i = 0; i < rawEntityArray.length; i += 1)
+    {
+      rawEntity = rawEntityArray[i];
+      entityArray.push(
+        DavResource.fromRawResource(rawEntity)
+      );
+    }
+    return entityArray;
+  };
+
+  /**
    * Handle an error occurred during the request and trigger the error callback.
+   * @param {string} action, one defined into {@see DavAction}
    * @param {AjxCallback} errorCallback
    * @private
    * @static
    */
-  DavConnector._handleError = function(errorCallback, error) {
+  DavConnector._handleError = function(action, errorCallback, error) {
     if (!!errorCallback) {
       errorCallback.run(error);
     }

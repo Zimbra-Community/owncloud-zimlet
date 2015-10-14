@@ -35,7 +35,7 @@ public class DavSOAPHandler implements SoapHandler
       command = DavCommand.fromString(actionStr);
     } catch (RuntimeException ex)
     {
-      encodeError(ex, soapResponse);
+      handleError(ex, soapResponse, zimbraExceptionContainer);
       return;
     }
 
@@ -96,9 +96,9 @@ public class DavSOAPHandler implements SoapHandler
         default:
           break;
       }
-    } catch (IOException e)
+    } catch (IOException ex)
     {
-      encodeError(e, soapResponse);
+      handleError(ex, soapResponse, zimbraExceptionContainer);
     }
   }
 
@@ -107,16 +107,30 @@ public class DavSOAPHandler implements SoapHandler
    * @param error The error which will be encoded.
    * @param resp The response container
    */
-  private void encodeError(Exception error, SoapResponse resp)
+  private static void handleError(
+    Exception error,
+    SoapResponse resp,
+    ZimbraExceptionContainer errorContainer
+  )
+  {
+    resp.setValue("error", encodeError(error).toString());
+    errorContainer.setException(error);
+  }
+
+  private static JSONObject encodeError(Throwable error)
   {
     JSONObject errorObj = new JSONObject();
-    errorObj.put("message", error.getMessage());
     JSONArray stackArr = new JSONArray();
     for (StackTraceElement el : error.getStackTrace()) {
       stackArr.put(el.toString());
     }
-    errorObj.put("trace", stackArr.toString());
-    resp.setValue("error", errorObj.toString());
+    errorObj.put("message", error.getMessage());
+    errorObj.put("trace", stackArr);
+    if (error.getCause() != null)
+    {
+      errorObj.put("cause", encodeError(error.getCause()));
+    }
+    return errorObj;
   }
 
   /**
