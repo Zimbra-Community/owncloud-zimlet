@@ -5,6 +5,7 @@
    * @enum {string}
    */
   var DavAction = {
+    COPY: 'COPY',
     DELETE: 'DELETE',
     GET: 'GET',
     MKCOL: 'MKCOL',
@@ -112,6 +113,24 @@
   function DavConnector() {}
   DavConnector.prototype = {};
   DavConnector.prototype.constructor = DavConnector;
+
+  /**
+   * Perform a COPY request.
+   * Create a copy of a resource
+   * @param {string} path
+   * @param {string} destPath
+   * @param {boolean} overwrite
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  DavConnector.prototype.copy = function(path, destPath, overwrite, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
+    soapDoc.set('path', path);
+    soapDoc.set('destPath', destPath);
+    soapDoc.set('overwrite', 'false');
+    if (overwrite === true) soapDoc.set('overwrite', 'true');
+    DavConnector._sendRequest(DavAction.COPY, soapDoc, callback, errorCallback);
+  };
 
   /**
    * Perform a DELETE request
@@ -228,7 +247,9 @@
       return void 0;
     }
 
-    if (action === DavAction.DELETE)
+    if (action === DavAction.COPY) {
+      callback.run(response[action]);
+    } else if (action === DavAction.DELETE)
     {
       callback.run(response[action]);
     } else if (action === DavAction.GET)

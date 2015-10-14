@@ -55,10 +55,30 @@ public class DavSoapConnector
   }
 
   /**
+   * Perform a COPY request.
+   * Create a copy of a resource
+   * @param path The resource path.
+   * @param destPath The path to copy the resource to.
+   * @param overwrite Whether or not to fail when the resource already exists.
+   * @return True if the command is not failed.
+   * @throws IOException
+   */
+  public boolean copy(String path, String destPath, boolean overwrite)
+    throws IOException
+  {
+    mSardine.copy(
+      buildUrl(path),
+      buildUrl(destPath),
+      overwrite
+    );
+    return true;
+  }
+
+  /**
    * Perform a DELETE request.
    * Remove a resource (recursively)
    * @param path The resource path.
-   * @return The content of the file, inside a StringBuilder.
+   * @return True if the command is not failed.
    * @throws IOException
    */
   public boolean delete(String path)
@@ -93,7 +113,7 @@ public class DavSoapConnector
    * Perform a MKCOL request.
    * Create a collection.
    * @param path The path which will be created.
-   * @return True if the request was handled correctly.
+   * @return True if the command is not failed.
    * @throws IOException
    */
   public boolean mkcol(String path)

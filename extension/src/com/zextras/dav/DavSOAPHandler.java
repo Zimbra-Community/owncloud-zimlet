@@ -93,7 +93,18 @@ public class DavSOAPHandler implements SoapHandler
           soapResponse.setValue("MKCOL", true);
           break;
         case COPY:
-          soapResponse.setValue("COPY", new JSONObject().toString());
+          if (path == null)
+          {
+            throw new RuntimeException("Source path not provided for COPY DAV action.");
+          }
+          String destPath = zimbraContext.getParameter("destPath", null);
+          if (destPath == null)
+          {
+            throw new RuntimeException("Destination path not provided for COPY DAV action.");
+          }
+          boolean overwrite = Boolean.parseBoolean(zimbraContext.getParameter("overwrite", "false"));
+          connector.copy(path, destPath, overwrite);
+          soapResponse.setValue("COPY", true);
           break;
         case MOVE:
           soapResponse.setValue("MOVE", new JSONObject().toString());
