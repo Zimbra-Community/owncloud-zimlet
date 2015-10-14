@@ -9,6 +9,7 @@
     DELETE: 'DELETE',
     GET: 'GET',
     MKCOL: 'MKCOL',
+    MOVE: 'MOVE',
     PROPFIND: 'PROPFIND'
   };
 
@@ -173,6 +174,24 @@
   };
 
   /**
+   * Perform a MOVE request.
+   * Move a resource from location
+   * @param {string} path
+   * @param {string} destPath
+   * @param {boolean} overwrite
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  DavConnector.prototype.move = function(path, destPath, overwrite, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
+    soapDoc.set('path', path);
+    soapDoc.set('destPath', destPath);
+    soapDoc.set('overwrite', 'false');
+    if (overwrite === true) soapDoc.set('overwrite', 'true');
+    DavConnector._sendRequest(DavAction.MOVE, soapDoc, callback, errorCallback);
+  };
+
+  /**
    * Perform a PROPFIND request
    * Read the metadata of a resource (optionally including its children)
    * @param {string} path
@@ -253,6 +272,10 @@
     {
       callback.run(response[action]);
     } else if (action === DavAction.GET)
+    {
+      callback.run(response[action]);
+    }
+    else if(action === DavAction.MOVE)
     {
       callback.run(response[action]);
     }

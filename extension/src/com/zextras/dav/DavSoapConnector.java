@@ -110,6 +110,26 @@ public class DavSoapConnector
   }
 
   /**
+   * Perform a MOVE request.
+   * Move a resource from location
+   * @param path The resource path.
+   * @param destPath The path to copy the resource to.
+   * @param overwrite Whether or not to fail when the resource already exists.
+   * @return True if the command is not failed.
+   * @throws IOException
+   */
+  public boolean move(String path, String destPath, boolean overwrite)
+    throws IOException
+  {
+    mSardine.move(
+      buildUrl(path),
+      buildUrl(destPath),
+      overwrite
+    );
+    return true;
+  }
+
+  /**
    * Perform a MKCOL request.
    * Create a collection.
    * @param path The path which will be created.

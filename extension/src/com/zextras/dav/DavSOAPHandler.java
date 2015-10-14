@@ -54,7 +54,7 @@ public class DavSOAPHandler implements SoapHandler
       switch (command)
       {
         case OPTIONS:
-          soapResponse.setValue("OPTIONS", new JSONObject().toString());
+          soapResponse.setValue(command.name(), new JSONObject().toString());
           break;
         case GET:
           soapResponse.setValue(
@@ -65,11 +65,11 @@ public class DavSOAPHandler implements SoapHandler
           );
           break;
         case PUT:
-          soapResponse.setValue("PUT", new JSONObject().toString());
+          soapResponse.setValue(command.name(), new JSONObject().toString());
           break;
         case PROPFIND:
           soapResponse.setValue(
-            "PROPFIND",
+            command.name(),
             connector.propfind(
               zimbraContext.getParameter("path", "/"),
               Integer.parseInt(zimbraContext.getParameter("depth", "1"))
@@ -82,7 +82,7 @@ public class DavSOAPHandler implements SoapHandler
             throw new RuntimeException("Path not provided for DELETE DAV action.");
           }
           connector.delete(path);
-          soapResponse.setValue("DELETE", true);
+          soapResponse.setValue(command.name(), true);
           break;
         case MKCOL:
           if (path == null)
@@ -90,27 +90,38 @@ public class DavSOAPHandler implements SoapHandler
             throw new RuntimeException("Path not provided for MKCOL DAV action.");
           }
           connector.mkcol(path);
-          soapResponse.setValue("MKCOL", true);
+          soapResponse.setValue(command.name(), true);
           break;
         case COPY:
           if (path == null)
           {
             throw new RuntimeException("Source path not provided for COPY DAV action.");
           }
-          String destPath = zimbraContext.getParameter("destPath", null);
-          if (destPath == null)
+          String cpDestPath = zimbraContext.getParameter("destPath", null);
+          if (cpDestPath == null)
           {
             throw new RuntimeException("Destination path not provided for COPY DAV action.");
           }
-          boolean overwrite = Boolean.parseBoolean(zimbraContext.getParameter("overwrite", "false"));
-          connector.copy(path, destPath, overwrite);
-          soapResponse.setValue("COPY", true);
+          boolean cpOverwrite = Boolean.parseBoolean(zimbraContext.getParameter("overwrite", "false"));
+          connector.copy(path, cpDestPath, cpOverwrite);
+          soapResponse.setValue(command.name(), true);
           break;
         case MOVE:
-          soapResponse.setValue("MOVE", new JSONObject().toString());
+          if (path == null)
+          {
+            throw new RuntimeException("Source path not provided for MOVE DAV action.");
+          }
+          String mvDestPath = zimbraContext.getParameter("destPath", null);
+          if (mvDestPath == null)
+          {
+            throw new RuntimeException("Destination path not provided for MOVE DAV action.");
+          }
+          boolean mvOverwrite = Boolean.parseBoolean(zimbraContext.getParameter("overwrite", "false"));
+          connector.move(path, mvDestPath, mvOverwrite);
+          soapResponse.setValue(command.name(), true);
           break;
         default:
-          break;
+          throw new RuntimeException("DAV command '" + command.name() + "' not handled.");
       }
     } catch (IOException ex)
     {
