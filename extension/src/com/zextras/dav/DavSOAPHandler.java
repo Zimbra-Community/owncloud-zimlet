@@ -28,8 +28,9 @@ public class DavSOAPHandler implements SoapHandler
     ZimbraExceptionContainer zimbraExceptionContainer
   )
   {
-    String actionStr = zimbraContext.getParameter("action", "");
-    DavCommand command;
+    final String actionStr = zimbraContext.getParameter("action", "");
+    final String path = zimbraContext.getParameter("path", null);
+    final DavCommand command;
     try
     {
       command = DavCommand.fromString(actionStr);
@@ -40,7 +41,7 @@ public class DavSOAPHandler implements SoapHandler
     }
 
     // TODO: Get this data from the account config.
-    DavSoapConnector connector = new DavSoapConnector(
+    final DavSoapConnector connector = new DavSoapConnector(
       "https://files.planetbud.net",
       443,
       "/remote.php/webdav/",
@@ -76,10 +77,14 @@ public class DavSOAPHandler implements SoapHandler
           );
           break;
         case DELETE:
-          soapResponse.setValue("DELETE", new JSONObject().toString());
+          if (path == null)
+          {
+            throw new RuntimeException("Path not provided for DELETE DAV action.");
+          }
+          connector.delete(path);
+          soapResponse.setValue("DELETE", true);
           break;
         case MKCOL:
-          String path = zimbraContext.getParameter("path", null);
           if (path == null)
           {
             throw new RuntimeException("Path not provided for MKCOL DAV action.");

@@ -55,6 +55,20 @@ public class DavSoapConnector
   }
 
   /**
+   * Perform a DELETE request.
+   * Remove a resource (recursively)
+   * @param path The resource path.
+   * @return The content of the file, inside a StringBuilder.
+   * @throws IOException
+   */
+  public boolean delete(String path)
+    throws IOException
+  {
+    mSardine.delete(buildUrl(path));
+    return true;
+  }
+
+  /**
    * Perform a GET request.
    * Retrieve the contents of a resource.
    * @param path The resource path.

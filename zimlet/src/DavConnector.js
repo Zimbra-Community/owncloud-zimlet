@@ -5,6 +5,7 @@
    * @enum {string}
    */
   var DavAction = {
+    DELETE: 'DELETE',
     GET: 'GET',
     MKCOL: 'MKCOL',
     PROPFIND: 'PROPFIND'
@@ -113,6 +114,19 @@
   DavConnector.prototype.constructor = DavConnector;
 
   /**
+   * Perform a DELETE request
+   * Remove a resource (recursively)
+   * @param {string} path
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  DavConnector.prototype.delete = function(path, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
+    soapDoc.set('path', path);
+    DavConnector._sendRequest(DavAction.DELETE, soapDoc, callback, errorCallback);
+  };
+
+  /**
    * Perform a GET request
    * Retrieve the contents of a resource
    * @param {string} path
@@ -123,6 +137,20 @@
     var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
     soapDoc.set('path', path);
     DavConnector._sendRequest(DavAction.GET, soapDoc, callback, errorCallback);
+  };
+
+  /**
+   * Perform a MKCOL request
+   * Create a collection
+   * @param {string} path
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  DavConnector.prototype.mkcol = function(path, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount'),
+      escapedPath = path.replace(' ', '%20');
+    soapDoc.set('path', escapedPath);
+    DavConnector._sendRequest(DavAction.MKCOL, soapDoc, callback, errorCallback);
   };
 
   /**
@@ -138,20 +166,6 @@
     soapDoc.set('path', path);
     soapDoc.set('depth', depth);
     DavConnector._sendRequest(DavAction.PROPFIND, soapDoc, callback, errorCallback);
-  };
-
-  /**
-   * Perform a MKCOL request
-   * Create a collection
-   * @param {string} path
-   * @param {AjxCallback} callback
-   * @param {AjxCallback} errorCallback
-   */
-  DavConnector.prototype.mkcol = function(path, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount'),
-      escapedPath = path.replace(' ', '%20');
-    soapDoc.set('path', escapedPath);
-    DavConnector._sendRequest(DavAction.MKCOL, soapDoc, callback, errorCallback);
   };
 
   /**
@@ -214,7 +228,10 @@
       return void 0;
     }
 
-    if (action === DavAction.GET)
+    if (action === DavAction.DELETE)
+    {
+      callback.run(response[action]);
+    } else if (action === DavAction.GET)
     {
       callback.run(response[action]);
     }
@@ -227,7 +244,6 @@
       callback.run(
         DavConnector._parsePropfind(response[action])
       );
-
       callback.run(entityArray);
     }
     else
