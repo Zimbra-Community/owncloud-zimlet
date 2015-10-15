@@ -57,6 +57,9 @@ The recommended method is to deploy using git. (I no longer support zmzimletctl,
 
 You should now be able to see your ownCloud login page under the same domain as your Zimbra server: https://zimbraserver.example.com/owncloud/ 
 
+If you get an ERROR 404 or you don't see ownCloud see 
+[https://github.com/barrydegraaff/owncloud-zimlet/wiki/Install-and-enable-Zimbra-Proxy](https://github.com/barrydegraaff/owncloud-zimlet/wiki/Install-and-enable-Zimbra-Proxy)
+
 ### Configure your ownCloud Server
 
 Comment a line in the css so the `Deleted Items` menu becomes visible in Zimbra:
