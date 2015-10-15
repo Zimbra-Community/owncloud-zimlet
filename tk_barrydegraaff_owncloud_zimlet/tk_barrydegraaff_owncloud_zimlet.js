@@ -51,7 +51,7 @@ ownCloudZimlet.prototype.init = function () {
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_default_folder"))
    {
-      this.setUserProperty("owncloud_zimlet_default_folder", 'Zimbra emails', true);
+      this.setUserProperty("owncloud_zimlet_default_folder", 'Documents', true);
    }
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");   
 
