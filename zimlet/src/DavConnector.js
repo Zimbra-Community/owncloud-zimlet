@@ -306,7 +306,6 @@
       callback.run(
         DavConnector._parsePropfind(response[action])
       );
-      callback.run(entityArray);
     }
     else if(action === DavAction.PUT)
     {

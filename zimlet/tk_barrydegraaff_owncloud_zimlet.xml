@@ -45,7 +45,10 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
    <userProperties>
       <property type="string" label="" name="owncloud_zimlet_username" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_password" rows="1"/>
-      <property type="string" label="" name="owncloud_zimlet_default_folder" rows="1"/>
-      <property type="string" label="" name="owncloud_zimlet_store_pass" rows="1"/>
+      <property type="string" label="" name="owncloud_zimlet_server_name" rows="1"/>
+      <property type="string" label="" name="owncloud_zimlet_server_port" rows="1"/>
+      <property type="string" label="" name="owncloud_zimlet_server_path" rows="1" value="/owncloud/remote.php/webdav/"/>
+      <property type="string" label="" name="owncloud_zimlet_default_folder" rows="1" value="Zimbra emails"/>
+      <property type="string" label="" name="owncloud_zimlet_store_pass" rows="1" value="true"/>
    </userProperties>
 </zimlet>

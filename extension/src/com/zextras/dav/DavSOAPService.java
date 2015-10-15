@@ -23,7 +23,7 @@ public class DavSOAPService implements SoapService
   {
     mServiceMap = new HashMap<QName, SoapHandler>()
     {{
-      put(DavSOAPHandler.sREQUEST_QNAME, new DavSOAPHandler());
+      put(DavSOAPHandler.REQUEST_QNAME, new DavSOAPHandler());
     }};
   }
 

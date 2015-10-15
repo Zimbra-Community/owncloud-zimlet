@@ -1,21 +1,37 @@
 package com.zextras.dav;
 
+import com.zextras.util.UserPropertyExtractor;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.openzal.zal.Account;
+import org.openzal.zal.Provisioning;
 import org.openzal.zal.soap.*;
 import org.openzal.zal.soap.QName;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * SOAP Handler to interface a class which act as a client, with the SOAP infrastructure.
  */
 public class DavSOAPHandler implements SoapHandler
 {
-  static final private String sNAMESPACE     = "urn:zimbraAccount";
-  static final         QName  sREQUEST_QNAME = new QName("davSoapConnector", sNAMESPACE);
+  private static String NAMESPACE = "urn:zimbraAccount";
+  public static final QName REQUEST_QNAME = new QName("davSoapConnector", NAMESPACE);
+
+  private static String ZIMLET_NAME = "tk_barrydegraaff_owncloud_zimlet";
+
+  private final Provisioning mProvisioning;
+
+  public DavSOAPHandler()
+  {
+    mProvisioning = new Provisioning();
+  }
 
   /**
    * Handle a SOAP request.
@@ -30,6 +46,56 @@ public class DavSOAPHandler implements SoapHandler
     ZimbraExceptionContainer zimbraExceptionContainer
   )
   {
+    final String accountId = zimbraContext.getAuthenticatedAccontId();
+    final Account account = mProvisioning.assertAccountById(accountId);
+
+    final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, ZIMLET_NAME);
+
+    if (
+      userProperties.get(ZimletProperty.DAV_SERVER_NAME) == null ||
+      userProperties.get(ZimletProperty.DAV_SERVER_PORT) == null ||
+      userProperties.get(ZimletProperty.DAV_SERVER_PATH) == null ||
+      userProperties.get(ZimletProperty.DAV_USER_USERNAME) == null ||
+      userProperties.get(ZimletProperty.DAV_USER_PASSWORD) == null
+      )
+    {
+      handleError(
+        new RuntimeException("DAV Data connection not set for user '" + account.getName() + "'"),
+        soapResponse,
+        zimbraExceptionContainer
+      );
+      return;
+    }
+
+    {
+      final URL serverUrl;
+      try
+      {
+        serverUrl = new URL(userProperties.get(ZimletProperty.DAV_SERVER_NAME));
+      } catch (MalformedURLException e)
+      {
+        handleError(e, soapResponse, zimbraExceptionContainer);
+        return;
+      }
+      if (!checkPermissionOnTarget(serverUrl, account))
+      {
+        handleError(
+          new RuntimeException("Proxy domain not allowed '" + serverUrl + "' for user '" + account.getName() + "'"),
+          soapResponse,
+          zimbraExceptionContainer
+        );
+        return;
+      }
+    }
+
+    final DavSoapConnector connector = new DavSoapConnector(
+      userProperties.get(ZimletProperty.DAV_SERVER_NAME),
+      Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
+      userProperties.get(ZimletProperty.DAV_SERVER_PATH),
+      userProperties.get(ZimletProperty.DAV_USER_USERNAME),
+      userProperties.get(ZimletProperty.DAV_USER_PASSWORD)
+    );
+
     final String actionStr = zimbraContext.getParameter("action", "");
     final String path = zimbraContext.getParameter("path", null);
     final DavCommand command;
@@ -41,15 +107,6 @@ public class DavSOAPHandler implements SoapHandler
       handleError(ex, soapResponse, zimbraExceptionContainer);
       return;
     }
-
-    // TODO: Get this data from the account config.
-    final DavSoapConnector connector = new DavSoapConnector(
-      "https://files.planetbud.net",
-      443,
-      "/remote.php/webdav/",
-      "zimbra",
-      "z1i2m3b4r5a"
-    );
 
     try
     {
@@ -194,5 +251,22 @@ public class DavSOAPHandler implements SoapHandler
   )
   {
     return true;
+  }
+
+  private boolean checkPermissionOnTarget(URL target, Account account) {
+    Set<String> domains = UserPropertyExtractor.getProxyAllowedDomain(account);
+    String host = target.getHost().toLowerCase();
+    for (String domain : domains) {
+      if (domain.equals("*")) {
+        return true;
+      }
+      if (domain.charAt(0) == '*') {
+        domain = domain.substring(1);
+      }
+      if (host.endsWith(domain)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
