@@ -513,7 +513,7 @@ function(status, statusstr) {
 ownCloudZimlet.prototype.appLaunch =
 function(appName) { 
    var app = appCtxt.getApp(appName);
-   app.setContent('<div style="position: fixed; left:0; width:100%; height:100%; border:0px;"><iframe id="ownCloudFrame" style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+'"></div>');
+   app.setContent('<div style="position: fixed; left:0; width:100%; height:86%; border:0px;"><iframe id="ownCloudFrame" style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+'"></div>');
    var overview = app.getOverview(); // returns ZmOverview
    overview.setContent("&nbsp;");
    var child = document.getElementById(overview._htmlElId);

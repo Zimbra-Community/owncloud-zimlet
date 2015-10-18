@@ -62,13 +62,7 @@ If you get an ERROR 404 or you don't see ownCloud see
 
 ### Configure your ownCloud Server
 
-Comment a line in the css so the `Deleted Items` menu becomes visible in Zimbra:
-
-    [root@owncloud1 ~]# nano /var/www/html/owncloud/apps/files/css/files.css
-    .nav-trashbin {
-    /*	position: fixed !important; */
-    
-Also if you want to enable link sharing add a php file to you ownCloud installation:
+If you want to enable link sharing add a php file to you ownCloud installation:
 
     [root@owncloud1 ~]# cd /var/www/html/owncloud/ocs/
     [root@owncloud1 ~]# rm -Rf zcs.php
