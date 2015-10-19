@@ -23,27 +23,26 @@ import java.net.URI;
 
 /**
  * Simple class for making WebDAV <code>MOVE</code> requests.
- *
  */
 public class HttpMove extends HttpRequestBase
 {
-	public static final String METHOD_NAME = "MOVE";
+  public static final String METHOD_NAME = "MOVE";
 
-	public HttpMove(URI sourceUrl, URI destinationUrl, boolean overwrite)
-	{
-		this.setHeader(HttpHeaders.DESTINATION, destinationUrl.toASCIIString());
-		this.setHeader(HttpHeaders.OVERWRITE, overwrite ? "T" : "F");
-		this.setURI(sourceUrl);
-	}
+  public HttpMove(URI sourceUrl, URI destinationUrl, boolean overwrite)
+  {
+    this.setHeader(HttpHeaders.DESTINATION, destinationUrl.toASCIIString());
+    this.setHeader(HttpHeaders.OVERWRITE, overwrite ? "T" : "F");
+    this.setURI(sourceUrl);
+  }
 
-	public HttpMove(String sourceUrl, String destinationUrl, boolean overwrite)
-	{
-		this(URI.create(sourceUrl), URI.create(destinationUrl), overwrite);
-	}
+  public HttpMove(String sourceUrl, String destinationUrl, boolean overwrite)
+  {
+    this(URI.create(sourceUrl), URI.create(destinationUrl), overwrite);
+  }
 
-	@Override
-	public String getMethod()
-	{
-		return METHOD_NAME;
-	}
+  @Override
+  public String getMethod()
+  {
+    return METHOD_NAME;
+  }
 }

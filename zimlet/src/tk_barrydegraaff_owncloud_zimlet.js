@@ -29,6 +29,7 @@ var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 ownCloudZimlet.prototype.init =
   function () {
     this.davConnector = new DavConnector();
+    this.ownCloudConnector = new OwnCloudConnector();
     ownCloudZimlet.version=this._zimletContext.version;
     //Set global config
     tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] = this._zimletContext.getConfig("proxy_location");
@@ -1010,6 +1011,14 @@ ownCloudTabView.prototype._uploadFiles =
 ownCloudZimlet.prototype.getDavConnector =
   function() {
     return this.davConnector;
+  };
+
+/**
+ * TODO: Remove me, I'm here for testing purpose
+ */
+ownCloudZimlet.prototype.getOwnCloudConnector =
+  function() {
+    return this.ownCloudConnector;
   };
 
 /* This method generates a password

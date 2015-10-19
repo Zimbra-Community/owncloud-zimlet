@@ -34,39 +34,39 @@ import java.io.InputStream;
  */
 public class MultiStatusResponseHandler extends ValidatingResponseHandler<Multistatus>
 {
-	@Override
-	public Multistatus handleResponse(HttpResponse response) throws IOException
-	{
-		super.validateResponse(response);
+  @Override
+  public Multistatus handleResponse(HttpResponse response) throws IOException
+  {
+    super.validateResponse(response);
 
-		// Process the response from the server.
-		HttpEntity entity = response.getEntity();
-		StatusLine statusLine = response.getStatusLine();
-		if (entity == null)
-		{
-			throw new SardineException("No entity found in response", statusLine.getStatusCode(),
-                    statusLine.getReasonPhrase());
-        }
-        try
-        {
-            return this.getMultistatus(entity.getContent());
-        }
-        catch(IOException e) {
-            // JAXB error unmarshalling response stream
-            throw new SardineException(e.getMessage(), statusLine.getStatusCode(), statusLine.getReasonPhrase());
-        }
-	}
+    // Process the response from the server.
+    HttpEntity entity = response.getEntity();
+    StatusLine statusLine = response.getStatusLine();
+    if (entity == null)
+    {
+      throw new SardineException("No entity found in response", statusLine.getStatusCode(),
+        statusLine.getReasonPhrase());
+    }
+    try
+    {
+      return this.getMultistatus(entity.getContent());
+    } catch (IOException e)
+    {
+      // JAXB error unmarshalling response stream
+      throw new SardineException(e.getMessage(), statusLine.getStatusCode(), statusLine.getReasonPhrase());
+    }
+  }
 
-	/**
-	 * Helper method for getting the Multistatus response processor.
-	 *
-	 * @param stream The input to read the status
-	 * @return Multistatus element parsed from the stream
-	 * @throws IOException When there is a JAXB error
-	 */
-	protected Multistatus getMultistatus(InputStream stream)
-			throws IOException
-	{
-		return SardineUtil.unmarshal(stream);
-	}
+  /**
+   * Helper method for getting the Multistatus response processor.
+   *
+   * @param stream The input to read the status
+   * @return Multistatus element parsed from the stream
+   * @throws IOException When there is a JAXB error
+   */
+  protected Multistatus getMultistatus(InputStream stream)
+    throws IOException
+  {
+    return SardineUtil.unmarshal(stream);
+  }
 }

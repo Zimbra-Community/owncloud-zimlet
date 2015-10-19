@@ -22,25 +22,24 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 /**
  * Simple class for making <code>MKCOL</code> requests.
- *
  */
 public class HttpMkCol extends HttpEntityEnclosingRequestBase
 {
-	public static final String METHOD_NAME = "MKCOL";
+  public static final String METHOD_NAME = "MKCOL";
 
-	public HttpMkCol(String url)
-	{
-		this(URI.create(url));
-	}
+  public HttpMkCol(String url)
+  {
+    this(URI.create(url));
+  }
 
-	public HttpMkCol(URI url)
-	{
-		this.setURI(url);
-	}
+  public HttpMkCol(URI url)
+  {
+    this.setURI(url);
+  }
 
-	@Override
-	public String getMethod()
-	{
-		return METHOD_NAME;
-	}
+  @Override
+  public String getMethod()
+  {
+    return METHOD_NAME;
+  }
 }

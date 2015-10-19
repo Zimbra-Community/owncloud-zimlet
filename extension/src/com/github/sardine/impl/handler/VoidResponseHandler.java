@@ -28,10 +28,10 @@ import java.io.IOException;
  */
 public class VoidResponseHandler extends ValidatingResponseHandler<Void>
 {
-	@Override
-	public Void handleResponse(HttpResponse response) throws IOException
-	{
-		this.validateResponse(response);
-		return null;
-	}
+  @Override
+  public Void handleResponse(HttpResponse response) throws IOException
+  {
+    this.validateResponse(response);
+    return null;
+  }
 }

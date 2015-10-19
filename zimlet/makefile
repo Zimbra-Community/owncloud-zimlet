@@ -4,6 +4,7 @@ zimlet: clean
 	zip -j tk_barrydegraaff_owncloud_zimlet.zip \
 		src/tk_barrydegraaff_owncloud_zimlet.js \
 		src/DavConnector.js \
+		src/OwnCloudConnector.js \
 		src/davclient.js \
 		src/mime.js \
 		tk_barrydegraaff_owncloud_zimlet.css \

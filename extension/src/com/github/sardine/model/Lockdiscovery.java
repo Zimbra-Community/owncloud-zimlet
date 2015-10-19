@@ -18,9 +18,9 @@ import java.util.List;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * 
+ * <p/>
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -32,45 +32,44 @@ import java.util.List;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "activelock"
+  "activelock"
 })
 @XmlRootElement(name = "lockdiscovery")
-public class Lockdiscovery {
+public class Lockdiscovery
+{
 
-    private List<Activelock> activelock;
+  private List<Activelock> activelock;
 
-    /**
-     * Gets the value of the activelock property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the activelock property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getActivelock().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Activelock }
-     * 
-     * 
-     */
-    public List<Activelock> getActivelock() {
-        if (activelock == null) {
-            activelock = new ArrayList<Activelock>();
-        }
-        return this.activelock;
+  /**
+   * Gets the value of the activelock property.
+   * <p/>
+   * <p/>
+   * This accessor method returns a reference to the live list,
+   * not a snapshot. Therefore any modification you make to the
+   * returned list will be present inside the JAXB object.
+   * This is why there is not a <CODE>set</CODE> method for the activelock property.
+   * <p/>
+   * <p/>
+   * For example, to add a new item, do as follows:
+   * <pre>
+   *    getActivelock().add(newItem);
+   * </pre>
+   * <p/>
+   * <p/>
+   * <p/>
+   * Objects of the following type(s) are allowed in the list
+   * {@link Activelock }
+   */
+  public List<Activelock> getActivelock()
+  {
+    if (activelock == null)
+    {
+      activelock = new ArrayList<Activelock>();
     }
+    return this.activelock;
+  }
 
 }

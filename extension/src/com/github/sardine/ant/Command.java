@@ -15,56 +15,64 @@ import com.github.sardine.Sardine;
 public abstract class Command extends ProjectComponent
 {
 
-	/** Parent task. */
-	private SardineTask fSardineTask = null;
+  /**
+   * Parent task.
+   */
+  private SardineTask fSardineTask = null;
 
-	/**
-	 * This is called prior to {@link #execute()} in order to enable the command implementation to validate
-	 * the provided attributes.
-	 *
-	 * @throws Exception if the command is misconfigured
-	 */
-	protected abstract void validateAttributes() throws Exception;
+  /**
+   * This is called prior to {@link #execute()} in order to enable the command implementation to validate
+   * the provided attributes.
+   *
+   * @throws Exception if the command is misconfigured
+   */
+  protected abstract void validateAttributes() throws Exception;
 
-	/**
-	 * Execute the command.
-	 *
-	 * @throws Exception if the command failed
-	 */
-	protected abstract void execute() throws Exception;
+  /**
+   * Execute the command.
+   *
+   * @throws Exception if the command failed
+   */
+  protected abstract void execute() throws Exception;
 
-	/**
-	 * Check the command attribute and execute it.
-	 *
-	 * @throws Exception if the command is misconfigured or failed for some other reason
-	 */
-	public final void executeCommand() throws Exception {
-		try {
-			validateAttributes();
-			execute();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (fSardineTask.isFailonerror()) {
-				throw e;
-			}
-			fSardineTask.log(getClass().getSimpleName() + " failed: " + e.getLocalizedMessage(), e,
-					Project.MSG_ERR);
-		}
-	}
+  /**
+   * Check the command attribute and execute it.
+   *
+   * @throws Exception if the command is misconfigured or failed for some other reason
+   */
+  public final void executeCommand() throws Exception
+  {
+    try
+    {
+      validateAttributes();
+      execute();
+    } catch (Exception e)
+    {
+      e.printStackTrace();
+      if (fSardineTask.isFailonerror())
+      {
+        throw e;
+      }
+      fSardineTask.log(getClass().getSimpleName() + " failed: " + e.getLocalizedMessage(), e,
+        Project.MSG_ERR);
+    }
+  }
 
-	/**
-	 * Sets the SardineTask
-	 */
-	public final void setTask(SardineTask task) {
-		fSardineTask = task;
-	}
+  /**
+   * Sets the SardineTask
+   */
+  public final void setTask(SardineTask task)
+  {
+    fSardineTask = task;
+  }
 
-	/**
-	 * Returns the Sardine for this command.
-	 *
-	 * @return the Sardine for this command
-	 */
-	protected final Sardine getSardine() {
-		return fSardineTask.getSardine();
-	}
+  /**
+   * Returns the Sardine for this command.
+   *
+   * @return the Sardine for this command
+   */
+  protected final Sardine getSardine()
+  {
+    return fSardineTask.getSardine();
+  }
 }

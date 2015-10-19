@@ -28,50 +28,52 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.protocol.HttpContext;
 
-public class SardineRedirectStrategy extends DefaultRedirectStrategy {
+public class SardineRedirectStrategy extends DefaultRedirectStrategy
+{
 
-    @Override
-    protected boolean isRedirectable(String method) {
-        if (super.isRedirectable(method))
-        {
-            return true;
-        }
-        return method.equalsIgnoreCase(HttpPropFind.METHOD_NAME);
-    }
-
-    @Override
-    public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context)
-            throws ProtocolException
+  @Override
+  protected boolean isRedirectable(String method)
+  {
+    if (super.isRedirectable(method))
     {
-        String method = request.getRequestLine().getMethod();
-        if (method.equalsIgnoreCase(HttpPropFind.METHOD_NAME))
-        {
-            HttpPropFind propfind = new HttpPropFind(this.getLocationURI(request, response, context));
-            Header depth = request.getFirstHeader("Depth");
-            if (depth != null && depth.getValue() != null)
-            {
-                propfind.setDepth(depth.getValue());
-            }
-            return this.copyEntity(propfind, request);
-        }
-        else if (method.equalsIgnoreCase(HttpReport.METHOD_NAME))
-        {
-            HttpReport report = new HttpReport(this.getLocationURI(request, response, context));
-            Header depth = request.getFirstHeader("Depth");
-            if (depth != null && depth.getValue() != null)
-            {
-                report.setDepth(depth.getValue());
-            }
-            return this.copyEntity(report, request);
-        }
-        return super.getRedirect(request, response, context);
+      return true;
     }
+    return method.equalsIgnoreCase(HttpPropFind.METHOD_NAME);
+  }
 
-    private HttpUriRequest copyEntity(final HttpEntityEnclosingRequestBase redirect, final HttpRequest original) {
-        if (original instanceof HttpEntityEnclosingRequest)
-        {
-            redirect.setEntity(((HttpEntityEnclosingRequest) original).getEntity());
-        }
-        return redirect;
+  @Override
+  public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context)
+    throws ProtocolException
+  {
+    String method = request.getRequestLine().getMethod();
+    if (method.equalsIgnoreCase(HttpPropFind.METHOD_NAME))
+    {
+      HttpPropFind propfind = new HttpPropFind(this.getLocationURI(request, response, context));
+      Header depth = request.getFirstHeader("Depth");
+      if (depth != null && depth.getValue() != null)
+      {
+        propfind.setDepth(depth.getValue());
+      }
+      return this.copyEntity(propfind, request);
+    } else if (method.equalsIgnoreCase(HttpReport.METHOD_NAME))
+    {
+      HttpReport report = new HttpReport(this.getLocationURI(request, response, context));
+      Header depth = request.getFirstHeader("Depth");
+      if (depth != null && depth.getValue() != null)
+      {
+        report.setDepth(depth.getValue());
+      }
+      return this.copyEntity(report, request);
     }
+    return super.getRedirect(request, response, context);
+  }
+
+  private HttpUriRequest copyEntity(final HttpEntityEnclosingRequestBase redirect, final HttpRequest original)
+  {
+    if (original instanceof HttpEntityEnclosingRequest)
+    {
+      redirect.setEntity(((HttpEntityEnclosingRequest) original).getEntity());
+    }
+    return redirect;
+  }
 }

@@ -19,9 +19,9 @@ import java.util.List;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * 
+ * <p/>
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -32,46 +32,45 @@ import java.util.List;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "content"
+  "content"
 })
 @XmlRootElement(name = "getetag")
-public class Getetag {
+public class Getetag
+{
 
-    @XmlMixed
-    private List<String> content;
+  @XmlMixed
+  private List<String> content;
 
-    /**
-     * Gets the value of the content property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
-    public List<String> getContent() {
-        if (content == null) {
-            content = new ArrayList<String>();
-        }
-        return this.content;
+  /**
+   * Gets the value of the content property.
+   * <p/>
+   * <p/>
+   * This accessor method returns a reference to the live list,
+   * not a snapshot. Therefore any modification you make to the
+   * returned list will be present inside the JAXB object.
+   * This is why there is not a <CODE>set</CODE> method for the content property.
+   * <p/>
+   * <p/>
+   * For example, to add a new item, do as follows:
+   * <pre>
+   *    getContent().add(newItem);
+   * </pre>
+   * <p/>
+   * <p/>
+   * <p/>
+   * Objects of the following type(s) are allowed in the list
+   * {@link String }
+   */
+  public List<String> getContent()
+  {
+    if (content == null)
+    {
+      content = new ArrayList<String>();
     }
+    return this.content;
+  }
 
 }

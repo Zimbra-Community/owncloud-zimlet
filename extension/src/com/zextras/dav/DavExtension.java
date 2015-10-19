@@ -1,5 +1,6 @@
 package com.zextras.dav;
 
+import com.zextras.owncloud.OwnCloudSOAPService;
 import org.openzal.zal.extension.ZalExtension;
 import org.openzal.zal.extension.ZalExtensionController;
 import org.openzal.zal.extension.Zimbra;
@@ -14,12 +15,14 @@ public class DavExtension implements ZalExtension
 {
 
   private final SoapServiceManager mSoapServiceManager;
+  private final OwnCloudSOAPService mOwnCloudSoapService;
   private DavSOAPService mDavSoapService;
 
   public DavExtension()
   {
     mSoapServiceManager = new SoapServiceManager();
     mDavSoapService = new DavSOAPService();
+    mOwnCloudSoapService = new OwnCloudSOAPService();
   }
 
   @Override
@@ -43,6 +46,7 @@ public class DavExtension implements ZalExtension
   public void startup(ZalExtensionController zalExtensionController, Zimbra zimbra)
   {
     mSoapServiceManager.register(mDavSoapService);
+    mSoapServiceManager.register(mOwnCloudSoapService);
     ZimbraLog.mailbox.info("Loaded WebDav extension.");
   }
 
@@ -53,6 +57,7 @@ public class DavExtension implements ZalExtension
   public void shutdown()
   {
     mSoapServiceManager.unregister(mDavSoapService);
+    mSoapServiceManager.unregister(mOwnCloudSoapService);
     ZimbraLog.mailbox.info("Removed extension ownCloud.");
   }
 }

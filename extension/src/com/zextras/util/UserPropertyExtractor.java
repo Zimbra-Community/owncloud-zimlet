@@ -2,6 +2,7 @@ package com.zextras.util;
 
 import org.openzal.zal.Account;
 
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -54,5 +55,22 @@ public class UserPropertyExtractor
       Collections.addAll(allowedDomains, allAllowedDomains);
     }
     return allowedDomains;
+  }
+
+  public static boolean checkPermissionOnTarget(URL target, Account account) {
+    Set<String> domains = UserPropertyExtractor.getProxyAllowedDomain(account);
+    String host = target.getHost().toLowerCase();
+    for (String domain : domains) {
+      if (domain.equals("*")) {
+        return true;
+      }
+      if (domain.charAt(0) == '*') {
+        domain = domain.substring(1);
+      }
+      if (host.endsWith(domain)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

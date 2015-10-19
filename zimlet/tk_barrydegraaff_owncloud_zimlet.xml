@@ -29,6 +29,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
         label="ownCloud"
         description="Attach from and save to ownCloud">
     <include>tk_barrydegraaff_owncloud_zimlet.js</include>
+    <include>OwnCloudConnector.js</include>
     <include>DavConnector.js</include>
     <include>davclient.js</include>
     <include>mime.js</include>

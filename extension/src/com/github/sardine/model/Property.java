@@ -17,12 +17,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
-
 /**
  * <p>Java class for anonymous complex type.</p>
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * 
+ * <p/>
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -45,26 +44,27 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
 
 })
 @XmlRootElement(name = "property")
-public class Property {
+public class Property
+{
 
 
-	@XmlAnyElement
-	private Element property;
+  @XmlAnyElement
+  private Element property;
 
-	public Element getProperty() {
-		return property;
-	}
+  public Element getProperty()
+  {
+    return property;
+  }
 
-	public void setProperty(Element property) {
-		this.property = property;
-	}
+  public void setProperty(Element property)
+  {
+    this.property = property;
+  }
 
 }

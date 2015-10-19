@@ -9,29 +9,29 @@ import java.util.List;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * 
+ * <p/>
  * <pre>
- *   &lt;D:owner&gt; 
+ *   &lt;D:owner&gt;
  *        &lt;D:href&gt;http://www.example.com/acl/users/gstein&lt;/D:href&gt;
  *      &lt;/D:owner&gt;
  * </pre>
- * 
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(name = "")
 @XmlRootElement(name = "acl")
-public class Acl {
-	private List<Ace> ace;
+public class Acl
+{
+  private List<Ace> ace;
 
-	public List<Ace> getAce() {
-		return ace;
-	}
+  public List<Ace> getAce()
+  {
+    return ace;
+  }
 
-	public void setAce(List<Ace> ace) {
-		this.ace = ace;
-	}
+  public void setAce(List<Ace> ace)
+  {
+    this.ace = ace;
+  }
 }

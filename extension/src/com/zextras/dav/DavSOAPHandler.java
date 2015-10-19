@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * SOAP Handler to interface a class which act as a client, with the SOAP infrastructure.
@@ -77,7 +76,7 @@ public class DavSOAPHandler implements SoapHandler
         handleError(e, soapResponse, zimbraExceptionContainer);
         return;
       }
-      if (!checkPermissionOnTarget(serverUrl, account))
+      if (!UserPropertyExtractor.checkPermissionOnTarget(serverUrl, account))
       {
         handleError(
           new RuntimeException("Proxy domain not allowed '" + serverUrl + "' for user '" + account.getName() + "'"),
@@ -251,22 +250,5 @@ public class DavSOAPHandler implements SoapHandler
   )
   {
     return true;
-  }
-
-  private boolean checkPermissionOnTarget(URL target, Account account) {
-    Set<String> domains = UserPropertyExtractor.getProxyAllowedDomain(account);
-    String host = target.getHost().toLowerCase();
-    for (String domain : domains) {
-      if (domain.equals("*")) {
-        return true;
-      }
-      if (domain.charAt(0) == '*') {
-        domain = domain.substring(1);
-      }
-      if (host.endsWith(domain)) {
-        return true;
-      }
-    }
-    return false;
   }
 }

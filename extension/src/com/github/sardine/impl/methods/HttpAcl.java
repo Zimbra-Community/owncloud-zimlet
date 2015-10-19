@@ -28,25 +28,25 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
  */
 public class HttpAcl extends HttpEntityEnclosingRequestBase
 {
-	public static final String METHOD_NAME = "ACL";
+  public static final String METHOD_NAME = "ACL";
 
-	public HttpAcl(final String uri)
-	{
-		this(URI.create(uri));
-	}
+  public HttpAcl(final String uri)
+  {
+    this(URI.create(uri));
+  }
 
-	/**
-	 * @param uri The resource
-	 */
-	public HttpAcl(final URI uri)
-	{
-		this.setURI(uri);
-		this.setHeader(HttpHeaders.CONTENT_TYPE, "text/xml; charset=utf-8");
-	}
+  /**
+   * @param uri The resource
+   */
+  public HttpAcl(final URI uri)
+  {
+    this.setURI(uri);
+    this.setHeader(HttpHeaders.CONTENT_TYPE, "text/xml; charset=utf-8");
+  }
 
-	@Override
-	public String getMethod()
-	{
-		return METHOD_NAME;
-	}
+  @Override
+  public String getMethod()
+  {
+    return METHOD_NAME;
+  }
 }

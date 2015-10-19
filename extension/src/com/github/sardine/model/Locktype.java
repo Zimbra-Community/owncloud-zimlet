@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * 
+ * <p/>
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -31,41 +31,38 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "write"
+  "write"
 })
 @XmlRootElement(name = "locktype")
-public class Locktype {
+public class Locktype
+{
 
-    @XmlElement(required = true)
-    private Write write;
+  @XmlElement(required = true)
+  private Write write;
 
-    /**
-     * Gets the value of the write property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Write }
-     *     
-     */
-    public Write getWrite() {
-        return write;
-    }
+  /**
+   * Gets the value of the write property.
+   *
+   * @return possible object is
+   * {@link Write }
+   */
+  public Write getWrite()
+  {
+    return write;
+  }
 
-    /**
-     * Sets the value of the write property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Write }
-     *     
-     */
-    public void setWrite(Write value) {
-        this.write = value;
-    }
+  /**
+   * Sets the value of the write property.
+   *
+   * @param value allowed object is
+   *              {@link Write }
+   */
+  public void setWrite(Write value)
+  {
+    this.write = value;
+  }
 
 }

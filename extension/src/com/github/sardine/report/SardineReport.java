@@ -5,12 +5,12 @@ import com.github.sardine.util.SardineUtil;
 
 public abstract class SardineReport<T>
 {
-	public String toXml()
-	{
-		return SardineUtil.toXml(toJaxb());
-	}
+  public String toXml()
+  {
+    return SardineUtil.toXml(toJaxb());
+  }
 
-	public abstract Object toJaxb();
+  public abstract Object toJaxb();
 
-	public abstract T fromMultistatus(Multistatus multistatus);
+  public abstract T fromMultistatus(Multistatus multistatus);
 }

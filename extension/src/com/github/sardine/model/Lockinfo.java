@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * 
+ * <p/>
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -33,94 +33,87 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "lockscope",
-    "locktype",
-    "owner"
+  "lockscope",
+  "locktype",
+  "owner"
 })
 @XmlRootElement(name = "lockinfo")
-public class Lockinfo {
+public class Lockinfo
+{
 
-    @XmlElement(required = true)
-    private Lockscope lockscope;
-    @XmlElement(required = true)
-    private Locktype locktype;
-    private Owner owner;
+  @XmlElement(required = true)
+  private Lockscope lockscope;
+  @XmlElement(required = true)
+  private Locktype locktype;
+  private Owner owner;
 
-    /**
-     * Gets the value of the lockscope property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Lockscope }
-     *     
-     */
-    public Lockscope getLockscope() {
-        return lockscope;
-    }
+  /**
+   * Gets the value of the lockscope property.
+   *
+   * @return possible object is
+   * {@link Lockscope }
+   */
+  public Lockscope getLockscope()
+  {
+    return lockscope;
+  }
 
-    /**
-     * Sets the value of the lockscope property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Lockscope }
-     *     
-     */
-    public void setLockscope(Lockscope value) {
-        this.lockscope = value;
-    }
+  /**
+   * Sets the value of the lockscope property.
+   *
+   * @param value allowed object is
+   *              {@link Lockscope }
+   */
+  public void setLockscope(Lockscope value)
+  {
+    this.lockscope = value;
+  }
 
-    /**
-     * Gets the value of the locktype property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Locktype }
-     *     
-     */
-    public Locktype getLocktype() {
-        return locktype;
-    }
+  /**
+   * Gets the value of the locktype property.
+   *
+   * @return possible object is
+   * {@link Locktype }
+   */
+  public Locktype getLocktype()
+  {
+    return locktype;
+  }
 
-    /**
-     * Sets the value of the locktype property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Locktype }
-     *     
-     */
-    public void setLocktype(Locktype value) {
-        this.locktype = value;
-    }
+  /**
+   * Sets the value of the locktype property.
+   *
+   * @param value allowed object is
+   *              {@link Locktype }
+   */
+  public void setLocktype(Locktype value)
+  {
+    this.locktype = value;
+  }
 
-    /**
-     * Gets the value of the owner property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Owner }
-     *     
-     */
-    public Owner getOwner() {
-        return owner;
-    }
+  /**
+   * Gets the value of the owner property.
+   *
+   * @return possible object is
+   * {@link Owner }
+   */
+  public Owner getOwner()
+  {
+    return owner;
+  }
 
-    /**
-     * Sets the value of the owner property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Owner }
-     *     
-     */
-    public void setOwner(Owner value) {
-        this.owner = value;
-    }
+  /**
+   * Sets the value of the owner property.
+   *
+   * @param value allowed object is
+   *              {@link Owner }
+   */
+  public void setOwner(Owner value)
+  {
+    this.owner = value;
+  }
 
 }

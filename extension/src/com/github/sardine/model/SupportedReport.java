@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -31,41 +31,38 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "report"
+  "report"
 })
 @XmlRootElement(name = "supported-report")
-public class SupportedReport {
+public class SupportedReport
+{
 
-    @XmlElement(required = true)
-    protected Report report;
+  @XmlElement(required = true)
+  protected Report report;
 
-    /**
-     * Gets the value of the report property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Report }
-     *
-     */
-    public Report getReport() {
-        return report;
-    }
+  /**
+   * Gets the value of the report property.
+   *
+   * @return possible object is
+   * {@link Report }
+   */
+  public Report getReport()
+  {
+    return report;
+  }
 
-    /**
-     * Sets the value of the report property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Report }
-     *
-     */
-    public void setReport(Report value) {
-        this.report = value;
-    }
+  /**
+   * Sets the value of the report property.
+   *
+   * @param value allowed object is
+   *              {@link Report }
+   */
+  public void setReport(Report value)
+  {
+    this.report = value;
+  }
 
 }

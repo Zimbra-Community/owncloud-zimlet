@@ -8,7 +8,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "protected")
-public class Protected {
+public class Protected
+{
 
-	
+
 }

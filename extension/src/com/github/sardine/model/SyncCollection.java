@@ -19,9 +19,9 @@ import java.math.BigInteger;
 
 /**
  * <p>Java class for anonymous complex type.
- *
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- *
+ * <p/>
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -36,123 +36,113 @@ import java.math.BigInteger;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- *
- *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "syncToken",
-    "syncLevel",
-    "prop",
-    "limit"
+  "syncToken",
+  "syncLevel",
+  "prop",
+  "limit"
 })
 @XmlRootElement(name = "sync-collection")
 public class SyncCollection
 {
 
-    @XmlElement(name = "sync-token", required = true)
-    @XmlSchemaType(name = "anyURI")
-    protected String syncToken;
-    @XmlElement(name = "sync-level", required = true)
-    protected String syncLevel;
-    @XmlElement(required = true)
-    protected Prop prop;
-    protected BigInteger limit;
+  @XmlElement(name = "sync-token", required = true)
+  @XmlSchemaType(name = "anyURI")
+  protected String syncToken;
+  @XmlElement(name = "sync-level", required = true)
+  protected String syncLevel;
+  @XmlElement(required = true)
+  protected Prop prop;
+  protected BigInteger limit;
 
-    /**
-     * Gets the value of the syncToken property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getSyncToken() {
-        return syncToken;
-    }
+  /**
+   * Gets the value of the syncToken property.
+   *
+   * @return possible object is
+   * {@link String }
+   */
+  public String getSyncToken()
+  {
+    return syncToken;
+  }
 
-    /**
-     * Sets the value of the syncToken property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setSyncToken(String value) {
-        this.syncToken = value;
-    }
+  /**
+   * Sets the value of the syncToken property.
+   *
+   * @param value allowed object is
+   *              {@link String }
+   */
+  public void setSyncToken(String value)
+  {
+    this.syncToken = value;
+  }
 
-    /**
-     * Gets the value of the syncLevel property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
-     */
-    public String getSyncLevel() {
-        return syncLevel;
-    }
+  /**
+   * Gets the value of the syncLevel property.
+   *
+   * @return possible object is
+   * {@link String }
+   */
+  public String getSyncLevel()
+  {
+    return syncLevel;
+  }
 
-    /**
-     * Sets the value of the syncLevel property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setSyncLevel(String value) {
-        this.syncLevel = value;
-    }
+  /**
+   * Sets the value of the syncLevel property.
+   *
+   * @param value allowed object is
+   *              {@link String }
+   */
+  public void setSyncLevel(String value)
+  {
+    this.syncLevel = value;
+  }
 
-    /**
-     * Gets the value of the prop property.
-     *
-     * @return
-     *     possible object is
-     *     {@link Prop }
-     *
-     */
-    public Prop getProp() {
-        return prop;
-    }
+  /**
+   * Gets the value of the prop property.
+   *
+   * @return possible object is
+   * {@link Prop }
+   */
+  public Prop getProp()
+  {
+    return prop;
+  }
 
-    /**
-     * Sets the value of the prop property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link Prop }
-     *
-     */
-    public void setProp(Prop value) {
-        this.prop = value;
-    }
+  /**
+   * Sets the value of the prop property.
+   *
+   * @param value allowed object is
+   *              {@link Prop }
+   */
+  public void setProp(Prop value)
+  {
+    this.prop = value;
+  }
 
-    /**
-     * Gets the value of the limit property.
-     *
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *
-     */
-    public BigInteger getLimit() {
-        return limit;
-    }
+  /**
+   * Gets the value of the limit property.
+   *
+   * @return possible object is
+   * {@link BigInteger }
+   */
+  public BigInteger getLimit()
+  {
+    return limit;
+  }
 
-    /**
-     * Sets the value of the limit property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *
-     */
-    public void setLimit(BigInteger value) {
-        this.limit = value;
-    }
+  /**
+   * Sets the value of the limit property.
+   *
+   * @param value allowed object is
+   *              {@link BigInteger }
+   */
+  public void setLimit(BigInteger value)
+  {
+    this.limit = value;
+  }
 
 }

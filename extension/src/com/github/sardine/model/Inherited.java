@@ -7,19 +7,22 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-     "href"
+  "href"
 })
 @XmlRootElement(name = "inherited")
-public class Inherited {
+public class Inherited
+{
 
-	private String href;
+  private String href;
 
-	public String getHref() {
-		return href;
-	}
+  public String getHref()
+  {
+    return href;
+  }
 
-	public void setHref(String href) {
-		this.href = href;
-	}
-	
+  public void setHref(String href)
+  {
+    this.href = href;
+  }
+
 }

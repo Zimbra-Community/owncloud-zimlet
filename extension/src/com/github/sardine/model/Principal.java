@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * 
+ * <p/>
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -30,71 +30,82 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "href","property","all","authenticated","unauthenticated","self"
+  "href", "property", "all", "authenticated", "unauthenticated", "self"
 })
 @XmlRootElement(name = "principal")
-public class Principal {
+public class Principal
+{
 
-	private String href;
-	private Property property;
-	private All all;
-	private Authenticated authenticated;
-	private Unauthenticated unauthenticated;
-	private Self self;
- 
+  private String href;
+  private Property property;
+  private All all;
+  private Authenticated authenticated;
+  private Unauthenticated unauthenticated;
+  private Self self;
 
-	public String getHref() {
-		return href;
-	}
 
-	public void setHref(String href) {
-		this.href = href;
-	}
+  public String getHref()
+  {
+    return href;
+  }
 
-	public Property getProperty() {
-		return property;
-	}
+  public void setHref(String href)
+  {
+    this.href = href;
+  }
 
-	public void setProperty(Property property) {
-		this.property = property;
-	}
+  public Property getProperty()
+  {
+    return property;
+  }
 
-	public All getAll() {
-		return all;
-	}
+  public void setProperty(Property property)
+  {
+    this.property = property;
+  }
 
-	public void setAll(All all) {
-		this.all = all;
-	}
+  public All getAll()
+  {
+    return all;
+  }
 
-	public Authenticated getAuthenticated() {
-		return authenticated;
-	}
+  public void setAll(All all)
+  {
+    this.all = all;
+  }
 
-	public void setAuthenticated(Authenticated authenticated) {
-		this.authenticated = authenticated;
-	}
+  public Authenticated getAuthenticated()
+  {
+    return authenticated;
+  }
 
-	public Unauthenticated getUnauthenticated() {
-		return unauthenticated;
-	}
+  public void setAuthenticated(Authenticated authenticated)
+  {
+    this.authenticated = authenticated;
+  }
 
-	public void setUnauthenticated(Unauthenticated unauthenticated) {
-		this.unauthenticated = unauthenticated;
-	}
+  public Unauthenticated getUnauthenticated()
+  {
+    return unauthenticated;
+  }
 
-	public Self getSelf() {
-		return self;
-	}
+  public void setUnauthenticated(Unauthenticated unauthenticated)
+  {
+    this.unauthenticated = unauthenticated;
+  }
 
-	public void setSelf(Self self) {
-		this.self = self;
-	}
+  public Self getSelf()
+  {
+    return self;
+  }
+
+  public void setSelf(Self self)
+  {
+    this.self = self;
+  }
 
 
 }

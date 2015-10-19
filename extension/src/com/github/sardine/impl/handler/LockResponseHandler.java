@@ -30,40 +30,40 @@ import java.io.InputStream;
  */
 public class LockResponseHandler extends ValidatingResponseHandler<String>
 {
-	@Override
-	public String handleResponse(HttpResponse response) throws IOException
-	{
-		super.validateResponse(response);
+  @Override
+  public String handleResponse(HttpResponse response) throws IOException
+  {
+    super.validateResponse(response);
 
-		// Process the response from the server.
-		HttpEntity entity = response.getEntity();
-        StatusLine statusLine = response.getStatusLine();
-		if (entity == null)
-		{
-			throw new SardineException("No entity found in response", statusLine.getStatusCode(),
-					statusLine.getReasonPhrase());
-		}
-        try
-        {
-    		return this.getToken(entity.getContent());
-        }
-        catch(IOException e) {
-            // JAXB error unmarshalling response stream
-            throw new SardineException(e.getMessage(), statusLine.getStatusCode(), statusLine.getReasonPhrase());
-        }
-	}
+    // Process the response from the server.
+    HttpEntity entity = response.getEntity();
+    StatusLine statusLine = response.getStatusLine();
+    if (entity == null)
+    {
+      throw new SardineException("No entity found in response", statusLine.getStatusCode(),
+        statusLine.getReasonPhrase());
+    }
+    try
+    {
+      return this.getToken(entity.getContent());
+    } catch (IOException e)
+    {
+      // JAXB error unmarshalling response stream
+      throw new SardineException(e.getMessage(), statusLine.getStatusCode(), statusLine.getReasonPhrase());
+    }
+  }
 
-	/**
-	 * Helper method for getting the Multistatus response processor.
-	 *
-	 * @param stream The input to read the status
-	 * @return Multistatus element parsed from the stream
-	 * @throws java.io.IOException When there is a JAXB error
-	 */
-	protected String getToken(InputStream stream)
-			throws IOException
-	{
-		Prop prop = SardineUtil.unmarshal(stream);
-		return prop.getLockdiscovery().getActivelock().iterator().next().getLocktoken().getHref().iterator().next();
-	}
+  /**
+   * Helper method for getting the Multistatus response processor.
+   *
+   * @param stream The input to read the status
+   * @return Multistatus element parsed from the stream
+   * @throws java.io.IOException When there is a JAXB error
+   */
+  protected String getToken(InputStream stream)
+    throws IOException
+  {
+    Prop prop = SardineUtil.unmarshal(stream);
+    return prop.getLockdiscovery().getActivelock().iterator().next().getLocktoken().getHref().iterator().next();
+  }
 }

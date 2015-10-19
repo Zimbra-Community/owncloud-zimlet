@@ -17,9 +17,9 @@ import java.util.List;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * 
+ * <p/>
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -31,27 +31,27 @@ import java.util.List;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "href"
+  "href"
 })
 @XmlRootElement(name = "principal-collection-set")
-public class PrincipalCollectionSet {
+public class PrincipalCollectionSet
+{
 
-	private List<String> href;
+  private List<String> href;
 
- 
 
-	public List<String> getHref() {
-		return href;
-	}
+  public List<String> getHref()
+  {
+    return href;
+  }
 
-	public void setHref(List<String> href) {
-		this.href = href;
-	}
+  public void setHref(List<String> href)
+  {
+    this.href = href;
+  }
 
 
 }

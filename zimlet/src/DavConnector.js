@@ -1,5 +1,17 @@
 (function(context) {
   /**
+   * Urn of the request
+   * @const
+   * @type {string}
+   */
+  var URN = 'urn:zimbraAccount';
+  /**
+   * Handler name registerd as zimbra SOAP Extension
+   * @const
+   * @type {string}
+   */
+  var HANDLER_NAME = 'davSoapConnector';
+  /**
    * Supported DAV Actions.
    * @const
    * @enum {string}
@@ -126,7 +138,7 @@
    * @param {AjxCallback} errorCallback
    */
   DavConnector.prototype.copy = function(path, destPath, overwrite, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('path', path);
     soapDoc.set('destPath', destPath);
     soapDoc.set('overwrite', 'false');
@@ -142,7 +154,7 @@
    * @param {AjxCallback} errorCallback
    */
   DavConnector.prototype.delete = function(path, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('path', path);
     DavConnector._sendRequest(DavAction.DELETE, soapDoc, callback, errorCallback);
   };
@@ -155,7 +167,7 @@
    * @param {AjxCallback} errorCallback
    */
   DavConnector.prototype.get = function(path, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('path', path);
     DavConnector._sendRequest(DavAction.GET, soapDoc, callback, errorCallback);
   };
@@ -168,7 +180,7 @@
    * @param {AjxCallback} errorCallback
    */
   DavConnector.prototype.mkcol = function(path, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount'),
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN),
       escapedPath = path.replace(' ', '%20');
     soapDoc.set('path', escapedPath);
     DavConnector._sendRequest(DavAction.MKCOL, soapDoc, callback, errorCallback);
@@ -184,7 +196,7 @@
    * @param {AjxCallback} errorCallback
    */
   DavConnector.prototype.move = function(path, destPath, overwrite, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('path', path);
     soapDoc.set('destPath', destPath);
     soapDoc.set('overwrite', 'false');
@@ -201,7 +213,7 @@
    * @param {AjxCallback} errorCallback
    */
   DavConnector.prototype.propfind = function(path, depth, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('path', path);
     soapDoc.set('depth', depth);
     DavConnector._sendRequest(DavAction.PROPFIND, soapDoc, callback, errorCallback);
@@ -217,7 +229,7 @@
    * @param {AjxCallback} errorCallback
    */
   DavConnector.prototype.put = function(path, data, contentType, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create('davSoapConnector', 'urn:zimbraAccount');
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('path', path);
     soapDoc.set('data', data);
     soapDoc.set('contentType', contentType);
@@ -343,6 +355,7 @@
    * Handle an error occurred during the request and trigger the error callback.
    * @param {string} action, one defined into {@see DavAction}
    * @param {AjxCallback} errorCallback
+   * @param {Error} error
    * @private
    * @static
    */
