@@ -6,8 +6,10 @@ import com.zextras.owncloud.client.OwnCloudClient;
 import com.zextras.owncloud.client.Share;
 import com.zextras.owncloud.client.encoders.ResponseEncoder;
 import com.zextras.owncloud.client.encoders.json.GetAllSharesRespEnc;
+import com.zextras.owncloud.client.encoders.json.GetSharesFromFolderRespEnc;
 import com.zextras.owncloud.client.handlers.SharesResponseHandler;
 import com.zextras.owncloud.client.methods.HttpGetAllShares;
+import com.zextras.owncloud.client.methods.HttpGetSharesFromFolder;
 import com.zextras.util.UserPropertyExtractor;
 import org.openzal.zal.Account;
 import org.openzal.zal.soap.SoapResponse;
@@ -56,6 +58,11 @@ public class OwnCloudSoapConnector
     );
   }
 
+  /**
+   * Get all the shares from the user.
+   * @param soapResponse The response where the result will be put.
+   * @throws IOException
+   */
   public void getAllShares(SoapResponse soapResponse)
     throws IOException
   {
@@ -64,6 +71,29 @@ public class OwnCloudSoapConnector
       new SharesResponseHandler()
     );
     ResponseEncoder responseEncoder = new GetAllSharesRespEnc(shares, soapResponse);
+    responseEncoder.encode();
+  }
+
+  /**
+   * Get all shares from a given file/folder.
+   * @param soapResponse The response where the result will be put.
+   * @param path Path to file/folder
+   * @param reshares Returns not only the shares from the current user but all shares from the given file.
+   * @param subfiles Returns all shares within a folder, given that path defines a folder.
+   * @throws IOException
+   */
+  public void getSharesFromFolder(
+    SoapResponse soapResponse,
+    String path,
+    boolean reshares,
+    boolean subfiles
+  ) throws IOException
+  {
+    List<Share> shares = mOwnCloudClient.exec(
+      new HttpGetSharesFromFolder(mOwnCloudClient, path, reshares, subfiles),
+      new SharesResponseHandler()
+    );
+    ResponseEncoder responseEncoder = new GetSharesFromFolderRespEnc(shares, soapResponse);
     responseEncoder.encode();
   }
 }

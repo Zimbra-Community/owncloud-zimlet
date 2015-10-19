@@ -2,7 +2,8 @@ package com.zextras.owncloud;
 
 public enum OwnCloudCommand
 {
-  GET_ALL_SHARES("getAllShares");
+  GET_ALL_SHARES("getAllShares"),
+  GET_SHARES_FROM_FOLDER("getSharesFromFolder");
 
   private final String mAction;
 

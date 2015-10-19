@@ -51,6 +51,20 @@ public class OwnCloudSOAPHandler implements SoapHandler
         case GET_ALL_SHARES:
           connector.getAllShares(soapResponse);
           break;
+        case GET_SHARES_FROM_FOLDER:
+          String path = zimbraContext.getParameter("path", "");
+          path = path.replace(" ", "%20");
+          String reshares = zimbraContext.getParameter("reshares", "false");
+          String subfiles = zimbraContext.getParameter("subfiles", "true");
+          if (path.equals("")) { throw new RuntimeException("Missing 'path' argument for '" + command.name() + "' command."); }
+
+          connector.getSharesFromFolder(
+            soapResponse,
+            path,
+            reshares.toLowerCase().equals("true"),
+            subfiles.toLowerCase().equals("true")
+          );
+          break;
         default:
           throw new RuntimeException("OwnCloud command '" + command.name() + "' not handled.");
       }

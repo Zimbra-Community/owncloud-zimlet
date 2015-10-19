@@ -18,7 +18,8 @@
    * @enum {string}
    */
   var OwnCloudAction = {
-    GET_ALL_SHARES: 'getAllShares'
+    GET_ALL_SHARES: 'getAllShares',
+    GET_SHARES_FROM_FOLDER: 'getSharesFromFolder'
   };
 
   /**
@@ -38,6 +39,23 @@
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     OwnCloudConnector._sendRequest(OwnCloudAction.GET_ALL_SHARES, soapDoc, callback, errorCallback);
   };
+
+  /**
+   * Get all shares from a given file/folder.
+   * @param {string} path Path to file/folder
+   * @param {boolean} reshares Returns not only the shares from the current user but all shares from the given file.
+   * @param {boolean} subfiles Returns all shares within a folder, given that path defines a folder.
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  OwnCloudConnector.prototype.getSharesFromFolder = function(path, reshares, subfiles, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+    soapDoc.set('path', path);
+    soapDoc.set('reshares', reshares || false);
+    soapDoc.set('subfiles', subfiles || true);
+    OwnCloudConnector._sendRequest(OwnCloudAction.GET_SHARES_FROM_FOLDER, soapDoc, callback, errorCallback);
+  };
+
 
   /**
    * Send the request to the server soap extension.
@@ -99,6 +117,9 @@
     }
 
     if (action === OwnCloudAction.GET_ALL_SHARES) {
+      callback.run(JSON.parse(response[action]));
+    } else if (action === OwnCloudAction.GET_SHARES_FROM_FOLDER)
+    {
       callback.run(JSON.parse(response[action]));
     }
     else

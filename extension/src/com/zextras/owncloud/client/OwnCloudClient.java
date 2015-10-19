@@ -33,7 +33,7 @@ import java.net.URISyntaxException;
 
 public class OwnCloudClient
 {
-  public static String OCS_SHARE_PATH = "/ocs/v1.php/apps/files_sharing/api/v1/shares";
+  public static String OCS_SHARE_PATH = "/ocs/v1.php/apps/files_sharing/api/v1";
 
   private final CloseableHttpClient mHttpClient;
   private final CredentialsProvider mCredentialsProvider;
@@ -62,18 +62,12 @@ public class OwnCloudClient
     mHttpClient.close();
   }
 
-  public URI getOCSSharesUri()
+  public String getOCSSharesUrl()
   {
-    try
-    {
-      return new URI(mProtocol + "://" +
-        mCredentialsProvider.getCredentials(AuthScope.ANY).getUserPrincipal().getName() +
-        ":" + mCredentialsProvider.getCredentials(AuthScope.ANY).getPassword() +
-        "@" + mServerName + ":" + mPort + OCS_SHARE_PATH);
-    } catch (URISyntaxException e)
-    {
-      throw new RuntimeException(e);
-    }
+    return mProtocol + "://" +
+      mCredentialsProvider.getCredentials(AuthScope.ANY).getUserPrincipal().getName() +
+      ":" + mCredentialsProvider.getCredentials(AuthScope.ANY).getPassword() +
+      "@" + mServerName + ":" + mPort + OCS_SHARE_PATH;
   }
 
   public <T> T exec(
