@@ -119,7 +119,6 @@ ownCloudZimlet.prototype.status = function(text, type) {
 
 ownCloudZimlet.prototype.saveAttachment = 
 function(name, url) {
-   ownCloudZimlet.prototype.createFolder(this);
    var client = new davlib.DavClient();
    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
    client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],  function(status, statusstr, content) 
@@ -250,10 +249,7 @@ function(itemId) {
 /* doDrop handler
  * */
 ownCloudZimlet.prototype.doDrop =
-function(zmObjects) {
-   console.log(zmObjects);
-   ownCloudZimlet.prototype.createFolder(this);
-   
+function(zmObjects) { 
    var client = new davlib.DavClient();
    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
    client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],  function(status, statusstr, content) 
