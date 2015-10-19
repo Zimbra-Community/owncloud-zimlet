@@ -37,7 +37,9 @@ ownCloudZimlet.prototype.init = function () {
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_username"))
    {
-      this.setUserProperty("owncloud_zimlet_username", '', true);   
+      var username = appCtxt.getActiveAccount().name.match(/.*@/);
+      username = username[0].replace('@','');
+      this.setUserProperty("owncloud_zimlet_username", username, true);   
    }
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = this.getUserProperty("owncloud_zimlet_username");
    
@@ -70,10 +72,8 @@ ownCloudZimlet.prototype.init = function () {
 		AjxPackage.require({name:"MailCore", callback:new AjxCallback(this, this.addAttachmentHandler)});
 	}
    
-   //Create the default folder, and create an active session with ownCloudif the password is stored OR
-   //Create the default folder if we use SSO (disable_password_storing)
-   if (   ( tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) ||
-   ( (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] != 'false') && (!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) )  )
+   //Create the default folder, and create an active session with ownCloudif the password is stored
+   if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
    {
       ownCloudZimlet.prototype.createFolder(this);
    }   
