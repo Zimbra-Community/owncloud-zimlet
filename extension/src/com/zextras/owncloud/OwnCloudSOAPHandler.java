@@ -5,7 +5,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openzal.zal.Account;
 import org.openzal.zal.Provisioning;
-import org.openzal.zal.log.ZimbraLog;
 import org.openzal.zal.soap.*;
 
 import java.io.IOException;
@@ -65,6 +64,13 @@ public class OwnCloudSOAPHandler implements SoapHandler
             subfiles.toLowerCase().equals("true")
           );
           break;
+        case GET_SHARE_BY_ID:
+          int shareId = Integer.parseInt(zimbraContext.getParameter("shareId", ""));
+          connector.getShareById(
+            soapResponse,
+            shareId
+          );
+          break;
         default:
           throw new RuntimeException("OwnCloud command '" + command.name() + "' not handled.");
       }
@@ -72,8 +78,6 @@ public class OwnCloudSOAPHandler implements SoapHandler
     {
       zimbraExceptionContainer.setException(ex);
     }
-
-    ZimbraLog.mailbox.info("OwnCloud Client created");
   }
 
   /**

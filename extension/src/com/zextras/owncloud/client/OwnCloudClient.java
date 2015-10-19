@@ -28,8 +28,6 @@ import org.apache.http.util.VersionInfo;
 
 import java.io.IOException;
 import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public class OwnCloudClient
 {

@@ -19,7 +19,8 @@
    */
   var OwnCloudAction = {
     GET_ALL_SHARES: 'getAllShares',
-    GET_SHARES_FROM_FOLDER: 'getSharesFromFolder'
+    GET_SHARES_FROM_FOLDER: 'getSharesFromFolder',
+    GET_SHARE_BY_ID: 'getShareById'
   };
 
   /**
@@ -56,6 +57,17 @@
     OwnCloudConnector._sendRequest(OwnCloudAction.GET_SHARES_FROM_FOLDER, soapDoc, callback, errorCallback);
   };
 
+  /**
+   * Get information about a given share.
+   * @param {string} shareId Share ID
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  OwnCloudConnector.prototype.getShareById = function(shareId, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+    soapDoc.set('shareId', shareId);
+    OwnCloudConnector._sendRequest(OwnCloudAction.GET_SHARE_BY_ID, soapDoc, callback, errorCallback);
+  };
 
   /**
    * Send the request to the server soap extension.
@@ -118,7 +130,12 @@
 
     if (action === OwnCloudAction.GET_ALL_SHARES) {
       callback.run(JSON.parse(response[action]));
-    } else if (action === OwnCloudAction.GET_SHARES_FROM_FOLDER)
+    }
+    else if (action === OwnCloudAction.GET_SHARES_FROM_FOLDER)
+    {
+      callback.run(JSON.parse(response[action]));
+    }
+    else if (action === OwnCloudAction.GET_SHARE_BY_ID)
     {
       callback.run(JSON.parse(response[action]));
     }

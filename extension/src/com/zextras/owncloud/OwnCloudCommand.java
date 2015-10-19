@@ -3,7 +3,8 @@ package com.zextras.owncloud;
 public enum OwnCloudCommand
 {
   GET_ALL_SHARES("getAllShares"),
-  GET_SHARES_FROM_FOLDER("getSharesFromFolder");
+  GET_SHARES_FROM_FOLDER("getSharesFromFolder"),
+  GET_SHARE_BY_ID("getShareById");
 
   private final String mAction;
 

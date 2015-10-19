@@ -6,9 +6,12 @@ import com.zextras.owncloud.client.OwnCloudClient;
 import com.zextras.owncloud.client.Share;
 import com.zextras.owncloud.client.encoders.ResponseEncoder;
 import com.zextras.owncloud.client.encoders.json.GetAllSharesRespEnc;
+import com.zextras.owncloud.client.encoders.json.GetShareByIdRespEnc;
 import com.zextras.owncloud.client.encoders.json.GetSharesFromFolderRespEnc;
+import com.zextras.owncloud.client.handlers.ShareResponseHandler;
 import com.zextras.owncloud.client.handlers.SharesResponseHandler;
 import com.zextras.owncloud.client.methods.HttpGetAllShares;
+import com.zextras.owncloud.client.methods.HttpGetShareById;
 import com.zextras.owncloud.client.methods.HttpGetSharesFromFolder;
 import com.zextras.util.UserPropertyExtractor;
 import org.openzal.zal.Account;
@@ -94,6 +97,23 @@ public class OwnCloudSoapConnector
       new SharesResponseHandler()
     );
     ResponseEncoder responseEncoder = new GetSharesFromFolderRespEnc(shares, soapResponse);
+    responseEncoder.encode();
+  }
+
+  /**
+   * Get information about a given share.
+   * @param soapResponse The response where the result will be put.
+   * @param shareId Share ID
+   * @throws IOException
+   */
+  public void getShareById(SoapResponse soapResponse, int shareId)
+    throws IOException
+  {
+    Share share = mOwnCloudClient.exec(
+      new HttpGetShareById(mOwnCloudClient, shareId),
+      new ShareResponseHandler()
+    );
+    ResponseEncoder responseEncoder = new GetShareByIdRespEnc(share, soapResponse);
     responseEncoder.encode();
   }
 }
