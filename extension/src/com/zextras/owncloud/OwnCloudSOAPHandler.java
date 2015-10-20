@@ -48,28 +48,51 @@ public class OwnCloudSOAPHandler implements SoapHandler
       switch (command)
       {
         case GET_ALL_SHARES:
-          connector.getAllShares(soapResponse);
+          {
+            connector.getAllShares(soapResponse);
+          }
           break;
         case GET_SHARES_FROM_FOLDER:
-          String path = zimbraContext.getParameter("path", "");
-          path = path.replace(" ", "%20");
-          String reshares = zimbraContext.getParameter("reshares", "false");
-          String subfiles = zimbraContext.getParameter("subfiles", "true");
-          if (path.equals("")) { throw new RuntimeException("Missing 'path' argument for '" + command.name() + "' command."); }
+          {
+            String path = zimbraContext.getParameter("path", "");
+            path = path.replace(" ", "%20");
+            String reshares = zimbraContext.getParameter("reshares", "false");
+            String subfiles = zimbraContext.getParameter("subfiles", "true");
+            if (path.equals(""))
+            {
+              throw new RuntimeException("Missing 'path' argument for '" + command.name() + "' command.");
+            }
 
-          connector.getSharesFromFolder(
-            soapResponse,
-            path,
-            reshares.toLowerCase().equals("true"),
-            subfiles.toLowerCase().equals("true")
-          );
+            connector.getSharesFromFolder(
+              soapResponse,
+              path,
+              reshares.toLowerCase().equals("true"),
+              subfiles.toLowerCase().equals("true")
+            );
+          }
           break;
         case GET_SHARE_BY_ID:
-          int shareId = Integer.parseInt(zimbraContext.getParameter("shareId", ""));
-          connector.getShareById(
-            soapResponse,
-            shareId
-          );
+          {
+            int shareId = Integer.parseInt(zimbraContext.getParameter("shareId", "-1"));
+            if (shareId == -1)
+            {
+              throw new RuntimeException("Missing 'shareId' argument for '" + command.name() + "' command.");
+            }
+            connector.getShareById(
+              soapResponse,
+              shareId
+            );
+          }
+          break;
+        case DELETE_SHARE_BY_ID:
+          {
+            int shareId = Integer.parseInt(zimbraContext.getParameter("shareId", "-1"));
+            if (shareId == -1)
+            {
+              throw new RuntimeException("Missing 'shareId' argument for '" + command.name() + "' command.");
+            }
+            connector.deleteShareById(soapResponse, shareId);
+          }
           break;
         default:
           throw new RuntimeException("OwnCloud command '" + command.name() + "' not handled.");

@@ -20,7 +20,8 @@
   var OwnCloudAction = {
     GET_ALL_SHARES: 'getAllShares',
     GET_SHARES_FROM_FOLDER: 'getSharesFromFolder',
-    GET_SHARE_BY_ID: 'getShareById'
+    GET_SHARE_BY_ID: 'getShareById',
+    DELETE_SHARE_BY_ID: 'deleteShareById'
   };
 
   /**
@@ -67,6 +68,18 @@
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('shareId', shareId);
     OwnCloudConnector._sendRequest(OwnCloudAction.GET_SHARE_BY_ID, soapDoc, callback, errorCallback);
+  };
+
+  /**
+   * Remove the given share.
+   * @param {string} shareId Share ID
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  OwnCloudConnector.prototype.deleteShareById = function(shareId, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+    soapDoc.set('shareId', shareId);
+    OwnCloudConnector._sendRequest(OwnCloudAction.DELETE_SHARE_BY_ID, soapDoc, callback, errorCallback);
   };
 
   /**
@@ -138,6 +151,10 @@
     else if (action === OwnCloudAction.GET_SHARE_BY_ID)
     {
       callback.run(JSON.parse(response[action]));
+    }
+    else if (action === OwnCloudAction.DELETE_SHARE_BY_ID)
+    {
+      callback.run(response[action])
     }
     else
     {
