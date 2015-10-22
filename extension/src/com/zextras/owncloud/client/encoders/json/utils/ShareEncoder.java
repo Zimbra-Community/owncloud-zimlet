@@ -1,5 +1,6 @@
 package com.zextras.owncloud.client.encoders.json.utils;
 
+
 import com.zextras.owncloud.client.Share;
 import org.json.JSONObject;
 

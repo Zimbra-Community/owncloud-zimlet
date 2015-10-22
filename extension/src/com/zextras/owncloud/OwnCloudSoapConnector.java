@@ -1,21 +1,20 @@
 package com.zextras.owncloud;
 
 
+import com.zextras.Zimlet;
 import com.zextras.dav.ZimletProperty;
 import com.zextras.owncloud.client.OwnCloudClient;
 import com.zextras.owncloud.client.Share;
+import com.zextras.owncloud.client.ShareType;
+import com.zextras.owncloud.client.handlers.CreateShareResponseHandler;
+import com.zextras.owncloud.client.responses.CreateShareResponse;
+import com.zextras.owncloud.client.responses.StatusResponse;
 import com.zextras.owncloud.client.encoders.ResponseEncoder;
-import com.zextras.owncloud.client.encoders.json.VoidResponseEnc;
-import com.zextras.owncloud.client.encoders.json.GetAllSharesRespEnc;
-import com.zextras.owncloud.client.encoders.json.GetShareByIdRespEnc;
-import com.zextras.owncloud.client.encoders.json.GetSharesFromFolderRespEnc;
+import com.zextras.owncloud.client.encoders.json.*;
 import com.zextras.owncloud.client.handlers.ShareResponseHandler;
 import com.zextras.owncloud.client.handlers.SharesResponseHandler;
-import com.zextras.owncloud.client.handlers.VoidResponseHandler;
-import com.zextras.owncloud.client.methods.HttpDeleteShareById;
-import com.zextras.owncloud.client.methods.HttpGetAllShares;
-import com.zextras.owncloud.client.methods.HttpGetShareById;
-import com.zextras.owncloud.client.methods.HttpGetSharesFromFolder;
+import com.zextras.owncloud.client.handlers.StatusResponseHandler;
+import com.zextras.owncloud.client.methods.*;
 import com.zextras.util.UserPropertyExtractor;
 import org.openzal.zal.Account;
 import org.openzal.zal.soap.SoapResponse;
@@ -28,13 +27,11 @@ import java.util.Map;
 
 public class OwnCloudSoapConnector
 {
-  private static String ZIMLET_NAME = "tk_barrydegraaff_owncloud_zimlet";
-
   private final OwnCloudClient mOwnCloudClient;
 
   public OwnCloudSoapConnector(Account account)
   {
-    final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, ZIMLET_NAME);
+    final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, Zimlet.NAME);
     if (
         userProperties.get(ZimletProperty.DAV_SERVER_NAME) == null ||
         userProperties.get(ZimletProperty.DAV_SERVER_PORT) == null ||
@@ -47,9 +44,10 @@ public class OwnCloudSoapConnector
     }
 
     final URL url;
+    final int port = Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT));
     try
     {
-      url = new URL(userProperties.get(ZimletProperty.DAV_SERVER_NAME));
+      url = new URL(userProperties.get(ZimletProperty.DAV_SERVER_NAME) + ":" + port);
     } catch (MalformedURLException e)
     {
       throw new RuntimeException(e);
@@ -58,7 +56,7 @@ public class OwnCloudSoapConnector
     mOwnCloudClient = new OwnCloudClient(
       url.getProtocol(),
       url.getHost(),
-      Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
+      port,
       userProperties.get(ZimletProperty.DAV_USER_USERNAME),
       userProperties.get(ZimletProperty.DAV_USER_PASSWORD)
     );
@@ -76,7 +74,7 @@ public class OwnCloudSoapConnector
       new HttpGetAllShares(mOwnCloudClient),
       new SharesResponseHandler()
     );
-    ResponseEncoder responseEncoder = new GetAllSharesRespEnc(shares, soapResponse);
+    ResponseEncoder responseEncoder = new GetAllSharesRespEnc(soapResponse, shares);
     responseEncoder.encode();
   }
 
@@ -93,13 +91,14 @@ public class OwnCloudSoapConnector
     String path,
     boolean reshares,
     boolean subfiles
-  ) throws IOException
+  )
+    throws IOException
   {
     List<Share> shares = mOwnCloudClient.exec(
       new HttpGetSharesFromFolder(mOwnCloudClient, path, reshares, subfiles),
       new SharesResponseHandler()
     );
-    ResponseEncoder responseEncoder = new GetSharesFromFolderRespEnc(shares, soapResponse);
+    ResponseEncoder responseEncoder = new GetSharesFromFolderRespEnc(soapResponse, shares);
     responseEncoder.encode();
   }
 
@@ -116,7 +115,7 @@ public class OwnCloudSoapConnector
       new HttpGetShareById(mOwnCloudClient, shareId),
       new ShareResponseHandler()
     );
-    ResponseEncoder responseEncoder = new GetShareByIdRespEnc(share, soapResponse);
+    ResponseEncoder responseEncoder = new GetShareByIdRespEnc(soapResponse, share);
     responseEncoder.encode();
   }
 
@@ -129,11 +128,95 @@ public class OwnCloudSoapConnector
   public void deleteShareById(SoapResponse soapResponse, int shareId)
     throws IOException
   {
-    mOwnCloudClient.exec(
+    StatusResponse response = mOwnCloudClient.exec(
       new HttpDeleteShareById(mOwnCloudClient, shareId),
-      new VoidResponseHandler()
+      new StatusResponseHandler()
     );
-    VoidResponseEnc responseEncoder = new VoidResponseEnc(OwnCloudCommand.DELETE_SHARE_BY_ID, soapResponse);
+    StatusRespEnc responseEncoder = new StatusRespEnc(soapResponse, OwnCloudCommand.DELETE_SHARE_BY_ID, response);
+    responseEncoder.encode();
+  }
+
+  public void updateShare(
+    SoapResponse soapResponse,
+    int shareId,
+    /* @Nullable */ String permissions,
+    /* @Nullable */ String password,
+    /* @Nullable */ String publicUpload,
+    /* @Nullable */ String expireDate
+  )
+    throws IOException
+  {
+    StatusResponse statusPermissions = null;
+    StatusResponse statusPassword = null;
+    StatusResponse statusPublicUpload = null;
+    StatusResponse statusExpireDate = null;
+    if (permissions != null)
+    {
+      statusPermissions = mOwnCloudClient.exec(
+        new HttpUpdateShare(mOwnCloudClient, shareId, "permissions", Integer.parseInt(permissions, 10)),
+        new StatusResponseHandler()
+      );
+    }
+    if (password != null)
+    {
+      statusPassword = mOwnCloudClient.exec(
+        new HttpUpdateShare(mOwnCloudClient, shareId, "password", password),
+        new StatusResponseHandler()
+      );
+    }
+    if (publicUpload != null)
+    {
+      statusPublicUpload = mOwnCloudClient.exec(
+        new HttpUpdateShare(mOwnCloudClient, shareId, "publicUpload", Boolean.parseBoolean(publicUpload)),
+        new StatusResponseHandler()
+      );
+    }
+    if (expireDate != null)
+    {
+      statusExpireDate = mOwnCloudClient.exec(
+        new HttpUpdateShare(mOwnCloudClient, shareId, "expireDate", expireDate),
+        new StatusResponseHandler()
+      );
+    }
+
+    StatusRespEnc responseEncoder = new UpdateShareRespEnc(
+      soapResponse,
+      OwnCloudCommand.UPDATE_SHARE,
+      statusPermissions,
+      statusPassword,
+      statusPublicUpload,
+      statusExpireDate
+    );
+    responseEncoder.encode();
+  }
+
+  public void createShare(
+    SoapResponse soapResponse,
+    String path,
+    ShareType shareType,
+    String shareWith,
+    boolean publicUpload,
+    String password,
+    Permission permissions
+  )
+    throws IOException
+  {
+    CreateShareResponse response = mOwnCloudClient.exec(
+      new HttpCreateShare(
+        mOwnCloudClient,
+        path,
+        shareType,
+        shareWith,
+        publicUpload,
+        password,
+        permissions
+      ),
+      new CreateShareResponseHandler()
+    );
+    CreateShareRespEnc responseEncoder = new CreateShareRespEnc(
+      soapResponse,
+      response
+    );
     responseEncoder.encode();
   }
 }

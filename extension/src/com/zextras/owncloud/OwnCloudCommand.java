@@ -5,7 +5,9 @@ public enum OwnCloudCommand
   GET_ALL_SHARES("getAllShares"),
   GET_SHARES_FROM_FOLDER("getSharesFromFolder"),
   GET_SHARE_BY_ID("getShareById"),
-  DELETE_SHARE_BY_ID("deleteShareById");
+  CREATE_SHARE("createShare"),
+  DELETE_SHARE_BY_ID("deleteShareById"),
+  UPDATE_SHARE("updateShare");
 
   private final String mAction;
 

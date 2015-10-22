@@ -2,15 +2,13 @@ package com.zextras.owncloud.client.methods;
 
 
 import com.zextras.owncloud.client.OwnCloudClient;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpGet;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class HttpGetAllShares extends HttpRequestBase
+public class HttpGetAllShares extends HttpGet
 {
-  public static final String METHOD_NAME = "GET";
-
   /**
    * Get all the shares from the user.
    * @param client The {@see OwnCloudClient} client
@@ -24,11 +22,5 @@ public class HttpGetAllShares extends HttpRequestBase
     {
       throw new RuntimeException(e);
     }
-  }
-
-  @Override
-  public String getMethod()
-  {
-    return METHOD_NAME;
   }
 }

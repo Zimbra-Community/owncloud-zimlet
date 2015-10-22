@@ -12,7 +12,7 @@ public class GetShareByIdRespEnc implements ResponseEncoder
   private final Share mShare;
   private final SoapResponse mSoapResponse;
 
-  public GetShareByIdRespEnc(Share share, SoapResponse soapResponse)
+  public GetShareByIdRespEnc(SoapResponse soapResponse, Share share)
   {
     mShare = share;
 

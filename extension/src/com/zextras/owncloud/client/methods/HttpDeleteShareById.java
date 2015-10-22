@@ -2,15 +2,13 @@ package com.zextras.owncloud.client.methods;
 
 
 import com.zextras.owncloud.client.OwnCloudClient;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpDelete;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class HttpDeleteShareById extends HttpRequestBase
+public class HttpDeleteShareById extends HttpDelete
 {
-  public static final String METHOD_NAME = "DELETE";
-
   /**
    * Get information about a given share.
    * @param client The {@see OwnCloudClient} client
@@ -25,11 +23,5 @@ public class HttpDeleteShareById extends HttpRequestBase
     {
       throw new RuntimeException(e);
     }
-  }
-
-  @Override
-  public String getMethod()
-  {
-    return METHOD_NAME;
   }
 }

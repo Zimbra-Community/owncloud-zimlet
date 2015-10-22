@@ -1,6 +1,7 @@
 package com.zextras.owncloud;
 
 
+import com.zextras.owncloud.client.ShareType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openzal.zal.Account;
@@ -55,13 +56,13 @@ public class OwnCloudSOAPHandler implements SoapHandler
         case GET_SHARES_FROM_FOLDER:
           {
             String path = zimbraContext.getParameter("path", "");
-            path = path.replace(" ", "%20");
-            String reshares = zimbraContext.getParameter("reshares", "false");
-            String subfiles = zimbraContext.getParameter("subfiles", "true");
             if (path.equals(""))
             {
               throw new RuntimeException("Missing 'path' argument for '" + command.name() + "' command.");
             }
+            path = path.replace(" ", "%20");
+            String reshares = zimbraContext.getParameter("reshares", "false");
+            String subfiles = zimbraContext.getParameter("subfiles", "true");
 
             connector.getSharesFromFolder(
               soapResponse,
@@ -84,6 +85,39 @@ public class OwnCloudSOAPHandler implements SoapHandler
             );
           }
           break;
+        case CREATE_SHARE:
+          String path = zimbraContext.getParameter("path", "");
+          if (path.equals(""))
+          {
+            throw new RuntimeException("Missing 'path' argument for '" + command.name() + "' command.");
+          }
+          ShareType shareType = ShareType.fromCode(Integer.parseInt(zimbraContext.getParameter("shareType", "")));
+          String shareWith = zimbraContext.getParameter("path", null);
+          if ((shareType == ShareType.USER || shareType == ShareType.GROUP) && shareWith == null)
+          {
+            throw new RuntimeException("Missing 'shareType' argument for '" + command.name() + "' command with share type '" + shareType.name() + "'.");
+          }
+          boolean publicUpload = Boolean.parseBoolean(zimbraContext.getParameter("publicUpload", "false"));
+          String password = zimbraContext.getParameter("password", null);
+          Permission permissions;
+          if (shareType == ShareType.PUBLIC_LINK)
+          {
+            permissions = Permission.fromCode(Integer.parseInt(zimbraContext.getParameter("permissions", "1")));
+          }
+          else
+          {
+            permissions = Permission.fromCode(Integer.parseInt(zimbraContext.getParameter("permissions", "31")));
+          }
+          connector.createShare(
+            soapResponse,
+            path,
+            shareType,
+            shareWith,
+            publicUpload,
+            password,
+            permissions
+          );
+          break;
         case DELETE_SHARE_BY_ID:
           {
             int shareId = Integer.parseInt(zimbraContext.getParameter("shareId", "-1"));
@@ -93,6 +127,21 @@ public class OwnCloudSOAPHandler implements SoapHandler
             }
             connector.deleteShareById(soapResponse, shareId);
           }
+          break;
+        case UPDATE_SHARE:
+          int shareId = Integer.parseInt(zimbraContext.getParameter("shareId", "-1"));
+          if (shareId == -1)
+          {
+            throw new RuntimeException("Missing 'shareId' argument for '" + command.name() + "' command.");
+          }
+          connector.updateShare(
+            soapResponse,
+            shareId,
+            zimbraContext.getParameter("permissions", null),
+            zimbraContext.getParameter("password", null),
+            zimbraContext.getParameter("publicUpload", null),
+            zimbraContext.getParameter("expireDate", null)
+          );
           break;
         default:
           throw new RuntimeException("OwnCloud command '" + command.name() + "' not handled.");

@@ -1,5 +1,6 @@
 package com.zextras.dav;
 
+import com.zextras.Zimlet;
 import com.zextras.util.UserPropertyExtractor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,8 +23,6 @@ public class DavSOAPHandler implements SoapHandler
 {
   private static String NAMESPACE = "urn:zimbraAccount";
   public static final QName REQUEST_QNAME = new QName("davSoapConnector", NAMESPACE);
-
-  private static String ZIMLET_NAME = "tk_barrydegraaff_owncloud_zimlet";
 
   private final Provisioning mProvisioning;
 
@@ -48,7 +47,7 @@ public class DavSOAPHandler implements SoapHandler
     final String accountId = zimbraContext.getAuthenticatedAccontId();
     final Account account = mProvisioning.assertAccountById(accountId);
 
-    final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, ZIMLET_NAME);
+    final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, Zimlet.NAME);
 
     if (
       userProperties.get(ZimletProperty.DAV_SERVER_NAME) == null ||

@@ -1,5 +1,6 @@
 package com.zextras.owncloud.client;
 
+
 import com.github.sardine.impl.SardineRedirectStrategy;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;

@@ -21,7 +21,9 @@
     GET_ALL_SHARES: 'getAllShares',
     GET_SHARES_FROM_FOLDER: 'getSharesFromFolder',
     GET_SHARE_BY_ID: 'getShareById',
-    DELETE_SHARE_BY_ID: 'deleteShareById'
+    CREATE_SHARE: 'createShare',
+    DELETE_SHARE_BY_ID: 'deleteShareById',
+    UPDATE_SHARE: 'updateShare'
   };
 
   /**
@@ -71,6 +73,40 @@
   };
 
   /**
+   * Share a new file/folder with a user/group or as a public link.
+   * @param {string} path Path to the file/folder which should be shared.
+   * @param {number} shareType 0 = user; 1 = group; 3 = public link; 6 = federated cloud share
+   * @param {string} shareWith User/Group id with which the file should be shared.
+   * @param {boolean} publicUpload Allow public upload to a public shared folder.
+   * @param {string=} password Password to pretect public link Share with.
+   * @param {number} permissions 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all
+   *                             (default: 31, for public shares: 1)
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  OwnCloudConnector.prototype.createShare = function(
+    path,
+    shareType,
+    shareWith,
+    publicUpload,
+    password,
+    permissions,
+    callback,
+    errorCallback
+  ) {
+    publicUpload = (publicUpload === true || publicUpload === false)? publicUpload : void 0;
+
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+    soapDoc.set('path', path);
+    soapDoc.set('shareType', shareType);
+    soapDoc.set('shareWith', shareWith);
+    soapDoc.set('publicUpload', publicUpload);
+    soapDoc.set('password', password);
+    soapDoc.set('permissions', permissions);
+    OwnCloudConnector._sendRequest(OwnCloudAction.CREATE_SHARE, soapDoc, callback, errorCallback);
+  };
+
+  /**
    * Remove the given share.
    * @param {string} shareId Share ID
    * @param {AjxCallback} callback
@@ -80,6 +116,41 @@
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('shareId', shareId);
     OwnCloudConnector._sendRequest(OwnCloudAction.DELETE_SHARE_BY_ID, soapDoc, callback, errorCallback);
+  };
+
+  /**
+   * Update a given share.
+   * @param {string} shareId Share ID
+   * @param {number=null} permissions Update permissions {@see OwnCloudConnector.prototype.createShare}.
+   * @param {string=null} password Updated password for public link share.
+   * @param {boolean=null} publicUpload enable(true)/disable(false) public upload for public shares.
+   * @param {string=null} expireDate Set a expire date for public link shares. This argument expects a well formatted
+   *                                 date string eg. 'YYYY-MM-DD'
+   * @param {AjxCallback} callback
+   * @param {AjxCallback} errorCallback
+   */
+  OwnCloudConnector.prototype.updateShare = function(
+    shareId,
+    permissions,
+    password,
+    publicUpload,
+    expireDate,
+    callback,
+    errorCallback
+  ) {
+    permissions = permissions || void 0;
+    password = password || void 0;
+    publicUpload = (publicUpload === true || publicUpload === false)? publicUpload : void 0;
+    expireDate = expireDate || void 0;
+
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+    soapDoc.set('shareId', shareId);
+    if (typeof permissions !== 'undefined') { soapDoc.set('permissions', permissions); }
+    if (typeof password !== 'undefined') { soapDoc.set('password', password); }
+    if (typeof publicUpload !== 'undefined') { soapDoc.set('publicUpload', publicUpload); }
+    if (typeof expireDate !== 'undefined') { soapDoc.set('expireDate', expireDate); }
+
+    OwnCloudConnector._sendRequest(OwnCloudAction.UPDATE_SHARE, soapDoc, callback, errorCallback);
   };
 
   /**
@@ -144,20 +215,22 @@
     if (action === OwnCloudAction.GET_ALL_SHARES) {
       callback.run(JSON.parse(response[action]));
     }
-    else if (action === OwnCloudAction.GET_SHARES_FROM_FOLDER)
-    {
+    else if (action === OwnCloudAction.GET_SHARES_FROM_FOLDER) {
       callback.run(JSON.parse(response[action]));
     }
-    else if (action === OwnCloudAction.GET_SHARE_BY_ID)
-    {
+    else if (action === OwnCloudAction.GET_SHARE_BY_ID) {
       callback.run(JSON.parse(response[action]));
     }
-    else if (action === OwnCloudAction.DELETE_SHARE_BY_ID)
-    {
-      callback.run(response[action])
+    else if (action === OwnCloudAction.CREATE_SHARE) {
+      callback.run(JSON.parse(response[action]))
     }
-    else
-    {
+    else if (action === OwnCloudAction.DELETE_SHARE_BY_ID) {
+      callback.run(JSON.parse(response[action]))
+    }
+    else if (action === OwnCloudAction.UPDATE_SHARE) {
+      callback.run(JSON.parse(response[action]))
+    }
+    else {
       errorCallback.run(new Error('OwnCloud Action "' + action + '" not handled.'));
     }
   };

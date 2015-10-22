@@ -15,7 +15,7 @@ public class GetAllSharesRespEnc implements ResponseEncoder
   private final List<Share> mShares;
   private final SoapResponse mSoapResponse;
 
-  public GetAllSharesRespEnc(List<Share> shares, SoapResponse soapResponse)
+  public GetAllSharesRespEnc(SoapResponse soapResponse, List<Share> shares)
   {
     mShares = shares;
 

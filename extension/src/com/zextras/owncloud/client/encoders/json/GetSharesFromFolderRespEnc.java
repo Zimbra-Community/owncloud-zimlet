@@ -15,10 +15,9 @@ public class GetSharesFromFolderRespEnc implements ResponseEncoder
   private final List<Share> mShares;
   private final SoapResponse mSoapResponse;
 
-  public GetSharesFromFolderRespEnc(List<Share> shares, SoapResponse soapResponse)
+  public GetSharesFromFolderRespEnc(SoapResponse soapResponse, List<Share> shares)
   {
     mShares = shares;
-
     mSoapResponse = soapResponse;
   }
 
