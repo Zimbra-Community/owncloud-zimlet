@@ -1,6 +1,7 @@
 package com.zextras.owncloud;
 
 
+import com.zextras.SoapUtil;
 import com.zextras.owncloud.client.ShareType;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -163,24 +164,8 @@ public class OwnCloudSOAPHandler implements SoapHandler
     ZimbraExceptionContainer errorContainer
   )
   {
-    resp.setValue("error", encodeError(error).toString());
+    resp.setValue("error", SoapUtil.encodeError(error).toString());
     errorContainer.setException(error);
-  }
-
-  private static JSONObject encodeError(Throwable error)
-  {
-    JSONObject errorObj = new JSONObject();
-    JSONArray stackArr = new JSONArray();
-    for (StackTraceElement el : error.getStackTrace()) {
-      stackArr.put(el.toString());
-    }
-    errorObj.put("message", error.getMessage());
-    errorObj.put("trace", stackArr);
-    if (error.getCause() != null)
-    {
-      errorObj.put("cause", encodeError(error.getCause()));
-    }
-    return errorObj;
   }
 
   /**

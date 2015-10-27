@@ -6,7 +6,7 @@
    */
   var URN = 'urn:zimbraAccount';
   /**
-   * Handler name registerd as zimbra SOAP Extension
+   * Handler name registered as zimbra SOAP Extension
    * @const
    * @type {string}
    */
@@ -24,6 +24,28 @@
     MOVE: 'MOVE',
     PROPFIND: 'PROPFIND',
     PUT: 'PUT'
+  };
+
+  var ZimbraItemType = {
+    UNKNOWN: -1,
+    FOLDER: 1,
+    SEARCHFOLDER: 2,
+    TAG: 3,
+    CONVERSATION: 4,
+    MESSAGE: 5,
+    CONTACT: 6,
+    /** @deprecated */ INVITE: 7,
+    DOCUMENT: 8,
+    NOTE: 9,
+    FLAG: 10,
+    APPOINTMENT: 11,
+    VIRTUAL_CONVERSATION: 12,
+    MOUNTPOINT: 13,
+    /** @deprecated */ WIKI: 14,
+    TASK: 15,
+    CHAT: 16,
+    COMMENT: 17,
+    LINK: 18
   };
 
   /**
@@ -134,8 +156,8 @@
    * @param {string} path
    * @param {string} destPath
    * @param {boolean} overwrite
-   * @param {AjxCallback} callback
-   * @param {AjxCallback} errorCallback
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.copy = function(path, destPath, overwrite, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
@@ -150,8 +172,8 @@
    * Perform a DELETE request
    * Remove a resource (recursively)
    * @param {string} path
-   * @param {AjxCallback} callback
-   * @param {AjxCallback} errorCallback
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.delete = function(path, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
@@ -163,8 +185,8 @@
    * Perform a GET request
    * Retrieve the contents of a resource
    * @param {string} path
-   * @param {AjxCallback} callback
-   * @param {AjxCallback} errorCallback
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.get = function(path, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
@@ -176,8 +198,8 @@
    * Perform a MKCOL request
    * Create a collection
    * @param {string} path
-   * @param {AjxCallback} callback
-   * @param {AjxCallback} errorCallback
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.mkcol = function(path, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN),
@@ -192,8 +214,8 @@
    * @param {string} path
    * @param {string} destPath
    * @param {boolean} overwrite
-   * @param {AjxCallback} callback
-   * @param {AjxCallback} errorCallback
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.move = function(path, destPath, overwrite, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
@@ -209,8 +231,8 @@
    * Read the metadata of a resource (optionally including its children)
    * @param {string} path
    * @param {number} depth, control recursion default 0 (only returning the properties for the resource itself)
-   * @param {AjxCallback} callback
-   * @param {AjxCallback} errorCallback
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.propfind = function(path, depth, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
@@ -225,8 +247,8 @@
    * @param {string} path
    * @param {string} data, control recursion default 0 (only returning the properties for the resource itself)
    * @param {string} contentType
-   * @param {AjxCallback} callback
-   * @param {AjxCallback} errorCallback
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.put = function(path, data, contentType, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
@@ -240,8 +262,8 @@
    * Send the request to the server soap extension.
    * @param {string} action, one defined into {@see DavAction}
    * @param {AjxSoapDoc} soapDoc
-   * @param {AjxCallback} callback
-   * @param {AjxCallback} errorCallback
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
    * @private
    * @static
    */

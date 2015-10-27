@@ -1,10 +1,16 @@
 package com.zextras.dav;
 
+
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
+import com.github.sardine.impl.SardineException;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.openzal.zal.Item;
+import org.openzal.zal.MailItemType;
+import org.openzal.zal.Mailbox;
+import org.openzal.zal.MailboxManager;
 
 import javax.xml.namespace.QName;
 import java.io.BufferedReader;
@@ -43,15 +49,19 @@ public class DavSoapConnector
 
   /**
    * Build a complete path suitable for a DAV client.
+   * The path will be sanitized.
    * @param path The path suffix.
    * @return The complete DAV Path.
    */
-  private String buildUrl(String path)
+  protected String buildUrl(String path)
   {
+    final String url;
     if (path.startsWith(mBasePath))
-      return mUrl + ":" + mPort + path;
+      url = mUrl + ":" + mPort + path;
     else
-      return mUrl + ":" + mPort + mBasePath + path;
+      url = mUrl + ":" + mPort + mBasePath + path;
+
+    return url.replace(" ", "%20");
   }
 
   /**
@@ -136,11 +146,18 @@ public class DavSoapConnector
    * @return True if the command is not failed.
    * @throws IOException
    */
-  public boolean mkcol(String path)
+  public DavStatus mkcol(String path)
     throws IOException
   {
-    mSardine.createDirectory(buildUrl(path));
-    return true;
+    try
+    {
+      mSardine.createDirectory(buildUrl(path));
+    }
+    catch (SardineException se)
+    {
+      return DavStatus.fromCode(se.getStatusCode());
+    }
+    return DavStatus.Created;
   }
 
   /**
@@ -210,13 +227,21 @@ public class DavSoapConnector
    * @param contentType
    * @throws IOException
    */
-  public void put(String path, InputStream inputStream, String contentType)
+  public DavStatus put(String path, InputStream inputStream, String contentType)
     throws IOException
   {
-    mSardine.put(
-      buildUrl(path),
-      inputStream,
-      contentType
-    );
+    try
+    {
+      mSardine.put(
+        buildUrl(path),
+        inputStream,
+        contentType
+      );
+    }
+    catch (SardineException se)
+    {
+      return DavStatus.fromCode(se.getStatusCode());
+    }
+    return DavStatus.Created;
   }
 }

@@ -1,31 +1,33 @@
-package com.zextras.dav;
+package com.zextras.dav4zimbra;
 
 import com.zextras.SoapUtil;
 import com.zextras.Zimlet;
+import com.zextras.dav.DavStatus;
+import com.zextras.dav.ZimletProperty;
 import com.zextras.util.UserPropertyExtractor;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.openzal.zal.Account;
+import org.openzal.zal.MailItemType;
 import org.openzal.zal.Provisioning;
 import org.openzal.zal.soap.*;
-import org.openzal.zal.soap.QName;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
  * SOAP Handler to interface a class which act as a client, with the SOAP infrastructure.
  */
-public class DavSOAPHandler implements SoapHandler
+public class Dav4ZimbraSOAPHandler implements SoapHandler
 {
   private static String NAMESPACE = "urn:zimbraAccount";
-  public static final QName REQUEST_QNAME = new QName("davSoapConnector", NAMESPACE);
+  public static final QName REQUEST_QNAME = new QName("dav4zimbra", NAMESPACE);
 
   private final Provisioning mProvisioning;
 
-  public DavSOAPHandler()
+  public Dav4ZimbraSOAPHandler()
   {
     mProvisioning = new Provisioning();
   }
@@ -43,8 +45,8 @@ public class DavSOAPHandler implements SoapHandler
     ZimbraExceptionContainer zimbraExceptionContainer
   )
   {
-    final String accountId = zimbraContext.getAuthenticatedAccontId();
-    final Account account = mProvisioning.assertAccountById(accountId);
+    final String zimbraAccountId = zimbraContext.getAuthenticatedAccontId();
+    final Account account = mProvisioning.assertAccountById(zimbraAccountId);
 
     final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, Zimlet.NAME);
 
@@ -85,20 +87,21 @@ public class DavSOAPHandler implements SoapHandler
       }
     }
 
-    final DavSoapConnector connector = new DavSoapConnector(
+    final Dav4ZimbraConnector connector = new Dav4ZimbraConnector(
       userProperties.get(ZimletProperty.DAV_SERVER_NAME),
       Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
       userProperties.get(ZimletProperty.DAV_SERVER_PATH),
       userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-      userProperties.get(ZimletProperty.DAV_USER_PASSWORD)
+      userProperties.get(ZimletProperty.DAV_USER_PASSWORD),
+      userProperties.get(ZimletProperty.DAV_MAIL_FOLDER)
     );
 
     final String actionStr = zimbraContext.getParameter("action", "");
     final String path = zimbraContext.getParameter("path", null);
-    final DavCommand command;
+    final Dav4ZimbraCommand command;
     try
     {
-      command = DavCommand.fromString(actionStr);
+      command = Dav4ZimbraCommand.fromString(actionStr);
     } catch (RuntimeException ex)
     {
       handleError(ex, soapResponse, zimbraExceptionContainer);
@@ -109,99 +112,50 @@ public class DavSOAPHandler implements SoapHandler
     {
       switch (command)
       {
-        case GET:
+        case SEND_ITEM_TO_DAV:
           {
-            soapResponse.setValue(
-              "GET",
-              connector.get(
-                zimbraContext.getParameter("path", "/")
-              ).toString()
+            String typeString = zimbraContext.getParameter("itemType", null);
+            if (typeString == null)
+            {
+              throw new RuntimeException("Item type not provided for SEND_ITEM_TO_DAV action.");
+            }
+            String idString = zimbraContext.getParameter("itemId", null);
+            if (idString == null)
+            {
+              throw new RuntimeException("Item ID not provided for SEND_ITEM_TO_DAV action.");
+            }
+            DavStatus status = connector.sendItemToDav(
+              zimbraAccountId,
+              MailItemType.of(typeString),
+              Integer.parseInt(idString)
             );
+            soapResponse.setValue(command.value(), status.getCode());
           }
           break;
-        case PUT:
+        case SEND_MAIL_ATTACHMENT_TO_DAV:
+          String midString = zimbraContext.getParameter("mid", null);
+          if (midString == null)
           {
-            if (path == null)
-            {
-              throw new RuntimeException("Path not provided for PUT DAV action.");
-            }
-            String data = zimbraContext.getParameter("data", null);
-            String contentType = zimbraContext.getParameter("contentType", "text/xml,charset=UTF-8");
-            DavStatus status = connector.put(
-              path,
-              new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)),
-              contentType
-            );
-            soapResponse.setValue(command.name(), status.getCode());
+            throw new RuntimeException("Item type not provided for SEND_ITEM_TO_DAV action.");
           }
-          break;
-        case PROPFIND:
+          String partString = zimbraContext.getParameter("part", null);
+          if (partString == null)
           {
-            soapResponse.setValue(
-              command.name(),
-              connector.propfind(
-                zimbraContext.getParameter("path", "/"),
-                Integer.parseInt(zimbraContext.getParameter("depth", "1"))
-              ).toString()
-            );
+            throw new RuntimeException("Item ID not provided for SEND_ITEM_TO_DAV action.");
           }
-          break;
-        case DELETE:
-          {
-            if (path == null)
-            {
-              throw new RuntimeException("Path not provided for DELETE DAV action.");
-            }
-            connector.delete(path);
-            soapResponse.setValue(command.name(), true);
-          }
-          break;
-        case MKCOL:
-          {
-            if (path == null)
-            {
-              throw new RuntimeException("Path not provided for MKCOL DAV action.");
-            }
-            DavStatus status = connector.mkcol(path);
-            soapResponse.setValue(command.name(), status.getCode());
-          }
-          break;
-        case COPY:
-          {
-            if (path == null)
-            {
-              throw new RuntimeException("Source path not provided for COPY DAV action.");
-            }
-            String cpDestPath = zimbraContext.getParameter("destPath", null);
-            if (cpDestPath == null)
-            {
-              throw new RuntimeException("Destination path not provided for COPY DAV action.");
-            }
-            boolean cpOverwrite = Boolean.parseBoolean(zimbraContext.getParameter("overwrite", "false"));
-            connector.copy(path, cpDestPath, cpOverwrite);
-            soapResponse.setValue(command.name(), true);
-          }
-          break;
-        case MOVE:
-          {
-            if (path == null)
-            {
-              throw new RuntimeException("Source path not provided for MOVE DAV action.");
-            }
-            String mvDestPath = zimbraContext.getParameter("destPath", null);
-            if (mvDestPath == null)
-            {
-              throw new RuntimeException("Destination path not provided for MOVE DAV action.");
-            }
-            boolean mvOverwrite = Boolean.parseBoolean(zimbraContext.getParameter("overwrite", "false"));
-            connector.move(path, mvDestPath, mvOverwrite);
-            soapResponse.setValue(command.name(), true);
-          }
+          String fileNameString = zimbraContext.getParameter("fileName", null);
+          DavStatus status = connector.sendMailAttachmentToDav(
+            zimbraAccountId,
+            Integer.parseInt(midString),
+            partString,
+            fileNameString
+          );
+          soapResponse.setValue(command.value(), status.getCode());
           break;
         default:
-          throw new RuntimeException("DAV command '" + command.name() + "' not handled.");
+          throw new RuntimeException("Dav4Zimbra command '" + command.name() + "' not handled.");
       }
-    } catch (IOException ex)
+    } catch (Exception ex)
     {
       handleError(ex, soapResponse, zimbraExceptionContainer);
     }

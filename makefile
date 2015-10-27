@@ -7,7 +7,7 @@ package: clean zimlet extension
 	cp extension/dav-soap-connector-extension.jar dist/owncloud-extension/
 	cp extension/lib/*.jar dist/owncloud-extension/
 	rm dist/owncloud-extension/servlet-api.jar
-	rm dist/owncloud-extension/zal*.jar
+	rm dist/owncloud-extension/mail.jar
 	tar --owner=root --group=root -czf owncloud-extension.tar.gz -C dist owncloud-extension
 
 extension:

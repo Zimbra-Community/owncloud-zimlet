@@ -9,5 +9,5 @@ public class ZimletProperty
   public static String DAV_SERVER_PATH = "owncloud_zimlet_server_path";
 
 //  public static String STORE_PASSWORD = "owncloud_zimlet_store_pass";
-//  public static String DAV_MAIL_FOLDER = "owncloud_zimlet_default_folder";
+  public static String DAV_MAIL_FOLDER = "owncloud_zimlet_default_folder";
 }

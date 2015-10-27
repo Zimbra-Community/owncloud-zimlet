@@ -26,16 +26,26 @@ tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype = new ZmZimletBase();
 tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype.constructor = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 
+/**
+ * Initialize the context of the OwnCloud zimlet.
+ * This method is invoked by Zimbra.
+ */
 ownCloudZimlet.prototype.init =
   function () {
     this.davConnector = new DavConnector();
     this.ownCloudConnector = new OwnCloudConnector();
-    ownCloudZimlet.version=this._zimletContext.version;
+    this.davForZimbraConnector = new DavForZimbraConnector();
+
+    this._defaultPropfindErrCbk = new AjxCallback(
+      this,
+      this._handlePropfindError
+    );
+
     //Set global config
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] = this._zimletContext.getConfig("proxy_location");
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = this._zimletContext.getConfig("proxy_location") + this._zimletContext.getConfig("dav_path");
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_link_sharing'] = this._zimletContext.getConfig("disable_link_sharing");
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this._zimletContext.getConfig("disable_password_storing");
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] = this.getConfig('proxy_location');
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = this.getConfig('proxy_location') + this.getConfig('dav_path');
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_link_sharing'] = this.getConfig('disable_link_sharing');
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this.getConfig('disable_password_storing');
 
     //Set default value
     if(!this.getUserProperty("owncloud_zimlet_username"))
@@ -58,120 +68,139 @@ ownCloudZimlet.prototype.init =
     }
     tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");
 
-    //Set default value
-    if(!this.getUserProperty("owncloud_zimlet_store_pass"))
-    {
-      this.setUserProperty("owncloud_zimlet_store_pass", 'false', true);
-    }
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_store_pass'] = this.getUserProperty("owncloud_zimlet_store_pass");
-
     try {
       this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
     } catch (err) { }
 
     if (appCtxt.get(ZmSetting.MAIL_ENABLED)) {
-      AjxPackage.require({name:"MailCore", callback:new AjxCallback(this, this.addAttachmentHandler)});
+      AjxPackage.require({
+        name: 'MailCore',
+        callback: new AjxCallback(this, this.addAttachmentHandler)
+      });
     }
 
-    //Create the default folder, and create an active session with ownCloudif the password is stored OR
-    //Create the default folder if we use SSO (disable_password_storing)
-    if (   ( tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) ||
-      ( (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] != 'false') && (!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) )  )
-    {
-      ownCloudZimlet.prototype.createFolder(this);
-    }
+    this.createFolder();
   };
 
+/**
+ * Attach the handler fired when the attachment is displayed on a message.
+ */
 ownCloudZimlet.prototype.addAttachmentHandler =
-  function(mime) {
+  function() {
     this._msgController = AjxDispatcher.run("GetMsgController");
-    var viewType = appCtxt.getViewTypeFromId(ZmId.VIEW_MSG);
+    var viewType = appCtxt.getViewTypeFromId(ZmId.VIEW_MSG),
+      i = 0,
+      tmpMime,
+      mimeType;
     this._msgController._initializeView(viewType);
 
-    //Load 1000 mime-types
-    ownCloudZimlet.prototype.mime();
-    ownCloudZimlet.mime.forEach(function(mime)
+    for (i = 0; i < ownCloudZimlet.mime.length; i += 1)
     {
-      var MISSMIME = 'ownCloudZimlet'+mime.replace("/","_");
-      ZmMimeTable.MISSMIME=mime;
-      ZmMimeTable._table[ZmMimeTable.MISSMIME]={desc:ZmMsg.unknownBinaryType,image:"UnknownDoc",imageLarge:"UnknownDoc_48"};
-    });
+      tmpMime = ownCloudZimlet.mime[i];
+      if (ZmMimeTable._table.hasOwnProperty(tmpMime)) { continue; }
+      ZmMimeTable._table[tmpMime] = {
+        desc: ZmMsg.unknownBinaryType,
+        image: "UnknownDoc",
+        imageLarge: "UnknownDoc_48"
+      };
+    }
 
-    for (var mimeType in ZmMimeTable._table) {
-      this._msgController._listView[viewType].addAttachmentLinkHandler(mimeType,"ownCloud",this.addownCloudLink);
+    for (mimeType in ZmMimeTable._table) {
+      if (!ZmMimeTable._table.hasOwnProperty(tmpMime)) { continue; }
+      this._msgController._listView[viewType].addAttachmentLinkHandler(mimeType, "ownCloud", tk_barrydegraaff_owncloud_zimlet_HandlerObject._addOwnCloudLink);
     }
   };
 
-ownCloudZimlet.prototype.addownCloudLink =
+/**
+ * Generate a link used to send an attachment to OwnCloud.
+ * @param attachment
+ * @returns {string}
+ * @private
+ */
+ownCloudZimlet._addOwnCloudLink =
   function(attachment) {
-    var html =
-      "<a href='#' class='AttLink' style='text-decoration:underline;' " +
-      "onClick=\"ownCloudZimlet.prototype.saveAttachment('" + attachment.label + "','" + attachment.url + "')\">"+
-      "ownCloud" +
+    return "<a href='#' class='AttLink' style='text-decoration:underline;' " +
+      "onClick=\"" +
+      "window.tk_barrydegraaff_owncloud_zimlet_HandlerObject.saveAttachment('" + attachment.mid + "','" + attachment.part + "','" + attachment.label + "')" +
+      "\">"+
+      "send to ownCloud" +
       "</a>";
-
-    return html;
   };
 
-/* status method show a Zimbra status message
- * */
+/**
+ * Show a Zimbra Status message (toast notification).
+ * @param {string} text The message.
+ * @param {number} type The color and the icon of the notification.
+ */
 ownCloudZimlet.prototype.status =
   function(text, type) {
     var transitions = [ ZmToast.FADE_IN, ZmToast.PAUSE, ZmToast.FADE_OUT ];
     appCtxt.getAppController().setStatusMsg(text, type, null, transitions);
   };
 
-ownCloudZimlet.prototype.saveAttachment =
-  function(name, url) {
-    ownCloudZimlet.prototype.createFolder(this);
-    var client = new davlib.DavClient();
-    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-    client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],  function(status, statusstr, content)
-    {
-      if(status == 207)
-      {
-        this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);
-        var rawDavResponse = content.split('<d:response>');
-        var existingItems = [];
-
-        rawDavResponse.forEach(function(response)
-        {
-
-          var href = response.match(/<d:href>.*<\/d:href>/);
-          if(href)
-          {
-            href = href[0].replace(/(<d:href>|<\/d:href>)/gm,"");
-            href = href.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ escape(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']),'').replace('/','').replace('/','');
-            existingItems[href] = href;
-          }
-        });
-
-        //Now make an ajax request and read the contents of this mail, including all attachments as text
-        //it should be base64 encoded
-        var xmlHttp = null;
-        xmlHttp = new XMLHttpRequest();
-        xmlHttp.open( "GET", url, true );
-        xmlHttp.responseType = "blob";
-        xmlHttp.send( null );
-
-        xmlHttp.onload = function(e)
-        {
-          var client = new davlib.DavClient();
-          client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-
-          var fileName = ownCloudZimlet.prototype.fileName(existingItems, name);
-          client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
-          existingItems[fileName] = fileName;
-        };
-      }
-      else
-      {
-        ownCloudZimlet.prototype.status(statusstr, ZmStatusView.LEVEL_CRITICAL);
-      }
-    }, this, 1);
+/**
+ * Save an attachment to OwnCloud.
+ * @param {string} mid The message id
+ * @param {string} part The part of the message.
+ * @param {string} label The label (usually the file name)
+ * @static
+ */
+ownCloudZimlet.saveAttachment =
+  function(mid, part, label) {
+    var zimletCtxt = appCtxt.getZimletMgr().getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+    zimletCtxt.saveAttachment(mid, part, label);
   };
 
-/* Called by framework when attach popup called
+/**
+ * Save an attachment to OwnCloud.
+ * @param {string} mid The message id
+ * @param {string} part The part of the message.
+ * @param {string} label The label (usually the file name)
+ */
+ownCloudZimlet.prototype.saveAttachment =
+  function(mid, part, label) {
+    var createFolderCbk,
+      propfindCbk;
+
+    propfindCbk = new AjxCallback(
+      this,
+      this._saveAttachmentPropfindCbk,
+      [mid, part, label]
+    );
+
+    createFolderCbk = new AjxCallback(
+      this.davConnector,
+      this.davConnector.propfind,
+      [
+        this.getConfig('owncloud_zimlet_default_folder'),
+        1,
+        propfindCbk,
+        this._defaultPropfindErrCbk
+      ]
+    );
+
+    this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);
+    this.createFolder(createFolderCbk);
+  };
+
+/**
+ * Save an attachment to OwnCloud.
+ * @param {string} mid The message id
+ * @param {string} part The part of the message.
+ * @param {string} fileName The file name
+ * @private
+ */
+ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
+  function(mid, part, fileName) {
+    this.davForZimbraConnector.sendMailAttachmentToDav(
+      mid,
+      part,
+      fileName
+    );
+  };
+
+/**
+ * Called by framework when attach popup called
  */
 ownCloudZimlet.prototype.initializeAttachPopup =
   function(menu, controller) {
@@ -200,7 +229,6 @@ ownCloudZimlet.prototype.showAttachmentDialog =
       if(xmlHttp.status == 401)
       {
         zimlet.displayDialog(1, 'Preferences', null);
-        return;
       }
       else
       {
@@ -225,22 +253,25 @@ ownCloudZimlet.prototype.showAttachmentDialog =
     }
   };
 
-/* Called when the panel is double-clicked.
+/**
+ * Called when the panel is double-clicked.
  */
 ownCloudZimlet.prototype.doubleClicked =
   function() {
     this.singleClicked();
   };
 
-/* Called when the panel is single-clicked.
+/**
+ * Called when the panel is single-clicked.
  */
 ownCloudZimlet.prototype.singleClicked =
   function() {
     this.displayDialog(1, 'Preferences', null);
   };
 
-/* Context menu handler
- * */
+/**
+ * Context menu handler
+ */
 ownCloudZimlet.prototype.menuItemSelected =
   function(itemId) {
     switch (itemId) {
@@ -253,269 +284,157 @@ ownCloudZimlet.prototype.menuItemSelected =
     }
   };
 
-/* doDrop handler
- * */
+/**
+ * Handle the action 'drop' on the Zimlet Menu Item.
+ * @param {ZmItem[]} zmObjects Objects dropped on the Zimlet Menu Item.
+ */
 ownCloudZimlet.prototype.doDrop =
   function(zmObjects) {
-    console.log(zmObjects);
-    ownCloudZimlet.prototype.createFolder(this);
+    var createFolderCbk,
+      propfindCbk;
 
-    var client = new davlib.DavClient();
-    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-    client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],  function(status, statusstr, content)
-    {
-      if(status == 207)
-      {
-        this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);
-        var rawDavResponse = content.split('<d:response>');
-        var existingItems = [];
+    propfindCbk = new AjxCallback(
+      this,
+      this._doDropPropfindCbk,
+      [zmObjects]
+    );
 
-        rawDavResponse.forEach(function(response)
-        {
+    createFolderCbk = new AjxCallback(
+      this.davConnector,
+      this.davConnector.propfind,
+      [
+        this.getConfig('owncloud_zimlet_default_folder'),
+        1,
+        propfindCbk,
+        this._defaultPropfindErrCbk
+      ]
+    );
 
-          var href = response.match(/<d:href>.*<\/d:href>/);
-          if(href)
-          {
-            href = href[0].replace(/(<d:href>|<\/d:href>)/gm,"");
-            href = href.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ escape(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']),'').replace('/','').replace('/','');
-            existingItems[unescape(href)] = unescape(href);
-          }
-        });
-
-        /* Single selects result in an object passed,
-         Multi selects results in an array of objects passed.
-         Always make it an array */
-        if(!zmObjects[0])
-        {
-          zmObjects = [zmObjects];
-        }
-
-        zmObjects.forEach(function(zmObject)
-        {
-          //if its a conversation i.e. "ZmConv" object, get the first loaded message "ZmMailMsg" object within that.
-          if (zmObject.TYPE == "ZmConv") {
-            var msgObj = zmObject.srcObj;//get access to source-object
-            msgObj  = msgObj.getFirstHotMsg();
-            zmObject.id = msgObj.id;
-          }
-
-          var url = [];
-          var i = 0;
-          var proto = location.protocol;
-          var port = Number(location.port);
-          url[i++] = proto;
-          url[i++] = "//";
-          url[i++] = location.hostname;
-          if (port && ((proto == ZmSetting.PROTO_HTTP && port != ZmSetting.HTTP_DEFAULT_PORT)
-            || (proto == ZmSetting.PROTO_HTTPS && port != ZmSetting.HTTPS_DEFAULT_PORT))) {
-            url[i++] = ":";
-            url[i++] = port;
-          }
-          url[i++] = "/home/";
-          url[i++]= AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name);
-          url[i++] = "/message.txt?fmt=txt&id=";
-          if (zmObject.id < 0)
-          {
-            var id = zmObject.id * -1;
-          }
-          else
-          {
-            var id = zmObject.id;
-          }
-          url[i++] = id;
-
-          var getUrl = url.join("");
-
-          //Now make an ajax request and read the contents of this mail, including all attachments as text
-          //it should be base64 encoded
-          var xmlHttp = null;
-          xmlHttp = new XMLHttpRequest();
-          xmlHttp.open( "GET", getUrl, true );
-
-          //Doc from briefcase is a binary
-          if (zmObject.name)
-          {
-            xmlHttp.responseType = "blob";
-          }
-          xmlHttp.send( null );
-
-          xmlHttp.onload = function(e)
-          {
-            var client = new davlib.DavClient();
-            client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-            if (zmObject.type == "BRIEFCASE_ITEM")
-            {
-              //file from briefcase
-              var fileName = ownCloudZimlet.prototype.fileName(existingItems, zmObject.name);
-              client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
-              existingItems[fileName] = fileName;
-            }
-            else if (zmObject.TYPE == "ZmContact")
-            {
-              //contacts
-              var fileName = ownCloudZimlet.prototype.fileName(existingItems, (zmObject.email ? zmObject.email + '.vcf' : zmObject.id + '.vcf') );
-              client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
-              existingItems[fileName] = fileName;
-            }
-            else if (zmObject.TYPE == "ZmAppt")
-            {
-              //appointment
-              //Multi select is broken: https://bugzilla.zimbra.com/show_bug.cgi?id=101605
-              var fileName = ownCloudZimlet.prototype.fileName(existingItems, zmObject.subject + '.ics');
-              client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
-              existingItems[fileName] = fileName;
-            }
-            else if (zmObject.type == "TASK")
-            {
-              //task
-              var fileName = ownCloudZimlet.prototype.fileName(existingItems, zmObject.name + '.ics');
-              client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
-              existingItems[fileName] = fileName;
-            }
-            else
-            {
-              //email
-              if (zmObject.srcObj)
-              {
-                var fileName = ownCloudZimlet.prototype.fileName(existingItems, (zmObject.srcObj.subject + '.eml'));
-                client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, xmlHttp.response,  ownCloudZimlet.prototype.createFileCallback);
-                existingItems[fileName] = fileName;
-                var boundary = xmlHttp.response.match(/boundary="([^"\\]*(?:\\.[^"\\]*)*)"/i);
-                if (!boundary)
-                {
-                  return;
-                }
-                boundary[1] = '--'+boundary[1];
-                var multipart = xmlHttp.response.split(boundary[1]);
-                multipart.forEach(function(part) {
-                  if(multipart[0].indexOf('Content-Type: multipart/mixed;') < 0)
-                  {
-                    return;
-                  }
-
-                  var partArr = part.split('\r\n\r\n');
-                  if(partArr[0].indexOf('Content-Disposition: attachment')> 0)
-                  {
-                    var filename = partArr[0].match(/filename.*/i);
-                    filename = filename[0].replace('"',"").replace('filename=',"").replace('"',"");
-                    var dataBin = ownCloudZimlet.prototype.base64DecToArr(partArr[1]);
-                    var blob = new Blob([dataBin], { type: 'octet/stream' });
-                    var fileName = ownCloudZimlet.prototype.fileName(existingItems, filename);
-                    client.PUT(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] + "/" + fileName, blob,  ownCloudZimlet.prototype.createFileCallback);
-                    existingItems[fileName] = fileName;
-                  }
-                });
-              }
-            }
-          };
-        });
-      }
-      else
-      {
-        if((!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) && (status == 401))
-        {
-          this.displayDialog(1, 'Preferences', null);
-          return;
-        }
-        else
-        {
-          ownCloudZimlet.prototype.status(statusstr, ZmStatusView.LEVEL_CRITICAL);
-        }
-      }
-    }, this, 1);
+    this.createFolder(createFolderCbk);
   };
 
-ownCloudZimlet.prototype.fileName =
-  function (existingItems, fileName) {
-    if(existingItems[fileName]==fileName)
-    {
-      //fileName already exists, generate a different one
-      var x = 1;
-      var newFileName = fileName;
-      while (existingItems[newFileName]==newFileName)
-      {
-        //newFileName = fileName + x;
-        var dot = fileName.lastIndexOf(".");
-        if(dot < 0)
-        {
-          newFileName = fileName + x;
-        }
-        else
-        {
-          newFileName = fileName.substr(0,dot) + x + fileName.substr(dot);
-        }
-        x++;
+/**
+ * Send a list of ZmObjects to OwnCloud.
+ * The real copy will be made on the server, this optimization will avoid to saturate the user bandwidth.
+ * @param {ZmItem[]} zmObjects Objects to send to OwnCloud.
+ * @param {DavResource[]} resources
+ * @param {AjxCallback=} callback Callback invoked with the result.
+ * @param {AjxCallback=} errorCallback Callback invoked when an error occurs.
+ * @private
+ */
+ownCloudZimlet.prototype._doDropPropfindCbk =
+  function(zmObjects, resources, callback, errorCallback) {
+    var id,
+      type = "MESSAGE",
+      iObj = 0,
+      tmpObj;
+    this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);
+
+
+    if (!zmObjects[0]) {
+      zmObjects = [zmObjects];
+    }
+
+    for (iObj = 0; iObj < zmObjects.length; iObj += 1) {
+      tmpObj = zmObjects[iObj];
+      if (tmpObj.id < 0) {
+        id = tmpObj.id * -1;
+      } else {
+        id = tmpObj.id;
       }
-      return newFileName;
+
+      //if its a conversation i.e. 'ZmConv' object, get the first loaded message 'ZmMailMsg' object within that.
+      if (tmpObj.TYPE == 'ZmConv') {
+        var msgObj = tmpObj.srcObj; // get access to source-object
+        msgObj = msgObj.getFirstHotMsg();
+        tmpObj.id = msgObj.id;
+        type = 'MESSAGE';
+      }
+
+      if (tmpObj.type == 'BRIEFCASE_ITEM') {
+        type = 'DOCUMENT';
+      } else if (tmpObj.TYPE == 'ZmContact') {
+        type = 'CONTACT';
+      } else if (tmpObj.TYPE == 'ZmAppt') {
+        type = 'APPOINTMENT';
+      } else if (tmpObj.type == 'TASK') {
+        type = 'TASK';
+      }
+      this.davForZimbraConnector.sendItemToDav(
+        type,
+        id,
+        callback,
+        errorCallback
+      );
+    }
+  };
+
+/**
+ * Manage the error occurred during the PROPFIND donw to check if the zimlet can upload something on OwnCloud.
+ * @param {number} statusCode
+ * @private
+ */
+ownCloudZimlet.prototype._handlePropfindError =
+  function(statusCode)
+  {
+    if((!this.getConfig('owncloud_zimlet_password') || this.getConfig('owncloud_zimlet_password') === '') && statusCode == 401)
+    {
+      this.displayDialog(1, 'Preferences', null);
     }
     else
     {
-      //fileName does not exists, OK to PUT it to DAV
-      return fileName;
+      this.status('DAV Error ' + statusCode, ZmStatusView.LEVEL_CRITICAL);
     }
   };
 
-/* Base64 decode binary safe
- https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
+/**
+ * Create the 'Zimbra mails' folder (or the user defined one).
+ * @param {ZmZimletContext=} zimlet Context of the zimlet.
+ * @param {AjxCallback=} callback Callback invoked with the result.
+ * @param {AjxCallback=} errorCallback Callback invoked when an error occurs.
  */
-ownCloudZimlet.prototype.b64ToUint6 =
-  function (nChr) {
-    return nChr > 64 && nChr < 91 ?
-    nChr - 65
-      : nChr > 96 && nChr < 123 ?
-    nChr - 71
-      : nChr > 47 && nChr < 58 ?
-    nChr + 4
-      : nChr === 43 ?
-      62
-      : nChr === 47 ?
-      63
-      :
-      0;
-  };
-
-ownCloudZimlet.prototype.base64DecToArr =
-  function (sBase64, nBlocksSize) {
-    var
-      sB64Enc = sBase64.replace(/[^A-Za-z0-9\+\/]/g, ""), nInLen = sB64Enc.length,
-      nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2, taBytes = new Uint8Array(nOutLen);
-
-    for (var nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
-      nMod4 = nInIdx & 3;
-      nUint24 |= ownCloudZimlet.prototype.b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
-      if (nMod4 === 3 || nInLen - nInIdx === 1) {
-        for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
-          taBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255;
-        }
-        nUint24 = 0;
-      }
-    }
-    return taBytes;
-  };
-
 ownCloudZimlet.prototype.createFolder =
-  function(zimlet) {
-    var client = new davlib.DavClient();
-    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-    client.MKCOL(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] + "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'], ownCloudZimlet.prototype.createFolderCallback);
+  function(callback, errorCallback) {
+    this.davConnector.mkcol(
+      '/' + this.getConfig('owncloud_zimlet_default_folder'),
+      new AjxCallback(
+        this,
+        this._createFolderCallback,
+        [callback, errorCallback]
+      )
+    );
   };
 
+/**
+ * Callback invoked when a file is created.
+ * @param {} status
+ */
 ownCloudZimlet.prototype.createFileCallback =
-  function(status, statusstr) {
+  function(status) {
     //201 == created
     //405 == already there
     //Other status codes are not a good sign
-    console.log('------------------------------------- DAV response: ' + status  + " " + statusstr);
+    if (!!console && !!console.log) {
+      console.log('------------------------------------- DAV response: ' + status);
+    }
   };
 
-ownCloudZimlet.prototype.createFolderCallback =
-  function(status, statusstr) {
-    //201 == created
-    //405 == already there
-    //Other status codes are not a good sign
-    if (status !== '405')
-    {
-      console.log('------------------------------------- DAV response: ' + status  + " " + statusstr);
+/**
+ * Callback invoked when a folder is created.
+ * @param {AjxCallback=} callback
+ * @param {AjxCallback=} errorCallback
+ * @param {number} statusCode
+ * @private
+ */
+ownCloudZimlet.prototype._createFolderCallback =
+  function(callback, errorCallback, statusCode) {
+    if (statusCode === 201 || statusCode === 405) {
+      // 201 == created
+      // 405 == already there
+      if (!!callback) callback.run(statusCode);
+    } else {
+      // Other status codes are not a good sign
+      if (!!errorCallback) errorCallback.run(statusCode);
     }
   };
 
@@ -536,7 +455,7 @@ ownCloudZimlet.prototype.appLaunch =
  * This method gets called by the Zimlet framework each time the application is opened or closed.
  *
  * @param	{String}	appName		the application name
- * @param	{Boolean}	active		if true, the application status is open; otherwise, false
+ * @param	{boolean}	active		if true, the application status is open; otherwise, false
  */
 ownCloudZimlet.prototype.appActive =
   function(appName, active) {
@@ -569,29 +488,44 @@ ownCloudZimlet.prototype.displayDialog =
     switch(id) {
       case 1:
         //Default dialog
-        this._dialog = new ZmDialog( { title:title, parent:this.getShell(), standardButtons:[DwtDialog.OK_BUTTON,DwtDialog.CANCEL_BUTTON], disposeOnPopDown:true } );
+        this._dialog = new ZmDialog({
+          title: title,
+          parent: this.getShell(),
+          standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
+          disposeOnPopDown: true
+        });
         var username = appCtxt.getActiveAccount().name.match(/.*@/),
           html,
           serverName = location.protocol + '//' + location.hostname;
         username = username[0].replace('@','');
-        html = "<div style='width:500px; height: 200px;'>To store an email or attachment in ownCloud, drag it onto the ownCloud icon.<br><br><table>"+
-          "<tr><td>Username:&nbsp;</td><td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+(this.getUserProperty("owncloud_zimlet_username") ? this.getUserProperty("owncloud_zimlet_username") : username)+"'></td></tr>" +
-          "<tr><td>Password:</td><td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(this.getUserProperty("owncloud_zimlet_password") ? this.getUserProperty("owncloud_zimlet_password") : tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])+"'></td></tr>" +
-          "<tr><td>Server:&nbsp;</td><td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_name' value='"+(this.getUserProperty("owncloud_zimlet_server_name") ? this.getUserProperty("owncloud_zimlet_server_name") : serverName)+"'></td></tr>" +
-          "<tr><td>Port:&nbsp;</td><td style='width:98%'><input style='width:50px' type='number' min='1' max='65535' id='owncloud_zimlet_server_port' value='"+(this.getUserProperty("owncloud_zimlet_server_port") ? this.getUserProperty("owncloud_zimlet_server_port") : ((location.protocol === 'https:') ? 443 : 80))+"'></td></tr>" +
-          "<tr><td>Path:&nbsp;</td><td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+(this.getUserProperty("owncloud_zimlet_server_path") ? this.getUserProperty("owncloud_zimlet_server_path") : tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'])+"'></td></tr>";
-
-        if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
-        {
-          html += "<tr><td>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (this.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
-        }
-        else
-        {
-          html += "<tr><td style='color:#888888'>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true'  disabled></td><td><small style='color:#888888'>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
-        }
-
-        html += "<tr><td>Default folder:</td><td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+this.getUserProperty("owncloud_zimlet_default_folder")+"'></td></tr>" +
-          "</table></div>";
+        html = "<div style='width:500px; height: 200px;'>To store an email or attachment in ownCloud, drag it onto the ownCloud icon.<br><br>" +
+          "<table>"+
+          "<tr>" +
+          "<td>Username:&nbsp;</td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+(this.getUserProperty('owncloud_zimlet_username') ? this.getUserProperty('owncloud_zimlet_username') : username)+"'></td>" +
+          "</tr>" +
+          "<tr>" +
+          "<td>Password:</td>" +
+          "<td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(this.getUserProperty('owncloud_zimlet_password') ? this.getUserProperty('owncloud_zimlet_password') : this.getConfig('owncloud_zimlet_password'))+"'></td>" +
+          "</tr>" +
+          "<tr>" +
+          "<td>Server:&nbsp;</td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_name' value='"+(this.getUserProperty('owncloud_zimlet_server_name') ? this.getUserProperty('owncloud_zimlet_server_name') : serverName)+"'></td>" +
+          "</tr>" +
+          "<tr>" +
+          "<td>Port:&nbsp;</td>" +
+          "<td style='width:98%'><input style='width:50px' type='number' min='1' max='65535' id='owncloud_zimlet_server_port' value='"+(this.getUserProperty('owncloud_zimlet_server_port') ? this.getUserProperty('owncloud_zimlet_server_port') : ((location.protocol === 'https:') ? 443 : 80))+"'></td>" +
+          "</tr>" +
+          "<tr>" +
+          "<td>Path:&nbsp;</td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+(this.getUserProperty('owncloud_zimlet_server_path') ? this.getUserProperty('owncloud_zimlet_server_path') : this.getConfig('owncloud_zimlet_server_path'))+"'></td>" +
+          "</tr>" +
+          "<tr>" +
+          "<td>Default folder:&nbsp;</td>" +
+          "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+this.getUserProperty('owncloud_zimlet_default_folder')+"'></td>" +
+          "</tr>" +
+          "</table>" +
+          "</div>";
         this._dialog.setContent(html);
         this._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.prefSaveBtn));
         this._dialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(this, this.cancelBtn));
@@ -613,115 +547,19 @@ ownCloudZimlet.prototype.cancelBtn =
     }
   };
 
-/* This method is called when the dialog "OK" button is clicked in preferences
+/**
+ * This method is called when the dialog "OK" button is clicked in preferences
  */
 ownCloudZimlet.prototype.prefSaveBtn =
   function() {
-    this.setUserProperty("owncloud_zimlet_username", document.getElementById('owncloud_zimlet_username').value, false);
-
-    if(document.getElementById("owncloud_zimlet_store_pass").checked)
-    {
-      if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
-      {
-        this.setUserProperty("owncloud_zimlet_password", document.getElementById('owncloud_zimlet_password').value, false);
-      }
-    }
-    else
-    {
-      this.setUserProperty("owncloud_zimlet_password", "", false);
-    }
-    this.setUserProperty("owncloud_zimlet_server_name", document.getElementById('owncloud_zimlet_server_name').value, false);
-    this.setUserProperty("owncloud_zimlet_server_port", document.getElementById('owncloud_zimlet_server_port').value, false);
-    this.setUserProperty("owncloud_zimlet_server_path", document.getElementById('owncloud_zimlet_server_path').value, false);
-    this.setUserProperty("owncloud_zimlet_default_folder", document.getElementById('owncloud_zimlet_default_folder').value, false);
-    this.setUserProperty("owncloud_zimlet_store_pass", (document.getElementById("owncloud_zimlet_store_pass").checked ? 'true' : 'false'), true);
-
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = document.getElementById('owncloud_zimlet_username').value;
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('owncloud_zimlet_password').value;
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = document.getElementById('owncloud_zimlet_server_name').value;
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = document.getElementById('owncloud_zimlet_server_port').value;
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] = document.getElementById('owncloud_zimlet_server_path').value;
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = document.getElementById('owncloud_zimlet_default_folder').value;
-    ownCloudZimlet.prototype.createFolder(this);
-
+    this.setUserProperty('owncloud_zimlet_server_name', document.getElementById('owncloud_zimlet_server_name').value, false);
+    this.setUserProperty('owncloud_zimlet_server_port', document.getElementById('owncloud_zimlet_server_port').value, false);
+    this.setUserProperty('owncloud_zimlet_server_path', document.getElementById('owncloud_zimlet_server_path').value, false);
+    this.setUserProperty('owncloud_zimlet_username', document.getElementById('owncloud_zimlet_username').value, false);
+    this.setUserProperty('owncloud_zimlet_password', document.getElementById('owncloud_zimlet_password').value, false);
+    this.setUserProperty('owncloud_zimlet_default_folder', document.getElementById('owncloud_zimlet_default_folder').value, false);
+    this.createFolder();
     this.cancelBtn();
-  };
-
-/**
- * @class
- * The attach mail tab view.
- *
- * @param	{DwtTabView}	parant		the tab view
- * @param	{hash}	zimlet				the zimlet
- * @param	{string}	className		the class name
- *
- * @extends		DwtTabViewPage
- */
-ownCloudTabView =
-  function(parent, zimlet, className) {
-    this.zimlet = zimlet;
-    DwtComposite.call(this,parent,className,Dwt.STATIC_STYLE);
-    var acct = appCtxt.multiAccounts ? appCtxt.getAppViewMgr().getCurrentView().getFromAccount() : appCtxt.getActiveAccount();
-    if (this.prevAccount && (acct.id == this.prevAccount.id)) {
-      this.setSize(Dwt.DEFAULT, "275");
-      return;
-    }
-    this.prevAccount = acct;
-    this._createHtml1(zimlet);
-  };
-
-ownCloudTabView.prototype = new DwtComposite;
-ownCloudTabView.prototype.constructor = ownCloudTabView;
-
-ownCloudTabView.prototype.toString =
-  function() {
-    return "ownCloudTabView";
-  };
-
-/* Creates HTML for for the attach ownCloud tab UI.
- */
-ownCloudTabView.prototype._createHtml1 =
-  function(zimlet) {
-    try{
-      var ZmAttachDialog = document.getElementsByClassName("ZmAttachDialog");
-      ZmAttachDialog[0].style.width = "700px";
-
-      var WindowInnerContainer = document.getElementsByClassName("WindowInnerContainer");
-      WindowInnerContainer[0].style.width = "700px";
-
-    } catch (err) { }
-
-    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-    {
-      var prompt = '<span style="display:none" id=\'passpromptOuter\'>Your password is required for sharing links: <input type=\'password\' id=\'passprompt\'></span>';
-    }
-    else
-    {
-      var prompt = '<span style="display:none" id=\'passpromptOuter\'></span>';
-    }
-
-    if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_link_sharing']!=="false")
-    {
-      var disable_link_sharing = ' style="display:none" ';
-    }
-    else
-    {
-      var xmlHttp = new XMLHttpRequest();
-      xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+"/ocs/zcs.php?path=havesession", false);
-      xmlHttp.send( null );
-      if(xmlHttp.response =='true')
-      {
-        var prompt = '<span style="display:none" id=\'passpromptOuter\'></span>';
-      }
-      var disable_link_sharing = '';
-    }
-
-    html = '<select ' + disable_link_sharing + ' onclick="if(this.value != \'attach\'){document.getElementById(\'passpromptOuter\').style.display = \'block\'; ownCloudZimlet.prototype.existingShares()} else { document.getElementById(\'passpromptOuter\').style.display = \'none\'; ownCloudZimlet.prototype.removeElementsByClass(\'ownCloudShareExists\');}" id="shareType"><option value="attach">Send as attachment</option><option value="1">Share as link</option></select> '+prompt+' <div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';
-    this.setContent(html);
-
-    var client = new davlib.DavClient();
-    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-    client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],  ownCloudZimlet.prototype.readFolderAsHTMLCallback, document.getElementById('davBrowser'), 1);
   };
 
 ownCloudZimlet.prototype.readSubFolder =
@@ -840,186 +678,9 @@ ownCloudZimlet.prototype.readFolderAsHTMLCallback =
     {
       ownCloudZimlet.prototype.existingShares();
     }
-    ownCloudTabView.attachment_ids = [];
+    OwnCloudTabView.attachment_ids = [];
   };
 
-/* Uploads the files.
- */
-ownCloudTabView.prototype._uploadFiles =
-  function(attachmentDlg)
-  {
-    var ownCloudSelect = document.getElementsByClassName("ownCloudSelect");
-
-    var oCreq = [];
-    var req = "";
-    var fileName = [];
-
-    var ownCloudSelectSelected = [];
-    var indexNew = 0;
-    for (var index = 0; index < ownCloudSelect.length; index++) {
-      if(ownCloudSelect[index].checked)
-      {
-        ownCloudSelectSelected[indexNew] = ownCloudSelect[index];
-        indexNew++;
-      }
-    }
-    ownCloudSelect = ownCloudSelectSelected;
-
-    if(document.getElementById('shareType').value == 'attach')
-    {
-      var attBubble = document.getElementsByClassName("attBubbleContainer");
-      attBubble[0].style.backgroundImage = 'url(\'/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/progressround.gif\')';
-      attBubble[0].style.backgroundRepeat = "no-repeat";
-      attBubble[0].style.backgroundPosition = "right";
-
-      if (ownCloudSelect[0])
-      {
-        if(ownCloudSelect[0].checked)
-        {
-          ownCloudSelect[0].checked = false;
-          oCreq[ownCloudSelect[0].value] = new XMLHttpRequest();
-          oCreq[ownCloudSelect[0].value].open('GET', ownCloudSelect[0].value, true);
-          oCreq[ownCloudSelect[0].value].setRequestHeader("Authorization", "Basic " + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-          oCreq[ownCloudSelect[0].value].responseType = "blob";
-          oCreq[ownCloudSelect[0].value].send('');
-
-          oCreq[ownCloudSelect[0].value].onload = function(e)
-          {
-            //Patch for Internet Explorer that does not implement responseURL in XMLHttpRequest
-            if (!this.responseURL)
-            {
-              this.responseURL = ownCloudSelect[0].value;
-            }
-            req = new XMLHttpRequest();
-            fileName[this.responseURL] = this.responseURL.match(/(?:[^/][\d\w\.]+)+$/);
-            fileName[this.responseURL] = decodeURI(fileName[this.responseURL][0]);
-            req.open("POST", "/service/upload?fmt=extended,raw", true);
-            req.setRequestHeader("Cache-Control", "no-cache");
-            req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-            req.setRequestHeader("Content-Type",  "application/octet-stream" + ";");
-            req.setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
-            req.setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName[this.responseURL] + '"');
-            req.onload = function(e)
-            {
-              var resp = eval("["+req.responseText+"]");
-              var respObj = resp[2];
-              var attId = "";
-              for (var i = 0; i < respObj.length; i++)
-              {
-                if(respObj[i].aid != "undefined") {
-                  ownCloudTabView.attachment_ids.push(respObj[i].aid);
-                }
-              }
-              ownCloudTabView.prototype._uploadFiles();
-            }
-            req.send(this.response);
-          };
-        }
-      }
-      else
-      {
-        //If there are no more attachments to upload to Zimbra, attach them to the draft message
-        var attachment_list = ownCloudTabView.attachment_ids.join(",");
-        var viewType = appCtxt.getCurrentViewType();
-        if (viewType == ZmId.VIEW_COMPOSE)
-        {
-          var controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
-          controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, attachment_list);
-        }
-
-        var attBubble = document.getElementsByClassName("attBubbleContainer");
-        attBubble[0].style.backgroundImage = 'url(\'\')';
-      }
-    }
-    else
-    {
-      //Create share links
-      var attBubble = document.getElementsByClassName("attBubbleContainer");
-      attBubble[0].style.backgroundImage = 'url(\'/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/progressround.gif\')';
-      attBubble[0].style.backgroundRepeat = "no-repeat";
-      attBubble[0].style.backgroundPosition = "right";
-
-      if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-      {
-        if(document.getElementById('passprompt'))
-        {
-          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('passprompt').value;
-        }
-      }
-
-      var jsonArray = [];
-      for(var x=0; x < ownCloudSelect.length; x++)
-      {
-        jsonArray.push(unescape(ownCloudSelect[x].value.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"")));
-      }
-      var jsonString = JSON.stringify(jsonArray);
-      var xmlHttp = new XMLHttpRequest();
-      var password = ownCloudZimlet.prototype.pwgen();
-      var composeMode = appCtxt.getCurrentView().getHtmlEditor().getMode();
-      if(composeMode == 'text/plain')
-      {
-        var sep = "rn";
-      }
-      else
-      {
-        var sep = "<br>";
-      }
-
-      xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+ "/ocs/zcs.php?proxy_location=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] + "&zcsuser="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + "&zcspass=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] + "&path="+jsonString+"&shareType=3&password="+password+"&permissions="+document.getElementById('shareType').value+"&sep="+sep);
-      xmlHttp.send( null );
-      xmlHttp.onload = function(e)
-      {
-        var url = xmlHttp.response;
-        var composeView = appCtxt.getCurrentView();
-        //I hate the Zimbra compose controller
-        var content = composeView.getHtmlEditor().getContent();
-        if(content.indexOf('<hr id="') > 0)
-        {
-          content = content.replace('<hr id="',url + '<br><hr id="');
-        }
-        else if(content.indexOf('<div id="') > 0)
-        {
-          content = content.replace('<div id="',url + '<br><div id="');
-        }
-        else if(content.indexOf('</body') > 0)
-        {
-          content = content.replace('</body',url + '<br></body');
-        }
-        else if(content.indexOf('----') > 0)
-        {
-          content = content.replace('----',url + '\r\n----');
-        }
-        else
-        {
-          content = content + url + '';
-        }
-        composeView.getHtmlEditor().setContent(content);
-        var attBubble = document.getElementsByClassName("attBubbleContainer");
-        attBubble[0].style.backgroundImage = 'url(\'\')';
-      }
-    }
-    //This function is called via the Attach Dialog once passing attachmentDlg,
-    //subsequent calls when handling multiple selects don't pass attachmentDlg.
-    try {
-      attachmentDlg.popdown();
-    } catch (err) {}
-  };
-
-/**
- * TODO: Remove me, I'm here for testing purpose
- */
-ownCloudZimlet.prototype.getDavConnector =
-  function() {
-    return this.davConnector;
-  };
-
-/**
- * TODO: Remove me, I'm here for testing purpose
- */
-ownCloudZimlet.prototype.getOwnCloudConnector =
-  function() {
-    return this.ownCloudConnector;
-  };
 
 /* This method generates a password
  */
@@ -1035,21 +696,4 @@ ownCloudZimlet.prototype.pwgen =
       pass += chars.charAt(i);
     }
     return pass;
-  };
-
-ZmownCloudController =
-  function(view) {
-    if (arguments.length == 0) { return; }
-    ZmListController.call(this, null, null);
-    this._currentViewId = "ZmownCloudListView";
-    this._view = {};
-    this._view[this._currentViewId] = view;
-  };
-
-ZmownCloudController.prototype = new ZmListController;
-ZmownCloudController.prototype.constructor = ZmownCloudController;
-
-ZmownCloudController.prototype._resetToolbarOperations =
-  function() {
-    // override to avoid js expn although we do not have a toolbar per se
   };

@@ -22,43 +22,22 @@ public class UserPropertyExtractor
    */
   public static Map<String, String> getZimletUserProperties(Account account, String filterBy)
   {
-    final Map<String, Object> accountAttrs = account.getAttrs(true);
     final Map<String, String> propSet = new HashMap<String, String>();
-    if (accountAttrs.get(A_zimbraZimletUserProperties) != null)
+
+    for (String property : account.getMultiAttrSet(A_zimbraZimletUserProperties))
     {
-      final String[] allZimletUserProperties = (String[])accountAttrs.get(A_zimbraZimletUserProperties);
-      for (String property : allZimletUserProperties)
+      if (property.startsWith(filterBy + ":"))
       {
-        if (property.startsWith(filterBy + ":"))
-        {
-          String rawProperty = property.substring(filterBy.length() + 1);
-          String[] strings = rawProperty.split(":", 2);
-          propSet.put(strings[0], strings[1]);
-        }
+        String rawProperty = property.substring(filterBy.length() + 1);
+        String[] strings = rawProperty.split(":", 2);
+        propSet.put(strings[0], strings[1]);
       }
     }
     return propSet;
   }
 
-  /**
-   *
-   * @param account
-   * @return
-   */
-  public static Set<String> getProxyAllowedDomain(Account account)
-  {
-    final Map<String, Object> accountAttrs = account.getAttrs(true);
-    final Set<String> allowedDomains = new HashSet<String>();
-    if (accountAttrs.get(A_zimbraProxyAllowedDomains) != null)
-    {
-      final String[] allAllowedDomains = (String[])accountAttrs.get(A_zimbraProxyAllowedDomains);
-      Collections.addAll(allowedDomains, allAllowedDomains);
-    }
-    return allowedDomains;
-  }
-
   public static boolean checkPermissionOnTarget(URL target, Account account) {
-    Set<String> domains = UserPropertyExtractor.getProxyAllowedDomain(account);
+    Set<String> domains = account.getMultiAttrSet(A_zimbraProxyAllowedDomains);
     String host = target.getHost().toLowerCase();
     for (String domain : domains) {
       if (domain.equals("*")) {

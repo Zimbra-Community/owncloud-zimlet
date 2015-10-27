@@ -6,7 +6,7 @@
    */
   var URN = 'urn:zimbraAccount';
   /**
-   * Handler name registerd as zimbra SOAP Extension
+   * Handler name registered as zimbra SOAP Extension
    * @const
    * @type {string}
    */
