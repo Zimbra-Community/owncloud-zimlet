@@ -4,7 +4,7 @@ shopt -s extglob
 ZAL_VERSION=1.9
 ZAL_VERSION_EXTENDED=1.9.1
 
-ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | grep -oP "\d+.\d+.\d+")
+ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | tr -d '\n' | sed -r 's/.* ([0-9\.]+[0-9]).*/\1/')
 
 echo "  Downloading the correct ZAL Version (${ZAL_VERSION_EXTENDED} for zimbra ${ZIMBRA_VERSION})..."
 wget "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
