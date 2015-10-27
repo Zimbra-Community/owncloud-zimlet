@@ -5,14 +5,11 @@ import com.zextras.Zimlet;
 import com.zextras.dav.DavStatus;
 import com.zextras.dav.ZimletProperty;
 import com.zextras.util.UserPropertyExtractor;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.openzal.zal.Account;
 import org.openzal.zal.MailItemType;
 import org.openzal.zal.Provisioning;
 import org.openzal.zal.soap.*;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -34,9 +31,9 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
 
   /**
    * Handle a SOAP request.
-   * @param zimbraContext The zimbra contest
-   * @param soapResponse The response container for the SOAP request
-   * @param zimbraExceptionContainer
+   * @param zimbraContext The zimbra contest.
+   * @param soapResponse The response container for the SOAP request.
+   * @param zimbraExceptionContainer The Zimbra Exception Container.
    */
   @Override
   public void handleRequest(
@@ -97,7 +94,7 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
     );
 
     final String actionStr = zimbraContext.getParameter("action", "");
-    final String path = zimbraContext.getParameter("path", null);
+//    final String path = zimbraContext.getParameter("path", null);
     final Dav4ZimbraCommand command;
     try
     {

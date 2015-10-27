@@ -1,5 +1,8 @@
 package com.zextras.owncloud;
 
+/**
+ * Commands handled by the OwnCloud connector.
+ */
 public enum OwnCloudCommand
 {
   GET_ALL_SHARES("getAllShares"),
@@ -21,6 +24,11 @@ public enum OwnCloudCommand
     return mAction;
   }
 
+  /**
+   * Convert a string into the correct OwnCloudCommand.
+   * @param command The command as string.
+   * @return The OwnCloudCommand.
+   */
   public static OwnCloudCommand fromString(String command)
   {
     for (OwnCloudCommand enumCommand : OwnCloudCommand.values())

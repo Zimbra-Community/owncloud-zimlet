@@ -1,5 +1,8 @@
 package com.zextras.dav;
 
+/**
+ * Container class for Zimlet Property names.
+ */
 public class ZimletProperty
 {
   public static String DAV_USER_USERNAME = "owncloud_zimlet_username";

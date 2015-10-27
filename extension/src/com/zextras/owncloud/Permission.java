@@ -1,6 +1,8 @@
 package com.zextras.owncloud;
 
-
+/**
+ * Permissions for an OwnCloud share.
+ */
 public enum Permission
 {
   READ(1),

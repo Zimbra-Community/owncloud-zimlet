@@ -1,6 +1,8 @@
 package com.zextras.dav;
 
-
+/**
+ * Status codes returned from a DAV server.
+ */
 public enum DavStatus
 {
     Continue(100),
@@ -61,6 +63,12 @@ public enum DavStatus
   {
     return mCode;
   }
+
+  /**
+   * Convert the status into a DavStatus, starting from the code.
+   * @param status The status code
+   * @return The DavStatus
+   */
   public static DavStatus fromCode(int status)
   {
     for (DavStatus enumStatus : DavStatus.values())

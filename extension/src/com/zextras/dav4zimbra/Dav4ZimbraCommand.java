@@ -1,5 +1,8 @@
 package com.zextras.dav4zimbra;
 
+/**
+ * Commands handled by the connector.
+ */
 public enum Dav4ZimbraCommand
 {
   SEND_ITEM_TO_DAV("sendItemToDav"),
@@ -17,6 +20,11 @@ public enum Dav4ZimbraCommand
     return mAction;
   }
 
+  /**
+   * Get a Dav4ZimbraCommand starting from a string.
+   * @param command The command as string.
+   * @return The Dav4ZimbraCommand
+   */
   public static Dav4ZimbraCommand fromString(String command)
   {
     for (Dav4ZimbraCommand enumCommand : Dav4ZimbraCommand.values())

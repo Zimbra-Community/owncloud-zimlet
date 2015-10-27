@@ -7,6 +7,11 @@ public enum DavCommand
 {
   GET, PUT, PROPFIND, DELETE, MKCOL, COPY, MOVE;
 
+  /**
+   * Decode a string into a DavCommand.
+   * @param command The string that represents the command.
+   * @return The DAV Command.
+   */
   public static DavCommand fromString(String command)
   {
     for (DavCommand enumCommand : DavCommand.values())

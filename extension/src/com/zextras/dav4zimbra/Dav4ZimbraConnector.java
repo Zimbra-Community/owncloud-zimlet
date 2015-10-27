@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * This class provide an abstraction layer to handle a DAV Client return a JSON data.
+ * This class provide an abstraction layer to handle Zimbra objects from/to DAV mount point.
  * The return values can be used into a SOAP response.
  */
 public class Dav4ZimbraConnector extends DavSoapConnector
@@ -119,7 +119,8 @@ public class Dav4ZimbraConnector extends DavSoapConnector
   }
 
   /**
-   * Send an attachment of a message to a DAV mountpoint.
+   * Send an attachment of a message to a DAV mount point.
+   * TODO: Check the file existence before to send it.
    * @param zimbraAccountId The account ID.
    * @param mid The message ID.
    * @param part The part number.

@@ -21,6 +21,7 @@ public class DavExtension implements ZalExtension
   private final DavSOAPService mDavSoapService;
   private final Dav4ZimbraSOAPService mDav4ZimbraSoapService;
   private final OwnCloudSOAPService mOwnCloudSoapService;
+  private final OwnCloudProxyHandler mOwnCloudProxyHandler;
 
   public DavExtension()
   {
@@ -29,6 +30,7 @@ public class DavExtension implements ZalExtension
     mDavSoapService = new DavSOAPService();
     mDav4ZimbraSoapService = new Dav4ZimbraSOAPService();
     mOwnCloudSoapService = new OwnCloudSOAPService();
+    mOwnCloudProxyHandler = new OwnCloudProxyHandler();
   }
 
   @Override
@@ -54,6 +56,7 @@ public class DavExtension implements ZalExtension
     mSoapServiceManager.register(mDavSoapService);
     mSoapServiceManager.register(mDav4ZimbraSoapService);
     mSoapServiceManager.register(mOwnCloudSoapService);
+    mHttpServiceManager.registerHandler(mOwnCloudProxyHandler);
     ZimbraLog.mailbox.info("Loaded WebDav extension.");
   }
 
@@ -66,6 +69,7 @@ public class DavExtension implements ZalExtension
     mSoapServiceManager.unregister(mDavSoapService);
     mSoapServiceManager.unregister(mDav4ZimbraSoapService);
     mSoapServiceManager.unregister(mOwnCloudSoapService);
+    mHttpServiceManager.unregisterHandler(mOwnCloudProxyHandler);
     ZimbraLog.mailbox.info("Removed extension ownCloud.");
   }
 }

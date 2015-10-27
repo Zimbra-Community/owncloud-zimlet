@@ -231,8 +231,8 @@ public class OwnCloudProxyHandler implements HttpHandler
       throw new RuntimeException("DAV Data connection not set for user '" + account.getName() + "'");
     }
     int port = Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT));
-    String username = userProperties.get(ZimletProperty.DAV_USER_USERNAME);
-    String password = userProperties.get(ZimletProperty.DAV_USER_PASSWORD);
+//    String username = userProperties.get(ZimletProperty.DAV_USER_USERNAME);
+//    String password = userProperties.get(ZimletProperty.DAV_USER_PASSWORD);
     final URL url;
     try
     {
