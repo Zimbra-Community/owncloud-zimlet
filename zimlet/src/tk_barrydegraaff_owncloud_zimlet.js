@@ -32,9 +32,9 @@ var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
  */
 ownCloudZimlet.prototype.init =
   function () {
-    this.davConnector = new DavConnector();
-    this.ownCloudConnector = new OwnCloudConnector();
-    this.davForZimbraConnector = new DavForZimbraConnector();
+    this._davConnector = new DavConnector();
+    this._ownCloudConnector = new OwnCloudConnector();
+    this._davForZimbraConnector = new DavForZimbraConnector();
 
     this._defaultPropfindErrCbk = new AjxCallback(
       this,
@@ -169,8 +169,8 @@ ownCloudZimlet.prototype.saveAttachment =
     );
 
     createFolderCbk = new AjxCallback(
-      this.davConnector,
-      this.davConnector.propfind,
+      this._davConnector,
+      this._davConnector.propfind,
       [
         this.getConfig('owncloud_zimlet_default_folder'),
         1,
@@ -192,7 +192,7 @@ ownCloudZimlet.prototype.saveAttachment =
  */
 ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
   function(mid, part, fileName) {
-    this.davForZimbraConnector.sendMailAttachmentToDav(
+    this._davForZimbraConnector.sendMailAttachmentToDav(
       mid,
       part,
       fileName
@@ -300,8 +300,8 @@ ownCloudZimlet.prototype.doDrop =
     );
 
     createFolderCbk = new AjxCallback(
-      this.davConnector,
-      this.davConnector.propfind,
+      this._davConnector,
+      this._davConnector.propfind,
       [
         this.getConfig('owncloud_zimlet_default_folder'),
         1,
@@ -360,7 +360,7 @@ ownCloudZimlet.prototype._doDropPropfindCbk =
       } else if (tmpObj.type == 'TASK') {
         type = 'TASK';
       }
-      this.davForZimbraConnector.sendItemToDav(
+      this._davForZimbraConnector.sendItemToDav(
         type,
         id,
         callback,
@@ -395,7 +395,7 @@ ownCloudZimlet.prototype._handlePropfindError =
  */
 ownCloudZimlet.prototype.createFolder =
   function(callback, errorCallback) {
-    this.davConnector.mkcol(
+    this._davConnector.mkcol(
       '/' + this.getConfig('owncloud_zimlet_default_folder'),
       new AjxCallback(
         this,
