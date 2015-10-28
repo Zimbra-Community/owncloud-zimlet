@@ -37,7 +37,9 @@ ownCloudZimlet.prototype.init = function () {
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_username"))
    {
-      this.setUserProperty("owncloud_zimlet_username", '', true);   
+      var username = appCtxt.getActiveAccount().name.match(/.*@/);
+      username = username[0].replace('@','');
+      this.setUserProperty("owncloud_zimlet_username", username, true);   
    }
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = this.getUserProperty("owncloud_zimlet_username");
    
@@ -51,7 +53,7 @@ ownCloudZimlet.prototype.init = function () {
    //Set default value
    if(!this.getUserProperty("owncloud_zimlet_default_folder"))
    {
-      this.setUserProperty("owncloud_zimlet_default_folder", 'Zimbra emails', true);
+      this.setUserProperty("owncloud_zimlet_default_folder", 'Documents', true);
    }
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");   
 
@@ -70,10 +72,8 @@ ownCloudZimlet.prototype.init = function () {
 		AjxPackage.require({name:"MailCore", callback:new AjxCallback(this, this.addAttachmentHandler)});
 	}
    
-   //Create the default folder, and create an active session with ownCloudif the password is stored OR
-   //Create the default folder if we use SSO (disable_password_storing)
-   if (   ( tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) ||
-   ( (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] != 'false') && (!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) )  )
+   //Create the default folder, and create an active session with ownCloudif the password is stored
+   if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
    {
       ownCloudZimlet.prototype.createFolder(this);
    }   
@@ -119,7 +119,6 @@ ownCloudZimlet.prototype.status = function(text, type) {
 
 ownCloudZimlet.prototype.saveAttachment = 
 function(name, url) {
-   ownCloudZimlet.prototype.createFolder(this);
    var client = new davlib.DavClient();
    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
    client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],  function(status, statusstr, content) 
@@ -250,10 +249,7 @@ function(itemId) {
 /* doDrop handler
  * */
 ownCloudZimlet.prototype.doDrop =
-function(zmObjects) {
-   console.log(zmObjects);
-   ownCloudZimlet.prototype.createFolder(this);
-   
+function(zmObjects) { 
    var client = new davlib.DavClient();
    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
    client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ "/" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],  function(status, statusstr, content) 
@@ -513,7 +509,7 @@ function(status, statusstr) {
 ownCloudZimlet.prototype.appLaunch =
 function(appName) { 
    var app = appCtxt.getApp(appName);
-   app.setContent('<div style="position: fixed; left:0; width:100%; height:100%; border:0px;"><iframe id="ownCloudFrame" style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+'"></div>');
+   app.setContent('<div style="position: fixed; left:0; width:100%; height:86%; border:0px;"><iframe id="ownCloudFrame" style="z-index:2; left:0; width:100%; height:100%; border:0px;" src="'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+'"></div>');
    var overview = app.getOverview(); // returns ZmOverview
    overview.setContent("&nbsp;");
    var child = document.getElementById(overview._htmlElId);

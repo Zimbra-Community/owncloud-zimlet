@@ -57,15 +57,12 @@ The recommended method is to deploy using git. (I no longer support zmzimletctl,
 
 You should now be able to see your ownCloud login page under the same domain as your Zimbra server: https://zimbraserver.example.com/owncloud/ 
 
+If you get an ERROR 404 or you don't see ownCloud see 
+[https://github.com/barrydegraaff/owncloud-zimlet/wiki/Install-and-enable-Zimbra-Proxy](https://github.com/barrydegraaff/owncloud-zimlet/wiki/Install-and-enable-Zimbra-Proxy)
+
 ### Configure your ownCloud Server
 
-Comment a line in the css so the `Deleted Items` menu becomes visible in Zimbra:
-
-    [root@owncloud1 ~]# nano /var/www/html/owncloud/apps/files/css/files.css
-    .nav-trashbin {
-    /*	position: fixed !important; */
-    
-Also if you want to enable link sharing add a php file to you ownCloud installation:
+If you want to enable link sharing add a php file to you ownCloud installation:
 
     [root@owncloud1 ~]# cd /var/www/html/owncloud/ocs/
     [root@owncloud1 ~]# rm -Rf zcs.php
@@ -75,6 +72,15 @@ If your ownCloud server does not return the correct domain when using the public
 
     [root@owncloud1 ~]# nano /var/www/html/owncloud/config/config.php   
     'overwritehost' => 'yourdomain.com',    
+
+### Do you backup using zmmailbox tgz? Please be advised of proxy problems
+
+I am sorry to inform you that exporting tgz files is considered broken by Zimbra: [https://bugzilla.zimbra.com/show_bug.cgi?id=101760](https://bugzilla.zimbra.com/show_bug.cgi?id=101760). 
+Installing the proxy may break the tgz export feature a bit more, it is advised you bypass the proxy when using zmmailbox. Please see: [https://bugzilla.zimbra.com/show_bug.cgi?id=101760#c11](https://bugzilla.zimbra.com/show_bug.cgi?id=101760#c11)
+
+
+
+
 
 ========================================================================
 
