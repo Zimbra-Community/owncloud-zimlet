@@ -78,11 +78,11 @@
    * @param {number} shareType 0 = user; 1 = group; 3 = public link; 6 = federated cloud share
    * @param {string} shareWith User/Group id with which the file should be shared.
    * @param {boolean} publicUpload Allow public upload to a public shared folder.
-   * @param {string=} password Password to pretect public link Share with.
+   * @param {string} password Password to pretect public link Share with.
    * @param {number} permissions 1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all
    *                             (default: 31, for public shares: 1)
-   * @param {AjxCallback} callback
-   * @param {AjxCallback} errorCallback
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
    */
   OwnCloudConnector.prototype.createShare = function(
     path,

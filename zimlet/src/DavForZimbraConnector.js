@@ -22,6 +22,22 @@
     SEND_MAIL_ATTACHMENT_TO_DAV: 'sendMailAttachmentToDav'
   };
 
+  var DavForZimbraShareType = {
+    USER: 0,
+    GROUP: 1,
+    PUBLIC_LINK: 3,
+    FEDERATED_CLOUD_SHARE: 6
+  };
+
+  var DavForZimbraSharePermission = {
+    READ: 1,   // Default for public shares.
+    UPDATE: 2,
+    CREATE: 4,
+    DELETE: 8,
+    SHARE: 16,
+    ALL: 31    // Default.
+  };
+
   /**
    * OwnCloud connector client for OwnCloud server extension.
    * @constructor
@@ -146,4 +162,6 @@
 
   /* Expose these object to the scope */
   context.DavForZimbraConnector = DavForZimbraConnector;
+  context.DavForZimbraShareType = DavForZimbraShareType;
+  context.DavForZimbraSharePermission = DavForZimbraSharePermission;
 })(this);

@@ -231,7 +231,7 @@ ownCloudZimlet.prototype.showAttachmentDialog =
 
     this.AMV.reparentHtmlElement(attachDialog._getContentDiv().childNodes[0], 0);
     this.AMV.attachDialog = attachDialog;
-    attachDialog.setOkListener(new AjxCallback(this.AMV, this.AMV._uploadFiles));
+    attachDialog.setOkListener(new AjxCallback(this.AMV, this.AMV._attachFiles));
 
     var view = appCtxt.getCurrentView();
     var callback = new AjxCallback(view, view._attsDoneCallback, [true]);

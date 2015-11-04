@@ -30,6 +30,11 @@ OwnCloudTabView =
     });
     this._tree.setSize(Dwt.DEFAULT, "275");
     this._tree.setScrollStyle(Dwt.SCROLL);
+    this._checkbox = new DwtCheckbox({ // feature available only in ownCloud installation.
+      parent: this,
+      style: DwtCheckbox.TEXT_RIGHT
+    });
+    this._checkbox.setText('Add file as shared link');
     this._populateTree();
     //this._createHtml1();
   };
@@ -125,9 +130,12 @@ OwnCloudTabView.prototype._renderResource =
     return treeItem;
   };
 
-/* Uploads the files.
+/**
+ * Attach files to a mail.
+ * @param {ZmAttachDialog} attachmentDlg
+ * @private
  */
-OwnCloudTabView.prototype._uploadFiles =
+OwnCloudTabView.prototype._attachFiles =
   function(attachmentDlg)
   {
     var
@@ -136,182 +144,38 @@ OwnCloudTabView.prototype._uploadFiles =
       /** @type {number[]} */ ids = [],
       /** @type {DavResource} */ resource,
       /** @type {number} */ i,
-      /** @type {number[]} */ attachedIds = [];
-
+      /** @type {number[]} */ attachedIds = [],
+      /** @type {boolean} */ attachLinks = this._checkbox.getInputElement().checked;
     for (i = 0; i < selection.length; i += 1) {
       resourcesToAttach.push(selection[i].getData('DavResource'));
     }
 
-    this._getFirstResource(
-      resourcesToAttach,
-      ids,
-      new AjxCallback(
-        this,
-        this._onUploadFinished,
-        [attachmentDlg, ids]
-      )
-    );
-
-    return;
-
-    var ownCloudSelect = document.getElementsByClassName("ownCloudSelect");
-
-    var oCreq = [];
-    var req = "";
-    var fileName = [];
-
-    var ownCloudSelectSelected = [];
-    var indexNew = 0;
-    for (var index = 0; index < ownCloudSelect.length; index++) {
-      if(ownCloudSelect[index].checked)
-      {
-        ownCloudSelectSelected[indexNew] = ownCloudSelect[index];
-        indexNew++;
-      }
+    if (attachLinks) {
+      // Attach files as links.
+      this._getFirstLink(
+        resourcesToAttach,
+        new AjxCallback(
+          this,
+          this._onLinkingFinished,
+          [attachmentDlg]
+        )
+      );
+    } else {
+      // Attach files as standard attachments.
+      this._getFirstResource(
+        resourcesToAttach,
+        ids,
+        new AjxCallback(
+          this,
+          this._onUploadFinished,
+          [attachmentDlg, ids]
+        )
+      );
     }
-    ownCloudSelect = ownCloudSelectSelected;
-
-    if(document.getElementById('shareType').value == 'attach')
-    {
-      var attBubble = document.getElementsByClassName("attBubbleContainer");
-      attBubble[0].style.backgroundImage = 'url(\'/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/progressround.gif\')';
-      attBubble[0].style.backgroundRepeat = "no-repeat";
-      attBubble[0].style.backgroundPosition = "right";
-
-      if (ownCloudSelect[0])
-      {
-        if(ownCloudSelect[0].checked)
-        {
-          ownCloudSelect[0].checked = false;
-          oCreq[ownCloudSelect[0].value] = new XMLHttpRequest();
-          oCreq[ownCloudSelect[0].value].open('GET', ownCloudSelect[0].value, true);
-          oCreq[ownCloudSelect[0].value].setRequestHeader("Authorization", "Basic " + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + ":" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-          oCreq[ownCloudSelect[0].value].responseType = "blob";
-          oCreq[ownCloudSelect[0].value].send('');
-
-          oCreq[ownCloudSelect[0].value].onload = function(e)
-          {
-            //Patch for Internet Explorer that does not implement responseURL in XMLHttpRequest
-            if (!this.responseURL)
-            {
-              this.responseURL = ownCloudSelect[0].value;
-            }
-            req = new XMLHttpRequest();
-            fileName[this.responseURL] = this.responseURL.match(/(?:[^/][\d\w\.]+)+$/);
-            fileName[this.responseURL] = decodeURI(fileName[this.responseURL][0]);
-            req.open("POST", "/service/upload?fmt=extended,raw", true);
-            req.setRequestHeader("Cache-Control", "no-cache");
-            req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-            req.setRequestHeader("Content-Type",  "application/octet-stream" + ";");
-            req.setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
-            req.setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName[this.responseURL] + '"');
-            req.onload = function(e) {
-              var resp = eval("["+req.responseText+"]");
-              var respObj = resp[2];
-              var attId = "";
-              for (var i = 0; i < respObj.length; i++)
-              {
-                if(respObj[i].aid != "undefined") {
-                  OwnCloudTabView.attachment_ids.push(respObj[i].aid);
-                }
-              }
-              OwnCloudTabView.prototype._uploadFiles();
-            };
-            req.send(this.response);
-          };
-        }
-      }
-      else
-      {
-        //If there are no more attachments to upload to Zimbra, attach them to the draft message
-        var attachment_list = OwnCloudTabView.attachment_ids.join(",");
-        var viewType = appCtxt.getCurrentViewType();
-        if (viewType == ZmId.VIEW_COMPOSE)
-        {
-          var controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
-          controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, attachment_list);
-        }
-
-        var attBubble = document.getElementsByClassName("attBubbleContainer");
-        attBubble[0].style.backgroundImage = 'url(\'\')';
-      }
-    }
-    else
-    {
-      //Create share links
-      var attBubble = document.getElementsByClassName("attBubbleContainer");
-      attBubble[0].style.backgroundImage = 'url(\'/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/progressround.gif\')';
-      attBubble[0].style.backgroundRepeat = "no-repeat";
-      attBubble[0].style.backgroundPosition = "right";
-
-      if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-      {
-        if(document.getElementById('passprompt'))
-        {
-          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('passprompt').value;
-        }
-      }
-
-      var jsonArray = [];
-      for(var x=0; x < ownCloudSelect.length; x++)
-      {
-        jsonArray.push(unescape(ownCloudSelect[x].value.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],"")));
-      }
-      var jsonString = JSON.stringify(jsonArray);
-      var xmlHttp = new XMLHttpRequest();
-      var password = ownCloudZimlet.prototype.pwgen();
-      var composeMode = appCtxt.getCurrentView().getHtmlEditor().getMode();
-      if(composeMode == 'text/plain')
-      {
-        var sep = "rn";
-      }
-      else
-      {
-        var sep = "<br>";
-      }
-
-      xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+ "/ocs/zcs.php?proxy_location=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] + "&zcsuser="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + "&zcspass=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] + "&path="+jsonString+"&shareType=3&password="+password+"&permissions="+document.getElementById('shareType').value+"&sep="+sep);
-      xmlHttp.send( null );
-      xmlHttp.onload = function(e)
-      {
-        var url = xmlHttp.response;
-        var composeView = appCtxt.getCurrentView();
-        //I hate the Zimbra compose controller
-        var content = composeView.getHtmlEditor().getContent();
-        if(content.indexOf('<hr id="') > 0)
-        {
-          content = content.replace('<hr id="',url + '<br><hr id="');
-        }
-        else if(content.indexOf('<div id="') > 0)
-        {
-          content = content.replace('<div id="',url + '<br><div id="');
-        }
-        else if(content.indexOf('</body') > 0)
-        {
-          content = content.replace('</body',url + '<br></body');
-        }
-        else if(content.indexOf('----') > 0)
-        {
-          content = content.replace('----',url + '\r\n----');
-        }
-        else
-        {
-          content = content + url + '';
-        }
-        composeView.getHtmlEditor().setContent(content);
-        var attBubble = document.getElementsByClassName("attBubbleContainer");
-        attBubble[0].style.backgroundImage = 'url(\'\')';
-      }
-    }
-    //This function is called via the Attach Dialog once passing attachmentDlg,
-    //subsequent calls when handling multiple selects don't pass attachmentDlg.
-    try {
-      attachmentDlg.popdown();
-    } catch (err) {}
   };
 
 /**
- *
+ * Process the resources array, consuming an item.
  * @param {DavResource[]} resources
  * @param {number[]} ids
  * @param {AjxCallback} callback
@@ -340,7 +204,40 @@ OwnCloudTabView.prototype._getFirstResource =
   };
 
 /**
- *
+ * Process the resources array, consuming an item.
+ * @param {DavResource[]} resources
+ * @param {AjxCallback} callback
+ * @private
+ */
+OwnCloudTabView.prototype._getFirstLink =
+  function(resources, callback) {
+    if (resources.length < 1) {
+      if (!!callback) {
+        callback.run();
+      }
+      return;
+    }
+
+    var resource = resources.shift(),
+      internalCallback = new AjxCallback(
+        this,
+        this._createShareCbk,
+        [resource, resources, callback]
+      );
+
+    this._ownCloudConnector.createShare(
+      resource.getHref(),
+      DavForZimbraShareType.PUBLIC_LINK,
+      void 0,
+      false,
+      void 0,
+      DavForZimbraSharePermission.READ,
+      internalCallback
+    );
+  };
+
+/**
+ * When a resource is retrieved, send it to zimbra as attachment.
  * @param {DavResource} resource
  * @param {DavResource[]} resources
  * @param {number[]} ids
@@ -375,8 +272,9 @@ OwnCloudTabView.prototype._getResourceCbk =
   };
 
 /**
- * @param {} dialog
- * @param {number[]} ids
+ * Callback invoked when the system has finished the upload of the files.
+ * @param {} dialog The dialog to popdown.
+ * @param {number[]} ids IDs of the objects attached.
  * @private
  */
 OwnCloudTabView.prototype._onUploadFinished =
@@ -389,5 +287,61 @@ OwnCloudTabView.prototype._onUploadFinished =
       controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
       controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, ids.join(","));
     }
+    dialog.popdown();
+  };
+
+/**
+ * Handle the data received from the ownCloud installation about the shared path.
+ * @param {DavResource} resource
+ * @param {DavResource[]} resources
+ * @param {AjxCallback} callback
+ * @param {{}} data
+ * @private
+ */
+OwnCloudTabView.prototype._createShareCbk =
+  function(resource, resources, callback, data) {
+    // Data contains:
+    //   id: {number}
+    //   message: {string}
+    //   status: {string}
+    //   statuscode: {number}
+    //   token: {string}
+    //   url: "{oc-url}/index.php/s/{token-string}"
+    //   console.log(arguments);
+
+    var composeView = appCtxt.getCurrentView(),
+      composeMode = composeView.getHtmlEditor().getMode(),
+      content = composeView.getHtmlEditor().getContent(),
+      sep;
+
+    if(composeMode == 'text/plain') {
+      sep = "\r\n";
+    } else {
+      sep = "<br>";
+    }
+
+    if(content.indexOf('<hr id="') > 0) {
+      content = content.replace('<hr id="', data.url + sep + '<hr id="');
+    } else if(content.indexOf('<div id="') > 0) {
+      content = content.replace('<div id="', data.url + sep + '<div id="');
+    } else if(content.indexOf('</body') > 0) {
+      content = content.replace('</body', data.url + sep + '</body');
+    } else if(content.indexOf('----') > 0) {
+      content = content.replace('----', data.url + sep + '----');
+    } else {
+      content = content + sep + data.url + sep;
+    }
+    composeView.getHtmlEditor().setContent(content);
+
+   this._getFirstLink(resources, callback);
+  };
+
+/**
+ * When the links are generated, popdown the attachment dialog.
+ * @param {} dialog The dialog to popdown.
+ * @private
+ */
+OwnCloudTabView.prototype._onLinkingFinished =
+  function(dialog) {
     dialog.popdown();
   };
