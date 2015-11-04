@@ -6,14 +6,15 @@ ZAL_VERSION_EXTENDED=1.9.1
 
 ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | tr -d '\n' | sed -r 's/.* ([0-9\.]+[0-9]).*/\1/')
 
-echo "  Downloading the correct ZAL Version (${ZAL_VERSION_EXTENDED} for zimbra ${ZIMBRA_VERSION})..."
-wget "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
+#echo "  Downloading the correct ZAL Version (${ZAL_VERSION_EXTENDED} for zimbra ${ZIMBRA_VERSION})..."
+#wget "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
 
 echo "  Installing files..."
 mkdir -p /opt/zimbra/lib/ext/ownCloud
 rm /opt/zimbra/lib/ext/ownCloud/*.jar
-cp "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
-cp !(zal*).jar /opt/zimbra/lib/ext/ownCloud/
+#cp "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
+#cp !(zal*).jar /opt/zimbra/lib/ext/ownCloud/
+cp *.jar /opt/zimbra/lib/ext/ownCloud/
 
 echo "  Deploying zimlet..."
 su - zimbra -c "zmzimletctl deploy $(pwd)/tk_barrydegraaff_owncloud_zimlet.zip"

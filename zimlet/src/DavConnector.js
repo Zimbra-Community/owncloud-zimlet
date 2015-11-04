@@ -87,6 +87,10 @@
     /** @private {string[]} */ this._contentLanguage = contentLanguage;
     /** @private {string[]} */ this._supportedReports = supportedReports;
     /** @private {{}} */ this._customProps = customProps;
+    // Normalize the href
+    if (href.indexOf('/remote.php/webdav/') > -1) {
+      this._href = href.substr(18);
+    }
   }
   DavResource.prototype = {};
   DavResource.prototype.constructor = DavResource;
@@ -139,6 +143,14 @@
    */
   DavResource.prototype.getHref = function() {
     return this._href;
+  };
+
+  /**
+   * Get the content type of the entity.
+   * @return {string}
+   */
+  DavResource.prototype.getContentType = function() {
+    return this._contentType;
   };
 
 

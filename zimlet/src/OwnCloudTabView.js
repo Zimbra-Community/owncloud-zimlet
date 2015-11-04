@@ -2,23 +2,36 @@
  * @class
  * The attach mail tab view.
  *
- * @param	{DwtTabView} parent The tab view
- * @param	{hash} zimlet The zimlet
- * @param	{string} className The class name
+ * @param	{DwtTabView} parent The tab view.
+ * @param	{tk_barrydegraaff_owncloud_zimlet_HandlerObject} zimletCtxt The zimlet context.
+ * @param	{DavConnector} davConnector The DAV Connector.
+ * @param	{OwnCloudConnector} ownCloudConnector The OwnCloud connector.
  *
  * @extends	DwtTabViewPage
  */
 OwnCloudTabView =
-  function(parent, zimlet, className) {
-    this.zimlet = zimlet;
-    DwtComposite.call(this,parent,className,Dwt.STATIC_STYLE);
+  function(parent, zimletCtxt, davConnector, ownCloudConnector) {
+    this.zimlet = zimletCtxt;
+
+    this._zimletCtxt = zimletCtxt;
+    this._davConnector = davConnector;
+    this._ownCloudConnector = ownCloudConnector;
+    DwtComposite.call(this, parent, void 0, Dwt.STATIC_STYLE);
     var acct = appCtxt.multiAccounts ? appCtxt.getAppViewMgr().getCurrentView().getFromAccount() : appCtxt.getActiveAccount();
     if (this.prevAccount && (acct.id == this.prevAccount.id)) {
       this.setSize(Dwt.DEFAULT, "275");
       return;
     }
     this.prevAccount = acct;
-    this._createHtml1(zimlet);
+
+    this._tree = new DwtTree({
+      parent: this,
+      style: DwtTree.CHECKEDITEM_STYLE
+    });
+    this._tree.setSize(Dwt.DEFAULT, "275");
+    this._tree.setScrollStyle(Dwt.SCROLL);
+    this._populateTree();
+    //this._createHtml1();
   };
 
 OwnCloudTabView.prototype = new DwtComposite;
@@ -29,58 +42,118 @@ OwnCloudTabView.prototype.toString =
     return "OwnCloudTabView";
   };
 
-/* Creates HTML for for the attach ownCloud tab UI.
+/**
+ * Populate the Tree
+ * @private
  */
-OwnCloudTabView.prototype._createHtml1 =
-  function(zimlet) {
-    try{
-      var ZmAttachDialog = document.getElementsByClassName("ZmAttachDialog");
-      ZmAttachDialog[0].style.width = "700px";
-
-      var WindowInnerContainer = document.getElementsByClassName("WindowInnerContainer");
-      WindowInnerContainer[0].style.width = "700px";
-
-    } catch (err) { }
-
-    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-    {
-      var prompt = '<span style="display:none" id=\'passpromptOuter\'>Your password is required for sharing links: <input type=\'password\' id=\'passprompt\'></span>';
-    }
-    else
-    {
-      var prompt = '<span style="display:none" id=\'passpromptOuter\'></span>';
-    }
-
-    if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_link_sharing']!=="false")
-    {
-      var disable_link_sharing = ' style="display:none" ';
-    }
-    else
-    {
-      var xmlHttp = new XMLHttpRequest();
-      xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+"/ocs/zcs.php?path=havesession", false);
-      xmlHttp.send( null );
-      if(xmlHttp.response =='true')
-      {
-        var prompt = '<span style="display:none" id=\'passpromptOuter\'></span>';
-      }
-      var disable_link_sharing = '';
-    }
-
-    html = '<select ' + disable_link_sharing + ' onclick="if(this.value != \'attach\'){document.getElementById(\'passpromptOuter\').style.display = \'block\'; ownCloudZimlet.prototype.existingShares()} else { document.getElementById(\'passpromptOuter\').style.display = \'none\'; ownCloudZimlet.prototype.removeElementsByClass(\'ownCloudShareExists\');}" id="shareType"><option value="attach">Send as attachment</option><option value="1">Share as link</option></select> '+prompt+' <div style="width:650px; height: 255px; overflow-x: hidden; overflow-y: scroll; padding:2px; margin: 2px" id="davBrowser"></div><small><br></small>';
-    this.setContent(html);
-
-    var client = new davlib.DavClient();
-    client.initialize(location.hostname, 443, 'https', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-    client.PROPFIND(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'],  ownCloudZimlet.prototype.readFolderAsHTMLCallback, document.getElementById('davBrowser'), 1);
+OwnCloudTabView.prototype._populateTree =
+  function() {
+    this._davConnector.propfind(
+      '/',
+      1,
+      new AjxCallback(
+        this,
+        this._renderPropFind,
+        ['/', this._tree]
+      ),
+      this._zimletCtxt._defaultPropfindErrCbk
+    );
   };
 
+/**
+ * Render the list returned from the propfind.
+ * @param {string} href
+ * @param {DwtTree|DwtTreeItem} parent
+ * @param {DavResource[]} resources
+ * @private
+ */
+OwnCloudTabView.prototype._renderPropFind = function(href, parent, resources) {
+  var i;
+  // Display folders
+  for (i = 0; i < resources.length; i += 1) {
+    if (resources[i].isDirectory())
+    {
+      if (resources[i].getHref() === href) continue;
+      this._renderResource(parent, resources[i]);
+    }
+  }
+  // Display files
+  for (i = 0; i < resources.length; i += 1) {
+    if (!resources[i].isDirectory())
+    {
+      this._renderResource(parent, resources[i]);
+    }
+  }
+  OwnCloudTabView.attachment_ids = [];
+};
+
+/**
+ * Generate the tree item for a resource
+ * @param parent
+ * @param {} resource
+ * @return {DwtTreeItem} The tree item.
+ * @private
+ */
+OwnCloudTabView.prototype._renderResource =
+  function(parent, resource) {
+    var treeItem;
+    if (resource.isDirectory()) {
+      treeItem = new DwtTreeItem({
+        parent: parent,
+        text: resource.getName(),
+        imageInfo: 'folder'
+      });
+      this._davConnector.propfind(
+        resource.getHref(),
+        1,
+        new AjxCallback(
+          this,
+          this._renderPropFind,
+          [resource.getHref(), treeItem]
+        ),
+        this._zimletCtxt._defaultPropfindErrCbk
+      );
+    } else {
+      //indentation = resource.getHref().split('/').length - 2;
+      treeItem = new DwtTreeItem({
+        parent: parent,
+        text: resource.getName(),
+        imageInfo: ZmMimeTable.getInfo(resource._contentType).image
+      });
+    }
+    treeItem.setData('DavResource', resource);
+    return treeItem;
+  };
 
 /* Uploads the files.
  */
 OwnCloudTabView.prototype._uploadFiles =
   function(attachmentDlg)
   {
+    var
+      /** @type {DwtTreeItem[]} */ selection = this._tree.getSelection(),
+      /** @type {DavResource[]} */ resourcesToAttach = [],
+      /** @type {number[]} */ ids = [],
+      /** @type {DavResource} */ resource,
+      /** @type {number} */ i,
+      /** @type {number[]} */ attachedIds = [];
+
+    for (i = 0; i < selection.length; i += 1) {
+      resourcesToAttach.push(selection[i].getData('DavResource'));
+    }
+
+    this._getFirstResource(
+      resourcesToAttach,
+      ids,
+      new AjxCallback(
+        this,
+        this._onUploadFinished,
+        [attachmentDlg, ids]
+      )
+    );
+
+    return;
+
     var ownCloudSelect = document.getElementsByClassName("ownCloudSelect");
 
     var oCreq = [];
@@ -132,8 +205,7 @@ OwnCloudTabView.prototype._uploadFiles =
             req.setRequestHeader("Content-Type",  "application/octet-stream" + ";");
             req.setRequestHeader("X-Zimbra-Csrf-Token", window.csrfToken);
             req.setRequestHeader("Content-Disposition", 'attachment; filename="'+ fileName[this.responseURL] + '"');
-            req.onload = function(e)
-            {
+            req.onload = function(e) {
               var resp = eval("["+req.responseText+"]");
               var respObj = resp[2];
               var attId = "";
@@ -144,7 +216,7 @@ OwnCloudTabView.prototype._uploadFiles =
                 }
               }
               OwnCloudTabView.prototype._uploadFiles();
-            }
+            };
             req.send(this.response);
           };
         }
@@ -236,4 +308,86 @@ OwnCloudTabView.prototype._uploadFiles =
     try {
       attachmentDlg.popdown();
     } catch (err) {}
+  };
+
+/**
+ *
+ * @param {DavResource[]} resources
+ * @param {number[]} ids
+ * @param {AjxCallback} callback
+ * @private
+ */
+OwnCloudTabView.prototype._getFirstResource =
+  function(resources, ids, callback) {
+    if (resources.length < 1) {
+      if (!!callback) {
+        callback.run(ids);
+      }
+      return;
+    }
+
+    var resource = resources.shift(),
+      internalCallback = new AjxCallback(
+        this,
+        this._getResourceCbk,
+        [resource, resources, ids, callback]
+    );
+
+    this._davConnector.get(
+      resource.getHref(),
+      internalCallback
+    );
+  };
+
+/**
+ *
+ * @param {DavResource} resource
+ * @param {DavResource[]} resources
+ * @param {number[]} ids
+ * @param {AjxCallback} callback
+ * @param {string} data
+ * @private
+ */
+OwnCloudTabView.prototype._getResourceCbk =
+  function(resource, resources, ids, callback, data) {
+    var req = new XMLHttpRequest();
+    if (!req.responseURL)
+    {
+      req.responseURL = '/service/upload?fmt=extended,raw';
+    }
+    req.open('POST', '/service/upload?fmt=extended,raw', true);
+    req.setRequestHeader('Cache-Control', 'no-cache');
+    req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    req.setRequestHeader('Content-Type',  'application/octet-stream' + ';');
+    req.setRequestHeader('X-Zimbra-Csrf-Token', window.csrfToken);
+    req.setRequestHeader('Content-Disposition', 'attachment; filename='+ resource.getName() + ';');
+    req.onload = (function(_this, resources, ids, callback) {
+      return function(result) {
+        var resp = eval('[' + this.responseText + ']'),
+          respObj;
+        respObj = resp[2];
+        if (!!(respObj[0].aid)) { ids.push(respObj[0].aid); }
+        // ew also have these fields: ct (content type), filename, s(size)
+        _this._getFirstResource(resources, ids, callback);
+      };
+    }(this, resources, ids, callback));
+    req.send(data);
+  };
+
+/**
+ * @param {} dialog
+ * @param {number[]} ids
+ * @private
+ */
+OwnCloudTabView.prototype._onUploadFinished =
+  function(dialog, ids) {
+    var viewType = appCtxt.getCurrentViewType(),
+      controller;
+
+    if (viewType == ZmId.VIEW_COMPOSE)
+    {
+      controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
+      controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, ids.join(","));
+    }
+    dialog.popdown();
   };

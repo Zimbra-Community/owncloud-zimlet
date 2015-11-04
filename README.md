@@ -24,57 +24,36 @@ Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 ### Install prerequisites
   - A running Zimbra server with Zimbra Proxy
   - A running ownCloud server
-  
-If you are not running Zimbra proxy, you can either install it OR run a seperate nginx, apache or other proxy server.
 
+### Build the ownCloud Extension and Zimlet
+The recommended method is to build from sources.
 
-### Configure your Zimbra Server
-Add a reverse proxy on your Zimbra to access ownCloud in the same domain. Open the template file and add the /owncloud location before the final `}`. 
+    [user@host ~]$ yum install -y git ant                                      # On RedHat/Fedora/CentOS
+    [user@host ~]$ apt-get -y install git ant                                  # On Debian/Ubuntu
+    [user@host ~]$ cd ~
+    [user@host ~]$ rm owncloud-zimlet -Rf
+    [user@host ~]$ git clone https://github.com/barrydegraaff/owncloud-zimlet
+    [user@host ~]$ cd owncloud-zimlet
+    [user@host owncloud-zimlet]$ git checkout 0.2.0
+    [user@host owncloud-zimlet]$ cd extension && ant download-libs && cd ..    # Optional: you can download the libraries manually
+    [user@host owncloud-zimlet]$ make
 
-    [root@myzimbra ~]# nano /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.default.template
-    location /owncloud/ {
-        proxy_pass https://owncloud.example.com/owncloud/;
-    }
+You should find the package file `owncloud-extension.tar.gz` ready to be deployed, send it to your server.
 
-In case your ownCloud is installed in a different location (not /owncloud), for example `/oc` or `/mycloud` see 
-[https://github.com/barrydegraaff/owncloud-zimlet/wiki/ownCloud-in-a-different-location](https://github.com/barrydegraaff/owncloud-zimlet/wiki/ownCloud-in-a-different-location)
+### Install the ownCloud Extension and Zimlet
+Copy the package file `owncloud-extension.tar.gz` into `/tmp/`:
+
+    [user@host owncloud-zimlet]$ scp owncloud-extension.tar.gz root@server:/tmp/owncloud-extension.tar.gz
     
-##### Install the ownCloud Zimlet
-The recommended method is to deploy using git. (I no longer support zmzimletctl, although that still works.)
-
-    [root@myzimbra ~]# yum install -y git 
-    [root@myzimbra ~]# apt-get -y install git
-    [root@myzimbra ~]# cd ~
-    [root@myzimbra ~]# rm owncloud-zimlet -Rf
-    [root@myzimbra ~]# git clone https://github.com/barrydegraaff/owncloud-zimlet
-    [root@myzimbra ~]# cd owncloud-zimlet
-    [root@myzimbra owncloud-zimlet]# git checkout 0.2.0
-    [root@myzimbra owncloud-zimlet]# chmod +rx install-dev.sh
-    [root@myzimbra owncloud-zimlet]# ./install-dev.sh
-    [root@myzimbra owncloud-zimlet]# su zimbra
-    [zimbra@myzimbra owncloud-zimlet] zmprov mc default zimbraPrefZimletTreeOpen TRUE
-    [zimbra@myzimbra owncloud-zimlet] zmcontrol restart
-
-You should now be able to see your ownCloud login page under the same domain as your Zimbra server: https://zimbraserver.example.com/owncloud/ 
-
-### Configure your ownCloud Server
-
-Comment a line in the css so the `Deleted Items` menu becomes visible in Zimbra:
-
-    [root@owncloud1 ~]# nano /var/www/html/owncloud/apps/files/css/files.css
-    .nav-trashbin {
-    /*	position: fixed !important; */
+Start the installer:
     
-Also if you want to enable link sharing add a php file to you ownCloud installation:
+    [root@server tmp]# sudo -u zimbra tar -xzf /tmp/owncloud-extension.tar.gz -C /tmp/
+    [root@server tmp]# cd /tmp/owncloud-extension && sudo ./install 
 
-    [root@owncloud1 ~]# cd /var/www/html/owncloud/ocs/
-    [root@owncloud1 ~]# rm -Rf zcs.php
-    [root@owncloud1 ~]# wget https://raw.githubusercontent.com/barrydegraaff/owncloud-zimlet/master/php/zcs.php
+### Do you backup using zmmailbox tgz? Please be advised of proxy problems
 
-If your ownCloud server does not return the correct domain when using the public share api, you have to set your domain in:
-
-    [root@owncloud1 ~]# nano /var/www/html/owncloud/config/config.php   
-    'overwritehost' => 'yourdomain.com',    
+I am sorry to inform you that exporting tgz files is considered broken by Zimbra: [https://bugzilla.zimbra.com/show_bug.cgi?id=101760](https://bugzilla.zimbra.com/show_bug.cgi?id=101760). 
+Installing the proxy may break the tgz export feature a bit more, it is advised you bypass the proxy when using zmmailbox. Please see: [https://bugzilla.zimbra.com/show_bug.cgi?id=101760#c11](https://bugzilla.zimbra.com/show_bug.cgi?id=101760#c11)
 
 ========================================================================
 
