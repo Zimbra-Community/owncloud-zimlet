@@ -1,6 +1,7 @@
 package com.zextras.owncloud.proxy;
 
 
+import com.zextras.SoapUtil;
 import com.zextras.Zimlet;
 import com.zextras.dav.ZimletProperty;
 import com.zextras.util.UserPropertyExtractor;
@@ -37,6 +38,11 @@ public class OwnCloudProxyHandler implements HttpHandler
   {
     Account account = getAccount(httpServletRequest);
     URL serverUrl = getServerUrl(account);
+
+    if (!UserPropertyExtractor.checkPermissionOnTarget(serverUrl, account))
+    {
+      throw new RuntimeException("Proxy domain not allowed '" + serverUrl + "' for user '" + account.getName() + "'");
+    }
 
     Conf conf  = new Conf();
 

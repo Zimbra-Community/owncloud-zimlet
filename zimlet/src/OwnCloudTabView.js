@@ -9,35 +9,34 @@
  *
  * @extends	DwtTabViewPage
  */
-OwnCloudTabView =
-  function(parent, zimletCtxt, davConnector, ownCloudConnector) {
-    this.zimlet = zimletCtxt;
+function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector) {
+  this.zimlet = zimletCtxt;
 
-    this._zimletCtxt = zimletCtxt;
-    this._davConnector = davConnector;
-    this._ownCloudConnector = ownCloudConnector;
-    DwtComposite.call(this, parent, void 0, Dwt.STATIC_STYLE);
-    var acct = appCtxt.multiAccounts ? appCtxt.getAppViewMgr().getCurrentView().getFromAccount() : appCtxt.getActiveAccount();
-    if (this.prevAccount && (acct.id == this.prevAccount.id)) {
-      this.setSize(Dwt.DEFAULT, "275");
-      return;
-    }
-    this.prevAccount = acct;
+  this._zimletCtxt = zimletCtxt;
+  this._davConnector = davConnector;
+  this._ownCloudConnector = ownCloudConnector;
+  DwtComposite.call(this, parent, void 0, Dwt.STATIC_STYLE);
+  var acct = appCtxt.multiAccounts ? appCtxt.getAppViewMgr().getCurrentView().getFromAccount() : appCtxt.getActiveAccount();
+  if (this.prevAccount && (acct.id == this.prevAccount.id)) {
+    this.setSize(Dwt.DEFAULT, "275");
+    return;
+  }
+  this.prevAccount = acct;
 
-    this._tree = new DwtTree({
-      parent: this,
-      style: DwtTree.CHECKEDITEM_STYLE
-    });
-    this._tree.setSize(Dwt.DEFAULT, "275");
-    this._tree.setScrollStyle(Dwt.SCROLL);
-    this._checkbox = new DwtCheckbox({ // feature available only in ownCloud installation.
-      parent: this,
-      style: DwtCheckbox.TEXT_RIGHT
-    });
-    this._checkbox.setText('Add file as shared link');
-    this._populateTree();
-    //this._createHtml1();
-  };
+  this._tree = new DwtTree({
+    parent: this,
+    style: DwtTree.CHECKEDITEM_STYLE
+  });
+  this._tree.setSize(Dwt.DEFAULT, "275");
+  this._tree.setScrollStyle(Dwt.SCROLL);
+  this._checkbox = new DwtCheckbox({ // feature available only in ownCloud installation.
+    parent: this,
+    style: DwtCheckbox.TEXT_RIGHT
+  });
+  this._checkbox.setText('Add file as shared link');
+  this._populateTree();
+  //this._createHtml1();
+}
 
 OwnCloudTabView.prototype = new DwtComposite;
 OwnCloudTabView.prototype.constructor = OwnCloudTabView;
