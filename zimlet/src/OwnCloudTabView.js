@@ -273,7 +273,7 @@ OwnCloudTabView.prototype._getResourceCbk =
 
 /**
  * Callback invoked when the system has finished the upload of the files.
- * @param {} dialog The dialog to popdown.
+ * @param {ZmAttachDialog} dialog The dialog to popdown.
  * @param {number[]} ids IDs of the objects attached.
  * @private
  */
@@ -338,7 +338,7 @@ OwnCloudTabView.prototype._createShareCbk =
 
 /**
  * When the links are generated, popdown the attachment dialog.
- * @param {} dialog The dialog to popdown.
+ * @param {ZmAttachDialog} dialog The dialog to popdown.
  * @private
  */
 OwnCloudTabView.prototype._onLinkingFinished =
