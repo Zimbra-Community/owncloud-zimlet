@@ -551,12 +551,55 @@ ownCloudZimlet.prototype.cancelBtn =
  */
 ownCloudZimlet.prototype.prefSaveBtn =
   function() {
-    this.setUserProperty('owncloud_zimlet_server_name', document.getElementById('owncloud_zimlet_server_name').value, false);
-    this.setUserProperty('owncloud_zimlet_server_port', document.getElementById('owncloud_zimlet_server_port').value, false);
-    this.setUserProperty('owncloud_zimlet_server_path', document.getElementById('owncloud_zimlet_server_path').value, false);
-    this.setUserProperty('owncloud_zimlet_username', document.getElementById('owncloud_zimlet_username').value, false);
-    this.setUserProperty('owncloud_zimlet_password', document.getElementById('owncloud_zimlet_password').value, false);
-    this.setUserProperty('owncloud_zimlet_default_folder', document.getElementById('owncloud_zimlet_default_folder').value, false);
-    this.createFolder();
-    this.cancelBtn();
+    this._saveUserProperties({
+      'owncloud_zimlet_server_name': document.getElementById('owncloud_zimlet_server_name').value,
+      'owncloud_zimlet_server_port': document.getElementById('owncloud_zimlet_server_port').value,
+      'owncloud_zimlet_server_path': document.getElementById('owncloud_zimlet_server_path').value,
+      'owncloud_zimlet_username': document.getElementById('owncloud_zimlet_username').value,
+      'owncloud_zimlet_password': document.getElementById('owncloud_zimlet_password').value,
+      'owncloud_zimlet_default_folder': document.getElementById('owncloud_zimlet_default_folder').value
+    },
+      new AjxCallback(
+        this,
+        function () {
+          this.createFolder();
+          this.cancelBtn();
+        }
+      )
+    );
+  };
+
+/**
+ * Save all the parameters (one at time) and invoke a callback when the cycle is finished.
+ * @param {{}} data
+ * @param {AjxCallback} callback
+ * @private
+ */
+ownCloudZimlet.prototype._saveUserProperties =
+  function(data, callback) {
+    var key,
+      value,
+      intKey,
+      intValue,
+      cloned = {},
+      intCallback;
+
+    for(key in data) {
+      if (!data.hasOwnProperty(key)) { continue; }
+      value = data[key];
+      for(intKey in data) {
+        if (!data.hasOwnProperty(intKey)) { continue; }
+        intValue = data[intKey];
+        if (key !== intKey) { cloned[intKey] = intValue}
+      }
+      intCallback = new AjxCallback(
+        this,
+        this._saveUserProperties,
+        [cloned, callback]
+      );
+      this.setUserProperty(key, value, true, intCallback);
+      return;
+    }
+
+    if(!!callback && !!callback.run) { callback.run(); }
   };
