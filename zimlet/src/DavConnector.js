@@ -187,7 +187,7 @@
    * @param {AjxCallback=} callback
    * @param {AjxCallback=} errorCallback
    */
-  DavConnector.prototype.delete = function(path, callback, errorCallback) {
+  DavConnector.prototype.rm = function(path, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('path', path);
     DavConnector._sendRequest(DavAction.DELETE, soapDoc, callback, errorCallback);
