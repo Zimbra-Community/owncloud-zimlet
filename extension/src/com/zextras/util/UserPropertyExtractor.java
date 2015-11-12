@@ -1,6 +1,7 @@
 package com.zextras.util;
 
 import org.openzal.zal.Account;
+import org.openzal.zal.Cos;
 
 import java.net.URL;
 import java.util.*;
@@ -38,6 +39,11 @@ public class UserPropertyExtractor
 
   public static boolean checkPermissionOnTarget(URL target, Account account) {
     Set<String> domains = account.getMultiAttrSet(A_zimbraProxyAllowedDomains);
+    Cos cos = account.getCOS();
+    if (cos != null)
+    {
+      domains.addAll(cos.getMultiAttrSet(A_zimbraProxyAllowedDomains));
+    }
     String host = target.getHost().toLowerCase();
     for (String domain : domains) {
       if (domain.equals("*")) {
