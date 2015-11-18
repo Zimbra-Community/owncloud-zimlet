@@ -1,4 +1,4 @@
-(function(context) {
+;(function(context) {
   /**
    * Urn of the request
    * @const
