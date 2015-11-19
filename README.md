@@ -27,6 +27,9 @@ Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
   
 If you are not running Zimbra proxy, you can either install it OR run a seperate nginx, apache or other proxy server.
 
+For fresh ownCloud installs I recommend to use the repository:
+[https://software.opensuse.org/download/package?project=isv:ownCloud:community&package=owncloud](https://software.opensuse.org/download/package?project=isv:ownCloud:community&package=owncloud)
+
 
 ### Configure your Zimbra Server
 Add a reverse proxy on your Zimbra to access ownCloud in the same domain. Open the template file and add the /owncloud location before the final `}`. 
