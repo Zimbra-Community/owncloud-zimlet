@@ -20,7 +20,7 @@ virt-install \
   --os-type linux \
   --os-variant rhel6 \
   --location http://ftp.tudelft.nl/centos.org/7/os/x86_64/ \
-  -x "ks=https://raw.githubusercontent.com/barrydegraaff/pgp-zimlet/master/kvm/centos7.cfg"
+  -x "ks=https://raw.githubusercontent.com/Zimbra-Community/pgp-zimlet/master/kvm/centos7.cfg"
 
 # On the client:
 yum update -y

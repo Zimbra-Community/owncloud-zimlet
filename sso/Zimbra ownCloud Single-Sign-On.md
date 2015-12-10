@@ -52,7 +52,7 @@ Download the login page and configure the pre-auth key:
 
         [root@owncloud1 ~]# mkdir /var/www/html/login
         [root@owncloud1 ~]# cd /var/www/html/login/
-        [root@owncloud1 ~]# wget https://raw.githubusercontent.com/barrydegraaff/owncloud-zimlet/master/sso/login/index.php
+        [root@owncloud1 ~]# wget https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/master/sso/login/index.php
         [root@owncloud1 ~]# nano index.php # configure your key now!
         [root@owncloud1 ~]# systemctl restart httpd
 

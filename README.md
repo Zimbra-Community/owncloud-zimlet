@@ -69,7 +69,7 @@ If you want to enable link sharing add a php file to you ownCloud installation:
 
     [root@owncloud1 ~]# cd /var/www/html/owncloud/ocs/
     [root@owncloud1 ~]# rm -Rf zcs.php
-    [root@owncloud1 ~]# wget https://raw.githubusercontent.com/barrydegraaff/owncloud-zimlet/master/php/zcs.php
+    [root@owncloud1 ~]# wget https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/master/php/zcs.php
 
 If your ownCloud server does not return the correct domain when using the public share api, you have to set your domain in:
 
