@@ -17,7 +17,7 @@ This Zimlet is designed for Zimbra version 8.6.
 
 This Zimlet is not available for use in Zimbra Desktop.
 
-Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
+Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
 ========================================================================
 
@@ -40,7 +40,7 @@ Add a reverse proxy on your Zimbra to access ownCloud in the same domain. Open t
     }
 
 In case your ownCloud is installed in a different location (not /owncloud), for example `/oc` or `/mycloud` see 
-[https://github.com/barrydegraaff/owncloud-zimlet/wiki/ownCloud-in-a-different-location](https://github.com/barrydegraaff/owncloud-zimlet/wiki/ownCloud-in-a-different-location)
+[https://github.com/Zimbra-Community/owncloud-zimlet/wiki/ownCloud-in-a-different-location](https://github.com/Zimbra-Community/owncloud-zimlet/wiki/ownCloud-in-a-different-location)
     
 ##### Install the ownCloud Zimlet
 The recommended method is to deploy using git. (I no longer support zmzimletctl, although that still works.)
@@ -49,7 +49,7 @@ The recommended method is to deploy using git. (I no longer support zmzimletctl,
     [root@myzimbra ~]# apt-get -y install git
     [root@myzimbra ~]# cd ~
     [root@myzimbra ~]# rm owncloud-zimlet -Rf
-    [root@myzimbra ~]# git clone https://github.com/barrydegraaff/owncloud-zimlet
+    [root@myzimbra ~]# git clone https://github.com/Zimbra-Community/owncloud-zimlet
     [root@myzimbra ~]# cd owncloud-zimlet
     [root@myzimbra owncloud-zimlet]# git checkout 0.2.1
     [root@myzimbra owncloud-zimlet]# chmod +rx install-dev.sh
@@ -61,7 +61,7 @@ The recommended method is to deploy using git. (I no longer support zmzimletctl,
 You should now be able to see your ownCloud login page under the same domain as your Zimbra server: https://zimbraserver.example.com/owncloud/ 
 
 If you get an ERROR 404 or you don't see ownCloud see 
-[https://github.com/barrydegraaff/owncloud-zimlet/wiki/Install-and-enable-Zimbra-Proxy](https://github.com/barrydegraaff/owncloud-zimlet/wiki/Install-and-enable-Zimbra-Proxy)
+[https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Install-and-enable-Zimbra-Proxy](https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Install-and-enable-Zimbra-Proxy)
 
 ### Configure your ownCloud Server
 

@@ -4,7 +4,7 @@
 This file is part of the Zimbra ownCloud Zimlet project.
 Copyright (C) 2015  Barry de Graaff
 
-Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
+Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ $url = "https://".$_SERVER['SERVER_NAME']."/".$_GET['proxy_location']."/ocs/v1.p
 
 /* This script works around an issue with ownCloud and a limitation in
  * XMLHttpRequest({mozAnon: true})
- * https://github.com/barrydegraaff/owncloud-zimlet/issues/13
+ * https://github.com/Zimbra-Community/owncloud-zimlet/issues/13
  * 
  * If a user has an active session with ownCloud, XMLHttpRequest passes the
  * auth cookie to the ocs share API. That returns HTTP 401 and 997 Unauthorised

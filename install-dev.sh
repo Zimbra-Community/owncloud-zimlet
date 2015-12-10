@@ -3,7 +3,7 @@
 # This file is part of the Zimbra ownCloud Zimlet project.
 # Copyright (C) 2015  Barry de Graaff
 # 
-# Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
+# Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
