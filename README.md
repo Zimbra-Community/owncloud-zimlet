@@ -38,6 +38,8 @@ Add a reverse proxy on your Zimbra to access ownCloud in the same domain. Open t
         proxy_pass https://owncloud.example.com/owncloud/;
     }
 
+Note: Depending on your Zimbra Proxy settings you might need to add the reverse proxy rules to a different file, such as when the `zimbraReverseProxyGenConfigPerVirtualHostname` server property is set to TRUE (e.g. /opt/zimbra/conf/nginx/templates/nginx.conf.web.https.template). 
+
 In case your ownCloud is installed in a different location (not /owncloud), for example `/oc` or `/mycloud` see 
 [https://github.com/Zimbra-Community/owncloud-zimlet/wiki/ownCloud-in-a-different-location](https://github.com/Zimbra-Community/owncloud-zimlet/wiki/ownCloud-in-a-different-location)
     
