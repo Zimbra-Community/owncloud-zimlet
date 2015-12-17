@@ -27,7 +27,7 @@ Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
   
 If you are not running Zimbra proxy, you can either install it OR run a seperate nginx, apache or other proxy server.
 
-For fresh ownCloud installs I recommend to use the [official repository](https://download.owncloud.org/download/repositories/stable/owncloud/).
+For fresh ownCloud installs I recommend to use the [official repository](https://download.owncloud.org/download/repositories/stable/owncloud/). If you do a fresh install of ownCloud, please finalize the installation via the Zimbra proxied url, this will add your Zimbra domain to the list of trusted domains in ownCloud and will avoid unwanted http auth prompts to show up in Zimbra.
 
 
 ### Configure your Zimbra Server
