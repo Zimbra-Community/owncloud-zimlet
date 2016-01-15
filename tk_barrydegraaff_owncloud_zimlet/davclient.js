@@ -478,7 +478,7 @@ global.davlib = new function() {
 
         var url = this._generateUrl(path);
         request.open(method, url, true);
-        request.setRequestHeader('Accept-Encoding', ' ');
+        /*request.setRequestHeader('Accept-Encoding', ' ');*/
         request.setRequestHeader('Authorization', this._createBasicAuth(this.username, this.password));        		
         
         return request
