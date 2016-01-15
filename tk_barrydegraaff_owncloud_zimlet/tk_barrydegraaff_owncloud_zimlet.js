@@ -131,15 +131,15 @@ function(name, url) {
 
          rawDavResponse.forEach(function(response) 
          {
-
             var href = response.match(/<d:href>.*<\/d:href>/);
             if(href)
             {
                href = href[0].replace(/(<d:href>|<\/d:href>)/gm,"");
-               href = href.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ escape(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']),'').replace('/','').replace('/','');
+               href = decodeURIComponent(href);
+               href = href.replace(decodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']),'');
                existingItems[href] = href;
             }                                                
-         });  
+         }); 
               
          //Now make an ajax request and read the contents of this mail, including all attachments as text
          //it should be base64 encoded
@@ -262,13 +262,12 @@ function(zmObjects) {
 
          rawDavResponse.forEach(function(response) 
          {
-
             var href = response.match(/<d:href>.*<\/d:href>/);
             if(href)
             {
                href = href[0].replace(/(<d:href>|<\/d:href>)/gm,"");
                href = decodeURIComponent(href);
-               href = href.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],'');
+               href = href.replace(decodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri']+ tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']),'');
                existingItems[href] = href;
             }                                                
          });  
