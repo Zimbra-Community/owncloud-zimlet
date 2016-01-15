@@ -11,7 +11,7 @@ Demo video:https://youtu.be/cVNEQpOJV0Q
 
 Installer for Windows: https://github.com/Zimbra-Community/owncloud-zimlet/raw/master/backup-client-windows/interactive-setup.exe
 
-The ownCloud Windows backup client is tested on Windows 7 (32bit) and Windows 2008 (64 bit) and Windows 2012R2.
+The ownCloud Windows backup client is tested on Windows 7 (32bit) and Windows 2008 (64 bit) and Windows 2012R2. The installer will ask you for your ownCloud user/password and server url. The program backups each day and overwrites old backups after 7 days
 
 Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
