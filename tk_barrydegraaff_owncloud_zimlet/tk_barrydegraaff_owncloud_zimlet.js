@@ -415,7 +415,8 @@ function(zmObjects) {
    }, this, 1);
 };
 
-ownCloudZimlet.prototype.fileName = function (existingItems, fileName) {
+ownCloudZimlet.prototype.fileName = function (existingItems, fileName) {   
+   fileName = ownCloudZimlet.prototype.sanitizeFileName(fileName);
    if(existingItems[fileName]==fileName)   
    {
       //fileName already exists, generate a different one
@@ -423,7 +424,6 @@ ownCloudZimlet.prototype.fileName = function (existingItems, fileName) {
       var newFileName = fileName;
       while (existingItems[newFileName]==newFileName)
       {
-         //newFileName = fileName + x;
          var dot = fileName.lastIndexOf(".");
          if(dot < 0)
          {
@@ -443,6 +443,13 @@ ownCloudZimlet.prototype.fileName = function (existingItems, fileName) {
       return fileName;
    }
 };
+
+//Sanitize file names so they are allowed in Windows and add %
+ownCloudZimlet.prototype.sanitizeFileName = function (fileName) {
+   return fileName.replace(/\\|\/|\:|\*|\?|\"|\<|\>|\||\%/gm,"");
+};
+
+
 
 /* Base64 decode binary safe
  https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
@@ -749,7 +756,7 @@ function(status, statusstr, content) {
             davResult[resultCount] = [];
          }
          var href = response.match(/<d:href>.*<\/d:href>/);
-         davResult[resultCount]['href'] = href[0].replace(/(<d:href>|<\/d:href>)/gm,"");;
+         davResult[resultCount]['href'] = href[0].replace(/(<d:href>|<\/d:href>)/gm,"");
          davResult[resultCount]['isDirectory'] = "false";
          var level = (davResult[resultCount]['href'].split("/").length - 1) - (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'].split("/").length - 1);
          davResult[resultCount]['level'] = level;
