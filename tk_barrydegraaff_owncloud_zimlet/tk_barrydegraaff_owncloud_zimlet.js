@@ -543,7 +543,7 @@ function(appName, active) {
       try {
          var cal = document.getElementsByClassName("DwtCalendar");
          cal[0].style.display = "none";
-      } catch (err) { setTimeout(function(){var cal = document.getElementsByClassName("DwtCalendar"); cal[0].style.display = "none"; }, 10000); }
+      } catch (err) { setTimeout(function(){var cal = document.getElementsByClassName("DwtCalendar"); if(cal[0]){cal[0].style.display = "none";}}, 10000); }
    }
    else
    {
