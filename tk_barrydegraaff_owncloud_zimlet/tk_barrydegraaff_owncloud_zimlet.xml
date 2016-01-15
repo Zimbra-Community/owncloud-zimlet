@@ -5,7 +5,7 @@ Zimbra ownCloud Zimlet
    https://github.com/Zimbra-Community/owncloud-zimlet
    https://www.indiegogo.com/projects/zimbra-owncloud-extension-zimlet
 
-Copyright (C) 2015  Barry de Graaff
+Copyright (C) 2015-2016  Barry de Graaff
 
 Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
@@ -24,7 +24,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
-        version="0.3.0"
+        version="0.3.1"
         target="main compose-window view-window"
         label="ownCloud"
         description="Attach from and save to ownCloud">
