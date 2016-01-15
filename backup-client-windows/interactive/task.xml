@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<!--
+This sample schedules a task to start on a daily basis.
+-->
+<Task xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+    <RegistrationInfo>
+        <Date>2005-10-11T13:21:17-08:00</Date>
+        <Author>AuthorName</Author>
+        <Version>1.0.0</Version>
+        <Description>Daily backup to ownCloud.</Description>
+    </RegistrationInfo>
+    <Triggers>
+        <CalendarTrigger>
+            <StartBoundary>2005-10-11TOWNDRIVEBACKUPTIME:00</StartBoundary>
+            <ScheduleByDay>
+                <DaysInterval>1</DaysInterval>
+            </ScheduleByDay>
+        </CalendarTrigger>
+    </Triggers>
+  <Principals>
+    <Principal id="Author">
+      <UserId>S-1-5-18</UserId>
+      <RunLevel>HighestAvailable</RunLevel>
+    </Principal>
+  </Principals>
+    <Settings>
+        <Enabled>true</Enabled>
+        <AllowStartOnDemand>true</AllowStartOnDemand>
+        <AllowHardTerminate>true</AllowHardTerminate>
+        <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    </Settings>
+    <Actions>
+        <Exec>
+           <Command>"%systemdrive%\OCBACKUP\makebackup.cmd"</Command>
+        </Exec>       
+    </Actions>
+</Task>

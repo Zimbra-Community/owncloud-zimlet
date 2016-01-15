@@ -1,0 +1,39 @@
+How to use WebDav via Curl
+
+I recently had to assist in automating a few interactions with an Owncloud deployment. Here are the command used to interact with WebDav via Curl
+
+Download file
+
+
+curl -u user:'pass' https://owncloud-url/remote.php/webdav/fileName --output fileName
+1
+curl -u user:'pass' https://owncloud-url/remote.php/webdav/fileName --output fileName
+List Directory
+
+
+curl -u user:'pass' -X PROPFIND https://owncloud-url/remote.php/webdav/
+1
+curl -u user:'pass' -X PROPFIND https://owncloud-url/remote.php/webdav/
+Create Directory
+
+
+curl -u user:'pass' -X MKCOL https://owncloud-url/remote.php/webdav/directoryName
+1
+curl -u user:'pass' -X MKCOL https://owncloud-url/remote.php/webdav/directoryName
+Delete
+
+
+curl -u user:'pass' -X DELETE https://owncloud-url/remote.php/webdav/directoryOrFileName
+1
+curl -u user:'pass' -X DELETE https://owncloud-url/remote.php/webdav/directoryOrFileName
+Upload
+
+
+curl -u user:'pass' -T fileToUpload https://owncloud-url/remote.php/webdav/directory/
+1
+curl -u user:'pass' -T fileToUpload https://owncloud-url/remote.php/webdav/directory/
+
+
+
+Working example:
+curl -u barry:AhHuhah8 -T "/home/bar/test.txt" https://ams01.ownCloud/remote.php/webdav/Documenti/

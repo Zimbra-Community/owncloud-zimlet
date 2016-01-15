@@ -1,0 +1,9 @@
+<configuration>
+  <General>
+    <credentials></credentials>
+    <backupFolder></backupFolder>
+    <backupFolder2></backupFolder2>
+    <url></url>
+  </General>
+</configuration>
+

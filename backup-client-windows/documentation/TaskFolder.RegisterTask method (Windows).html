@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(v=vs.85).aspx -->
+<html dir="ltr" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script async="" charset="UTF-8" src="./TaskFolder.RegisterTask method (Windows)_files/meCore.min.js"></script><script async="" charset="UTF-8" src="./TaskFolder.RegisterTask method (Windows)_files/meBoot.min.js"></script><link rel="stylesheet" type="text/css" href="./TaskFolder.RegisterTask method (Windows)_files/me.min.css"><link rel="canonical" href="./TaskFolder.RegisterTask method (Windows)_files/TaskFolder.RegisterTask method (Windows).html">
+    <title>TaskFolder.RegisterTask method (Windows)</title>
+
+
+
+
+
+
+
+<meta name="DCS.dcsuri" content="/en-us/library/windows/desktop/aa382575(d=default,l=en-us,v=vs.85).aspx">
+
+<meta name="NormalizedUrl" content="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(d=default,l=en-us,v=vs.85).aspx">
+
+<meta name="ms.normalizedurl" content="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(d=default,l=en-us,v=vs.85).aspx">
+
+<meta name="VotingContextUrl" content="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(d=default,l=en-us,v=vs.85).aspx">
+
+<meta name="MN" content="BF1CA93B-12:45:57 AM">
+
+<meta name="Search.ShortId" content="aa382575">
+
+<meta name="ms.shortidmsdn" content="aa382575">
+
+<meta name="Ms.Locale" content="en-us">
+
+<meta name="ms.prodver" content="VS.85">
+
+<meta name="ms.contentlang" content="EN">
+
+<meta name="ms.lang" content="EN">
+
+<meta name="ms.loc" content="US">
+
+<meta name="ms.sitever" content="2015.11.16.2">
+
+<meta name="ms.assetid" content="9bf5c59b-5aa1-42b3-a307-f583cdf59a39">
+
+<meta name="ms.auth" content="0">
+    
+
+
+
+
+
+
+
+
+
+    <script type="text/javascript" src="./TaskFolder.RegisterTask method (Windows)_files/ai.0.js" async=""></script><script type="text/javascript" data-do-not-move="true">
+        //<![CDATA[
+        var AmbientContext = null;
+
+        (function(){
+            var root = (function(){return this;}).call(null);
+
+            var GetCookie = function(name){
+                var cookies = root.document.cookie ? root.document.cookie.split('; ') : [];
+                for (var i = 0; i < cookies.length; i++) {
+                    var pos = cookies[i].indexOf('=');
+                    if (name === root.decodeURIComponent(cookies[i].slice(0, pos)))
+                    {
+                        var cookie = cookies[i].slice(pos + 1).replace(/\+/g, ' ');
+                        cookie = root.decodeURIComponent(cookie);
+                        return cookie;
+                    }
+                }
+            };
+
+            var JsonDeserialize = function(content) {
+                return root.JSON && root.JSON.parse ? root.JSON.parse(content) : (new Function('return (' + content + ')'))();
+            };
+
+            try {
+                AmbientContext = GetCookie('AmbientContext');
+                AmbientContext = AmbientContext && JsonDeserialize(AmbientContext);
+            } catch(ex) {
+            } finally {
+                AmbientContext = AmbientContext || null;
+            }
+        })();
+        //]]>
+    </script>
+
+    <script type="text/javascript" src="./TaskFolder.RegisterTask method (Windows)_files/jquery-1.8.2.min.js" data-do-not-move="true" data-provides="jQuery"></script>
+    
+    <link rel="shortcut icon" href="https://msdn.microsoft.com/Areas/Epx/Themes/Windows/Content/Winlogo_favicon.ico">
+
+<link rel="stylesheet" type="text/css" href="./TaskFolder.RegisterTask method (Windows)_files/shellnoresponsive.min.css"><link rel="stylesheet" type="text/css" href="./TaskFolder.RegisterTask method (Windows)_files/Combined.css"><script class="mtps-injected">try {
+/**/
+(window.MTPS || (window.MTPS = {})).cdnDomains || (window.MTPS.cdnDomains = { 
+	"image": "https://i-msdn.sec.s-msft.com", 
+	"js": "https://i2-msdn.sec.s-msft.com", 
+	"css": "https://i-msdn.sec.s-msft.com", 
+	"xap": "https://msdn.microsoft.com"
+});
+/**/
+} finally { MTPS._injectNextScript_0 && MTPS._injectNextScript_0(); }</script><script class="mtps-injected" src="./TaskFolder.RegisterTask method (Windows)_files/shellservice.v3.min.js"></script><script class="mtps-injected" src="./TaskFolder.RegisterTask method (Windows)_files/blender.js"></script><script class="mtps-injected">try {
+var isAuthenticated = (false);
+
+        //TODO: Notify all UxService first and add this link back.
+        // Currently we won't enable AAD, hard-code it to false
+        //var aadEnabled= (false);
+        var aadEnabled = false;
+
+        var ssoProperties = {
+          signedIn: isAuthenticated,
+          aadEnabled: aadEnabled,
+          signInOutUrl: $("#UhfSignInOutLink").val(),
+        };
+
+        if (isAuthenticated) {
+          ssoProperties.userHasProfile = (false);
+          ssoProperties.profileText = ":ProfileText:";
+          ssoProperties.createViewProfileText = ":CreateViewMSDNProfileText:";
+          ssoProperties.createViewProfileLink = ":ProfileLink:";
+          ssoProperties.MsaMemberName = ":MsaMemberName:";
+          ssoProperties.MsaFirstName = ":MsaFirstName:";
+          ssoProperties.MsaLastName = ":MsaLastName:";
+          ssoProperties.MsaCID = ":MsaCID:";
+          ssoProperties.AadDisplayName = ":AadDisplayName:";
+          ssoProperties.AadMemberName = ":AadMemberName:";
+          ssoProperties.AadOrgName = ":AadOrgName:";
+        }
+} finally { MTPS._injectNextScript_3 && MTPS._injectNextScript_3(); }</script><script class="mtps-injected">try {
+//
+  var literalNormalizedUrl = '/en-us/library/windows/desktop/aa382575(l=en-us,v=vs.85).aspx';
+  var wt_nvr_ru = 'WT_NVR_RU';
+  var wt_fpcdom = '.microsoft.com';
+  var wt_domlist = 'msdn.microsoft.com';
+  var wt_pathlist = '';
+  var wt_paramlist = 'DCSext.mtps_devcenter';
+  var wt_siteid = 'MSDN';
+  var gDomain = 'm.webtrends.com';
+  var gDcsId = 'dcsmgru7m99k7mqmgrhudo0k8_8c6m';
+  var gFpc = 'WT_FPC';
+
+
+
+  if (document.cookie.indexOf(gFpc + "=") == -1) {
+    var wtidJs = document.createElement("script");
+    wtidJs.src = "//" + gDomain + "/" + gDcsId + "/wtid.js";
+    document.getElementsByTagName("head")[0].appendChild(wtidJs);
+  }
+
+
+
+  var detectedLocale = 'en-us';
+  var wtsp = '_msdn_';
+  var gTrackEvents = '0';
+/**/
+} finally { MTPS._injectNextScript_4 && MTPS._injectNextScript_4(); }</script><script class="mtps-injected">try {
+//
+
+        window.appInsightsId = '60854590-027a-4ae4-98be-2741a40f355f';
+        //
+} finally { MTPS._injectNextScript_5 && MTPS._injectNextScript_5(); }</script><script class="mtps-injected" src="./TaskFolder.RegisterTask method (Windows)_files/Combined.js"></script><link href="./TaskFolder.RegisterTask method (Windows)_files/PrintView.css" rel="stylesheet" type="text/css" media="print"><meta name="ms.layout_limit_max_width" content="true"><meta name="ms.AmbientContextId" content="AB7AEDDF-6A7A-4C68-B821-C350D8B870E2"><meta name="ms.display_use_large_font" content="true"><meta name="ms.AmbientContextDownstream" content="%7B%7D"><meta name="ms.display_high_contrast" content="false"><script type="text/javascript" src="./TaskFolder.RegisterTask method (Windows)_files/ms.js"></script><script class="mtps-injected" src="./TaskFolder.RegisterTask method (Windows)_files/jquery.tmpl.min.js"></script><script class="mtps-injected" src="./TaskFolder.RegisterTask method (Windows)_files/Combined(1).js"></script><script src="./TaskFolder.RegisterTask method (Windows)_files/broker.js"></script><script class="mtps-injected">try {
+$(document).ready(function() {
+        try {
+            var token = $("#globalRequestVerification input[name='__RequestVerificationToken']").clone();
+            $("#siteFeedbackForm").append(token);
+        } catch(err) {
+            
+        }
+    });
+} finally { MTPS._injectNextScript_9 && MTPS._injectNextScript_9(); }</script></head>
+<body class="library Chrome">
+    <div id="page">
+
+        
+
+        
+
+    
+
+
+
+
+            <link rel="stylesheet" type="text/css" href="./TaskFolder.RegisterTask method (Windows)_files/UhfHeaderV3.css" data-do-not-move="true">
+        <div id="uhf-header-wrapper">
+             
+
+
+
+
+ 
+
+
+
+
+<script data-requires="jQuery" data-provides="uhfHeader" src="./TaskFolder.RegisterTask method (Windows)_files/meversion"></script>
+
+
+ 
+
+
+
+<div id="shell-header" class="shell-header " ms.pgarea="header">
+    <div class="shell-header-wrapper">
+        <div class="shell-header-top" data-bi-area="HeaderL0" data-bi-view="L0V1">
+
+            <div class="shell-header-brand" ms.cmpgrp="logo" role="banner">
+                <a id="srv_shellHeaderMicrosoftLogo" href="https://www.microsoft.com/" ms.cmpnm="MicrosoftBrandLogo" ms.title="Microsoft" title="Microsoft" data-bi-name="BrandLogo" tabindex="10">
+                    <img src="./TaskFolder.RegisterTask method (Windows)_files/microsoft.png" alt="Microsoft">
+                </a>
+            </div>
+
+            <div class="shell-header-nav-wrapper" ms.cmpgrp="nav" role="navigation">
+                <ul class="shell-header-nav" id="srv_shellHeaderNav" data-bi-area="L1" data-bi-view="Hovermenus">
+                        <li class="shell-header-user-mobile-container">
+                        </li>
+                                    <li class="shell-header-dropdown  " data-navcontainer="developer_technologies_NavContainer">
+                                        <div id="developer_technologies" class="shell-header-dropdown-label">
+                                            <a href="javascript:void(0)" role="menu" ms.title="Developer technologies" data-bi-name="DeveloperTechnologies" data-bi-slot="1" tabindex="20">
+                                                Developer technologies
+                                            </a>
+                                        </div>
+
+
+
+
+
+<div class="shell-header-dropdown-content " role="menu">
+                <dl class="shell-header-dropdown-tab  " ms.cmpnm="Developer technologies; Windows">
+
+                            <dt id="developer_tech_windows" class="shell-header-dropdown-tab-label shell-header-L2menu-direct-link-withL3">
+                                <a href="https://dev.windows.com/en-us/" role="menuitem" ms.title="Windows" tabindex="20" data-bi-name="DeveloperTech_Windows">Windows</a>
+                                <i class="shell-icon-dropdown"></i>
+                            </dt>
+                            <dd class="shell-header-dropdown-tab-content" data-col="0">
+
+
+
+    <ul class="shell-header-dropdown-tab-list">
+                    <li id="developer_tech_windows_windows_apps">
+                        <a href="https://dev.windows.com/en-us/windows-apps" role="menuitem" ms.title="Windows apps" tabindex="20" data-bi-name="DeveloperTech_Windows_WindowsApps">
+                            Windows apps
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_classic_desktop">
+                        <a href="https://dev.windows.com/en-us/desktop" role="menuitem" ms.title="Classic desktop" tabindex="20" data-bi-name="DeveloperTech_Windows_ClassicDesktop">
+                            Classic desktop
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_IoT">
+                        <a href="https://dev.windows.com/en-us/iot" role="menuitem" ms.title="Internet of Things" tabindex="20" data-bi-name="DeveloperTech_Windows_IoT">
+                            Internet of Things
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_games">
+                        <a href="https://dev.windows.com/en-us/games" role="menuitem" ms.title="Games" tabindex="20" data-bi-name="DeveloperTech_Games">
+                            Games
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_edge">
+                        <a href="https://dev.windows.com/en-us/microsoft-edge" role="menuitem" ms.title="Microsoft Edge" tabindex="20" data-bi-name="DeveloperTech_Windows_Edge">
+                            Microsoft Edge
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_hardware">
+                        <a href="https://msdn.microsoft.com/windows/hardware/gg236587.aspx" role="menuitem" ms.title="Hardware" tabindex="20" data-bi-name="DeveloperTech_Hardware">
+                            Hardware
+                        </a>
+                    </li>
+
+    </ul>
+
+
+
+                            </dd>
+
+                </dl>
+                <dl class="shell-header-dropdown-tab  " ms.cmpnm="Developer technologies; Services">
+
+                            <dt id="developer_tech_services" class="shell-header-dropdown-tab-label">
+                                <a href="javascript:void(0)" role="menuitem" ms.title="Services" ms.interactiontype="14" tabindex="20" data-bi-dnt="">
+                                    Services
+                                    <i class="shell-icon-dropdown facing-right"></i>
+                                </a>
+                            </dt>
+                            <dd class="shell-header-dropdown-tab-content" data-col="0">
+
+
+
+    <ul class="shell-header-dropdown-tab-list">
+                    <li id="developer_tech_windows_office 365">
+                        <a href="http://dev.office.com/" role="menuitem" ms.title="Office 365" tabindex="20" data-bi-name="DeveloperTech_Windows_Office365">
+                            Office 365
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_one_drive">
+                        <a href="https://dev.onedrive.com/" role="menuitem" ms.title="OneDrive" tabindex="20" data-bi-name="DeveloperTech_Windows_OneDrive">
+                            OneDrive
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_skype">
+                        <a href="http://www.skype.com/developer/" role="menuitem" ms.title="Skype" tabindex="20" data-bi-name="DeveloperTech_Windows_Skype">
+                            Skype
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_bing">
+                        <a href="http://www.bing.com/dev" role="menuitem" ms.title="Bing" tabindex="20" data-bi-name="DeveloperTech_Windows_Bing">
+                            Bing
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_cortana">
+                        <a href="https://dev.windows.com/en-us/cortana" role="menuitem" ms.title="Cortana" tabindex="20" data-bi-name="DeveloperTech_Windows_Cortana">
+                            Cortana
+                        </a>
+                    </li>
+
+    </ul>
+
+
+
+                            </dd>
+
+                </dl>
+                <dl class="shell-header-dropdown-tab  " ms.cmpnm="Developer technologies; Visual Studio">
+
+                            <dt id="developer_tech_visual_studio" class="shell-header-dropdown-tab-label shell-header-L2menu-direct-link-withL3">
+                                <a href="https://www.visualstudio.com/" role="menuitem" ms.title="Visual Studio" tabindex="20" data-bi-name="DeveloperTech_VisualStudio">Visual Studio</a>
+                                <i class="shell-icon-dropdown"></i>
+                            </dt>
+                            <dd class="shell-header-dropdown-tab-content" data-col="0">
+
+
+
+    <ul class="shell-header-dropdown-tab-list">
+                    <li id="developer_tech_windows_visual_studio_2015">
+                        <a href="https://www.visualstudio.com/features/" role="menuitem" ms.title="Visual Studio 2015" tabindex="20" data-bi-name="DeveloperTech_Windows_VisualStudio2015">
+                            Visual Studio 2015
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_visual_studio_online">
+                        <a href="https://www.visualstudio.com/products/what-is-visual-studio-online-vs" role="menuitem" ms.title="Visual Studio Online" tabindex="20" data-bi-name="DeveloperTech_Windows_VisualStudioOnline">
+                            Visual Studio Online
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_visual_studio_code">
+                        <a href="https://code.visualstudio.com/docs" role="menuitem" ms.title="Visual Studio Code" tabindex="20" data-bi-name="DeveloperTech_Windows_VisualStudioCode">
+                            Visual Studio Code
+                        </a>
+                    </li>
+
+    </ul>
+
+
+
+                            </dd>
+
+                </dl>
+                <dl class="shell-header-dropdown-tab  " ms.cmpnm="Developer technologies; MSDN">
+
+                            <dt id="developer_tech_msdn" class="shell-header-dropdown-tab-label shell-header-L2menu-direct-link-withL3">
+                                <a href="https://msdn.microsoft.com/" role="menuitem" ms.title="MSDN" tabindex="20" data-bi-name="DeveloperTech_MSDN">MSDN</a>
+                                <i class="shell-icon-dropdown"></i>
+                            </dt>
+                            <dd class="shell-header-dropdown-tab-content" data-col="0">
+
+
+
+    <ul class="shell-header-dropdown-tab-list">
+                    <li id="developer_tech_windows_subscription">
+                        <a href="https://msdn.microsoft.com/subscriptions" role="menuitem" ms.title="Subscription" tabindex="20" data-bi-name="DeveloperTech_Windows_Subscription">
+                            Subscription
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_community">
+                        <a href="https://social.msdn.microsoft.com/Forums/" role="menuitem" ms.title="Community" tabindex="20" data-bi-name="DeveloperTech_Windows_Community">
+                            Community
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_blogs">
+                        <a href="http://blogs.msdn.com/b/developer-tools/" role="menuitem" ms.title="Blogs" tabindex="20" data-bi-name="DeveloperTech_Windows_Blogs">
+                            Blogs
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_magazine">
+                        <a href="https://msdn.microsoft.com/magazine/dd767791" role="menuitem" ms.title="Magazine" tabindex="20" data-bi-name="DeveloperTech_Windows_Magazine">
+                            Magazine
+                        </a>
+                    </li>
+
+    </ul>
+
+
+
+                            </dd>
+
+                </dl>
+                <dl class="shell-header-dropdown-tab  " ms.cmpnm="Developer technologies; Office">
+
+                            <dt id="developer_tech_office" class="shell-header-dropdown-tab-label shell-header-L2menu-direct-link-withL3">
+                                <a href="https://dev.office.com/" role="menuitem" ms.title="Office" tabindex="20" data-bi-name="DeveloperTech_Office">Office</a>
+                                <i class="shell-icon-dropdown"></i>
+                            </dt>
+                            <dd class="shell-header-dropdown-tab-content" data-col="0">
+
+
+
+    <ul class="shell-header-dropdown-tab-list">
+                    <li id="developer_tech_windows_office365_apis">
+                        <a href="http://dev.office.com/getting-started/office365apis" role="menuitem" ms.title="Office 365 APIs" tabindex="20" data-bi-name="DeveloperTech_Windows_Office365APIs">
+                            Office 365 APIs
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_office_addins">
+                        <a href="http://dev.office.com/getting-started/addins" role="menuitem" ms.title="Office add-ins" tabindex="20" data-bi-name="DeveloperTech_Windows_OfficeAddIns">
+                            Office add-ins
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_sharepoint_addins">
+                        <a href="https://msdn.microsoft.com/library/office/fp179930.aspx" role="menuitem" ms.title="SharePoint add-ins" tabindex="20" data-bi-name="DeveloperTech_Windows_SharePointAddIns">
+                            SharePoint add-ins
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_office365_for_iOS">
+                        <a href="http://dev.office.com/ios" role="menuitem" ms.title="Office 365 for iOS" tabindex="20" data-bi-name="DeveloperTech_Windows_Office365ForiOS">
+                            Office 365 for iOS
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_office365_for_android">
+                        <a href="http://dev.office.com/Android" role="menuitem" ms.title="Office 365 for Android" tabindex="20" data-bi-name="DeveloperTech_Windows_Office365ForAndroid">
+                            Office 365 for Android
+                        </a>
+                    </li>
+
+    </ul>
+
+
+
+                            </dd>
+
+                </dl>
+                <dl class="shell-header-dropdown-tab  " ms.cmpnm="Developer technologies; Azure">
+
+                            <dt id="L2_Azure" class="shell-header-dropdown-tab-label shell-header-L2menu-direct-link-withL3">
+                                <a href="https://azure.microsoft.com/en-us/" role="menuitem" ms.title="Azure" tabindex="20" data-bi-name="DeveloperTech_Azure">Azure</a>
+                                <i class="shell-icon-dropdown"></i>
+                            </dt>
+                            <dd class="shell-header-dropdown-tab-content" data-col="0">
+
+
+
+    <ul class="shell-header-dropdown-tab-list">
+                    <li id="developer_tech_windows_web_apps">
+                        <a href="https://azure.microsoft.com/en-us/documentation/scenarios/web-app/" role="menuitem" ms.title="Web apps" tabindex="20" data-bi-name="DeveloperTech_Windows_WebApps">
+                            Web apps
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_mobile_apps">
+                        <a href="https://azure.microsoft.com/en-us/documentation/scenarios/mobile-app/" role="menuitem" ms.title=" Subscription" tabindex="20" data-bi-name="DeveloperTech_Windows_MobileApps">
+                             Subscription
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_virtual_machines">
+                        <a href="https://azure.microsoft.com/en-us/documentation/scenarios/virtual-machines/" role="menuitem" ms.title="Virtual machines" tabindex="20" data-bi-name="DeveloperTech_Windows_VirtualMachines">
+                            Virtual machines
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_data_analytics">
+                        <a href="https://azure.microsoft.com/en-us/documentation/scenarios/data-analytics/" role="menuitem" ms.title="Data analytics" tabindex="20" data-bi-name="DeveloperTech_Windows_DataAnalytics">
+                            Data analytics
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_high_performance_computing">
+                        <a href="https://azure.microsoft.com/en-us/documentation/scenarios/high-performance-computing/" role="menuitem" ms.title="High performance computing" tabindex="20" data-bi-name="DeveloperTech_Windows_HighPerformanceComputing">
+                            High performance computing
+                        </a>
+                    </li>
+                    <li id="developer_tech_windows_iot">
+                        <a href="https://azure.microsoft.com/en-us/documentation/scenarios/internet-of-things/" role="menuitem" ms.title="Internet of Things" tabindex="20" data-bi-name="DeveloperTech_Windows_IoT">
+                            Internet of Things
+                        </a>
+                    </li>
+
+    </ul>
+
+
+
+                            </dd>
+
+                </dl>
+
+</div>
+                                    </li>
+
+                </ul>
+            </div>
+                <div class="shell-header-user-container">
+                    <dl class="shell-header-user">
+                        <dt>
+                            <span id="meControl"><div class="msame_Header msame_unauth" tabindex="60" style="height: 48px;"><div class="msame_Header_name msame_TxtTrunc" style="line-height: 48px;">Sign in</div><div class="msame_Header_chev"></div></div></span>
+                        </dt>
+                    </dl>
+                </div>
+            
+            <div class="shell-header-nav-toggle " ms.cmpgrp="nav">
+                <button class="shell-header-toggle-menu" ms.cmpnm="mobile global nav toggle button" ms.title="Toggle menu" title="Toggle Menu" type="button" data-bi-name="Toggle Menu" tabindex="55">
+                    <i class="shell-icon-menu"></i>
+                </button>
+            </div>
+
+            <ul class="shell-header-toggle" ms.cmpgrp="header actions">
+                    <li>
+                        <button class="shell-header-toggle-search" type="button" data-bi-name="Toggle Search Icon" ms.title="search toggle" title="Toggle Search" tabindex="45">
+                            <i class="shell-icon-search"></i>
+                        </button>
+                    </li>
+                            </ul>
+
+            <div class="shell-header-actions" ms.cmpgrp="header actions">
+                    <form id="srv_shellHeaderSearchForm" class="shell-search" role="search" action="https://social.msdn.microsoft.com/search/windows" method="GET" autocomplete="off" onsubmit=" return window.msCommonShell.onSearch(this) " ms.cmpnm="search">
+                        <div class="shell-search-wrapper">
+                            <label for="cli_shellHeaderSearchInput" class="sr-only">Search Microsoft</label>
+                            <input id="cli_shellHeaderSearchInput" type="search" title="" name="query" data-bi-dnt="" placeholder="" maxlength="200" tabindex="30">
+
+                                <input type="hidden" name="Refinement" data-bi-dnt="" value="183">
+
+                            <button type="submit" title="Search" data-bi-dnt="" tabindex="40">
+                                <i class="shell-icon-search"></i>
+                                <span class="sr-only">Search</span>
+                            </button>
+                            <div id="cli_searchSuggestionsContainer" class="shell-search-dropdown-container">
+                                <div class="search-dropdown">
+                                    <div class="dropdown-item">
+                                        <ul id="cli_searchSuggestionsResults" data-bi-name="Search Suggestions" data-bi-source="UnifiedSearch" ms.cmpgrp="search suggestions"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="fixed-global-nav-buffer" style="height: 60px;"></div>
+
+
+
+
+
+
+
+
+<div class="shell-category-header cat-theme-blue" ms.pgarea="categoryheader">
+    
+    <div role="navigation" aria-label="Category level navigation" class="shell-category-nav" ms.cmpgrp="cat nav" data-bi-area="CategoryHeader-Windows Dev Center" data-bi-view="C0">
+        <div class="c-nav-pagination c-nav-pagination-prev" style="display: none;">
+            <i class="shell-icon-dropdown facing-left"></i>
+        </div>
+        <ul class="shell-category-top-level shell-category-brand">
+            <li class="c-logo-item">
+                        <a id="shell-cat-header-logo" class="c-logo c-top-nav-link" href="https://dev.windows.com/en-us" title="" ms.title="Windows Dev Center" data-bi-name="Category logo" tabindex="70">
+                            <span class="logo-text-label">Windows Dev Center</span>
+                        </a>
+                        <a id="shell-cat-header-logo-mobile" class="c-logo-mobile c-top-nav-link c-nav-dropdown" href="javascript:void(0);" ms.title="Windows Dev Center" ms.interactiontype="14" data-bi-name="Mobile category logo" tabindex="70">
+                            <span class="logo-text-label">Windows Dev Center</span>
+                            <i class="shell-icon-dropdown"></i>
+                        </a>
+                <ul class="c-nav-dropdown-menu" role="menu" data-bi-area="CategoryHeader-Windows Dev Center" data-bi-view="C1">
+
+
+
+        <li class="c-top-nav-item">
+            <a id="explore-mobile" class="c-top-nav-link c-nav-link c-nav-dropdown" href="javascript:void(0);" ms.title="Explore" role="menu" ms.interactiontype="14" data-bi-name="Explore" data-bi-slot="1" data-show-cta="True" tabindex="70">
+                    <span>
+                        Explore
+                        <i class="shell-icon-dropdown"></i>
+                    </span>
+                </a>
+                <ul class="c-nav-dropdown-menu" data-bi-area="CategoryHeader-Windows Dev Center" data-bi-view="Explore-C2" ms.cmpnm="Explore" role="menu">
+
+
+
+
+        <li class="c-nav-item ">
+            <a id="explore_whatsnewwin10-mobile" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/getstarted/whats-new-windows-10" ms.title="What’s new for Windows 10" role="menuitem" data-bi-name="Explore_WhatsNewWin10" data-bi-slot="1" tabindex="70">
+                <span>
+                    What’s new for Windows 10
+                </span>
+            </a>
+
+
+
+        </li>
+        <li class="c-nav-item ">
+            <a id="explore_guideuwpapps-mobile" class="c-nav-dropdown-item c-nav-link " href="https://msdn.microsoft.com/library/windows/apps/xaml/dn894631.aspx" ms.title="Intro to Universal Windows Platform" role="menuitem" data-bi-name="Explore_GuideUwpApps" data-bi-slot="2" tabindex="70">
+                <span>
+                    Intro to Universal Windows Platform
+                </span>
+            </a>
+
+
+
+        </li>
+        <li class="c-nav-item ">
+            <a id="explore_windowstrainingseries-mobile" class="c-nav-dropdown-item c-nav-link " href="http://go.microsoft.com/fwlink/p/?LinkId=626455" ms.title="Windows 10 training series" role="menuitem" data-bi-name="Explore_WindowsTrainingSeries" data-bi-slot="3" tabindex="70">
+                <span>
+                    Windows 10 training series
+                </span>
+            </a>
+
+
+
+        </li>
+        <li class="c-nav-item ">
+            <a id="explore_winandstoretrends-mobile" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/windows-trends" ms.title="Windows and Store trends" role="menuitem" data-bi-name="Explore_WinAndStoreTrends" data-bi-slot="4" tabindex="70">
+                <span>
+                    Windows and Store trends
+                </span>
+            </a>
+
+
+
+        </li>
+        <li class="c-nav-item ">
+            <a id="explore_cortana-mobile" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/cortana" ms.title="Cortana for developers" role="menuitem" data-bi-name="Explore_Cortana" data-bi-slot="5" tabindex="70">
+                <span>
+                    Cortana for developers
+                </span>
+            </a>
+
+
+
+        </li>
+
+
+            </ul>
+                        </li>
+        <li class="c-top-nav-item">
+            <a id="Docs-mobile" class="c-top-nav-link c-nav-link c-nav-dropdown" href="javascript:void(0);" ms.title="Docs" role="menu" ms.interactiontype="14" data-bi-name="Docs" data-bi-slot="2" data-show-cta="True" tabindex="70">
+                    <span>
+                        Docs
+                        <i class="shell-icon-dropdown"></i>
+                    </span>
+                </a>
+                <ul class="c-nav-dropdown-menu" data-bi-area="CategoryHeader-Windows Dev Center" data-bi-view="Docs-C2" ms.cmpnm="Docs" role="menu">
+
+
+
+
+        <li class="c-nav-item c-nav-link-with-dropdown">
+            <a id="docs_windowsapps-mobile" class="c-nav-dropdown-item c-nav-link c-top-nav-link c-nav-dropdown" href="javascript:void(0);" ms.title="Windows apps" role="menuitem" data-bi-name="Docs_WindowsApps" data-bi-slot="1" tabindex="70">
+                <span>
+                    Windows apps
+                        <i class="shell-icon-dropdown"></i>
+                </span>
+            </a>
+
+
+
+                    <ul class="c-nav-dropdown-menu" data-bi-area="CategoryHeader-Windows Dev Center" data-bi-view="Docs_WindowsApps-C3" ms.cmpnm="Windows apps" role="menu">
+
+
+
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/getstarted" ms.title="Get started" role="menuitem" data-bi-name="Docs_WindowsApps_GetStarted" data-bi-slot="1">
+                        <span>
+                            Get started
+                        </span>
+                    </a>
+            </li>
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/design" ms.title="Design" role="menuitem" data-bi-name="Docs_WindowsApps_Design" data-bi-slot="2">
+                        <span>
+                            Design
+                        </span>
+                    </a>
+            </li>
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/develop" ms.title="Develop" role="menuitem" data-bi-name="Docs_WindowsApps_Develop" data-bi-slot="3">
+                        <span>
+                            Develop
+                        </span>
+                    </a>
+            </li>
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/publish" ms.title="Publish" role="menuitem" data-bi-name="Docs_WindowsApps_Publish" data-bi-slot="4">
+                        <span>
+                            Publish
+                        </span>
+                    </a>
+            </li>
+
+
+
+                    </ul>
+        </li>
+        <li class="c-nav-item c-nav-link-with-dropdown">
+            <a id="docs_Games-mobile" class="c-nav-dropdown-item c-nav-link c-top-nav-link c-nav-dropdown" href="javascript:void(0);" ms.title="Games" role="menuitem" data-bi-name="Docs_Games" data-bi-slot="2" tabindex="70">
+                <span>
+                    Games
+                        <i class="shell-icon-dropdown"></i>
+                </span>
+            </a>
+
+
+
+                    <ul class="c-nav-dropdown-menu" data-bi-area="CategoryHeader-Windows Dev Center" data-bi-view="Docs_Games-C3" ms.cmpnm="Games" role="menu">
+
+
+
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/games/getstarted" ms.title="Get started" role="menuitem" data-bi-name="Docs_Games_GetStarted" data-bi-slot="1">
+                        <span>
+                            Get started
+                        </span>
+                    </a>
+            </li>
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/games/design" ms.title="Design" role="menuitem" data-bi-name="Docs_Games_Design" data-bi-slot="2">
+                        <span>
+                            Design
+                        </span>
+                    </a>
+            </li>
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/games/develop" ms.title="Develop" role="menuitem" data-bi-name="Docs_Games_Develop" data-bi-slot="3">
+                        <span>
+                            Develop
+                        </span>
+                    </a>
+            </li>
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/games/publish" ms.title="Publish" role="menuitem" data-bi-name="Docs_Games_Publish" data-bi-slot="4">
+                        <span>
+                            Publish
+                        </span>
+                    </a>
+            </li>
+
+
+
+                    </ul>
+        </li>
+        <li class="c-nav-item c-nav-link-with-dropdown">
+            <a id="docs_desktop-apps-mobile" class="c-nav-dropdown-item c-nav-link c-top-nav-link c-nav-dropdown" href="javascript:void(0);" ms.title="Classic desktop" role="menuitem" data-bi-name="Docs_DesktopApps" data-bi-slot="3" tabindex="70">
+                <span>
+                    Classic desktop
+                        <i class="shell-icon-dropdown"></i>
+                </span>
+            </a>
+
+
+
+                    <ul class="c-nav-dropdown-menu" data-bi-area="CategoryHeader-Windows Dev Center" data-bi-view="Docs_DesktopApps-C3" ms.cmpnm="Classic desktop" role="menu">
+
+
+
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/desktop/getstarted" ms.title="Get started" role="menuitem" data-bi-name="Docs_DesktopApps_GetStarted" data-bi-slot="1">
+                        <span>
+                            Get started
+                        </span>
+                    </a>
+            </li>
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/desktop/design" ms.title="Design" role="menuitem" data-bi-name="Docs_DesktopApps_Design" data-bi-slot="2">
+                        <span>
+                            Design
+                        </span>
+                    </a>
+            </li>
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/desktop/develop" ms.title="Develop" role="menuitem" data-bi-name="Docs_DesktopApps_Develop" data-bi-slot="3">
+                        <span>
+                            Develop
+                        </span>
+                    </a>
+            </li>
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="https://dev.windows.com/en-us/desktop/test-deploy" ms.title="Test and deploy" role="menuitem" data-bi-name="Docs_DesktopApps_TestDeploy" data-bi-slot="4">
+                        <span>
+                            Test and deploy
+                        </span>
+                    </a>
+            </li>
+
+
+
+                    </ul>
+        </li>
+        <li class="c-nav-item c-nav-link-with-dropdown">
+            <a id="docs_win-iot-mobile" class="c-nav-dropdown-item c-nav-link c-top-nav-link c-nav-dropdown" href="javascript:void(0);" ms.title="Windows IoT" role="menuitem" data-bi-name="Docs_WinIoT" data-bi-slot="4" tabindex="70">
+                <span>
+                    Windows IoT
+                        <i class="shell-icon-dropdown"></i>
+                </span>
+            </a>
+
+
+
+                    <ul class="c-nav-dropdown-menu" data-bi-area="CategoryHeader-Windows Dev Center" data-bi-view="Docs_WinIoT-C3" ms.cmpnm="Windows IoT" role="menu">
+
+
+
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="http://go.microsoft.com/fwlink/p/?linkid=532957" ms.title="Get started" role="menuitem" data-bi-name="Docs_WinIoT_GetStarted" data-bi-slot="1">
+                        <span>
+                            Get started
+                        </span>
+                    </a>
+            </li>
+            <li>
+                    <a class="c-nav-dropdown-item c-nav-link" href="http://go.microsoft.com/fwlink/p/?linkid=532961" ms.title="Develop" role="menuitem" data-bi-name="Docs_WinIoT_Develop" data-bi-slot="2">
+                        <span>
+                            Develop
+                        </span>
+                    </a>
+            </li>
+            <li>
+                        <a class="c-nav-dropdown-item c-nav-link" href="http://go.microsoft.com/fwlink/p/?linkid=532977" ms.title="Project gallery " role="menuitem" data-bi-name="Docs_WinIoT_LearnMore_IoTProjectGallery" data-bi-slot="3">
+                            <span>
+                                Project gallery 
+                            </span>
+                        </a>
+            </li>
+
+
+
+                    </ul>
+        </li>
+        <li class="c-nav-item ">
+            <a id="docs_edge-mobile" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/microsoft-edge" ms.title="Microsoft Edge" role="menuitem" data-bi-name="Docs_Edge" data-bi-slot="5" tabindex="70">
+                <span>
+                    Microsoft Edge
+                </span>
+            </a>
+
+
+
+        </li>
+
+
+            </ul>
+                        </li>
+        <li class="c-top-nav-item">
+                <a id="downloads-mobile" class="c-top-nav-link c-nav-link" href="https://dev.windows.com/en-us/downloads" ms.title="Downloads" role="menuitem" data-bi-name="Downloads" data-bi-slot="3" data-show-cta="True" tabindex="70">
+                    <span>
+                        Downloads
+                    </span>
+                </a>
+            </li>
+        <li class="c-top-nav-item">
+                <a id="samples-mobile" class="c-top-nav-link c-nav-link" href="https://dev.windows.com/en-us/samples" ms.title="Samples" role="menuitem" data-bi-name="Samples" data-bi-slot="4" data-show-cta="True" tabindex="70">
+                    <span>
+                        Samples
+                    </span>
+                </a>
+            </li>
+        <li class="c-top-nav-item">
+                <a id="support-mobile" class="c-top-nav-link c-nav-link" href="https://dev.windows.com/en-us/support" ms.title="Support" role="menuitem" data-bi-name="Support" data-bi-slot="5" data-show-cta="True" tabindex="70">
+                    <span>
+                        Support
+                    </span>
+                </a>
+            </li>
+        <li class="c-top-nav-item">
+                <a id="programs-mobile" class="c-top-nav-link c-nav-link" href="https://dev.windows.com/en-us/programs" ms.title="Programs" role="menuitem" data-bi-name="Programs" data-bi-slot="6" data-show-cta="True" tabindex="70">
+                    <span>
+                        Programs
+                    </span>
+                </a>
+            </li>
+        <li class="c-top-nav-item">
+                <a id="dashboard-mobile" class="c-top-nav-link c-nav-link" href="https://dev.windows.com/overview?from=UHF" ms.title="Dashboard" role="menuitem" data-bi-name="Dashboard" data-bi-slot="7" data-show-cta="True" tabindex="70">
+                    <span>
+                        Dashboard
+                    </span>
+                </a>
+            </li>
+
+                </ul>
+            </li>
+
+        </ul>
+        <ul class="shell-category-top-level shell-category-nav-wrapper" role="menu" data-bi-area="CategoryMenuItems-Windows Dev Center" data-bi-view="C1">
+
+
+
+        <li class="c-top-nav-item" style="margin-left: 0px;">
+            <a id="explore" class="c-top-nav-link c-nav-link c-nav-dropdown" href="javascript:void(0);" ms.title="Explore" role="menu" ms.interactiontype="14" data-bi-name="Explore" data-bi-slot="1" data-show-cta="True" tabindex="70">
+                    <span>
+                        Explore
+                        <i class="shell-icon-dropdown"></i>
+                    </span>
+                </a>
+                <ul class="c-nav-dropdown-menu" data-bi-area="CategoryHeader-Windows Dev Center" data-bi-view="Explore-C2" ms.cmpnm="Explore" role="menu">
+
+
+
+
+        <li class="c-nav-item ">
+            <a id="explore_whatsnewwin10" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/getstarted/whats-new-windows-10" ms.title="What’s new for Windows 10" role="menuitem" data-bi-name="Explore_WhatsNewWin10" data-bi-slot="1" tabindex="70">
+                <span>
+                    What’s new for Windows 10
+                </span>
+            </a>
+
+
+
+        </li>
+        <li class="c-nav-item ">
+            <a id="explore_guideuwpapps" class="c-nav-dropdown-item c-nav-link " href="https://msdn.microsoft.com/library/windows/apps/xaml/dn894631.aspx" ms.title="Intro to Universal Windows Platform" role="menuitem" data-bi-name="Explore_GuideUwpApps" data-bi-slot="2" tabindex="70">
+                <span>
+                    Intro to Universal Windows Platform
+                </span>
+            </a>
+
+
+
+        </li>
+        <li class="c-nav-item ">
+            <a id="explore_windowstrainingseries" class="c-nav-dropdown-item c-nav-link " href="http://go.microsoft.com/fwlink/p/?LinkId=626455" ms.title="Windows 10 training series" role="menuitem" data-bi-name="Explore_WindowsTrainingSeries" data-bi-slot="3" tabindex="70">
+                <span>
+                    Windows 10 training series
+                </span>
+            </a>
+
+
+
+        </li>
+        <li class="c-nav-item ">
+            <a id="explore_winandstoretrends" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/windows-trends" ms.title="Windows and Store trends" role="menuitem" data-bi-name="Explore_WinAndStoreTrends" data-bi-slot="4" tabindex="70">
+                <span>
+                    Windows and Store trends
+                </span>
+            </a>
+
+
+
+        </li>
+        <li class="c-nav-item ">
+            <a id="explore_cortana" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/cortana" ms.title="Cortana for developers" role="menuitem" data-bi-name="Explore_Cortana" data-bi-slot="5" tabindex="70">
+                <span>
+                    Cortana for developers
+                </span>
+            </a>
+
+
+
+        </li>
+
+
+            </ul>
+                        </li>
+        <li class="c-top-nav-item">
+            <a id="Docs" class="c-top-nav-link c-nav-link c-nav-dropdown" href="javascript:void(0);" ms.title="Docs" role="menu" ms.interactiontype="14" data-bi-name="Docs" data-bi-slot="2" data-show-cta="True" tabindex="70">
+                    <span>
+                        Docs
+                        <i class="shell-icon-dropdown"></i>
+                    </span>
+                </a>
+                <ul class="c-nav-dropdown-menu" data-bi-area="CategoryHeader-Windows Dev Center" data-bi-view="Docs-C2" ms.cmpnm="Docs" role="menu">
+
+
+
+
+        <li class="c-nav-item-with-dropdown c-nav-link-with-dropdown">
+            <a id="docs_windowsapps" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/windows-apps" ms.title="Windows apps" role="menuitem" data-bi-name="Docs_WindowsApps" data-bi-slot="1" tabindex="70">
+                <span>
+                    Windows apps
+                </span>
+            </a>
+
+                <i class="shell-icon-dropdown"></i>
+
+
+                    <div class="c-nav-dropdown-tab-content c-nav-multicolumn" data-col="4">
+
+
+
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/getstarted" role="menuitem" ms.title="Get started" data-bi-name="Docs_WindowsApps_GetStarted">
+                                    Get started
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_windowsapps_getstarted_whatsuniversal">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/dn726767.aspx" role="menuitem" ms.title="What&#39;s a Windows universal app" data-bi-name="Docs_WindowsApps_GetStarted_WhatsUniversal">
+                                What's a Windows universal app
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_getstarted_getsetup">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/dn726766.aspx" role="menuitem" ms.title="Get set up" data-bi-name="Docs_WindowsApps_GetStarted_GetSetUp">
+                                Get set up
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_getstarted_signup">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/bg124287.aspx" role="menuitem" ms.title="Sign up" data-bi-name="Docs_WindowsApps_GetStarted_SignUp">
+                                Sign up
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_getstarted_firstapp">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/bg124288.aspx" role="menuitem" ms.title="Your first app" data-bi-name="Docs_WindowsApps_GetStarted_FirstApp">
+                                Your first app
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_new">
+                            <a href="https://dev.windows.com/en-us/getstarted/whats-new-windows-10" role="menuitem" ms.title="New for Windows 10" data-bi-name="Docs_WindowsApps_GetStarted">
+                                New for Windows 10
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/design" role="menuitem" ms.title="Design" data-bi-name="Docs_WindowsApps_Design">
+                                    Design
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_windowsapps_design_basics">
+                            <a href="https://dev.windows.com/en-us/design/design-basics" role="menuitem" ms.title="Basics" data-bi-name="Docs_WindowsApps_Design_Basics">
+                                Basics
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_design_guidelines">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/hh465424.aspx" role="menuitem" ms.title="Guidelines" data-bi-name="Docs_WindowsApps_Design_Guidelines">
+                                Guidelines
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_design_downloads">
+                            <a href="https://dev.windows.com/en-us/design/assets" role="menuitem" ms.title="Downloads" data-bi-name="Docs_WindowsApps_Design_Downloads">
+                                Downloads
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/develop" role="menuitem" ms.title="Develop" data-bi-name="Docs_WindowsApps_Develop">
+                                    Develop
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_windowsapps_develop_how-to-guides">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/xaml/mt244352.aspx" role="menuitem" ms.title="How-to guides" data-bi-name="Docs_WindowsApps_Develop_HowToGuides">
+                                How-to guides
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_develop_api_reference">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/bg124285.aspx" role="menuitem" ms.title="API reference" data-bi-name="Docs_WindowsApps_Develop_API_Reference">
+                                API reference
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_develop_services">
+                            <a href="https://dev.windows.com/en-us/develop/microsoft-services" role="menuitem" ms.title="Services" data-bi-name="Docs_WindowsApps_Develop_Services">
+                                Services
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_develop_windows-8.x-guides">
+                            <a href="https://msdn.microsoft.com/en-us/library/windows/apps/mt244353.aspx" role="menuitem" ms.title="Windows 8.x guides" data-bi-name="Docs_WindowsApps_Develop_Windows8.xGuides">
+                                Windows 8.x guides
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_develop_windows-phone-silverlight-guides">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/ff402535(v=vs.105).aspx" role="menuitem" ms.title="Windows Phone Silverlight 8.x Guides" data-bi-name="Docs_WindowsApps_Develop_WindowsPhoneSilverlightGuides">
+                                Windows Phone Silverlight 8.x Guides
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/publish" role="menuitem" ms.title="Publish" data-bi-name="Docs_WindowsApps_Publish">
+                                    Publish
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_windowsapps_publish_submit-your-app">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/hh694062.aspx" role="menuitem" ms.title="Submit your app" data-bi-name="Docs_WindowsApps_Publish_SubmitYourApp">
+                                Submit your app
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_publish_promote_and_engage">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/mt148526.aspx" role="menuitem" ms.title="Promote and engage" data-bi-name="Docs_WindowsApps_Publish_PromoteEngage">
+                                Promote and engage
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_publish_view-analytics">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/mt148522.aspx" role="menuitem" ms.title="View analytics" data-bi-name="Docs_WindowsApps_Publish_ViewAnalytics">
+                                View analytics
+                            </a>
+                        </li>
+                        <li id="docs_windowsapps_publish_store-policies">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/dn764944.aspx" role="menuitem" ms.title="Store Policies" data-bi-name="Docs_WindowsApps_Publish_StorePolicies">
+                                Store Policies
+                            </a>
+                        </li>
+
+            </ul>
+
+
+
+                    </div>
+        </li>
+        <li class="c-nav-item-with-dropdown c-nav-link-with-dropdown">
+            <a id="docs_Games" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/games" ms.title="Games" role="menuitem" data-bi-name="Docs_Games" data-bi-slot="2" tabindex="70">
+                <span>
+                    Games
+                </span>
+            </a>
+
+                <i class="shell-icon-dropdown"></i>
+
+
+                    <div class="c-nav-dropdown-tab-content c-nav-multicolumn" data-col="4">
+
+
+
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/games/getstarted" role="menuitem" ms.title="Get started" data-bi-name="Docs_Games_GetStarted">
+                                    Get started
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_games_getstarted_get-set-up">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/dn726766.aspx" role="menuitem" ms.title="Get set up" data-bi-name="Docs_Games_GetStarted_GetSetUp">
+                                Get set up
+                            </a>
+                        </li>
+                        <li id="docs_games_getstarted_sign-up">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/bg124287.aspx" role="menuitem" ms.title="Sign up" data-bi-name="Docs_Games_GetStarted_SignUp">
+                                Sign up
+                            </a>
+                        </li>
+                        <li id="docs_games_getstarted_choose-tech">
+                            <a href="https://dev.windows.com/en-us/games/technology" role="menuitem" ms.title="Choose a technology" data-bi-name="Docs_Games__GetStarted_ChooseTech">
+                                Choose a technology
+                            </a>
+                        </li>
+                        <li id="docs_games_getstarted_uwp">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/mt282476.aspx" role="menuitem" ms.title="Games on the Universal Windows Platform" data-bi-name="Docs_Games_GetStarted_UWP">
+                                Games on the Universal Windows Platform
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/games/design" role="menuitem" ms.title="Design" data-bi-name="Docs_Games_Design">
+                                    Design
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_games_design_basics">
+                            <a href="https://dev.windows.com/en-us/design/design-basics" role="menuitem" ms.title="Basics" data-bi-name="Docs_Games_Design_Basics">
+                                Basics
+                            </a>
+                        </li>
+                        <li id="docs_games_design_guidelines">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/hh465424.aspx" role="menuitem" ms.title="Guidelines" data-bi-name="Docs_Games_Design_Guidelines">
+                                Guidelines
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/games/develop" role="menuitem" ms.title="Develop" data-bi-name="Docs_Games_Develop">
+                                    Develop
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_games_develop_Developing games">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/mt228375.aspx" role="menuitem" ms.title="Games for the UWP" data-bi-name="Docs_Games_Develop_DevelopingGames">
+                                Games for the UWP
+                            </a>
+                        </li>
+                        <li id="docs_games_develop_graphics">
+                            <a href="https://msdn.microsoft.com/library/windows/desktop/ee663279.aspx" role="menuitem" ms.title="DirectX graphics" data-bi-name="Docs_Games_Develop_Graphics">
+                                DirectX graphics
+                            </a>
+                        </li>
+                        <li id="docs_games_develop_direct3d-12-graphics">
+                            <a href="https://msdn.microsoft.com/library/windows/desktop/dn903821.aspx" role="menuitem" ms.title="Direct3D 12" data-bi-name="Docs_Games_Develop_Direct3D12Graphics ">
+                                Direct3D 12
+                            </a>
+                        </li>
+                        <li id="docs_games_develop_winapireference">
+                            <a href="https://msdn.microsoft.com/library/windows/apps/br211369.aspx" role="menuitem" ms.title="Windows API reference " data-bi-name="Docs_games_Develop_WinAPIReference ">
+                                Windows API reference 
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/games/publish" role="menuitem" ms.title="Publish" data-bi-name="Docs_Games_Publish">
+                                    Publish
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_games_publish_publish-win-apps">
+                            <a href="https://dev.windows.com/en-us/publish" role="menuitem" ms.title="Publish Windows apps" data-bi-name="Docs_Games_Publish_PublishWinApps">
+                                Publish Windows apps
+                            </a>
+                        </li>
+                        <li id="docs_games_publish_id@xbox">
+                            <a href="http://www.xbox.com/Developers/id" role="menuitem" ms.title="ID@Xbox " data-bi-name="Docs_Games_Publish_ID@Xbox ">
+                                ID@Xbox 
+                            </a>
+                        </li>
+
+            </ul>
+
+
+
+                    </div>
+        </li>
+        <li class="c-nav-item-with-dropdown c-nav-link-with-dropdown">
+            <a id="docs_desktop-apps" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/desktop" ms.title="Classic desktop" role="menuitem" data-bi-name="Docs_DesktopApps" data-bi-slot="3" tabindex="70">
+                <span>
+                    Classic desktop
+                </span>
+            </a>
+
+                <i class="shell-icon-dropdown"></i>
+
+
+                    <div class="c-nav-dropdown-tab-content c-nav-multicolumn" data-col="4">
+
+
+
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/desktop/getstarted" role="menuitem" ms.title="Get started" data-bi-name="Docs_DesktopApps_GetStarted">
+                                    Get started
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_desktopapps_getstarted_choose-tech">
+                            <a href="https://msdn.microsoft.com/library/windows/desktop/dn614993.aspx" role="menuitem" ms.title="Choose your technology" data-bi-name="Docs_DesktopApps_GetStarted_ChooseTech">
+                                Choose your technology
+                            </a>
+                        </li>
+                        <li id="docs_desktopapps_getstarted_whats-new">
+                            <a href="https://msdn.microsoft.com/library/windows/desktop/hh848361.aspx" role="menuitem" ms.title="What’s new " data-bi-name="Docs_DesktopApps_GetStarted_What’sNew ">
+                                What’s new 
+                            </a>
+                        </li>
+                        <li id="docs_desktopapps_getstarted_desktop-programming">
+                            <a href="https://msdn.microsoft.com/windows/desktop/ee663266.aspx" role="menuitem" ms.title="Programming models" data-bi-name="Docs_DesktopApps_GetStarted_DesktopProgramming">
+                                Programming models
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/desktop/design" role="menuitem" ms.title="Design" data-bi-name="Docs_DesktopApps_Design">
+                                    Design
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_desktopapps_design_principles">
+                            <a href="https://msdn.microsoft.com/library/windows/desktop/dn742446.aspx" role="menuitem" ms.title="Design principles" data-bi-name="Docs_DesktopApps_Design_Principles">
+                                Design principles
+                            </a>
+                        </li>
+                        <li id="docs_desktopapps_design_guidelines">
+                            <a href="https://msdn.microsoft.com/library/windows/desktop/dn688964.aspx" role="menuitem" ms.title="Guidelines " data-bi-name="Docs_DesktopApps_Design_Guidelines ">
+                                Guidelines 
+                            </a>
+                        </li>
+                        <li id="docs_desktopapps_design_visual-index">
+                            <a href="https://msdn.microsoft.com/library/windows/desktop/dn688966.aspx" role="menuitem" ms.title="Visual index " data-bi-name="Docs_DesktopApps_Design_VisualIndex ">
+                                Visual index 
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/desktop/develop" role="menuitem" ms.title="Develop" data-bi-name="Docs_DesktopApps_Develop">
+                                    Develop
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_desktopapps_develop_desktop-tech">
+                            <a href="https://msdn.microsoft.com/library/windows/desktop/bg126469.aspx" role="menuitem" ms.title="Features" data-bi-name="Docs_DesktopApps_Develop_DesktopTech">
+                                Features
+                            </a>
+                        </li>
+                        <li id="docs_desktopapps_develop_server_system">
+                            <a href="https://msdn.microsoft.com/library/windows/desktop/bg125390.aspx" role="menuitem" ms.title="Server and system " data-bi-name="Docs_DesktopApps_Develop_ServerSystem ">
+                                Server and system 
+                            </a>
+                        </li>
+                        <li id="docs_desktopapps_develop_api_ref">
+                            <a href="https://msdn.microsoft.com/library/windows/desktop/hh920508.aspx" role="menuitem" ms.title="API reference " data-bi-name="Docs_DesktopApps_Develop_ApiRef">
+                                API reference 
+                            </a>
+                        </li>
+                        <li id="docs_desktopapps_develop_certify">
+                            <a href="https://int.msdn.microsoft.com/windows/desktop/jj134964.aspx" role="menuitem" ms.title="Certify " data-bi-name="Docs_DesktopApps_Develop_Certify ">
+                                Certify 
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="https://dev.windows.com/en-us/desktop/test-deploy" role="menuitem" ms.title="Test and deploy" data-bi-name="Docs_DesktopApps_TestDeploy">
+                                    Test and deploy
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_desktopapps_testdeploy_deploy">
+                            <a href="https://dev.windows.com/en-us/desktop/test-deploy/deploy" role="menuitem" ms.title="Deploy " data-bi-name="Docs_DesktopApps_TestDeploy_Deploy">
+                                Deploy 
+                            </a>
+                        </li>
+                        <li id="docs_desktopapps_testdeploy_Debug">
+                            <a href="https://dev.windows.com/en-us/desktop/test-deploy/debug" role="menuitem" ms.title="Debug " data-bi-name="Docs_DesktopApps_TestDeploy_Debug ">
+                                Debug 
+                            </a>
+                        </li>
+                        <li id="docs_desktopapps_testdeploy_instrument">
+                            <a href="https://dev.windows.com/en-us/desktop/test-deploy/instrument" role="menuitem" ms.title="Instrument " data-bi-name="Docs_DesktopApps_TestDeploy_Instrument ">
+                                Instrument 
+                            </a>
+                        </li>
+                        <li id="docs_desktopapps_testdeploy_tools">
+                            <a href="https://dev.windows.com/en-us/desktop/test-deploy/tools" role="menuitem" ms.title="Tools " data-bi-name="Docs_DesktopApps_TestDeploy_Tools ">
+                                Tools 
+                            </a>
+                        </li>
+
+            </ul>
+
+
+
+                    </div>
+        </li>
+        <li class="c-nav-item-with-dropdown c-nav-link-with-dropdown">
+            <a id="docs_win-iot" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/iot" ms.title="Windows IoT" role="menuitem" data-bi-name="Docs_WinIoT" data-bi-slot="4" tabindex="70">
+                <span>
+                    Windows IoT
+                </span>
+            </a>
+
+                <i class="shell-icon-dropdown"></i>
+
+
+                    <div class="c-nav-dropdown-tab-content c-nav-multicolumn" data-col="4">
+
+
+
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="http://go.microsoft.com/fwlink/p/?linkid=532957" role="menuitem" ms.title="Get started" data-bi-name="Docs_WinIoT_GetStarted">
+                                    Get started
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_winiot_get_started_platform_overview">
+                            <a href="http://go.microsoft.com/fwlink/p/?linkid=532975" role="menuitem" ms.title="Platform overview " data-bi-name="Docs_WinIoT_GetStarted_PlatformOverview ">
+                                Platform overview 
+                            </a>
+                        </li>
+                        <li id="docs_winiot_get_started_register">
+                            <a href="http://go.microsoft.com/fwlink/p/?linkid=532947" role="menuitem" ms.title="Register " data-bi-name="Docs_WinIoT_GetStarted_Register ">
+                                Register 
+                            </a>
+                        </li>
+                        <li id="docs_winiot_get_started_hardware">
+                            <a href="http://go.microsoft.com/fwlink/p/?linkid=532948" role="menuitem" ms.title="Hardware" data-bi-name="Docs_WinIoT_GetStarted_Hardware">
+                                Hardware
+                            </a>
+                        </li>
+                        <li id="docs_winiot_get_started_setupyourdevice">
+                            <a href="http://go.microsoft.com/fwlink/p/?linkid=532974" role="menuitem" ms.title="Set up your device " data-bi-name="Docs_WinIoT_GetStarted_SetupYourDevice">
+                                Set up your device 
+                            </a>
+                        </li>
+                        <li id="docs_winiot_get_started_writefirstapp">
+                            <a href="http://go.microsoft.com/fwlink/p/?linkid=532945" role="menuitem" ms.title="Write your first app " data-bi-name="Docs_WinIoT_GetStarted_WriteFirstApp">
+                                Write your first app 
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                <a href="http://go.microsoft.com/fwlink/p/?linkid=532961" role="menuitem" ms.title="Develop" data-bi-name="Docs_WinIoT_Develop">
+                                    Develop
+                                </a>
+                            </h3>
+                    </li>
+                        <li id="docs_winiot_develop_win-iot-build2015">
+                            <a href="http://go.microsoft.com/fwlink/p/?linkid=532963" role="menuitem" ms.title="Windows IoT at Build 2015" data-bi-name="Docs_WinIoT_develop_WinIoTBuild2015">
+                                Windows IoT at Build 2015
+                            </a>
+                        </li>
+                        <li id="docs_winiot_develop_code">
+                            <a href="http://go.microsoft.com/fwlink/p/?linkid=532976" role="menuitem" ms.title="Code samples " data-bi-name="Docs_WinIoT_Develop_Code">
+                                Code samples 
+                            </a>
+                        </li>
+                        <li id="docs_winiot_develop_faq">
+                            <a href="http://go.microsoft.com/fwlink/p/?linkid=532965" role="menuitem" ms.title="FAQ " data-bi-name="Docs_WinIoT_develop_FAQ ">
+                                FAQ 
+                            </a>
+                        </li>
+
+            </ul>
+            <ul class="c-nav-dropdown-tab-list shell-c3-group">
+                    <li>
+                            <h3>
+                                Learn more
+                            </h3>
+                    </li>
+                        <li id="docs_winiot_learnmore_iot_project_gallery">
+                            <a href="http://go.microsoft.com/fwlink/p/?linkid=532977" role="menuitem" ms.title="Project gallery " data-bi-name="Docs_WinIoT_LearnMore_IoTProjectGallery">
+                                Project gallery 
+                            </a>
+                        </li>
+                        <li id="docs_winiot_learnmore_iot_downloads">
+                            <a href="http://go.microsoft.com/fwlink/p/?LinkID=532967" role="menuitem" ms.title="Downloads" data-bi-name="Docs_WinIoT_LearnMore_Downloads">
+                                Downloads
+                            </a>
+                        </li>
+                        <li id="docs_winiot_learnmore_community">
+                            <a href="http://go.microsoft.com/fwlink/p/?LinkID=532968" role="menuitem" ms.title="Community " data-bi-name="Docs_WinIoT_LearnMore_Community">
+                                Community 
+                            </a>
+                        </li>
+
+            </ul>
+
+
+
+                    </div>
+        </li>
+        <li class="c-nav-item ">
+            <a id="docs_edge" class="c-nav-dropdown-item c-nav-link " href="https://dev.windows.com/en-us/microsoft-edge" ms.title="Microsoft Edge" role="menuitem" data-bi-name="Docs_Edge" data-bi-slot="5" tabindex="70">
+                <span>
+                    Microsoft Edge
+                </span>
+            </a>
+
+
+
+        </li>
+
+
+            </ul>
+                        </li>
+        <li class="c-top-nav-item">
+                <a id="downloads" class="c-top-nav-link c-nav-link" href="https://dev.windows.com/en-us/downloads" ms.title="Downloads" role="menuitem" data-bi-name="Downloads" data-bi-slot="3" data-show-cta="True" tabindex="70">
+                    <span>
+                        Downloads
+                    </span>
+                </a>
+            </li>
+        <li class="c-top-nav-item">
+                <a id="samples" class="c-top-nav-link c-nav-link" href="https://dev.windows.com/en-us/samples" ms.title="Samples" role="menuitem" data-bi-name="Samples" data-bi-slot="4" data-show-cta="True" tabindex="70">
+                    <span>
+                        Samples
+                    </span>
+                </a>
+            </li>
+        <li class="c-top-nav-item">
+                <a id="support" class="c-top-nav-link c-nav-link" href="https://dev.windows.com/en-us/support" ms.title="Support" role="menuitem" data-bi-name="Support" data-bi-slot="5" data-show-cta="True" tabindex="70">
+                    <span>
+                        Support
+                    </span>
+                </a>
+            </li>
+        <li class="c-top-nav-item">
+                <a id="programs" class="c-top-nav-link c-nav-link" href="https://dev.windows.com/en-us/programs" ms.title="Programs" role="menuitem" data-bi-name="Programs" data-bi-slot="6" data-show-cta="True" tabindex="70">
+                    <span>
+                        Programs
+                    </span>
+                </a>
+            </li>
+
+        </ul>
+                <div class="shell-category-nav-featured"><div class="c-nav-pagination c-nav-pagination-next" style="display: none;">
+            <i class="shell-icon-dropdown facing-right"></i>
+        </div>
+                    <a id="dashboard" class="c-nav-link c-top-nav-link" ms.title="Dashboard" href="https://dev.windows.com/overview?from=UHF" role="menuitem" data-bi-name="Dashboard" data-bi-slot="7">
+                        <span>
+                            Dashboard
+                        </span>
+                    </a>
+                </div>
+
+        
+    </div>
+
+</div>
+<div class="fixed-category-nav-buffer"></div>
+
+
+<script data-do-not-move="true" type="text/javascript">
+
+    var shellInitOptions = {
+        lcaDisclaimerEnabled: false,
+        suggestedProductTitle : 'Suggested products'
+    };
+
+    
+    var meControlInitOptions = {
+        containerId: 'meControl',
+            enabled: true,
+        headerHeight: 48,
+        custom: {chevHtml:'<i class="msame_chev_uhf shell-icon-dropdown"></i>'},
+        
+            
+        market: 'en-US',
+        
+
+        mobileBreakpoints: {
+            shortHeader: 1084
+            },
+
+        rpData:
+    {
+        msaInfo:
+            {
+                        
+                signInUrl: '/en-us/store/signin',
+                signOutUrl: '/en-us/store/signout',
+                accountSettingsUrl: 'https://account.microsoft.com/',
+                switchUrl: '',
+                meUrl: 'https://login.live.com/me.srf?wa=wsignin1.0',
+                isSupported: true
+                
+            },
+        aadInfo:
+            {
+            },
+        preferredIdp: 'msa',
+    },
+        signInStr: 'Sign in',
+        signOutStr: 'Sign out'
+    };
+</script>
+ 
+        </div>
+    <input type="hidden" id="UhfSignInOutLink" value="https://login.live.com/login.srf?wa=wsignin1.0&amp;rpsnv=12&amp;ct=1448181957&amp;rver=6.0.5276.0&amp;wp=MCMBI&amp;wlcxt=MSDN%24MSDN%24MSDN&amp;wreply=https%3a%2f%2fmsdn.microsoft.com%2fen-us%2flibrary%2fwindows%2fdesktop%2faa382575%2528v%3dvs.85%2529.aspx&amp;lc=1033&amp;id=254354&amp;mkt=en-US">
+    
+    
+
+
+
+
+
+
+  <div class="breadCrumb">
+        <span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/mt162205.aspx" title="Windows desktop applications">Windows desktop applications</a></span>
+        <span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa904962.aspx" title="Develop">Develop</a></span>
+        <span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bg125390.aspx" title="Server and system ">Server and system </a></span>
+        <span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/hh309472(v=vs.85).aspx" title="System Administration">System Administration</a></span>
+        <span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa383614(v=vs.85).aspx" title="Task Scheduler">Task Scheduler</a></span>
+        <span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa383608(v=vs.85).aspx" title="Task Scheduler Reference">Task Scheduler Reference</a></span>
+        <span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa383607(v=vs.85).aspx" title="Task Scheduler Scripting Objects">Task Scheduler Scripting Objects</a></span>
+        <span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382560(v=vs.85).aspx" title="TaskFolder">TaskFolder</a></span>
+
+    <span><a href="./TaskFolder.RegisterTask method (Windows)_files/TaskFolder.RegisterTask method (Windows).html" title="TaskFolder.RegisterTask">TaskFolder.RegisterTask</a></span>
+  </div>
+
+
+        <div id="body">
+            <span id="tabletView_large"></span>
+            <span id="tabletView_small"></span>
+            <span id="mobileView"></span>
+            
+
+
+
+
+
+
+
+        <div id="leftNav" style="width: 280px; max-width: 480px; min-height: 3981px; height: 567px;">
+
+
+
+
+<div id="tocnav" class="hide-archive" style="width: 280.2px; position: fixed; top: 60px;">
+
+
+            <div class="toclevel0 " data-toclevel="0" style="padding-left: 0px;">
+<a class="toc_collapsed" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(v=vs.85).aspx#" aria-label="Expand the table of content"></a><a data-tochassubtree="true" href="https://msdn.microsoft.com/en-us/library/windows/desktop/mt162205.aspx" id="aa906039_MSDN.10_en-us" mtpsaliasid="" mtpsassetid="87082d4b-6cca-42cd-aadc-e3aa0279e5f8_MSDN.10_en-us" mtpsshortid="mt162205_MSDN.10_en-us" title="Windows desktop applications">Windows desktop applications</a>            </div>
+            <div class="toclevel0 " data-toclevel="0" style="padding-left: 0px;">
+<a class="toc_collapsed" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(v=vs.85).aspx#" aria-label="Expand the table of content"></a><a data-tochassubtree="true" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa904962.aspx" id="bg125588_MSDN.10_en-us" mtpsaliasid="" mtpsassetid="C0D3A18C-D498-42B4-8015-883D16590B90_MSDN.10_en-us" mtpsshortid="aa904962_MSDN.10_en-us" title="Develop">Develop</a>            </div>
+            <div class="toclevel0 " data-toclevel="0" style="padding-left: 0px;">
+<a class="toc_collapsed" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(v=vs.85).aspx#" aria-label="Expand the table of content"></a><a data-tochassubtree="true" href="https://msdn.microsoft.com/en-us/library/windows/desktop/bg125390.aspx" id="dn584049_VS.85_en-us" mtpsaliasid="" mtpsassetid="1bfa9e73-3d83-4bd5-9b60-c2be82c60b19_VS.85_en-us" mtpsshortid="bg125390_MSDN.10_en-us" title="Server and system">Server and system</a>            </div>
+            <div class="toclevel0 " data-toclevel="0" style="padding-left: 0px;">
+<a class="toc_collapsed" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(v=vs.85).aspx#" aria-label="Expand the table of content"></a><a data-tochassubtree="true" href="https://msdn.microsoft.com/en-us/library/windows/desktop/hh309472(v=vs.85).aspx" id="dn584051_VS.85_en-us" mtpsaliasid="" mtpsassetid="51A48716-53EF-493E-8974-C429BDE9B6FF_VS.85_en-us" mtpsshortid="hh309472_VS.85_en-us" title="System Administration">System Administration</a>            </div>
+            <div class="toclevel0 " data-toclevel="0" style="padding-left: 0px;">
+<a class="toc_collapsed" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(v=vs.85).aspx#" aria-label="Expand the table of content"></a><a data-tochassubtree="true" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa383614(v=vs.85).aspx" id="ms765722_VS.85_en-us" mtpsaliasid="" mtpsassetid="15970a51-c139-48b8-b82b-605728d0f386_VS.85_en-us" mtpsshortid="aa383614_VS.85_en-us" title="Task Scheduler">Task Scheduler</a>            </div>
+            <div class="toclevel0 " data-toclevel="0" style="padding-left: 0px;">
+<a class="toc_collapsed" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(v=vs.85).aspx#" aria-label="Expand the table of content"></a><a data-tochassubtree="true" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa383608(v=vs.85).aspx" id="ms765780_VS.85_en-us" mtpsaliasid="" mtpsassetid="e3b5a1e1-4d18-44b7-aaa6-ebec11892bec_VS.85_en-us" mtpsshortid="aa383608_VS.85_en-us" title="Task Scheduler Reference">Task Scheduler Reference</a>            </div>
+            <div class="toclevel0 " data-toclevel="0" style="padding-left: 0px;">
+<a class="toc_collapsed" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(v=vs.85).aspx#" aria-label="Expand the table of content"></a><a data-tochassubtree="true" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa383607(v=vs.85).aspx" id="ms765782_VS.85_en-us" mtpsaliasid="" mtpsassetid="632bc9ae-b300-42ed-9d2c-f1d2d53d44fb_VS.85_en-us" mtpsshortid="aa383607_VS.85_en-us" title="Task Scheduler Scripting Objects">Task Scheduler Scripting Objects</a>            </div>
+            <div class="toclevel1 " data-toclevel="1" data-childrenloaded="true" style="padding-left: 13px;">
+<a class="toc_expanded" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(v=vs.85).aspx#" aria-label="Collapse the table of content"></a><a data-tochassubtree="true" href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382560(v=vs.85).aspx" id="ms765829_VS.85_en-us" mtpsaliasid="" mtpsassetid="f6fd09ec-2777-4903-83b5-e3ac1aa472a0_VS.85_en-us" mtpsshortid="aa382560_VS.85_en-us" title="TaskFolder">TaskFolder</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382564(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.CreateFolder">TaskFolder.CreateFolder</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382565(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.DeleteFolder">TaskFolder.DeleteFolder</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382566(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.DeleteTask">TaskFolder.DeleteTask</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382567(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.GetFolder">TaskFolder.GetFolder</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382568(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.GetFolders">TaskFolder.GetFolders</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382569(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.GetSecurityDescriptor">TaskFolder.GetSecurityDescriptor</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382571(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.GetTask">TaskFolder.GetTask</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382572(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.GetTasks">TaskFolder.GetTasks</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382573(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.Name">TaskFolder.Name</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382574(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.Path">TaskFolder.Path</a>            </div>
+            <div class="toclevel2 current " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="./TaskFolder.RegisterTask method (Windows)_files/TaskFolder.RegisterTask method (Windows).html" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.RegisterTask">TaskFolder.RegisterTask</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382577(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.RegisterTaskDefinition">TaskFolder.RegisterTaskDefinition</a>            </div>
+            <div class="toclevel2 " data-toclevel="2" style="padding-left: 26px;">
+<span class="toc_empty"></span><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382578(v=vs.85).aspx" mtpsaliasid="" mtpsassetid="" mtpsshortid="" title="TaskFolder.SetSecurityDescriptor">TaskFolder.SetSecurityDescriptor</a>            </div>
+</div>                <div style="display:none">
+                    <div id="CollapseLocalizeString">Collapse the table of content</div>
+                    <div id="ExpandLocalizeString">Expand the table of content</div>
+                </div>
+
+            
+
+            
+
+            
+
+            <div id="toc-resizable-ew" class="toc-resizable-ew"></div>
+            
+
+<a id="NavigationResize" href="javascript:void(0)" style="left: 280.2px; display: inline-block;">
+    <img class="cl_nav_resize_open" src="./TaskFolder.RegisterTask method (Windows)_files/ImageSprite.png" title="Expand" alt="Expand">
+    <img class="cl_nav_resize_close" src="./TaskFolder.RegisterTask method (Windows)_files/ImageSprite.png" title="Minimize" alt="Minimize" style="display: none;">
+</a>
+
+
+
+        </div>
+    <div id="content" class="content" style="margin-left: 280.2px; width: auto;">
+
+
+
+
+
+
+
+
+<div class="topic" xmlns="http://www.w3.org/1999/xhtml">
+  <h1 class="title">TaskFolder.RegisterTask method</h1>
+  
+  <div id="mainSection">
+<div class="clsServerSDKContent">
+
+</div>
+<p>For scripting, registers (creates) a new task in the folder using XML to define the task.</p>
+<h2>Syntax</h2>
+
+<div id="code-snippet-1" class="codeSnippetContainer" xmlns="">
+    <div class="codeSnippetContainerTabs">
+        <div class="codeSnippetContainerTabSingle" dir="ltr"><a>VB</a></div>
+    </div>
+    <div class="codeSnippetContainerCodeContainer">
+        <div class="codeSnippetToolBar">
+            <div class="codeSnippetToolBarText">
+                <a name="CodeSnippetCopyLink" style="display: none;" title="Copy to clipboard." href="javascript:if (window.epx.codeSnippet)window.epx.codeSnippet.copyCode('CodeSnippetContainerCode_8b4a3156-975f-495c-8a8f-4ca673a53115');">Copy</a>
+            </div>
+        </div>
+        <div id="CodeSnippetContainerCode_8b4a3156-975f-495c-8a8f-4ca673a53115" class="codeSnippetContainerCode" dir="ltr">
+            <div style="color:Black;"><pre>
+TaskFolder.RegisterTask( _
+  <span style="color:Blue;">ByVal</span> path, _
+  <span style="color:Blue;">ByVal</span> xmlText, _
+  <span style="color:Blue;">ByVal</span> flags, _
+  <span style="color:Blue;">ByVal</span> userId, _
+  <span style="color:Blue;">ByVal</span> password, _
+  <span style="color:Blue;">ByVal</span> logonType, _
+  [ <span style="color:Blue;">ByVal</span> sddl ], _
+  <span style="color:Blue;">ByRef</span> pTask _
+)
+
+</pre></div>
+            
+        </div>
+    </div>
+</div>
+
+<h2>Parameters</h2>
+<dl>
+<dt><em>path</em> [in]</dt>
+<dd>
+<p>The name of the task. If this value is <strong>Nothing</strong>, the task will be registered in the root task folder and the task name will be a GUID value that is created by the Task Scheduler service.  </p>
+<p>A task name cannot begin or end with a space character. The '.' character  cannot be used to specify the current task folder  and the '..' characters cannot be used to specify the parent task folder in the path.</p>
+</dd>
+<dt><em>xmlText</em> [in]</dt>
+<dd>
+<p>An XML-formatted description of the task.</p>
+<p>The following topics contain tasks defined using XML.</p><ul>
+<li>
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa383765(v=vs.85).aspx">Time Trigger Example (XML)</a>
+</li>
+<li>
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa446889(v=vs.85).aspx">Event Trigger Example (XML)</a>
+</li>
+<li>
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa446863(v=vs.85).aspx">Daily Trigger Example (XML)</a>
+</li>
+<li>
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382115(v=vs.85).aspx">Registration Trigger Example (XML)</a>
+</li>
+<li>
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa384128(v=vs.85).aspx">Weekly Trigger Example (XML)</a>
+</li>
+<li>
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381913(v=vs.85).aspx">Logon Trigger Example (XML)</a>
+</li>
+<li>
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa446819(v=vs.85).aspx">Boot Trigger Example (XML)</a>
+</li>
+</ul>
+
+</dd>
+<dt><em>flags</em> [in]</dt>
+<dd>
+<p>A <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382538(v=vs.85).aspx"><strong xmlns="http://www.w3.org/1999/xhtml">TASK_CREATION</strong></a> constant.</p>
+<table responsive="true">
+<tbody><tr><th>Value</th><th>Meaning</th></tr>
+<tr><td data-th="Value"><a id="TASK_VALIDATE_ONLY"></a><a id="task_validate_only"></a><dl>
+<dt><strong>TASK_VALIDATE_ONLY</strong></dt>
+<dt>0x1</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>The Task Scheduler checks the syntax of the XML that describes the task but does not register the task. This constant cannot be combined with the <strong>TASK_CREATE</strong>, <strong>TASK_UPDATE</strong>, or  <strong>TASK_CREATE_OR_UPDATE</strong> values.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_CREATE"></a><a id="task_create"></a><dl>
+<dt><strong>TASK_CREATE</strong></dt>
+<dt>0x2</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>The Task Scheduler registers the task as a new task.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_UPDATE"></a><a id="task_update"></a><dl>
+<dt><strong>TASK_UPDATE</strong></dt>
+<dt>0x4</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>The Task Scheduler registers the task as an updated version of an existing task. When a task with a registration trigger is updated, the task will execute after the update occurs.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_CREATE_OR_UPDATE"></a><a id="task_create_or_update"></a><dl>
+<dt><strong>TASK_CREATE_OR_UPDATE</strong></dt>
+<dt>0x6</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>The Task Scheduler either registers the task as a new task or as an updated version if the task already exists. Equivalent to TASK_CREATE | TASK_UPDATE.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_DISABLE"></a><a id="task_disable"></a><dl>
+<dt><strong>TASK_DISABLE</strong></dt>
+<dt>0x8</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>The Task Scheduler disables the existing task.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_DONT_ADD_PRINCIPAL_ACE"></a><a id="task_dont_add_principal_ace"></a><dl>
+<dt><strong>TASK_DONT_ADD_PRINCIPAL_ACE</strong></dt>
+<dt>0x10</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>The Task Scheduler is prevented from adding the allow access-control entry (ACE) for the context principal. When the <strong>TaskFolder.RegisterTask</strong> function is called with this flag to update a task, the Task Scheduler service does not add the ACE for the new context principal and does not remove the ACE from the old context principal.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_IGNORE_REGISTRATION_TRIGGERS"></a><a id="task_ignore_registration_triggers"></a><dl>
+<dt><strong>TASK_IGNORE_REGISTRATION_TRIGGERS</strong></dt>
+<dt>0x20</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>The Task Scheduler creates the task, but ignores the registration triggers in the task. By ignoring the registration triggers, the task will not execute when it is registered unless a time-based trigger causes it to execute on registration.</p>
+</td></tr>
+</tbody></table>
+<p>&nbsp;</p>
+</dd>
+<dt><em>userId</em> [in]</dt>
+<dd>
+<p>The user credentials that are used to register the task. </p>
+<div class="alert"><strong>Note</strong>&nbsp;&nbsp;If the task is defined as a Task Scheduler 1.0 task, then do not use a group name (rather than a specific user name) in this userId parameter. A task is defined as a Task Scheduler 1.0 task when the version attribute of the Task element in the task's XML is set to 1.1.</div>
+<div>&nbsp;</div>
+</dd>
+<dt><em>password</em> [in]</dt>
+<dd>
+<p>The password for the userId that is used to register the task.  When the TASK_LOGON_SERVICE_ACCOUNT logon type is used, the password must be an empty  <strong>VARIANT</strong> value such as <strong>VT_NULL</strong> or <strong>VT_EMPTY</strong>.</p>
+</dd>
+<dt><em>logonType</em> [in]</dt>
+<dd>
+<p>Defines what logon technique is used to run the registered task.</p>
+<table responsive="true">
+<tbody><tr><th>Value</th><th>Meaning</th></tr>
+<tr><td data-th="Value"><a id="TASK_LOGON_NONE"></a><a id="task_logon_none"></a><dl>
+<dt><strong>TASK_LOGON_NONE</strong></dt>
+<dt>0</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>The logon method is not specified. Used for non-NT credentials.
+    </p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_LOGON_PASSWORD"></a><a id="task_logon_password"></a><dl>
+<dt><strong>TASK_LOGON_PASSWORD</strong></dt>
+<dt>1</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>Use a password for logging on the user. The password must be supplied at registration time.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_LOGON_S4U"></a><a id="task_logon_s4u"></a><dl>
+<dt><strong>TASK_LOGON_S4U</strong></dt>
+<dt>2</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>Use an existing interactive token to run a task. The user must log on using a service for user (S4U) logon. When an S4U logon is used, no password is stored by the system and there is no access to either the network or  to encrypted files.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_LOGON_INTERACTIVE_TOKEN"></a><a id="task_logon_interactive_token"></a><dl>
+<dt><strong>TASK_LOGON_INTERACTIVE_TOKEN</strong></dt>
+<dt>3</dt>
+</dl>
+</td><td data-th="Meaning">
+<p> User must already be logged on. The task will be run only in an existing interactive session.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_LOGON_GROUP"></a><a id="task_logon_group"></a><dl>
+<dt><strong>TASK_LOGON_GROUP</strong></dt>
+<dt>4</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>Group activation. The <strong>groupId</strong> field specifies the group.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_LOGON_SERVICE_ACCOUNT"></a><a id="task_logon_service_account"></a><dl>
+<dt><strong>TASK_LOGON_SERVICE_ACCOUNT</strong></dt>
+<dt>5</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>Indicates that a Local System, Local Service, or Network Service account is being used as a security context to run the task.</p>
+</td></tr>
+<tr><td data-th="Value"><a id="TASK_LOGON_INTERACTIVE_TOKEN_OR_PASSWORD"></a><a id="task_logon_interactive_token_or_password"></a><dl>
+<dt><strong>TASK_LOGON_INTERACTIVE_TOKEN_OR_PASSWORD</strong></dt>
+<dt>6</dt>
+</dl>
+</td><td data-th="Meaning">
+<p>First use the interactive token.  If the user is not logged on (no interactive token is available), then the password is used.  The password must be specified when a task is registered. This flag is not recommended for new tasks because it is less reliable than TASK_LOGON_PASSWORD.</p>
+</td></tr>
+</tbody></table>
+<p>&nbsp;</p>
+</dd>
+<dt><em>sddl</em> [in, optional]</dt>
+<dd>
+<p>The security descriptor that is associated with the registered task. You can specify the access control list (ACL) in the security descriptor for a task in order to allow or deny certain users and groups access to a task.</p>
+<div class="alert"><strong>Note</strong>&nbsp;&nbsp; If the Local System account is denied access to a task, then the Task Scheduler service can produce unexpected results.</div>
+<div>&nbsp;</div>
+</dd>
+<dt><em>pTask</em> [out]</dt>
+<dd>
+<p>A <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382079(v=vs.85).aspx"><strong xmlns="http://www.w3.org/1999/xhtml">RegisteredTask</strong></a> object that represents the new task.</p>
+</dd>
+</dl>
+<h2>Return value</h2>
+<p>This method does not return a value.</p>
+<h2>Remarks</h2>
+<p>For a task, that contains a message box action, the message box will be displayed if the task is activated and the task has an interactive logon type.  To set the task logon type to interactive, specify 3 (<strong>TASK_LOGON_INTERACTIVE_TOKEN</strong>) or 4 (<strong>TASK_LOGON_GROUP</strong>) in the <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382075(v=vs.85).aspx"><strong xmlns="http://www.w3.org/1999/xhtml">LogonType</strong></a> property of the task principal, or in the <em>logonType</em> parameter of <strong>TaskFolder.RegisterTask</strong> or <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382577(v=vs.85).aspx"><strong xmlns="http://www.w3.org/1999/xhtml">TaskFolder.RegisterTaskDefinition</strong></a>. </p>
+<p>Only a member of the Administrators group can create a task with a boot trigger.</p>
+<p>You can successfully register a task with a group specified in the <em>userId</em> parameter and 3 (<strong>TASK_LOGON_INTERACTIVE_TOKEN</strong>) specified in the <em>logonType</em> parameter of <strong>TaskFolder.RegisterTask</strong> or <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382577(v=vs.85).aspx"><strong xmlns="http://www.w3.org/1999/xhtml">TaskFolder.RegisterTaskDefinition</strong></a>, but the task will not run.</p>
+<h2>Requirements</h2>
+<table>
+<tbody><tr><th>
+<p>Minimum supported client</p>
+</th><td>Windows&nbsp;Vista [desktop apps only]</td></tr>
+<tr><th>
+<p>Minimum supported server</p>
+</th><td>Windows Server&nbsp;2008 [desktop apps only]</td></tr>
+<tr><th>
+<p>Type library</p>
+</th><td>
+<dl>
+<dt>Taskschd.tlb</dt>
+</dl>
+</td></tr>
+<tr><th>
+<p>DLL</p>
+</th><td>
+<dl>
+<dt>Taskschd.dll</dt>
+</dl>
+</td></tr>
+</tbody></table>
+<h2><a id="see_also"></a>See also</h2>
+<dl>
+<dt>
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa383614(v=vs.85).aspx">Task Scheduler</a>
+</dt>
+<dt>
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382079(v=vs.85).aspx"><strong xmlns="http://www.w3.org/1999/xhtml">RegisteredTask</strong></a>
+</dt>
+<dt>
+<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382560(v=vs.85).aspx"><strong xmlns="http://www.w3.org/1999/xhtml">TaskFolder</strong></a>
+</dt>
+</dl>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+</div>
+
+
+    
+
+
+
+<script id="CommentTemplate" type="text/x-jquery-tmpl">
+    <div class="communityContentAnnotation">
+        <a name="${Index}"></a>
+        <h3>
+            ${Title}
+        </h3>
+        <div class="communityContentAnnotationBody">
+            {{html Body}}
+        </div>
+        <div class="communityContentAnnotationInfo">
+            <div class="communityContentAnnotationAvatarContainer">
+                <a href="${UserAvatar.Href}" title="${UserAvatar.ToolTip}" class="communityContentAnnotationAvatar"><img src="${UserAvatar.ImageUrl}" alt="${UserAvatar.ImageAltText}" width="34" height="34" /></a>
+            </div>
+            <div class="communityContentAnnotationUserDateContainer">
+                <div class="communityContentAnnotationUserContainer">
+                    <a href="${UserAvatar.Href}">
+                        ${User}
+                    </a>
+                </div>
+                <div class="communityContentAnnotationDateContainer">
+                    <span>${Date}</span>
+                    
+                    {{if EditLink}}
+                        <span>
+                            <a href="${EditLink.Href}" title="${EditLink.ToolTip}" class="communityContentCommentEditLink">${EditLink.Title}</a>
+                        </span>
+                    {{/if}}
+
+                    {{if DeleteLink}}
+                        <span>
+                            <a href="${DeleteLink.Href}" title="${DeleteLink.ToolTip}" class="communityContentDeleteLink">${DeleteLink.Title}</a>
+                        </span>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<div class="communityContentContainer">
+    <div id="CommunityContentHeader" class="communityContentHeader">
+        <div class="communityContentHeaderTitleContainer">
+            <h2>Community Additions</h2>
+                <a class="communityContentAddLink" href="https://msdn.microsoft.com/en-us/library/windows/desktop/community/add/aa382575(v=vs.85).aspx">
+                    <span class="communityContentAddButton" title="Add">
+                        ADD
+                    </span>
+                </a>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+    
+    <div id="CommunityComments" data-url="/en-us/library/windows/desktop/community/comments/aa382575(v=vs.85).aspx"></div>
+</div>
+
+
+
+
+<div class="libraryMemberFilter">
+    <div class="filterContainer">
+        <span>Show:</span>
+        <label>
+            <input type="checkbox" class="libraryFilterInherited" checked="checked" value="Inherit">Inherited
+        </label>
+        <label>
+            <input type="checkbox" class="libraryFilterProtected" checked="checked" value="Protected">Protected
+        </label>
+    </div>
+</div>
+    
+<input type="hidden" id="libraryMemberFilterEmptyWarning" value="There are no members available with your current filter settings.">
+
+
+
+    </div>
+
+
+
+
+        </div>
+        <div class="clear"></div>
+
+        
+    
+<input name="__RequestVerificationToken" type="hidden" value="nJqCJ7Zf6hkWNLmo2u4SbRuAu6VpXroKLseLDJn5NEIXeBw479VQhIOUz3D2Fm_GwG2ZMsXOQOLXcQ-npib0RZ3esis1">
+<input id="ratingSubmitUrl" type="hidden" value="https://msdn.microsoft.com/en-us/library/feedback/add/aa382575(v=vs.85).aspx">
+<input id="isTopicRated" type="hidden" value="false">
+
+
+    
+
+
+
+        <link rel="stylesheet" type="text/css" href="./TaskFolder.RegisterTask method (Windows)_files/UhfFooter.css" data-do-not-move="true">
+    
+    <div id="ux-footer" class="ltr">
+        
+            <div id="footerSock" class="UhfFooterSock">
+                <div id="footerSockInner">
+                    <div data-fragmentname="SockLinks" id="Fragment_SockLinks" xmlns="http://www.w3.org/1999/xhtml">
+                        
+                        <span>Follow Us</span>
+                        <div class="linkList">
+                            <ul class="links">
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?LinkId=317808" id="SockLinks_728_43" xmlns="http://www.w3.org/1999/xhtml">http://go.microsoft.com/fwlink/p/?LinkId=317808</a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?linkid=393788" id="SockLinks_728_56" xmlns="http://www.w3.org/1999/xhtml">http://go.microsoft.com/fwlink/p/?linkid=393788</a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?LinkID=317807" id="SockLinks_728_86" xmlns="http://www.w3.org/1999/xhtml">http://go.microsoft.com/fwlink/p/?LinkID=317807</a>
+                                    </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <a name="feedback"></a>
+                    <div data-fragmentname="Survey" id="Fragment_Survey" xmlns="http://www.w3.org/1999/xhtml"></div>
+
+<div class="rating">
+    <div id="ratingSection1">
+        <div class="title">
+            Was this page helpful?
+        </div>
+        <div class="description">
+            Your feedback about this content is important.<br>Let us know what you think.
+        </div>
+        <div class="buttons">
+            <button class="button" id="ratingYes" aria-label="Yes, this page was helpful">Yes</button>
+            <button class="button" id="ratingNo" aria-label="No, this page was not helpful">No</button>
+        </div>
+        <input id="ratingValue" type="hidden" value="">
+    </div>
+    <div id="ratingSection2">
+        <div class="title left">
+            Additional feedback?
+        </div>
+        <textarea id="ratingText" rows="6" cols="" maxlength="1500"></textarea>
+        <div class="right">
+            <div class="counter">
+                <span id="feedbackTextCounter">1500</span> characters remaining
+            </div>
+            <div class="buttons">
+                <button class="button" id="ratingSubmit" aria-label="Submit my additional feedback">Submit</button>
+                <button class="button" id="ratingSkipThis" aria-label="Skip additional feedback">Skip this</button>
+            </div>
+        </div>
+    </div>
+    <div id="ratingSection3">
+        <div class="title">
+            Thank you!
+        </div>
+        <div class="description">
+            We appreciate your feedback.
+        </div>
+    </div>
+    
+    
+    <div id="contentFeedbackQAContainer" style="display: none;"></div>
+</div>
+    
+
+                    
+                    <div data-fragmentname="SockLinks" id="Fragment_SockLinks_Responsive" xmlns="http://www.w3.org/1999/xhtml">
+                        
+                        <span>Follow Us</span>
+                        <div class="linkList">
+                            <ul class="links">
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?LinkId=317808" id="SockLinks_728_43" xmlns="http://www.w3.org/1999/xhtml">http://go.microsoft.com/fwlink/p/?LinkId=317808</a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?linkid=393788" id="SockLinks_728_56" xmlns="http://www.w3.org/1999/xhtml">http://go.microsoft.com/fwlink/p/?linkid=393788</a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?LinkID=317807" id="SockLinks_728_86" xmlns="http://www.w3.org/1999/xhtml">http://go.microsoft.com/fwlink/p/?LinkID=317807</a>
+                                    </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        <div id="footerContainer">
+            <div id="baseFooter">
+                 
+
+
+<div class="shell-footer" data-bi-area="Footer" data-bi-view="3xLinks">
+    <div class="shell-footer-wrapper" role="contentinfo">
+
+            <div class="shell-footer-menugroups">
+                    <div class="sfm-group">
+                        <div class="grp-title">
+                            Downloads and tools <i class="shell-icon-dropdown"></i>
+                        </div>
+                        <ul>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?linkid=280676" role="menuitem" ms.title="Windows 10 dev tools" data-bi-name="footer_DownloadsAndTools_Win10DevTools" data-bi-slot="1" data-bi-source="Compass">
+                                            Windows 10 dev tools
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?LinkId=618475" role="menuitem" ms.title="Visual Studio" data-bi-name="Footer_DownloadsAndTools_VS" data-bi-slot="2" data-bi-source="Compass">
+                                            Visual Studio
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?linkid=616887" role="menuitem" ms.title="Windows SDK" data-bi-name="Footer_DownloadsAndTools_WinSDK" data-bi-slot="3" data-bi-source="Compass">
+                                            Windows SDK
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?LinkId=534236" role="menuitem" ms.title="Windows Store badges" data-bi-name="Footer_DownloadsAndTools_Badges" data-bi-slot="4" data-bi-source="Compass">
+                                            Windows Store badges
+                                        </a>
+                                    </li>
+
+                        </ul>
+                    </div>
+                    <div class="sfm-group">
+                        <div class="grp-title">
+                            Essentials <i class="shell-icon-dropdown"></i>
+                        </div>
+                        <ul>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?LinkId=534192" role="menuitem" ms.title="API reference (Windows apps)" data-bi-name="Footer_Essentials_WinAppsAPIRef" data-bi-slot="1" data-bi-source="Compass">
+                                            API reference (Windows apps)
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?linkid=285627" role="menuitem" ms.title="API reference (desktop apps)" data-bi-name="Footer_Essentials_DesktopAppsAPIRef" data-bi-slot="2" data-bi-source="Compass">
+                                            API reference (desktop apps)
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/?LinkID=280677" role="menuitem" ms.title="Code samples" data-bi-name="FooterEssentialsCodeSamples" data-bi-slot="3" data-bi-source="Compass">
+                                            Code samples
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://msdn.microsoft.com/library/windows/apps/xaml/mt244352.aspx" role="menuitem" ms.title="How-to guides (Windows apps)" data-bi-name="Footer_Essentials_HowToWinApps" data-bi-slot="4" data-bi-source="Compass">
+                                            How-to guides (Windows apps)
+                                        </a>
+                                    </li>
+
+                        </ul>
+                    </div>
+                    <div class="sfm-group">
+                        <div class="grp-title">
+                            Learning resources <i class="shell-icon-dropdown"></i>
+                        </div>
+                        <ul>
+                                    <li>
+                                        <a href="http://www.microsoftvirtualacademy.com/" role="menuitem" ms.title="Microsoft Virtual Academy" data-bi-name="Footer_MS_Virtual_Academy" data-bi-slot="1" data-bi-source="Compass">
+                                            Microsoft Virtual Academy
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="http://channel9.msdn.com/" role="menuitem" ms.title="Channel 9" data-bi-name="Footer_Ch9" data-bi-slot="2" data-bi-source="Compass">
+                                            Channel 9
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?LinkId=534190" role="menuitem" ms.title="Video gallery" data-bi-name="Footer_VidGallery" data-bi-slot="3" data-bi-source="Compass">
+                                            Video gallery
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="http://blogs.windows.com/buildingapps/2015/08/05/build-better-apps-windows-10-by-10-development-series/" role="menuitem" ms.title="Windows 10 by 10 blog series" data-bi-name="Footer_LearningResources_WIN10x10blog" data-bi-slot="4" data-bi-source="Compass">
+                                            Windows 10 by 10 blog series
+                                        </a>
+                                    </li>
+
+                        </ul>
+                    </div>
+                    <div class="sfm-group">
+                        <div class="grp-title">
+                            Programs <i class="shell-icon-dropdown"></i>
+                        </div>
+                        <ul>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?LinkId=534191" role="menuitem" ms.title="Get a dev account" data-bi-name="Footer_Programs_DevAcct" data-bi-slot="1" data-bi-source="Compass">
+                                            Get a dev account
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="http://go.microsoft.com/fwlink/p/?LinkID=246847" role="menuitem" ms.title="App Developer Agreement" data-bi-name="Footer_Programs_DevAgreement" data-bi-slot="2" data-bi-source="Compass">
+                                            App Developer Agreement
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="http://insider.windows.com/" role="menuitem" ms.title="Windows Insider Program" data-bi-name="Footer_Programs_WinInsider" data-bi-slot="3" data-bi-source="Compass">
+                                            Windows Insider Program
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://go.microsoft.com/fwlink/p/?LinkId=529768" role="menuitem" ms.title="Microsoft Affliate Program" data-bi-name="Footer_Programs_MsftAffliatePgrm" data-bi-slot="4" data-bi-source="Compass">
+                                            Microsoft Affliate Program
+                                        </a>
+                                    </li>
+
+                        </ul>
+                    </div>
+
+            </div>
+
+        <div class="shell-footer-lang"><span id="selectLocaleFromPopUp">
+        <div class="locale-selector" style="position: relative">
+            <a class="current-locale" href="javascript:void(0)">
+                <span class="text">English</span>
+                <span class="gear"></span>
+            </a>
+            <div class="locale-selection-panel site-flag site-flag-lang" style="top: -245px; display: none;">
+                <div class="content">
+                    <table class="all-locales" cellspacing="0" autogeneratecolumns="false" allowpaging="false" allowsorting="false" style="border-collapse: collapse;">
+                        <tbody>
+                            <tr>
+
+
+                                    <td><a title="Deutsch" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=de-de&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link">Deutsch</a></td>
+                                    <td><a title="English" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=en-us&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link selected">English</a></td>
+                                    <td><a title="Español" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=es-es&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link">Español</a></td>
+                                    <td><a title="Français" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=fr-fr&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link">Français</a></td>
+                                        </tr><tr>
+                                    <td><a title="Italiano" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=it-it&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link">Italiano</a></td>
+                                    <td><a title="日本語" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=ja-jp&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link">日本語</a></td>
+                                    <td><a title="한국어" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=ko-kr&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link">한국어</a></td>
+                                    <td><a title="Português" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=pt-br&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link">Português</a></td>
+                                        </tr><tr class="last">
+                                    <td><a title="Pусский" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=ru-ru&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link">Pусский</a></td>
+                                    <td><a title="简体中文" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=zh-cn&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link">简体中文</a></td>
+                                    <td><a title="繁體中文" href="https://msdn.microsoft.com/en-us/?action=SelectLocale&currentLocale=en-us&newLocale=zh-tw&fromPage=/en-us/library/windows/desktop/aa382575(v=vs.85).aspx" class="locale-link">繁體中文</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="arrow">
+                        &nbsp;</div>
+                </div>
+            </div>
+        </div>
+    </span></div>
+        <div class="shell-footer-copyright">
+            <ul>
+                            <li>
+                                <a id="privacyandcookies" href="https://go.microsoft.com/fwlink/p/?LinkId=521839" class="ctl_footerNavLink" data-bi-name="PrivacyAndCookies" data-bi-slot="1">
+                                    Privacy and cookies
+                                </a>
+                            </li>
+                            <li>
+                                <a id="termsofuse" href="https://go.microsoft.com/fwlink/p/?linkid=248155" class="ctl_footerNavLink" data-bi-name="TermsOfUse" data-bi-slot="2">
+                                    Terms of use
+                                </a>
+                            </li>
+                            <li>
+                                <a id="trademarks" href="https://go.microsoft.com/fwlink/p/?linkid=248154" class="ctl_footerNavLink" data-bi-name="Trademarks" data-bi-slot="3">
+                                    Trademarks
+                                </a>
+                            </li>
+
+                <li class="ctl_footerCopyright">
+                    © 2015 Microsoft
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+                        
+    
+    
+
+
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+
+
+        <div class="footerPrintView">
+            <div class="footerCopyrightPrintView">© 2015 Microsoft</div>
+        </div>
+
+        
+        
+        
+
+
+
+        <input id="MtpsDevice" type="hidden" value="Default">
+
+
+<!--[CDATA[ Third party scripts and code linked to or referenced from this website are licensed to you by the parties that own such code, not by Microsoft.  See ASP.NET Ajax CDN Terms of Use – http://www.asp.net/ajaxlibrary/CDN.ashx. ]]-->
+
+        
+        
+        
+            
+        
+
+
+
+
+
+
+<noscript>&lt;div&gt;&lt;img alt="DCSIMG" id="Img1" width="1" height="1" src="https://m.webtrends.com/dcsmgru7m99k7mqmgrhudo0k8_8c6m/njs.gif?dcsuri=/nojavascript&amp;amp;WT.js=No" /&gt;&lt;/div&gt;</noscript>
+
+
+
+
+
+
+
+
+<div id="globalRequestVerification">
+    <input name="__RequestVerificationToken" type="hidden" value="Dvw05sxisOZyCTftSkirW1xGrEpiaI4s1WT8VU8vvEAl4m6GXSvpYh7WUknFATwOD8cCxBvxkdrx4WKqtwMwuB-4qDk1">
+</div>
+
+
+    </div>
+
+    
+    
+
+    
+
+    
+    
+    
+<script type="text/javascript" class="mtps-injected">
+/*<![CDATA[*/
+(function(window,document){"use strict";function preload(scripts){for(var result=[],script,e,i=0;i<scripts.length;i++)script=scripts[i],script.hasOwnProperty("url")&&(e=document.createElement("script"),e.src=script.url,script.throwaway=e),result.push(script);return result}function inject(scripts,index){var script,elem;if(index>=scripts.length){delete mtps.injectScripts;return}script=scripts[index];elem=document.createElement("script");elem.className="mtps-injected";elem.async=!1;var isLoaded=!1,timeoutId=0,injectNextFnName="",injectNext=elem.onerror=function(){isLoaded||(isLoaded=!0,inject(scripts,index+1),window.clearTimeout(timeoutId),elem.onload=elem.onerror=elem.onreadystatechange=null,injectNextFnName&&delete mtps[injectNextFnName],elem.removeEventListener&&elem.removeEventListener("load",injectNext,!1))};elem.addEventListener?elem.addEventListener("load",injectNext,!1):elem.readyState==="uninitialized"?elem.onreadystatechange=function(){(this.readyState==="loaded"||this.readyState==="complete")&&injectNext()}:elem.onload=injectNext;script.hasOwnProperty("url")?(timeoutId=window.setTimeout(injectNext,12e4),elem.src=script.url):(injectNextFnName="_injectNextScript_"+index,mtps[injectNextFnName]=injectNext,timeoutId=window.setTimeout(injectNext,2e3),elem.text="try {\n"+script.txt+"\n} finally { MTPS."+injectNextFnName+" && MTPS."+injectNextFnName+"(); }");parent.appendChild(elem)}var mtps=window.MTPS||(window.MTPS={}),parent=document.getElementsByTagName("head")[0];mtps.injectScripts=function(scripts){inject(preload(scripts),0)}})(window,document);
+MTPS.injectScripts([
+	{ txt: "/**/\r\n(window.MTPS || (window.MTPS = {})).cdnDomains || (window.MTPS.cdnDomains = { \r\n\t\"image\": \"https://i-msdn.sec.s-msft.com\", \r\n\t\"js\": \"https://i2-msdn.sec.s-msft.com\", \r\n\t\"css\": \"https://i-msdn.sec.s-msft.com\", \r\n\t\"xap\": \"https://msdn.microsoft.com\"\r\n});\r\n/**/" },
+	{ url: "https://assets.onestore.ms/cdnfiles/onestorerolling-1511-18012/shell/generated/shellservice.v3.min.js" },
+	{ url: "https://assets.onestore.ms/cdnfiles/onestorerolling-1511-18012/store/blender/js/blender.js" },
+	{ txt: "var isAuthenticated = (false);\n\n        //TODO: Notify all UxService first and add this link back.\n        // Currently we won\u0027t enable AAD, hard-code it to false\n        //var aadEnabled= (false);\n        var aadEnabled = false;\n\n        var ssoProperties = {\n          signedIn: isAuthenticated,\n          aadEnabled: aadEnabled,\n          signInOutUrl: $(\"#UhfSignInOutLink\").val(),\n        };\n\n        if (isAuthenticated) {\n          ssoProperties.userHasProfile = (false);\n          ssoProperties.profileText = \":ProfileText:\";\n          ssoProperties.createViewProfileText = \":CreateViewMSDNProfileText:\";\n          ssoProperties.createViewProfileLink = \":ProfileLink:\";\n          ssoProperties.MsaMemberName = \":MsaMemberName:\";\n          ssoProperties.MsaFirstName = \":MsaFirstName:\";\n          ssoProperties.MsaLastName = \":MsaLastName:\";\n          ssoProperties.MsaCID = \":MsaCID:\";\n          ssoProperties.AadDisplayName = \":AadDisplayName:\";\n          ssoProperties.AadMemberName = \":AadMemberName:\";\n          ssoProperties.AadOrgName = \":AadOrgName:\";\n        }" },
+	{ txt: "//\n  var literalNormalizedUrl = \u0027/en-us/library/windows/desktop/aa382575(l=en-us,v=vs.85).aspx\u0027;\n  var wt_nvr_ru = \u0027WT_NVR_RU\u0027;\n  var wt_fpcdom = \u0027.microsoft.com\u0027;\n  var wt_domlist = \u0027msdn.microsoft.com\u0027;\n  var wt_pathlist = \u0027\u0027;\n  var wt_paramlist = \u0027DCSext.mtps_devcenter\u0027;\n  var wt_siteid = \u0027MSDN\u0027;\n  var gDomain = \u0027m.webtrends.com\u0027;\n  var gDcsId = \u0027dcsmgru7m99k7mqmgrhudo0k8_8c6m\u0027;\n  var gFpc = \u0027WT_FPC\u0027;\n\n\n\n  if (document.cookie.indexOf(gFpc + \"=\") == -1) {\n    var wtidJs = document.createElement(\"script\");\n    wtidJs.src = \"//\" + gDomain + \"/\" + gDcsId + \"/wtid.js\";\n    document.getElementsByTagName(\"head\")[0].appendChild(wtidJs);\n  }\n\n\n\n  var detectedLocale = \u0027en-us\u0027;\n  var wtsp = \u0027_msdn_\u0027;\n  var gTrackEvents = \u00270\u0027;\n/**/" },
+	{ txt: "//\n\n        window.appInsightsId = \u002760854590-027a-4ae4-98be-2741a40f355f\u0027;\n        //" },
+	{ url: "https://i2-msdn.sec.s-msft.com/Combined.js?resources=0:Utilities,1:UhfHeader,2:Rating,0:Topic,3:webtrendsscript,0:AppInsightsPerf,4:Toc,0:ABTestControl,5:WEDCS,0:livefyre,0:Comment,1:TocDropDown,4:NavigationResize;/Areas/Epx/Content/Scripts:0,/Areas/Epx/Themes/Windows/Content:1,/Areas/Epx/Themes/Base/Content:2,/Areas/Global/Content/Webtrends/resources:3,/Areas/Library/Content:4,/Areas/Library/Themes/Base/Content:5\u0026amp;hashKey=0BDBACAB22578E2081A5138EC26CA51F\u0026amp;v=925703C75503FEBD0D0333EE2C5A2F62" },
+	{ url: "https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js" },
+	{ url: "https://i2-msdn.sec.s-msft.com/Combined.js?resources=0:CommunityContent,0:LibraryMemberFilter,1:Toc_Fixed,2:UhfFooter,3:SelectLocaleFromPopUp,1:CodeSnippet,1:TopicNotInScope,1:CollapsibleArea,1:VersionSelector,1:SurveyBroker;/Areas/Library/Content:0,/Areas/Epx/Content/Scripts:1,/Areas/Epx/Themes/Windows/Content/:2,/Areas/Epx/Themes/Base/Content:3\u0026amp;hashKey=7F95702D1BBB44BF5CB5AAA06FB478F0\u0026amp;v=925703C75503FEBD0D0333EE2C5A2F62" },
+	{ txt: "$(document).ready(function() {\n        try {\n            var token = $(\"#globalRequestVerification input[name=\u0027__RequestVerificationToken\u0027]\").clone();\n            $(\"#siteFeedbackForm\").append(token);\n        } catch(err) {\n            \n        }\n    });" }
+]);
+
+/*]]>*/
+</script>
+
+<script src="./TaskFolder.RegisterTask method (Windows)_files/broker-config.js"></script><div id="meControlDropdown" class="msame_Drop_root" style="display: none;"><div class="msame_Drop_topb"></div><div class="msame_Drop_content"><div class="msame_Drop_active"></div><div class="msame_Drop_account"></div><div class="msame_Drop_links" style="display: none;"><div class="msame_Drop_links_list"></div></div><div class="msame_Drop_signIn" style="display: none;"><div id="msame_si0" class="msame_Drop_SI"><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa382575(v=vs.85).aspx#" class="msame_TxtTrunc">Sign in with another account</a></div></div><div class="msame_Drop_signOut"></div><div class="msame_Drop_accts" style=""><div class="msame_Drop_sep"></div><div class="msame_Drop_accts_list"><div class="msame_Drop_AL"><div class="msame_Drop_ALItems"><div id="msame_ai0" class="msame_Drop_AI switch" tabindex="0"><div class="msame_Drop_AI_pic"><div class="msame_Drop_AI_piccont"><div class="msame_Drop_AI_picframe"><img role="presentation" src="./TaskFolder.RegisterTask method (Windows)_files/bluemanmxxl.png"></div></div></div><div class="msame_Drop_AI_right"><div class="msame_TxtTrunc msame_Drop_AI_name">Barry de Graaff</div><div class="msame_TxtTrunc msame_Drop_AI_email">info@barrydegraaff.tk</div><div class="msame_TxtTrunc msame_Drop_AI_status">Signed out</div></div><div class="msame_Drop_AI_remove" tabindex="0"><img alt="Remove from list" src="./TaskFolder.RegisterTask method (Windows)_files/cross.png"></div><div class="msame_Drop_AI_prog" style="display:none;"></div></div></div></div></div></div></div></div></body></html>

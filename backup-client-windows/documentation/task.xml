@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<!--
+This sample schedules a task to start on a daily basis.
+-->
+<Task xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+    <RegistrationInfo>
+        <Date>2005-10-11T13:21:17-08:00</Date>
+        <Author>AuthorName</Author>
+        <Version>1.0.0</Version>
+        <Description>Notepad starts every day.</Description>
+    </RegistrationInfo>
+    <Triggers>
+        <CalendarTrigger>
+            <StartBoundary>2005-10-11T13:21:17-08:00</StartBoundary>
+            <EndBoundary>2006-01-01T00:00:00-08:00</EndBoundary>
+            <Repetition>
+                <Interval>PT1M</Interval>
+                <Duration>PT4M</Duration>
+            </Repetition>
+            <ScheduleByDay>
+                <DaysInterval>1</DaysInterval>
+            </ScheduleByDay>
+        </CalendarTrigger>
+    </Triggers>
+    <Principals>
+        <Principal>
+            <UserId>Administrator</UserId>
+            <LogonType>InteractiveToken</LogonType>
+        </Principal>
+    </Principals>
+    <Settings>
+        <Enabled>true</Enabled>
+        <AllowStartOnDemand>true</AllowStartOnDemand>
+        <AllowHardTerminate>true</AllowHardTerminate>
+    </Settings>
+    <Actions>
+        <Exec>
+            <Command>notepad.exe</Command>
+        </Exec>
+    </Actions>
+</Task>
