@@ -90,7 +90,7 @@ Installing the proxy may break the tgz export feature a bit more, it is advised 
 
 ### License
 
-Copyright (C) 2015  Barry de Graaff
+Copyright (C) 2015-2016  Barry de Graaff
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
