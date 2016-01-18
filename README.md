@@ -52,7 +52,7 @@ The recommended method is to deploy using git. (I no longer support zmzimletctl,
     [root@myzimbra ~]# rm owncloud-zimlet -Rf
     [root@myzimbra ~]# git clone https://github.com/Zimbra-Community/owncloud-zimlet
     [root@myzimbra ~]# cd owncloud-zimlet
-    [root@myzimbra owncloud-zimlet]# git checkout 0.3.2
+    [root@myzimbra owncloud-zimlet]# git checkout 0.3.3
     [root@myzimbra owncloud-zimlet]# chmod +rx install-dev.sh
     [root@myzimbra owncloud-zimlet]# ./install-dev.sh
     [root@myzimbra owncloud-zimlet]# su zimbra
