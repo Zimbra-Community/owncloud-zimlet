@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * <p/>
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -31,61 +31,66 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-  "exclusive",
-  "shared"
+    "exclusive",
+    "shared"
 })
 @XmlRootElement(name = "lockscope")
-public class Lockscope
-{
+public class Lockscope {
 
-  private Exclusive exclusive;
-  private Shared shared;
+    private Exclusive exclusive;
+    private Shared shared;
 
-  /**
-   * Gets the value of the exclusive property.
-   *
-   * @return possible object is
-   * {@link Exclusive }
-   */
-  public Exclusive getExclusive()
-  {
-    return exclusive;
-  }
+    /**
+     * Gets the value of the exclusive property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Exclusive }
+     *     
+     */
+    public Exclusive getExclusive() {
+        return exclusive;
+    }
 
-  /**
-   * Sets the value of the exclusive property.
-   *
-   * @param value allowed object is
-   *              {@link Exclusive }
-   */
-  public void setExclusive(Exclusive value)
-  {
-    this.exclusive = value;
-  }
+    /**
+     * Sets the value of the exclusive property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Exclusive }
+     *     
+     */
+    public void setExclusive(Exclusive value) {
+        this.exclusive = value;
+    }
 
-  /**
-   * Gets the value of the shared property.
-   *
-   * @return possible object is
-   * {@link Shared }
-   */
-  public Shared getShared()
-  {
-    return shared;
-  }
+    /**
+     * Gets the value of the shared property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Shared }
+     *     
+     */
+    public Shared getShared() {
+        return shared;
+    }
 
-  /**
-   * Sets the value of the shared property.
-   *
-   * @param value allowed object is
-   *              {@link Shared }
-   */
-  public void setShared(Shared value)
-  {
-    this.shared = value;
-  }
+    /**
+     * Sets the value of the shared property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Shared }
+     *     
+     */
+    public void setShared(Shared value) {
+        this.shared = value;
+    }
 
 }

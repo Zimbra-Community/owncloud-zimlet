@@ -26,34 +26,34 @@ import org.apache.http.client.HttpResponseException;
  */
 public class SardineException extends HttpResponseException
 {
-  private static final long serialVersionUID = -3900043433469104564L;
+	private static final long serialVersionUID = -3900043433469104564L;
 
-  private String responsePhrase;
+	private String responsePhrase;
 
-  /**
-   * @param msg            Custom description of failure
-   * @param statusCode     Error code returned by server
-   * @param responsePhrase Response phrase following the error code
-   */
-  public SardineException(String msg, int statusCode, String responsePhrase)
-  {
-    super(statusCode, msg);
-    this.responsePhrase = responsePhrase;
-  }
+	/**
+	 * @param msg            Custom description of failure
+	 * @param statusCode     Error code returned by server
+	 * @param responsePhrase Response phrase following the error code
+	 */
+	public SardineException(String msg, int statusCode, String responsePhrase)
+	{
+		super(statusCode, msg);
+		this.responsePhrase = responsePhrase;
+	}
 
-  /**
-   * The response phrase returned by the server.
-   *
-   * @return Null if not known.
-   */
-  public String getResponsePhrase()
-  {
-    return this.responsePhrase;
-  }
+	/**
+	 * The response phrase returned by the server.
+	 *
+	 * @return Null if not known.
+	 */
+	public String getResponsePhrase()
+	{
+		return this.responsePhrase;
+	}
 
-  @Override
-  public String toString()
-  {
-    return super.toString() + " (" + this.getStatusCode() + " " + responsePhrase + ")";
-  }
+	@Override
+	public String getMessage()
+	{
+		return String.format("%s (%d %s)", super.getMessage(), this.getStatusCode(), this.getResponsePhrase());
+	}
 }

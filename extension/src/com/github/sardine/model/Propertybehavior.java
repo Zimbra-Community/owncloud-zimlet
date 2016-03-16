@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * <p/>
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -31,61 +31,66 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-  "omit",
-  "keepalive"
+    "omit",
+    "keepalive"
 })
 @XmlRootElement(name = "propertybehavior")
-public class Propertybehavior
-{
+public class Propertybehavior {
 
-  private Omit omit;
-  private Keepalive keepalive;
+    private Omit omit;
+    private Keepalive keepalive;
 
-  /**
-   * Gets the value of the omit property.
-   *
-   * @return possible object is
-   * {@link Omit }
-   */
-  public Omit getOmit()
-  {
-    return omit;
-  }
+    /**
+     * Gets the value of the omit property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Omit }
+     *     
+     */
+    public Omit getOmit() {
+        return omit;
+    }
 
-  /**
-   * Sets the value of the omit property.
-   *
-   * @param value allowed object is
-   *              {@link Omit }
-   */
-  public void setOmit(Omit value)
-  {
-    this.omit = value;
-  }
+    /**
+     * Sets the value of the omit property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Omit }
+     *     
+     */
+    public void setOmit(Omit value) {
+        this.omit = value;
+    }
 
-  /**
-   * Gets the value of the keepalive property.
-   *
-   * @return possible object is
-   * {@link Keepalive }
-   */
-  public Keepalive getKeepalive()
-  {
-    return keepalive;
-  }
+    /**
+     * Gets the value of the keepalive property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Keepalive }
+     *     
+     */
+    public Keepalive getKeepalive() {
+        return keepalive;
+    }
 
-  /**
-   * Sets the value of the keepalive property.
-   *
-   * @param value allowed object is
-   *              {@link Keepalive }
-   */
-  public void setKeepalive(Keepalive value)
-  {
-    this.keepalive = value;
-  }
+    /**
+     * Sets the value of the keepalive property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Keepalive }
+     *     
+     */
+    public void setKeepalive(Keepalive value) {
+        this.keepalive = value;
+    }
 
 }

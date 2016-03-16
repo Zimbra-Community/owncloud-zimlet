@@ -18,9 +18,9 @@ import java.util.List;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * <p/>
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -32,44 +32,45 @@ import java.util.List;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-  "link"
+    "link"
 })
 @XmlRootElement(name = "source")
-public class Source
-{
+public class Source {
 
-  private List<Link> link;
+    private List<Link> link;
 
-  /**
-   * Gets the value of the link property.
-   * <p/>
-   * <p/>
-   * This accessor method returns a reference to the live list,
-   * not a snapshot. Therefore any modification you make to the
-   * returned list will be present inside the JAXB object.
-   * This is why there is not a <CODE>set</CODE> method for the link property.
-   * <p/>
-   * <p/>
-   * For example, to add a new item, do as follows:
-   * <pre>
-   *    getLink().add(newItem);
-   * </pre>
-   * <p/>
-   * <p/>
-   * <p/>
-   * Objects of the following type(s) are allowed in the list
-   * {@link Link }
-   */
-  public List<Link> getLink()
-  {
-    if (link == null)
-    {
-      link = new ArrayList<Link>();
+    /**
+     * Gets the value of the link property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the link property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getLink().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Link }
+     * 
+     * 
+     */
+    public List<Link> getLink() {
+        if (link == null) {
+            link = new ArrayList<Link>();
+        }
+        return this.link;
     }
-    return this.link;
-  }
 
 }

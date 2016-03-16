@@ -30,21 +30,21 @@ import org.apache.http.client.ResponseHandler;
  */
 public abstract class ValidatingResponseHandler<T> implements ResponseHandler<T>
 {
-  /**
-   * Checks the response for a statuscode between {@link HttpStatus#SC_OK} and {@link HttpStatus#SC_MULTIPLE_CHOICES}
-   * and throws an {@link com.github.sardine.impl.SardineException} otherwise.
-   *
-   * @param response to check
-   * @throws SardineException when the status code is not acceptable.
-   */
-  protected void validateResponse(HttpResponse response) throws SardineException
-  {
-    StatusLine statusLine = response.getStatusLine();
-    int statusCode = statusLine.getStatusCode();
-    if (statusCode >= HttpStatus.SC_OK && statusCode < HttpStatus.SC_MULTIPLE_CHOICES)
-    {
-      return;
-    }
-    throw new SardineException("Unexpected response", statusLine.getStatusCode(), statusLine.getReasonPhrase());
-  }
+	/**
+	 * Checks the response for a statuscode between {@link HttpStatus#SC_OK} and {@link HttpStatus#SC_MULTIPLE_CHOICES}
+	 * and throws an {@link com.github.sardine.impl.SardineException} otherwise.
+	 *
+	 * @param response to check
+	 * @throws SardineException when the status code is not acceptable.
+	 */
+	protected void validateResponse(HttpResponse response) throws SardineException
+	{
+		StatusLine statusLine = response.getStatusLine();
+		int statusCode = statusLine.getStatusCode();
+		if (statusCode >= HttpStatus.SC_OK && statusCode < HttpStatus.SC_MULTIPLE_CHOICES)
+		{
+			return;
+		}
+		throw new SardineException("Unexpected response", statusLine.getStatusCode(), statusLine.getReasonPhrase());
+	}
 }

@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * <p/>
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -36,160 +36,173 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-  "lockscope",
-  "locktype",
-  "depth",
-  "owner",
-  "timeout",
-  "locktoken"
+    "lockscope",
+    "locktype",
+    "depth",
+    "owner",
+    "timeout",
+    "locktoken"
 })
 @XmlRootElement(name = "activelock")
-public class Activelock
-{
+public class Activelock {
 
-  @XmlElement(required = true)
-  private Lockscope lockscope;
-  @XmlElement(required = true)
-  private Locktype locktype;
-  @XmlElement(required = true)
-  private String depth;
-  private Owner owner;
-  private String timeout;
-  private Locktoken locktoken;
+    @XmlElement(required = true)
+    private Lockscope lockscope;
+    @XmlElement(required = true)
+    private Locktype locktype;
+    @XmlElement(required = true)
+    private String depth;
+    private Owner owner;
+    private String timeout;
+    private Locktoken locktoken;
 
-  /**
-   * Gets the value of the lockscope property.
-   *
-   * @return possible object is
-   * {@link Lockscope }
-   */
-  public Lockscope getLockscope()
-  {
-    return lockscope;
-  }
+    /**
+     * Gets the value of the lockscope property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Lockscope }
+     *     
+     */
+    public Lockscope getLockscope() {
+        return lockscope;
+    }
 
-  /**
-   * Sets the value of the lockscope property.
-   *
-   * @param value allowed object is
-   *              {@link Lockscope }
-   */
-  public void setLockscope(Lockscope value)
-  {
-    this.lockscope = value;
-  }
+    /**
+     * Sets the value of the lockscope property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Lockscope }
+     *     
+     */
+    public void setLockscope(Lockscope value) {
+        this.lockscope = value;
+    }
 
-  /**
-   * Gets the value of the locktype property.
-   *
-   * @return possible object is
-   * {@link Locktype }
-   */
-  public Locktype getLocktype()
-  {
-    return locktype;
-  }
+    /**
+     * Gets the value of the locktype property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Locktype }
+     *     
+     */
+    public Locktype getLocktype() {
+        return locktype;
+    }
 
-  /**
-   * Sets the value of the locktype property.
-   *
-   * @param value allowed object is
-   *              {@link Locktype }
-   */
-  public void setLocktype(Locktype value)
-  {
-    this.locktype = value;
-  }
+    /**
+     * Sets the value of the locktype property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Locktype }
+     *     
+     */
+    public void setLocktype(Locktype value) {
+        this.locktype = value;
+    }
 
-  /**
-   * Gets the value of the depth property.
-   *
-   * @return possible object is
-   * {@link String }
-   */
-  public String getDepth()
-  {
-    return depth;
-  }
+    /**
+     * Gets the value of the depth property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDepth() {
+        return depth;
+    }
 
-  /**
-   * Sets the value of the depth property.
-   *
-   * @param value allowed object is
-   *              {@link String }
-   */
-  public void setDepth(String value)
-  {
-    this.depth = value;
-  }
+    /**
+     * Sets the value of the depth property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDepth(String value) {
+        this.depth = value;
+    }
 
-  /**
-   * Gets the value of the owner property.
-   *
-   * @return possible object is
-   * {@link Owner }
-   */
-  public Owner getOwner()
-  {
-    return owner;
-  }
+    /**
+     * Gets the value of the owner property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Owner }
+     *     
+     */
+    public Owner getOwner() {
+        return owner;
+    }
 
-  /**
-   * Sets the value of the owner property.
-   *
-   * @param value allowed object is
-   *              {@link Owner }
-   */
-  public void setOwner(Owner value)
-  {
-    this.owner = value;
-  }
+    /**
+     * Sets the value of the owner property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Owner }
+     *     
+     */
+    public void setOwner(Owner value) {
+        this.owner = value;
+    }
 
-  /**
-   * Gets the value of the timeout property.
-   *
-   * @return possible object is
-   * {@link String }
-   */
-  public String getTimeout()
-  {
-    return timeout;
-  }
+    /**
+     * Gets the value of the timeout property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTimeout() {
+        return timeout;
+    }
 
-  /**
-   * Sets the value of the timeout property.
-   *
-   * @param value allowed object is
-   *              {@link String }
-   */
-  public void setTimeout(String value)
-  {
-    this.timeout = value;
-  }
+    /**
+     * Sets the value of the timeout property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTimeout(String value) {
+        this.timeout = value;
+    }
 
-  /**
-   * Gets the value of the locktoken property.
-   *
-   * @return possible object is
-   * {@link Locktoken }
-   */
-  public Locktoken getLocktoken()
-  {
-    return locktoken;
-  }
+    /**
+     * Gets the value of the locktoken property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Locktoken }
+     *     
+     */
+    public Locktoken getLocktoken() {
+        return locktoken;
+    }
 
-  /**
-   * Sets the value of the locktoken property.
-   *
-   * @param value allowed object is
-   *              {@link Locktoken }
-   */
-  public void setLocktoken(Locktoken value)
-  {
-    this.locktoken = value;
-  }
+    /**
+     * Sets the value of the locktoken property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Locktoken }
+     *     
+     */
+    public void setLocktoken(Locktoken value) {
+        this.locktoken = value;
+    }
 
 }

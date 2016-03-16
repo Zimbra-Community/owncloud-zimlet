@@ -19,9 +19,9 @@ import java.util.List;
 
 /**
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -33,45 +33,46 @@ import java.util.List;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-  "supportedReport"
+    "supportedReport"
 })
 @XmlRootElement(name = "supported-report-set")
-public class SupportedReportSet
-{
+public class SupportedReportSet {
 
-  @XmlElement(name = "supported-report", required = true)
-  protected List<SupportedReport> supportedReport;
+    @XmlElement(name = "supported-report", required = true)
+    protected List<SupportedReport> supportedReport;
 
-  /**
-   * Gets the value of the supportedReport property.
-   * <p/>
-   * <p/>
-   * This accessor method returns a reference to the live list,
-   * not a snapshot. Therefore any modification you make to the
-   * returned list will be present inside the JAXB object.
-   * This is why there is not a <CODE>set</CODE> method for the supportedReport property.
-   * <p/>
-   * <p/>
-   * For example, to add a new item, do as follows:
-   * <pre>
-   *    getSupportedReport().add(newItem);
-   * </pre>
-   * <p/>
-   * <p/>
-   * <p/>
-   * Objects of the following type(s) are allowed in the list
-   * {@link SupportedReport }
-   */
-  public List<SupportedReport> getSupportedReport()
-  {
-    if (supportedReport == null)
-    {
-      supportedReport = new ArrayList<SupportedReport>();
+    /**
+     * Gets the value of the supportedReport property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the supportedReport property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getSupportedReport().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link SupportedReport }
+     *
+     *
+     */
+    public List<SupportedReport> getSupportedReport() {
+        if (supportedReport == null) {
+            supportedReport = new ArrayList<SupportedReport>();
+        }
+        return this.supportedReport;
     }
-    return this.supportedReport;
-  }
 
 }

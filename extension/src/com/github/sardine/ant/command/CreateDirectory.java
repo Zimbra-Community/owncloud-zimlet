@@ -9,36 +9,29 @@ import com.github.sardine.ant.Command;
  */
 public class CreateDirectory extends Command
 {
-  /**
-   * URL to create.
-   */
-  private String fUrl;
+	/** URL to create. */
+	private String url;
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void execute() throws Exception
-  {
-    log("creating directory " + fUrl);
-    getSardine().createDirectory(fUrl);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void execute() throws Exception {
+		log("creating directory " + url);
+		getSardine().createDirectory(url);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void validateAttributes() throws Exception
-  {
-    if (fUrl == null)
-      throw new IllegalArgumentException("url must not be null");
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateAttributes() throws Exception {
+		if (url == null)
+			throw new IllegalArgumentException("url must not be null");
+	}
 
-  /**
-   * Set the URL to create.
-   */
-  public void setUrl(String url)
-  {
-    fUrl = url;
-  }
+	/** Set the URL to create. */
+	public void setUrl(String url) {
+		this.url = url;
+	}
 }

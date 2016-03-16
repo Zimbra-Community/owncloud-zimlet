@@ -20,9 +20,9 @@ import java.util.List;
 
 /**
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -36,95 +36,100 @@ import java.util.List;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-  "response",
-  "responsedescription",
-  "syncToken"
+    "response",
+    "responsedescription",
+    "syncToken"
 })
 @XmlRootElement(name = "multistatus")
-public class Multistatus
-{
+public class Multistatus {
 
-  @XmlElement(required = true)
-  protected List<Response> response;
-  protected String responsedescription;
-  @XmlElement(name = "sync-token")
-  @XmlSchemaType(name = "anyURI")
-  protected String syncToken;
+    @XmlElement(required = true)
+    protected List<Response> response;
+    protected String responsedescription;
+    @XmlElement(name = "sync-token")
+    @XmlSchemaType(name = "anyURI")
+    protected String syncToken;
 
-  /**
-   * Gets the value of the response property.
-   * <p/>
-   * <p/>
-   * This accessor method returns a reference to the live list,
-   * not a snapshot. Therefore any modification you make to the
-   * returned list will be present inside the JAXB object.
-   * This is why there is not a <CODE>set</CODE> method for the response property.
-   * <p/>
-   * <p/>
-   * For example, to add a new item, do as follows:
-   * <pre>
-   *    getResponse().add(newItem);
-   * </pre>
-   * <p/>
-   * <p/>
-   * <p/>
-   * Objects of the following type(s) are allowed in the list
-   * {@link Response }
-   */
-  public List<Response> getResponse()
-  {
-    if (response == null)
-    {
-      response = new ArrayList<Response>();
+    /**
+     * Gets the value of the response property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the response property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getResponse().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Response }
+     *
+     *
+     */
+    public List<Response> getResponse() {
+        if (response == null) {
+            response = new ArrayList<Response>();
+        }
+        return this.response;
     }
-    return this.response;
-  }
 
-  /**
-   * Gets the value of the responsedescription property.
-   *
-   * @return possible object is
-   * {@link String }
-   */
-  public String getResponsedescription()
-  {
-    return responsedescription;
-  }
+    /**
+     * Gets the value of the responsedescription property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getResponsedescription() {
+        return responsedescription;
+    }
 
-  /**
-   * Sets the value of the responsedescription property.
-   *
-   * @param value allowed object is
-   *              {@link String }
-   */
-  public void setResponsedescription(String value)
-  {
-    this.responsedescription = value;
-  }
+    /**
+     * Sets the value of the responsedescription property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setResponsedescription(String value) {
+        this.responsedescription = value;
+    }
 
-  /**
-   * Gets the value of the syncToken property.
-   *
-   * @return possible object is
-   * {@link String }
-   */
-  public String getSyncToken()
-  {
-    return syncToken;
-  }
+    /**
+     * Gets the value of the syncToken property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getSyncToken() {
+        return syncToken;
+    }
 
-  /**
-   * Sets the value of the syncToken property.
-   *
-   * @param value allowed object is
-   *              {@link String }
-   */
-  public void setSyncToken(String value)
-  {
-    this.syncToken = value;
-  }
+    /**
+     * Sets the value of the syncToken property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setSyncToken(String value) {
+        this.syncToken = value;
+    }
 
 }

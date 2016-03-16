@@ -29,19 +29,19 @@ import com.github.sardine.impl.SardineException;
  */
 public class ExistsResponseHandler extends ValidatingResponseHandler<Boolean>
 {
-  @Override
-  public Boolean handleResponse(HttpResponse response) throws SardineException
-  {
-    StatusLine statusLine = response.getStatusLine();
-    int statusCode = statusLine.getStatusCode();
-    if (statusCode < HttpStatus.SC_MULTIPLE_CHOICES)
-    {
-      return true;
-    }
-    if (statusCode == HttpStatus.SC_NOT_FOUND)
-    {
-      return false;
-    }
-    throw new SardineException("Unexpected response", statusCode, statusLine.getReasonPhrase());
-  }
+	@Override
+	public Boolean handleResponse(HttpResponse response) throws SardineException
+	{
+		StatusLine statusLine = response.getStatusLine();
+		int statusCode = statusLine.getStatusCode();
+		if (statusCode < HttpStatus.SC_MULTIPLE_CHOICES)
+		{
+			return true;
+		}
+		if (statusCode == HttpStatus.SC_NOT_FOUND)
+		{
+			return false;
+		}
+		throw new SardineException("Unexpected response", statusCode, statusLine.getReasonPhrase());
+	}
 }

@@ -23,25 +23,26 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 /**
  * Simple class for making WebDAV <code>PROPPATCH</code> requests.
+ *
  */
 public class HttpPropPatch extends HttpEntityEnclosingRequestBase
 {
-  public static final String METHOD_NAME = "PROPPATCH";
+	public static final String METHOD_NAME = "PROPPATCH";
 
-  public HttpPropPatch(String url)
-  {
-    this(URI.create(url));
-  }
+	public HttpPropPatch(String url)
+	{
+		this(URI.create(url));
+	}
 
-  public HttpPropPatch(URI url)
-  {
-    this.setURI(url);
-    this.setHeader(HttpHeaders.CONTENT_TYPE, "text/xml; charset=utf-8");
-  }
+	public HttpPropPatch(URI url)
+	{
+		this.setURI(url);
+		this.setHeader(HttpHeaders.CONTENT_TYPE, "text/xml; charset=utf-8");
+	}
 
-  @Override
-  public String getMethod()
-  {
-    return METHOD_NAME;
-  }
+	@Override
+	public String getMethod()
+	{
+		return METHOD_NAME;
+	}
 }

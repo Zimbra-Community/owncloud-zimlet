@@ -23,26 +23,27 @@ import java.net.URI;
 
 /**
  * Simple class for making WebDAV <code>COPY</code> requests. Assumes Overwrite = T.
+ *
  */
 public class HttpCopy extends HttpRequestBase
 {
-  public static final String METHOD_NAME = "COPY";
+	public static final String METHOD_NAME = "COPY";
 
-  public HttpCopy(URI sourceUrl, URI destinationUrl, boolean overwrite)
-  {
-    this.setHeader(HttpHeaders.DESTINATION, destinationUrl.toASCIIString());
-    this.setHeader(HttpHeaders.OVERWRITE, overwrite ? "T" : "F");
-    this.setURI(sourceUrl);
-  }
+	public HttpCopy(URI sourceUrl, URI destinationUrl, boolean overwrite)
+	{
+		this.setHeader(HttpHeaders.DESTINATION, destinationUrl.toASCIIString());
+		this.setHeader(HttpHeaders.OVERWRITE, overwrite ? "T" : "F");
+		this.setURI(sourceUrl);
+	}
 
-  public HttpCopy(String sourceUrl, String destinationUrl, boolean overwrite)
-  {
-    this(URI.create(sourceUrl), URI.create(destinationUrl), overwrite);
-  }
+	public HttpCopy(String sourceUrl, String destinationUrl, boolean overwrite)
+	{
+		this(URI.create(sourceUrl), URI.create(destinationUrl), overwrite);
+	}
 
-  @Override
-  public String getMethod()
-  {
-    return METHOD_NAME;
-  }
+	@Override
+	public String getMethod()
+	{
+		return METHOD_NAME;
+	}
 }

@@ -11,52 +11,40 @@ import com.github.sardine.ant.Command;
  */
 public class Exists extends Command
 {
-  /**
-   * URL to check.
-   */
-  private String fUrl;
+	/** URL to check. */
+	private String url;
 
-  /**
-   * Property to set if URL exists.
-   */
-  private String fProperty;
+	/** Property to set if URL exists. */
+	private String property;
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void execute() throws Exception
-  {
-    if (getSardine().exists(fUrl))
-      getProject().setProperty(fProperty, "true");
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void execute() throws Exception {
+		if (getSardine().exists(url))
+			getProject().setProperty(property, "true");
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void validateAttributes() throws Exception
-  {
-    if (fUrl == null)
-      throw new IllegalArgumentException("url must not be null");
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateAttributes() throws Exception {
+		if (url == null)
+			throw new IllegalArgumentException("url must not be null");
 
-    if (fProperty == null)
-      throw new IllegalArgumentException("property must not be null");
-  }
+		if (property == null)
+			throw new IllegalArgumentException("property must not be null");
+	}
 
-  /**
-   * Set URL to check.
-   */
-  public void setUrl(String url)
-  {
-    fUrl = url;
-  }
+	/** Set URL to check. */
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
-  /**
-   * Set property to set if URL exists.
-   */
-  public void setProperty(String property)
-  {
-    fProperty = property;
-  }
+	/** Set property to set if URL exists. */
+	public void setProperty(String property) {
+		this.property = property;
+	}
 }

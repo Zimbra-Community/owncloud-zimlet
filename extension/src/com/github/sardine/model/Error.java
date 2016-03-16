@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * <p/>
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -31,38 +31,41 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-  "any"
+    "any"
 })
 @XmlRootElement(name = "error")
-public class Error
-{
+public class Error {
 
-  @XmlAnyElement(lax = true)
-  private Object any;
+    @XmlAnyElement(lax = true)
+    private Object any;
 
-  /**
-   * Gets the value of the any property.
-   *
-   * @return possible object is
-   * {@link Object }
-   */
-  public Object getAny()
-  {
-    return any;
-  }
+    /**
+     * Gets the value of the any property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Object }
+     *     
+     */
+    public Object getAny() {
+        return any;
+    }
 
-  /**
-   * Sets the value of the any property.
-   *
-   * @param value allowed object is
-   *              {@link Object }
-   */
-  public void setAny(Object value)
-  {
-    this.any = value;
-  }
+    /**
+     * Sets the value of the any property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Object }
+     *     
+     */
+    public void setAny(Object value) {
+        this.any = value;
+    }
 
 }

@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * <p/>
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -32,85 +32,92 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-  "allprop",
-  "propname",
-  "prop"
+    "allprop",
+    "propname",
+    "prop"
 })
 @XmlRootElement(name = "propfind")
-public class Propfind
-{
+public class Propfind {
 
-  private Allprop allprop;
-  private Propname propname;
-  private Prop prop;
+    private Allprop allprop;
+    private Propname propname;
+    private Prop prop;
 
-  /**
-   * Gets the value of the allprop property.
-   *
-   * @return possible object is
-   * {@link Allprop }
-   */
-  public Allprop getAllprop()
-  {
-    return allprop;
-  }
+    /**
+     * Gets the value of the allprop property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Allprop }
+     *     
+     */
+    public Allprop getAllprop() {
+        return allprop;
+    }
 
-  /**
-   * Sets the value of the allprop property.
-   *
-   * @param value allowed object is
-   *              {@link Allprop }
-   */
-  public void setAllprop(Allprop value)
-  {
-    this.allprop = value;
-  }
+    /**
+     * Sets the value of the allprop property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Allprop }
+     *     
+     */
+    public void setAllprop(Allprop value) {
+        this.allprop = value;
+    }
 
-  /**
-   * Gets the value of the propname property.
-   *
-   * @return possible object is
-   * {@link Propname }
-   */
-  public Propname getPropname()
-  {
-    return propname;
-  }
+    /**
+     * Gets the value of the propname property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Propname }
+     *     
+     */
+    public Propname getPropname() {
+        return propname;
+    }
 
-  /**
-   * Sets the value of the propname property.
-   *
-   * @param value allowed object is
-   *              {@link Propname }
-   */
-  public void setPropname(Propname value)
-  {
-    this.propname = value;
-  }
+    /**
+     * Sets the value of the propname property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Propname }
+     *     
+     */
+    public void setPropname(Propname value) {
+        this.propname = value;
+    }
 
-  /**
-   * Gets the value of the prop property.
-   *
-   * @return possible object is
-   * {@link Prop }
-   */
-  public Prop getProp()
-  {
-    return prop;
-  }
+    /**
+     * Gets the value of the prop property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Prop }
+     *     
+     */
+    public Prop getProp() {
+        return prop;
+    }
 
-  /**
-   * Sets the value of the prop property.
-   *
-   * @param value allowed object is
-   *              {@link Prop }
-   */
-  public void setProp(Prop value)
-  {
-    this.prop = value;
-  }
+    /**
+     * Sets the value of the prop property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Prop }
+     *     
+     */
+    public void setProp(Prop value) {
+        this.prop = value;
+    }
 
 }

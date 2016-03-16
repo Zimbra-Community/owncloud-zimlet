@@ -20,9 +20,9 @@ import java.util.List;
 
 /**
  * <p>Java class for anonymous complex type.</p>
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.</p>
- * <p/>
+ * 
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -35,49 +35,50 @@ import java.util.List;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-  "removeOrSet"
+    "removeOrSet"
 })
 @XmlRootElement(name = "propertyupdate")
-public class Propertyupdate
-{
+public class Propertyupdate {
 
-  @XmlElements({
-    @XmlElement(name = "remove", type = Remove.class),
-    @XmlElement(name = "set", type = Set.class)
-  })
-  private List<Object> removeOrSet;
+    @XmlElements({
+        @XmlElement(name = "remove", type = Remove.class),
+        @XmlElement(name = "set", type = Set.class)
+    })
+    private List<Object> removeOrSet;
 
-  /**
-   * Gets the value of the removeOrSet property.
-   * <p/>
-   * <p/>
-   * This accessor method returns a reference to the live list,
-   * not a snapshot. Therefore any modification you make to the
-   * returned list will be present inside the JAXB object.
-   * This is why there is not a <CODE>set</CODE> method for the removeOrSet property.
-   * <p/>
-   * <p/>
-   * For example, to add a new item, do as follows:
-   * <pre>
-   *    getRemoveOrSet().add(newItem);
-   * </pre>
-   * <p/>
-   * <p/>
-   * <p/>
-   * Objects of the following type(s) are allowed in the list
-   * {@link Remove }
-   * {@link Set }
-   */
-  public List<Object> getRemoveOrSet()
-  {
-    if (removeOrSet == null)
-    {
-      removeOrSet = new ArrayList<Object>();
+    /**
+     * Gets the value of the removeOrSet property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the removeOrSet property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getRemoveOrSet().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Remove }
+     * {@link Set }
+     * 
+     * 
+     */
+    public List<Object> getRemoveOrSet() {
+        if (removeOrSet == null) {
+            removeOrSet = new ArrayList<Object>();
+        }
+        return this.removeOrSet;
     }
-    return this.removeOrSet;
-  }
 
 }
