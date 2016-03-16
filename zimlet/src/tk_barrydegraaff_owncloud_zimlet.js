@@ -361,18 +361,20 @@ ownCloudZimlet.prototype._doDropPropfindCbk =
 /**
  * Manage the error occurred during the PROPFIND donw to check if the zimlet can upload something on OwnCloud.
  * @param {number} statusCode
+ * @param {{}} error
  * @private
  */
 ownCloudZimlet.prototype._handlePropfindError =
-  function(statusCode)
+  function(statusCode, error)
   {
     if((!this.getConfig('owncloud_zimlet_password') || this.getConfig('owncloud_zimlet_password') === '') && statusCode == 401)
     {
+      this.status('Login credentials error', ZmStatusView.LEVEL_CRITICAL);
       this.displayDialog(1);
     }
     else
     {
-      this.status('DAV Error ' + statusCode, ZmStatusView.LEVEL_CRITICAL);
+      this.status('DAV Error ' + statusCode + ((typeof error.message !== "undefined") ? " - " + error.message : ""), ZmStatusView.LEVEL_CRITICAL);
     }
   };
 
@@ -551,8 +553,14 @@ ownCloudZimlet.prototype.cancelBtn =
  */
 ownCloudZimlet.prototype.prefSaveBtn =
   function() {
+    var serverName = document.getElementById('owncloud_zimlet_server_name').value;
+    if (/\/$/.test(serverName)) {
+      // Trim the unwanted ending of the server name like
+      // https://oc.example.com/ turns into https://oc.example.com
+      serverName = serverName.substring(0, serverName.length - 1);
+    }
     this._saveUserProperties({
-      'owncloud_zimlet_server_name': document.getElementById('owncloud_zimlet_server_name').value,
+      'owncloud_zimlet_server_name': serverName,
       'owncloud_zimlet_server_port': document.getElementById('owncloud_zimlet_server_port').value,
       'owncloud_zimlet_server_path': document.getElementById('owncloud_zimlet_server_path').value,
       'owncloud_zimlet_username': document.getElementById('owncloud_zimlet_username').value,

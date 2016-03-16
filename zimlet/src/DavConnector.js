@@ -326,7 +326,7 @@
       return void 0;
     }
     if (!!response.error) {
-      errorCallback.run(JSON.parse(response.error));
+      errorCallback.run(-1, JSON.parse(response.error));
       return void 0;
     }
 
@@ -359,7 +359,7 @@
     }
     else
     {
-      errorCallback.run(new Error('DAV Action "' + action + '" not handled.'));
+      errorCallback.run(-2, new Error('DAV Action "' + action + '" not handled.'));
     }
   };
 
