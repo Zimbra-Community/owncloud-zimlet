@@ -291,7 +291,7 @@ ownCloudZimlet.prototype.doDrop =
     var propfindCbk = new AjxCallback(
       this,
       this._doDropPropfindCbk,
-      [zmObjects]
+      [zmObjects, new AjxCallback(this, this._onDropTransfer), this._defaultPropfindErrCbk]
     );
 
     this._davConnector.propfind(
@@ -302,23 +302,31 @@ ownCloudZimlet.prototype.doDrop =
     );
   };
 
+ownCloudZimlet.prototype._onDropTransfer =
+  function(zmItem, status) {
+    var name = this._getItemNameByType(zmItem);
+    if (status === 201) {
+      this.status(name + ' sent to ownCloud', ZmStatusView.LEVEL_INFO);
+    } else {
+      this.status(name + ' not sent ownCloud, error code: ' +  status, ZmStatusView.LEVEL_CRITICAL);
+    }
+  };
+
 /**
  * Send a list of ZmObjects to OwnCloud.
  * The real copy will be made on the server, this optimization will avoid to saturate the user bandwidth.
  * @param {ZmItem[]} zmObjects Objects to send to OwnCloud.
- * @param {DavResource[]} resources
  * @param {AjxCallback=} callback Callback invoked with the result.
  * @param {AjxCallback=} errorCallback Callback invoked when an error occurs.
+ * @param {DavResource[]} resources
  * @private
  */
 ownCloudZimlet.prototype._doDropPropfindCbk =
-  function(zmObjects, resources, callback, errorCallback) {
+  function(zmObjects, callback, errorCallback, resources) {
     var id,
       type = "MESSAGE",
       iObj = 0,
       tmpObj;
-    this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);
-
 
     if (!zmObjects[0]) {
       zmObjects = [zmObjects];
@@ -326,6 +334,18 @@ ownCloudZimlet.prototype._doDropPropfindCbk =
 
     for (iObj = 0; iObj < zmObjects.length; iObj += 1) {
       tmpObj = zmObjects[iObj];
+
+      var nestedCallback = new AjxCallback(
+        this,
+        function(_zmItem, _callback, _returnValue) {
+          if (!!_callback) {
+            _callback.run(_zmItem, _returnValue);
+          }
+        },
+        [tmpObj, callback]
+      );
+
+
       if (tmpObj.id < 0) {
         id = tmpObj.id * -1;
       } else {
@@ -349,12 +369,30 @@ ownCloudZimlet.prototype._doDropPropfindCbk =
       } else if (tmpObj.type === 'TASK') {
         type = 'TASK';
       }
+      this.status('Sending ' + this._getItemNameByType(tmpObj) + ' to ownCloud...', ZmStatusView.LEVEL_INFO);
       this._davForZimbraConnector.sendItemToDav(
         type,
         id,
-        callback,
+        nestedCallback,
         errorCallback
       );
+    }
+  };
+
+ownCloudZimlet.prototype._getItemNameByType =
+  function(zmItem) {
+    if ('BRIEFCASE_ITEM' === zmItem.type) {
+      return 'Document';
+    } else if ('ZmContact' === zmItem.TYPE) {
+      return 'Contact';
+    } else if ('ZmAppt' === zmItem.TYPE) {
+      return 'Appointment';
+    } else if ('TASK' === zmItem.type) {
+      return 'Task';
+    } else if ("ZmConv" === zmItem.TYPE || "ZmMailMsg" === zmItem.TYPE) {
+      return "Message";
+    } else {
+      return "Item";
     }
   };
 
