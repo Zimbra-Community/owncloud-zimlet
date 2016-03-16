@@ -206,7 +206,7 @@ ownCloudZimlet.prototype.initializeAttachPopup =
 ownCloudZimlet.prototype.removePrevAttDialogContent =
   function(contentDiv) {
     var elementNode =  contentDiv && contentDiv.firstChild;
-    if (elementNode && elementNode.className == "DwtComposite" ){
+    if (elementNode && elementNode.className === "DwtComposite" ){
       contentDiv.removeChild(elementNode);
     }
   };
@@ -333,20 +333,20 @@ ownCloudZimlet.prototype._doDropPropfindCbk =
       }
 
       //if its a conversation i.e. 'ZmConv' object, get the first loaded message 'ZmMailMsg' object within that.
-      if (tmpObj.TYPE == 'ZmConv') {
+      if (tmpObj.TYPE === 'ZmConv') {
         var msgObj = tmpObj.srcObj; // get access to source-object
         msgObj = msgObj.getFirstHotMsg();
         tmpObj.id = msgObj.id;
         type = 'MESSAGE';
       }
 
-      if (tmpObj.type == 'BRIEFCASE_ITEM') {
+      if (tmpObj.type === 'BRIEFCASE_ITEM') {
         type = 'DOCUMENT';
-      } else if (tmpObj.TYPE == 'ZmContact') {
+      } else if (tmpObj.TYPE === 'ZmContact') {
         type = 'CONTACT';
-      } else if (tmpObj.TYPE == 'ZmAppt') {
+      } else if (tmpObj.TYPE === 'ZmAppt') {
         type = 'APPOINTMENT';
-      } else if (tmpObj.type == 'TASK') {
+      } else if (tmpObj.type === 'TASK') {
         type = 'TASK';
       }
       this._davForZimbraConnector.sendItemToDav(
@@ -394,20 +394,6 @@ ownCloudZimlet.prototype.createFolder =
         [callback, errorCallback]
       )
     );
-  };
-
-/**
- * Callback invoked when a file is created.
- * @param {number} status The return code for the DAV Action.
- */
-ownCloudZimlet.prototype.createFileCallback =
-  function(status) {
-    //201 == created
-    //405 == already there
-    //Other status codes are not a good sign
-    if (!!console && !!console.log) {
-      console.log('------------------------------------- DAV response: ' + status);
-    }
   };
 
 /**
