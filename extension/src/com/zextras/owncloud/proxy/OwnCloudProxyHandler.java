@@ -1,7 +1,6 @@
 package com.zextras.owncloud.proxy;
 
 
-import com.zextras.SoapUtil;
 import com.zextras.Zimlet;
 import com.zextras.dav.ZimletProperty;
 import com.zextras.util.UserPropertyExtractor;
@@ -13,9 +12,11 @@ import org.openzal.zal.http.HttpHandler;
 import org.openzal.zal.log.ZimbraLog;
 import org.tuckey.web.filters.urlrewrite.*;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -25,9 +26,9 @@ public class OwnCloudProxyHandler implements HttpHandler
   public static final String sExtensionPath = "/service/extension/owncloud";
   private final Provisioning mProvisioning;
 
-  public OwnCloudProxyHandler()
+  public OwnCloudProxyHandler(Provisioning provisioning)
   {
-    mProvisioning = new Provisioning();
+    mProvisioning = provisioning;
   }
 
   public void doFilterResponse(

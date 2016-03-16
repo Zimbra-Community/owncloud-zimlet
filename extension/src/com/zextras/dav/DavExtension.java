@@ -10,6 +10,8 @@ import org.openzal.zal.http.HttpServiceManager;
 import org.openzal.zal.log.ZimbraLog;
 import org.openzal.zal.soap.SoapServiceManager;
 
+import java.lang.ref.WeakReference;
+
 /**
  * ZAL Extension created to operate on a DAV server using the SOAP interface.
  * The core of the ZAL will take care to handle this extension.
@@ -22,15 +24,17 @@ public class DavExtension implements ZalExtension
   private final Dav4ZimbraSOAPService mDav4ZimbraSoapService;
   private final OwnCloudSOAPService mOwnCloudSoapService;
   private final OwnCloudProxyHandler mOwnCloudProxyHandler;
+  private final Zimbra mZimbra;
 
   public DavExtension()
   {
+    mZimbra = new Zimbra();
     mSoapServiceManager = new SoapServiceManager();
     mHttpServiceManager = new HttpServiceManager();
-    mDavSoapService = new DavSOAPService();
-    mDav4ZimbraSoapService = new Dav4ZimbraSOAPService();
-    mOwnCloudSoapService = new OwnCloudSOAPService();
-    mOwnCloudProxyHandler = new OwnCloudProxyHandler();
+    mDavSoapService = new DavSOAPService(mZimbra.getProvisioning());
+    mDav4ZimbraSoapService = new Dav4ZimbraSOAPService(mZimbra.getMailboxManager(), mZimbra.getProvisioning());
+    mOwnCloudSoapService = new OwnCloudSOAPService(mZimbra.getProvisioning());
+    mOwnCloudProxyHandler = new OwnCloudProxyHandler(mZimbra.getProvisioning());
   }
 
   @Override
@@ -48,10 +52,10 @@ public class DavExtension implements ZalExtension
   /**
    * Method called by the ZAL Core to do the startup if the extension.
    * @param zalExtensionController The ZAL Controller instance.
-   * @param zimbra The Zimbra context.
+   * @param weakReference The Zimbra class loader reference.
    */
   @Override
-  public void startup(ZalExtensionController zalExtensionController, Zimbra zimbra)
+  public void startup(ZalExtensionController zalExtensionController, WeakReference<ClassLoader> weakReference)
   {
     mSoapServiceManager.register(mDavSoapService);
     mSoapServiceManager.register(mDav4ZimbraSoapService);

@@ -3,8 +3,6 @@ package com.zextras.owncloud;
 
 import com.zextras.SoapUtil;
 import com.zextras.owncloud.client.ShareType;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.openzal.zal.Account;
 import org.openzal.zal.Provisioning;
 import org.openzal.zal.soap.*;
@@ -18,9 +16,9 @@ public class OwnCloudSOAPHandler implements SoapHandler
 
   private final Provisioning mProvisioning;
 
-  public OwnCloudSOAPHandler()
+  public OwnCloudSOAPHandler(Provisioning provisioning)
   {
-    mProvisioning = new Provisioning();
+    mProvisioning = provisioning;
   }
 
   @Override

@@ -25,6 +25,7 @@ public class Dav4ZimbraConnector extends DavSoapConnector
   private final String mZimbraMailsPath;
 
   public Dav4ZimbraConnector(
+    MailboxManager mailboxManager,
     String url,
     int port,
     String basePath,
@@ -35,7 +36,7 @@ public class Dav4ZimbraConnector extends DavSoapConnector
   {
     super(url, port, basePath, username, password);
     mZimbraMailsPath = zimbraMailsPath;
-    mMailboxManager = new MailboxManager();
+    mMailboxManager = mailboxManager;
   }
 
   /**

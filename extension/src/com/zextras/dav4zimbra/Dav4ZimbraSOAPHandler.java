@@ -7,6 +7,7 @@ import com.zextras.dav.ZimletProperty;
 import com.zextras.util.UserPropertyExtractor;
 import org.openzal.zal.Account;
 import org.openzal.zal.MailItemType;
+import org.openzal.zal.MailboxManager;
 import org.openzal.zal.Provisioning;
 import org.openzal.zal.soap.*;
 
@@ -23,10 +24,12 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
   public static final QName REQUEST_QNAME = new QName("dav4zimbra", NAMESPACE);
 
   private final Provisioning mProvisioning;
+  private MailboxManager mMailboxManager;
 
-  public Dav4ZimbraSOAPHandler()
+  public Dav4ZimbraSOAPHandler(MailboxManager mailboxManager, Provisioning provisioning)
   {
-    mProvisioning = new Provisioning();
+    mMailboxManager = mailboxManager;
+    mProvisioning = provisioning;
   }
 
   /**
@@ -85,6 +88,7 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
     }
 
     final Dav4ZimbraConnector connector = new Dav4ZimbraConnector(
+      mMailboxManager,
       userProperties.get(ZimletProperty.DAV_SERVER_NAME),
       Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
       userProperties.get(ZimletProperty.DAV_SERVER_PATH),

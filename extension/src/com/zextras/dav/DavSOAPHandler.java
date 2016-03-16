@@ -25,9 +25,9 @@ public class DavSOAPHandler implements SoapHandler
 
   private final Provisioning mProvisioning;
 
-  public DavSOAPHandler()
+  public DavSOAPHandler(Provisioning provisioning)
   {
-    mProvisioning = new Provisioning();
+    mProvisioning = provisioning;
   }
 
   /**

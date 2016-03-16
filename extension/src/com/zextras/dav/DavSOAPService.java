@@ -1,5 +1,6 @@
 package com.zextras.dav;
 
+import org.openzal.zal.Provisioning;
 import org.openzal.zal.soap.QName;
 import org.openzal.zal.soap.SoapHandler;
 import org.openzal.zal.soap.SoapService;
@@ -19,11 +20,11 @@ public class DavSOAPService implements SoapService
    */
   private final HashMap<QName, SoapHandler> mServiceMap;
 
-  public DavSOAPService()
+  public DavSOAPService(final Provisioning provisioning)
   {
     mServiceMap = new HashMap<QName, SoapHandler>()
     {{
-      put(DavSOAPHandler.REQUEST_QNAME, new DavSOAPHandler());
+      put(DavSOAPHandler.REQUEST_QNAME, new DavSOAPHandler(provisioning));
     }};
   }
 

@@ -1,6 +1,8 @@
 package com.zextras.dav4zimbra;
 
 
+import org.openzal.zal.MailboxManager;
+import org.openzal.zal.Provisioning;
 import org.openzal.zal.soap.QName;
 import org.openzal.zal.soap.SoapHandler;
 import org.openzal.zal.soap.SoapService;
@@ -20,11 +22,11 @@ public class Dav4ZimbraSOAPService implements SoapService
    */
   private final HashMap<QName, SoapHandler> mServiceMap;
 
-  public Dav4ZimbraSOAPService()
+  public Dav4ZimbraSOAPService(final MailboxManager mailboxManager, final Provisioning provisioning)
   {
     mServiceMap = new HashMap<QName, SoapHandler>()
     {{
-      put(Dav4ZimbraSOAPHandler.REQUEST_QNAME, new Dav4ZimbraSOAPHandler());
+      put(Dav4ZimbraSOAPHandler.REQUEST_QNAME, new Dav4ZimbraSOAPHandler(mailboxManager, provisioning));
     }};
   }
 
