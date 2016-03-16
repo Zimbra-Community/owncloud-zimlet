@@ -212,7 +212,12 @@ ownCloudZimlet.prototype._saveAttachmentErrCbk =
  */
 ownCloudZimlet.prototype.initializeAttachPopup =
   function(menu, controller) {
-    controller._createAttachMenuItem(menu, 'ownCloud', this.showAttachmentDialog.bind(this), "ATTACH_MENU_OWNCLOUD");
+    var callback = (function(_this) {
+      return function() {
+        _this.showAttachmentDialog()
+      }
+    })(this);
+    controller._createAttachMenuItem(menu, 'ownCloud', callback, "ATTACH_MENU_OWNCLOUD");
   };
 
 /**
