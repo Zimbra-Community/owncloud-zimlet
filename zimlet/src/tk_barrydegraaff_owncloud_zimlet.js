@@ -171,8 +171,6 @@ ownCloudZimlet.prototype.saveAttachment =
       propfindCbk,
       this._defaultPropfindErrCbk
     );
-
-    this.status('Saving to ownCloud', ZmStatusView.LEVEL_INFO);
   };
 
 /**
@@ -184,11 +182,29 @@ ownCloudZimlet.prototype.saveAttachment =
  */
 ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
   function(mid, part, fileName) {
+    this.status('Sending \'' + fileName + '\' to ownCloud...', ZmStatusView.LEVEL_INFO);
+
     this._davForZimbraConnector.sendMailAttachmentToDav(
       mid,
       part,
-      fileName
+      fileName,
+      new AjxCallback(this, this._saveAttachmentOkCbk, [mid, part, fileName]),
+      new AjxCallback(this, this._saveAttachmentErrCbk, [mid, part, fileName])
     );
+  };
+
+ownCloudZimlet.prototype._saveAttachmentOkCbk =
+  function(mid, part, fileName, status) {
+    if (status === 201) {
+      this.status('\'' + fileName + '\' sent to ownCloud', ZmStatusView.LEVEL_INFO);
+    } else {
+      this.status('\'' + fileName + '\' not sent ownCloud, error code: ' +  status, ZmStatusView.LEVEL_CRITICAL);
+    }
+  };
+
+ownCloudZimlet.prototype._saveAttachmentErrCbk =
+  function(mid, part, fileName, status, error) {
+    this._handlePropfindError(status, error);
   };
 
 /**
