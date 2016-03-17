@@ -133,7 +133,7 @@ else
       curl_setopt($ch, CURLOPT_USERPWD, $zcsuser . ":" . $zcspass);
       curl_setopt($ch, CURLOPT_POST, 1);
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, "path=".urlencode($path)."&shareType=".urlencode($_GET['shareType'])."&password=".urlencode($_GET['password'])."&permissions=".urlencode($_GET['permissions']));
+      curl_setopt($ch, CURLOPT_POSTFIELDS, "path=".urlencode($path)."&shareType=".urlencode($_GET['shareType'])."&permissions=".urlencode($_GET['permissions']));
       curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       $server_output = curl_exec ($ch);
@@ -144,7 +144,7 @@ else
    
    if($result)
    {
-      echo "Use " . $_GET['password'] . " for: ".$_GET['sep'];
+      echo "I uploaded some files that you can access with the following links: ".$_GET['sep'];
       echo $result;
    }
 }

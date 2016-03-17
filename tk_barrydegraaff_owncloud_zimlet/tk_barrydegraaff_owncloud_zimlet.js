@@ -756,6 +756,7 @@ function(divId) {
 
 ownCloudZimlet.prototype.existingShares =
 function() {
+   /*
    var xmlHttp = new XMLHttpRequest();
    xmlHttp.open("GET",tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+ "/ocs/zcs.php?proxy_location=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] + "&zcsuser="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] + "&zcspass=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] + "&path=getshares", false);
    xmlHttp.send( null );
@@ -772,7 +773,8 @@ function() {
             }
          }
       }
-   }
+   }*/
+   return;
 };
 
 ownCloudZimlet.prototype.removeElementsByClass =
@@ -808,7 +810,7 @@ function(status, statusstr, content) {
             //This is a directory
             getcontentlength = [];
             getcontentlength[0]="0";
-            if(response.indexOf('<d:resourcetype><d:collection/></d:resourcetype>') > -1)
+            if(response.indexOf('<d:collection/>') > -1)
             {
                davResult[resultCount]['isDirectory'] = "true";
                if (davResult[resultCount]['level'] == -1)
