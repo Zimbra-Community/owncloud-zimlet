@@ -13,7 +13,7 @@ Integrating ownCloud in Zimbra Collaboration Suite, currently tested on:
 - Windows: Internet Explorer 11, Microsoft Edge, Google Chrome, Firefox
 - Linux: Google Chrome, Firefox
 
-This Zimlet is designed for Zimbra version 8.6.
+This Zimlet is designed for Zimbra version 8.6 and ownCloud versions 8 and 9.
 
 This Zimlet is not available for use in Zimbra Desktop.
 
