@@ -141,9 +141,19 @@ OwnCloudTabView.prototype._attachFiles =
     attachmentDlg.popdown();
 
     var
-      /** @type {DavResource[]} */ resourcesToAttach = this._getSelectedItems(this._tree.getChildren()),
+      /** @type {DavResource[]} */ selectedResources = this._getSelectedItems(this._tree.getChildren()),
+      /** @type {DavResource[]} */ resourcesToLink = [],
+      /** @type {DavResource[]} */ resourcesToAttach = [],
       /** @type {number[]} */ ids = [],
       /** @type {boolean} */ attachLinks = this._checkbox.getInputElement().checked;
+
+    for (var i = 0; i < selectedResources.length; i += 1) {
+      if (attachLinks || selectedResources[i].isDirectory()) {
+        resourcesToLink.push(selectedResources[i]);
+      } else {
+        resourcesToAttach.push(selectedResources[i]);
+      }
+    }
 
     if (this._waitingDialog === null) {
       this._waitingDialog = new DwtMessageDialog({
@@ -153,29 +163,15 @@ OwnCloudTabView.prototype._attachFiles =
     }
     this._waitingDialog.popup();
 
-    if (attachLinks) {
-      // Attach files as links.
-      this._getFirstLink(
-        resourcesToAttach,
-        resourcesToAttach.length,
-        new AjxCallback(
-          this,
-          this._onUploadOrAttachFinished,
-          [resourcesToAttach, resourcesToAttach.length, []]
-        )
-      );
-    } else {
-      // Attach files as standard attachments.
-      this._getFirstResource(
-        resourcesToAttach,
-        ids,
-        new AjxCallback(
-          this,
-          this._onUploadOrAttachFinished,
-          [resourcesToAttach, resourcesToAttach.length, ids]
-        )
-      );
-    }
+    this._getFirstLink(
+      resourcesToLink,
+      resourcesToLink.length,
+      new AjxCallback(
+        this,
+        this._onUploadOrAttachFinished,
+        [resourcesToLink, resourcesToLink.length, [], resourcesToAttach, resourcesToAttach.length, ids]
+      )
+    );
   };
 
 OwnCloudTabView.prototype._getSelectedItems =
@@ -304,23 +300,47 @@ OwnCloudTabView.prototype._getResourceCbk =
   };
 
 /**
- * Callback invoked when the system has finished the upload of the files.
- * @param {DavResource[]} resources
- * @param {number} resourcesCount
- * @param {number[]} ids IDs of the objects attached.
+ * Callback invoked when the system has finished the upload/link of the files.
+ * @param {DavResource[]} resourcesToLink
+ * @param {number} resourcesCountToLink
+ * @param {number[]} idsToLink IDs of the objects lined.
+ * @param {DavResource[]} resourcesToAttach
+ * @param {number} resourcesCountToAttach
+ * @param {number[]} idsToAttach IDs of the objects attached.
  * @private
  */
 OwnCloudTabView.prototype._onUploadOrAttachFinished =
-  function(resources, resourcesCount, ids) {
+  function(resourcesToLink, resourcesCountToLink, idsToLink, resourcesToAttach, resourcesCountToAttach, idsToAttach) {
     var viewType = appCtxt.getCurrentViewType(),
-      controller;
+      controller,
+      callback = new AjxCallback(
+        this,
+        this._onUploadOrAttachFinished,
+        [resourcesToLink, resourcesCountToLink, idsToLink, resourcesToAttach, resourcesCountToAttach, idsToAttach]
+      );
 
-    if (viewType == ZmId.VIEW_COMPOSE)
-    {
-      controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
-      controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, ids.join(","));
+    if (resourcesToLink.length > 0) {
+      // Attach files and forlders as links.
+      this._getFirstLink(
+        resourcesToLink,
+        resourcesToLink.length,
+        callback
+      );
+    } else if(resourcesToAttach.length > 0) {
+      // Attach files as standard attachments.
+      this._getFirstResource(
+        resourcesToAttach,
+        idsToAttach,
+        callback
+      );
+    } else {
+      if (viewType == ZmId.VIEW_COMPOSE)
+      {
+        controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
+        controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, [].concat(idsToLink).concat(idsToAttach).join(","));
+      }
+      this._waitingDialog.popdown();
     }
-    this._waitingDialog.popdown();
   };
 
 /**
