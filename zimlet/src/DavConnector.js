@@ -144,7 +144,7 @@
    * @return {string}
    */
   DavResource.prototype.getPath = function() {
-    var splitted = this.getHref().split();
+    var splitted = this.getHref().split("/");
     splitted.pop();
     if (this.isDirectory()) {
       splitted.pop();

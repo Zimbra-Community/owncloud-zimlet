@@ -33,6 +33,25 @@ var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
  */
 ownCloudZimlet.prototype.init =
   function () {
+    // Register operations in Zimbra
+    if (typeof ZmId['OPEN_IN_OWNCLOUD'] === "undefined") {
+      ZmId.OPEN_IN_OWNCLOUD = "OPEN_IN_OWNCLOUD";
+    }
+
+    if (typeof ZmMsg["OpenInOwnCloud"] === "undefined") {
+      ZmMsg.OpenInOwnCloud = "Open in ownCloud";
+    }
+
+    ZmOperation.registerOp(
+      ZmId.OPEN_IN_OWNCLOUD,
+      {
+        textKey: "OpenInOwnCloud",
+        image: "ownCloud-panelIcon",
+        showImageInToolbar: true
+      }
+    );
+
+    // Initialize the zimlet
     this._davConnector = new DavConnector();
     this._ownCloudConnector = new OwnCloudConnector();
     this._davForZimbraConnector = new DavForZimbraConnector();
@@ -47,6 +66,8 @@ ownCloudZimlet.prototype.init =
     tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = this.getConfig('proxy_location') + this.getConfig('dav_path');
     tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_link_sharing'] = this.getConfig('disable_link_sharing');
     tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this.getConfig('disable_password_storing');
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = this.getUserProperty('owncloud_zimlet_server_name');
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = this.getUserProperty('owncloud_zimlet_server_port');
 
     //Set default value
     if(!this.getUserProperty("owncloud_zimlet_username"))

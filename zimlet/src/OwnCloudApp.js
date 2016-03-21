@@ -22,18 +22,19 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
   treeView.addSelectionListener(new AjxListener(this, this._onItemSelected));
 
 
-  this._listView = new OwnCloudListView(app.getController().getView());
-
-  // app.setView(this._listView);
+  this._listView = new OwnCloudListView(
+    app.getController().getView(),
+    app._name,
+    this
+  );
 
   this.appActive(true);
   this._initTree(
     "/",
     this._parentTreeItem,
     new AjxCallback(
-      this._parentTreeItem,
-      this._parentTreeItem.setExpanded,
-      [true, false, true]
+      this,
+      this._handleRootPropfind
     )
   );
 }
@@ -172,5 +173,46 @@ OwnCloudApp.prototype._showFolderData = function(/** @type {DavResource[]} */ da
   this._listView.removeAll(true);
   for (i = 0; i < children.length; i += 1) {
     this._listView.addItem(children[i]);
+  }
+};
+
+OwnCloudApp.prototype._handleRootPropfind = function(resources) {
+  this._parentTreeItem.setExpanded(true, false, true);
+  this._showFolderData(resources);
+};
+
+OwnCloudApp.prototype.openResourceInBrowser = function(resources) {
+  var resource = resources[0],
+    url,
+    protocol = "http://",
+    server = this._settings["owncloud_zimlet_server_name"];
+
+  if (/^https?:\/\//.test(server)) {
+    var re = server.match(/^(https?:\/\/)([\w\d\.]*)$/);
+    protocol = re[1];
+    server = re[2];
+  }
+
+  url = [
+    protocol,
+    this._settings["owncloud_zimlet_username"], ":", this._settings["owncloud_zimlet_password"],
+    "@",
+    server,
+    ":",
+    this._settings["owncloud_zimlet_server_port"]
+  ];
+
+  if (resource.isDirectory()) {
+    url.push("/apps/files/?dir=");
+    url.push(AjxStringUtil.urlComponentEncode(resource.getHref()));
+  } else {
+    url.push("/apps/files/?dir=");
+    url.push(AjxStringUtil.urlComponentEncode(resource.getPath()));
+    url.push("#");
+    url.push(AjxStringUtil.urlComponentEncode(resource.getHref()));
+  }
+
+  if (window && window.open) {
+    window.open(url.join(""), "_blank");
   }
 };
