@@ -5,12 +5,13 @@ zimlet: clean
 		src/tk_barrydegraaff_owncloud_zimlet.js \
 		src/DavConnector.js \
 		src/DavForZimbraConnector.js \
+		src/mime.js \
+		src/OwnCloudAppView.js \
 		src/OwnCloudConnector.js \
 		src/OwnCloudTabView.js \
-		src/ZmOwnCloudController.js \
-		src/davclient.js \
-		src/mime.js \
+		src/OwnCloudTreeController.js \
 		tk_barrydegraaff_owncloud_zimlet.css \
+		src/ZmOwnCloudController.js \
 		config_template.xml \
 		assets/*.* \
 		tk_barrydegraaff_owncloud_zimlet.xml

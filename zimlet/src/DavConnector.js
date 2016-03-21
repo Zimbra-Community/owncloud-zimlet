@@ -91,6 +91,8 @@
     if (href.indexOf('/remote.php/webdav/') > -1) {
       this._href = href.substr(18);
     }
+
+    this._children = [];
   }
   DavResource.prototype = {};
   DavResource.prototype.constructor = DavResource;
@@ -138,6 +140,19 @@
   };
 
   /**
+   * Get the entity path.
+   * @return {string}
+   */
+  DavResource.prototype.getPath = function() {
+    var splitted = this.getHref().split();
+    splitted.pop();
+    if (this.isDirectory()) {
+      splitted.pop();
+    }
+    return splitted.join("/");
+  };
+
+  /**
    * Get the path of the entity.
    * @return {string}
    */
@@ -153,6 +168,29 @@
     return this._contentType;
   };
 
+  /**
+   * Add a child to the resource.
+   * @param {DavResource} child
+   */
+  DavResource.prototype.addChild = function(child) {
+    this._children.push(child);
+  };
+
+  /**
+   * Get the resource children.
+   * @return {DavResource[]}
+   */
+  DavResource.prototype.getChildren = function() {
+    return this._children;
+  };
+
+  /**
+   * Remove all resource children.
+   * @return {DavResource[]}
+   */
+  DavResource.prototype.removeAllChildren = function() {
+    this._children = [];
+  };
 
   /**
    * DAV connector client for DAV connector extension.
@@ -372,17 +410,61 @@
    */
   DavConnector._parsePropfind = function (rawResponse) {
     var rawEntityArray = JSON.parse(rawResponse),
-      rawEntity,
       entityArray = [],
-      i = 0;
-    for (i = 0; i < rawEntityArray.length; i += 1)
-    {
-      rawEntity = rawEntityArray[i];
-      entityArray.push(
-        DavResource.fromRawResource(rawEntity)
-      );
+      pathToFolders = {},
+      pathToWeight = {},
+      distanceFromRoot = {},
+      closestWeight = -1,
+      i = 0,
+      weight;
+    // Convert raw data to DavResources and map them paths
+    for (i = 0; i < rawEntityArray.length; i += 1) {
+      var rawEntity = rawEntityArray[i],
+        resource = DavResource.fromRawResource(rawEntity);
+      if (resource.isDirectory()) {
+        if (resource.getHref() === "/") {
+          weight = 0;
+        } else {
+          weight = resource.getHref().split("/").length - 2;
+        }
+        pathToFolders[resource.getHref()] = resource;
+      } else {
+        weight = resource.getHref().split("/").length - 1;
+      }
+      pathToWeight[resource.getHref()] = weight;
+      if (!distanceFromRoot.hasOwnProperty(weight)) {
+        distanceFromRoot[weight] = [];
+      }
+      distanceFromRoot[weight].push(resource);
+      if (weight > closestWeight) {
+        closestWeight = weight;
+      }
+      entityArray.push(resource);
     }
-    return entityArray;
+    // Connect fathers with children and
+    // assign a weight based on the distance from the root
+    for (i = 0; i < entityArray.length; i += 1) {
+      var entity = entityArray[i],
+        parentHref;
+
+      weight = pathToWeight[entity.getHref()];
+      if (weight < closestWeight) {
+        closestWeight = weight;
+      }
+
+      parentHref = entity.getHref().split("/");
+      parentHref.pop();
+      if (entity.isDirectory()) {
+        parentHref.pop();
+      }
+      parentHref.push("");
+      parentHref = parentHref.join("/");
+      if (pathToFolders.hasOwnProperty(parentHref)) {
+        pathToFolders[parentHref].addChild(entity);
+      }
+    }
+    // Return the array more closests from the root.
+    return distanceFromRoot[closestWeight];
   };
 
   /**

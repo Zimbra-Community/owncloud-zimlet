@@ -20,6 +20,7 @@
 
 function tk_barrydegraaff_owncloud_zimlet_HandlerObject() {
   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings = {};
+  this._appView = void 0;
 }
 
 tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype = new ZmZimletBase();
@@ -78,6 +79,8 @@ ownCloudZimlet.prototype.init =
         callback: new AjxCallback(this, this.addAttachmentHandler)
       });
     }
+
+    ZmOverviewController.CONTROLLER[OwnCloudAppView.TREE_ID] = "OwnCloudTreeController";
 
     this.createFolder();
   };
@@ -277,7 +280,7 @@ ownCloudZimlet.prototype._propfindShowAttDlgCbk =
  */
 ownCloudZimlet.prototype.doubleClicked =
   function() {
-    this.singleClicked();
+    this._openOwnCloudTab();
   };
 
 /**
@@ -285,7 +288,6 @@ ownCloudZimlet.prototype.doubleClicked =
  */
 ownCloudZimlet.prototype.singleClicked =
   function() {
-    this.displayDialog(1, 'Preferences', null);
   };
 
 /**
@@ -482,18 +484,17 @@ ownCloudZimlet.prototype._createFolderCallback =
 ownCloudZimlet.prototype.appLaunch =
   function(appName) {
     var app = appCtxt.getApp(appName);
-    app.setContent(
-      '<div style="position: fixed; left:0; width:100%; height:86%; border:0;">' +
-      '<iframe id="ownCloudFrame" style="z-index:2; left:0; width:100%; height:100%; border:0;" src="/service/extension/owncloud">' +
-      '</div>'
-    );
-    var overview = app.getOverview(); // returns ZmOverview
-    overview.setContent("&nbsp;");
-    var child = document.getElementById(overview._htmlElId);
-    child.parentNode.removeChild(child);
 
-    var toolbar = app.getToolbar(); // returns ZmToolBar
-    toolbar.setContent("<div style=\"padding:5px\"><button onclick=\"if(document.getElementById('ownCloudFrame').src.indexOf('"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+"') < 0){this.innerHTML='Help'; document.getElementById('ownCloudFrame').src = '"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location']+"'} else {this.innerHTML='Back to ownCloud'; document.getElementById('ownCloudFrame').src = '/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/help/index.html'}\">Help</button>&nbsp;&nbsp;<b>ownCloud Zimlet version: " + ownCloudZimlet.version + "</b></div>" );
+    if (typeof this._appView === "undefined") {
+      this._appView = new OwnCloudAppView(
+        this,
+        app,
+        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings,
+        this._davConnector,
+        this._ownCloudConnector,
+        this._davForZimbraConnector
+      );
+    }
   };
 
 /**
@@ -504,26 +505,13 @@ ownCloudZimlet.prototype.appLaunch =
  */
 ownCloudZimlet.prototype.appActive =
   function(appName, active) {
-    if (active)
-    {
-      //In the ownCloud Zimbra tab hide the left menu bar that is displayed by default in Zimbra, also hide the mini calendar
-      document.getElementById('z_sash').style.display = 'none';
-      //Users that click the ownCloud tab directly after logging in, will still be served with the calendar, as it is normal
-      //it takes some time to be displayed, so if that occurs, try to remove the calender again after 10 seconds.
-      try {
-        var cal = document.getElementsByClassName('DwtCalendar');
-        cal[0].style.display = 'none';
-      } catch (err) { setTimeout(function(){var cal = document.getElementsByClassName('DwtCalendar'); cal[0].style.display = 'none'; }, 10000); }
-    }
-    else
-    {
-      document.getElementById('z_sash').style.display = 'block';
-      try {
-        var cal = document.getElementsByClassName('DwtCalendar');
-        cal[0].style.display = 'block';
-      } catch (err) { }
+    if (typeof this._appView !== "undefined") {
+      this._appView.appActive(active);
     }
   };
+
+ownCloudZimlet.prototype.onSelectApp =
+  function(id) {};
 
 /**
  * Display the settings dialog.
@@ -655,4 +643,9 @@ ownCloudZimlet.prototype._saveUserProperties =
     }
 
     if(!!callback && !!callback.run) { callback.run(); }
+  };
+
+ownCloudZimlet.prototype._openOwnCloudTab =
+  function() {
+
   };
