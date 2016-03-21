@@ -169,6 +169,22 @@
   };
 
   /**
+   * Get the content length of the entity.
+   * @return {number}
+   */
+  DavResource.prototype.getContentLength = function() {
+    return this._contentLength;
+  };
+
+  /**
+   * Get the content modified date of the entity.
+   * @return {Date}
+   */
+  DavResource.prototype.getModified = function() {
+    return this._modified;
+  };
+
+  /**
    * Add a child to the resource.
    * @param {DavResource} child
    */

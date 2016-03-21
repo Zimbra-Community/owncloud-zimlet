@@ -1,8 +1,4 @@
-function OwnCloudAppView(zimletCtxt, app, settings, davConnector, ownCloudConnector, davForZimbraConnector) {
-  DwtComposite.call(this, {
-    parent: app.getOverview() // returns ZmOverview
-  });
-
+function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector, davForZimbraConnector) {
   this._zimletCtxt = zimletCtxt;
   this._app = app;
   this._settings = settings;
@@ -14,9 +10,9 @@ function OwnCloudAppView(zimletCtxt, app, settings, davConnector, ownCloudConnec
     toolbar = app.getToolbar(),
     treeView;
   overView.clear();
-  overView.setTreeView(OwnCloudAppView.TREE_ID);
+  overView.setTreeView(OwnCloudApp.TREE_ID);
 
-  treeView = overView.getTreeView(OwnCloudAppView.TREE_ID);
+  treeView = overView.getTreeView(OwnCloudApp.TREE_ID);
   this._parentTreeItem = new DwtHeaderTreeItem({
     parent: treeView,
     text: ZmMsg.folders,
@@ -25,7 +21,10 @@ function OwnCloudAppView(zimletCtxt, app, settings, davConnector, ownCloudConnec
   treeView.addTreeListener(new AjxListener(this, this._onItemExpanded));
   treeView.addSelectionListener(new AjxListener(this, this._onItemSelected));
 
-  app.setView(this);
+
+  this._listView = new OwnCloudListView(app.getController().getView());
+
+  // app.setView(this._listView);
 
   this.appActive(true);
   this._initTree(
@@ -39,19 +38,18 @@ function OwnCloudAppView(zimletCtxt, app, settings, davConnector, ownCloudConnec
   );
 }
 
-OwnCloudAppView.prototype = new DwtComposite();
-OwnCloudAppView.prototype.constructor = OwnCloudAppView;
+// OwnCloudAppView.prototype = new DwtComposite();
+// OwnCloudAppView.prototype.constructor = OwnCloudAppView;
 
-OwnCloudAppView.TREE_ID = "OC_TREE_VIEW";
+OwnCloudApp.TREE_ID = "OC_TREE_VIEW";
 
-OwnCloudAppView.prototype._getTreeView = function() {
-  return this._app.getOverView().getTreeView(OwnCloudAppView.TREE_ID);
+OwnCloudApp.prototype._getTreeView = function() {
+  return this._app.getOverView().getTreeView(OwnCloudApp.TREE_ID);
 };
 
-OwnCloudAppView.prototype.appActive = function(active) {
-};
+OwnCloudApp.prototype.appActive = function(active) {};
 
-OwnCloudAppView.prototype._onItemExpanded = function(/** @type {DwtTreeEvent} */ ev) {
+OwnCloudApp.prototype._onItemExpanded = function(/** @type {DwtTreeEvent} */ ev) {
   if (ev.detail === DwtTree.ITEM_EXPANDED) {
     var treeItem = ev.dwtObj,
       resource = treeItem.getData('DavResource'),
@@ -69,7 +67,7 @@ OwnCloudAppView.prototype._onItemExpanded = function(/** @type {DwtTreeEvent} */
   }
 };
 
-OwnCloudAppView.prototype._initTree = function(href, parent, callback) {
+OwnCloudApp.prototype._initTree = function(href, parent, callback) {
   var tmpCallback = new AjxCallback(
     this,
     this._restoreExpansion,
@@ -92,7 +90,7 @@ OwnCloudAppView.prototype._initTree = function(href, parent, callback) {
   );
 };
 
-OwnCloudAppView.prototype._restoreExpansion = function(treeItem, wasExpanded, callback, resources) {
+OwnCloudApp.prototype._restoreExpansion = function(treeItem, wasExpanded, callback, resources) {
   if (treeItem.getData('DavResource').getHref() === "/") {
     wasExpanded = true;
   }
@@ -102,7 +100,7 @@ OwnCloudAppView.prototype._restoreExpansion = function(treeItem, wasExpanded, ca
   }
 };
 
-OwnCloudAppView.prototype._renderTreePropFind = function(href, parent, callback, resources) {
+OwnCloudApp.prototype._renderTreePropFind = function(href, parent, callback, resources) {
   var i,
     rootFolder = resources[0],
     children = rootFolder.getChildren();
@@ -120,7 +118,7 @@ OwnCloudAppView.prototype._renderTreePropFind = function(href, parent, callback,
   }
 };
 
-OwnCloudAppView.prototype._renderTreeResource = function(parent, resource) {
+OwnCloudApp.prototype._renderTreeResource = function(parent, resource) {
   if (resource.isDirectory()) {
     var children = resource.getChildren(),
       i, hasChildFolder = false,
@@ -142,7 +140,7 @@ OwnCloudAppView.prototype._renderTreeResource = function(parent, resource) {
   }
 };
 
-OwnCloudAppView.prototype._appendLoadingTreeItem = function(parent) {
+OwnCloudApp.prototype._appendLoadingTreeItem = function(parent) {
   var tmpTreeItem = new DwtTreeItem({
     parent: parent,
     text: ZmMsg.loading,
@@ -151,7 +149,7 @@ OwnCloudAppView.prototype._appendLoadingTreeItem = function(parent) {
   });
 };
 
-OwnCloudAppView.prototype._onItemSelected = function(/** @type {DwtSelectionEvent} */ ev) {
+OwnCloudApp.prototype._onItemSelected = function(/** @type {DwtSelectionEvent} */ ev) {
   if (ev.detail === DwtTree.ITEM_SELECTED) {
     var treeItem = ev.dwtObj,
       davResource = treeItem.getData('DavResource');
@@ -167,8 +165,12 @@ OwnCloudAppView.prototype._onItemSelected = function(/** @type {DwtSelectionEven
   }
 };
 
-OwnCloudAppView.prototype._showFolderData = function(/** @type {DavResource[]} */ davResources) {
-  var resource = davResources[0];
-  if (console && console.log)
-    console.log(resource);
+OwnCloudApp.prototype._showFolderData = function(/** @type {DavResource[]} */ davResources) {
+  var resource = davResources[0],
+    children = resource.getChildren(),
+    i;
+  this._listView.removeAll(true);
+  for (i = 0; i < children.length; i += 1) {
+    this._listView.addItem(children[i]);
+  }
 };

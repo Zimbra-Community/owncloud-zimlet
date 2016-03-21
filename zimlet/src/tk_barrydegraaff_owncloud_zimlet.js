@@ -80,7 +80,7 @@ ownCloudZimlet.prototype.init =
       });
     }
 
-    ZmOverviewController.CONTROLLER[OwnCloudAppView.TREE_ID] = "OwnCloudTreeController";
+    ZmOverviewController.CONTROLLER[OwnCloudApp.TREE_ID] = "OwnCloudTreeController";
 
     this.createFolder();
   };
@@ -486,7 +486,7 @@ ownCloudZimlet.prototype.appLaunch =
     var app = appCtxt.getApp(appName);
 
     if (typeof this._appView === "undefined") {
-      this._appView = new OwnCloudAppView(
+      this._appView = new OwnCloudApp(
         this,
         app,
         tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings,

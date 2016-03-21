@@ -1,5 +1,5 @@
 function OwnCloudTreeController() {
-  ZmTreeController.call(this, OwnCloudAppView.TREE_ID);
+  ZmTreeController.call(this, OwnCloudApp.TREE_ID);
 
   // var treeItem = new DwtTreeItem({
   //     parent: this._folderTree,

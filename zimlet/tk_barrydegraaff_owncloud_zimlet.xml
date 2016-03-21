@@ -30,8 +30,9 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
         description="Attach from and save to ownCloud">
     <include>DavConnector.js</include>
     <include>DavForZimbraConnector.js</include>
-    <include>OwnCloudAppView.js</include>
+    <include>OwnCloudApp.js</include>
     <include>OwnCloudConnector.js</include>
+    <include>OwnCloudListView.js</include>
     <include>OwnCloudTabView.js</include>
     <include>OwnCloudTreeController.js</include>
     <include>tk_barrydegraaff_owncloud_zimlet.js</include>

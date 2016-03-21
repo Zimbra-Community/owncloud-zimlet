@@ -6,8 +6,9 @@ zimlet: clean
 		src/DavConnector.js \
 		src/DavForZimbraConnector.js \
 		src/mime.js \
-		src/OwnCloudAppView.js \
+		src/OwnCloudApp.js \
 		src/OwnCloudConnector.js \
+		src/OwnCloudListView.js \
 		src/OwnCloudTabView.js \
 		src/OwnCloudTreeController.js \
 		tk_barrydegraaff_owncloud_zimlet.css \
