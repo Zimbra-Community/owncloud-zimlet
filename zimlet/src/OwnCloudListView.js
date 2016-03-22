@@ -207,29 +207,72 @@ OwnCloudListView.prototype._getActionMenuOps = function() {
 };
 
 OwnCloudListView.prototype._sendFileListener = function(ev) {
+  var
+    /** @type {DavResource[]} */ resourcesToLink = this.getSelection(),
+    /** @type {DavResource[]} */ resourcesToAttach = [],
+    /** @type {string[]} */  resNames = [];
 
+  for (var i = 0; i < resourcesToLink.length; i+= 1) {
+    resNames.push(resourcesToLink[i].getName());
+  }
+
+  this._ocCommons.getAttachments(
+    resourcesToLink,
+    resourcesToAttach,
+    new AjxCallback(
+      this,
+      this._sendFilesListCbk,
+      [resNames]
+    )
+  );
 };
 
 OwnCloudListView.prototype._sendFileAsAttachmentListener = function(ev) {
-  console.log(ev);
+  var
+    /** @type {DavResource[]} */ selectedResources = this.getSelection(),
+    /** @type {DavResource[]} */ resourcesToLink = [],
+    /** @type {DavResource[]} */ resourcesToAttach = [],
+    /** @type {string[]} */  resNames = [];
+
+  for (var i = 0; i < selectedResources.length; i += 1) {
+    resNames.push(selectedResources[i].getName());
+    if (selectedResources[i].isDirectory()) {
+      resourcesToLink.push(selectedResources[i]);
+    } else {
+      resourcesToAttach.push(selectedResources[i]);
+    }
+  }
+
+  this._ocCommons.getAttachments(
+    resourcesToLink,
+    resourcesToAttach,
+    new AjxCallback(
+      this,
+      this._sendFilesListCbk,
+      [resNames]
+    )
+  );
+};
+
+OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAttach) {
+  var cc = AjxDispatcher.run("GetComposeController"),
+    htmlCompose = appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML,
+    extraBodyText = [];
+
+  for (var i = 0; i < urls.length; i+= 1) {
+    extraBodyText.push(urls[i].name + ": " + urls[i].link);
+  }
+
+  cc._setView({
+    action: ZmOperation.NEW_MESSAGE,
+    inNewWindow: false,
+    msg: new ZmMailMsg(),
+    subjOverride: new AjxListFormat().format(resNames),
+    extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
+  });
+  cc.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, [].concat(idsToAttach).join(","));
 };
 
 OwnCloudListView.prototype._openInOwnCloudListener = function(ev) {
   this._ocZimletApp.openResourceInBrowser(this.getSelection());
-};
-
-OwnCloudListView.prototype._sendFilesListCbk = function(names, urls, inNewWindow) {
-  var action = ZmOperation.NEW_MESSAGE,
-    msg = new ZmMailMsg(),
-    subjOverride = new AjxListFormat().format(names),
-    htmlCompose = appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML,
-    extraBodyText = urls.join(htmlCompose ? "<br>" : "\n");
-
-  AjxDispatcher.run("Compose", {
-    action: action,
-    inNewWindow: inNewWindow,
-    msg: msg,
-    subjOverride: subjOverride,
-    extraBodyText: extraBodyText
-  });
 };
