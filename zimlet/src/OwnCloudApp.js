@@ -195,8 +195,7 @@ OwnCloudApp.prototype.openResourceInBrowser = function(resources) {
 
   url = [
     protocol,
-    this._settings["owncloud_zimlet_username"], ":", this._settings["owncloud_zimlet_password"],
-    "@",
+    // this._settings["owncloud_zimlet_username"], ":", this._settings["owncloud_zimlet_password"], "@",
     server,
     ":",
     this._settings["owncloud_zimlet_server_port"]
