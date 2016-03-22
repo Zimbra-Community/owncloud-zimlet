@@ -25,7 +25,8 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
   this._listView = new OwnCloudListView(
     app.getController().getView(),
     app._name,
-    this
+    this,
+    new OwnCloudCommons(davConnector, ownCloudConnector, davForZimbraConnector)
   );
 
   this.appActive(true);

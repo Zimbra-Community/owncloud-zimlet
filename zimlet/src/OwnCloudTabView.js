@@ -9,12 +9,13 @@
  *
  * @extends	DwtTabViewPage
  */
-function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector) {
+function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, ocCommons) {
   this.zimlet = zimletCtxt;
 
   this._zimletCtxt = zimletCtxt;
   this._davConnector = davConnector;
   this._ownCloudConnector = ownCloudConnector;
+  this._ocCommons = ocCommons;
   this._waitingDialog = null;
   DwtComposite.call(this, parent, void 0, Dwt.STATIC_STYLE);
   var acct = appCtxt.multiAccounts ? appCtxt.getAppViewMgr().getCurrentView().getFromAccount() : appCtxt.getActiveAccount();
@@ -73,20 +74,19 @@ OwnCloudTabView.prototype._populateTree =
  * @private
  */
 OwnCloudTabView.prototype._renderPropFind = function(href, parent, resources) {
-  var i;
+  var i,
+    children = resources[0].getChildren();
   // Display folders
-  for (i = 0; i < resources.length; i += 1) {
-    if (resources[i].isDirectory())
-    {
-      if (resources[i].getHref() === href) continue;
-      this._renderResource(parent, resources[i]);
+  for (i = 0; i < children.length; i += 1) {
+    if (children[i].isDirectory()) {
+      this._renderResource(parent, children[i]);
     }
   }
   // Display files
-  for (i = 0; i < resources.length; i += 1) {
-    if (!resources[i].isDirectory())
+  for (i = 0; i < children.length; i += 1) {
+    if (!children[i].isDirectory())
     {
-      this._renderResource(parent, resources[i]);
+      this._renderResource(parent, children[i]);
     }
   }
   OwnCloudTabView.attachment_ids = [];
@@ -155,21 +155,12 @@ OwnCloudTabView.prototype._attachFiles =
       }
     }
 
-    if (this._waitingDialog === null) {
-      this._waitingDialog = new DwtMessageDialog({
-        parent: appCtxt.getShell(),
-        buttons: [DwtDialog.NO_BUTTONS]
-      });
-    }
-    this._waitingDialog.popup();
-
-    this._getFirstLink(
+    this._ocCommons.getAttachments(
       resourcesToLink,
-      resourcesToLink.length,
+      resourcesToAttach,
       new AjxCallback(
         this,
-        this._onUploadOrAttachFinished,
-        [resourcesToLink, resourcesToLink.length, [], resourcesToAttach, resourcesToAttach.length, ids]
+        this._onAttachmentsRetrieved
       )
     );
   };
@@ -190,183 +181,48 @@ OwnCloudTabView.prototype._getSelectedItems =
   };
 
 /**
- * Process the resources array, consuming an item.
- * @param {DavResource[]} resources
- * @param {number[]} ids
- * @param {AjxCallback} callback
+ * Callback invoked when the attachment generation process is finished.
+ * @param {string[]} urls
+ * @param {string[]} idsToAttach
  * @private
  */
-OwnCloudTabView.prototype._getFirstResource =
-  function(resources, ids, callback) {
-    if (resources.length < 1) {
-      if (!!callback) {
-        callback.run(ids);
-      }
-      return;
-    }
-
-    this._waitingDialog.setMessage(
-      "Attaching file(s) to the message, please wait ... " + ids.length + " / " + (resources.length + ids.length),
-      DwtMessageDialog.INFO_STYLE,
-      "Retrieving attachments from ownCloud"
-    );
-
-    var resource = resources.shift(),
-      internalCallback = new AjxCallback(
-        this,
-        this._getResourceCbk,
-        [resource, resources, ids, callback]
-    );
-
-    this._davConnector.get(
-      resource.getHref(),
-      internalCallback
-    );
-  };
-
-/**
- * Process the resources array, consuming an item.
- * @param {DavResource[]} resources
- * @param {number} resCount
- * @param {AjxCallback} callback
- * @private
- */
-OwnCloudTabView.prototype._getFirstLink =
-  function(resources, resCount, callback) {
-    if (resources.length < 1) {
-      if (!!callback) {
-        callback.run();
-      }
-      return;
-    }
-
-    this._waitingDialog.setMessage(
-      "Creating link(s) to attach to the message, please wait ... " + (resCount - resources.length)  + " / " + resCount,
-      DwtMessageDialog.INFO_STYLE,
-      "Retrieving attachments from ownCloud"
-    );
-
-    var resource = resources.shift(),
-      internalCallback = new AjxCallback(
-        this,
-        this._createShareCbk,
-        [resource, resources, resCount, callback]
-      );
-
-    this._ownCloudConnector.createShare(
-      resource.getHref(),
-      DavForZimbraShareType.PUBLIC_LINK,
-      void 0,
-      false,
-      void 0,
-      DavForZimbraSharePermission.READ,
-      internalCallback
-    );
-  };
-
-/**
- * When a resource is retrieved, send it to zimbra as attachment.
- * @param {DavResource} resource
- * @param {DavResource[]} resources
- * @param {number[]} ids
- * @param {AjxCallback} callback
- * @param {string} data
- * @private
- */
-OwnCloudTabView.prototype._getResourceCbk =
-  function(resource, resources, ids, callback, data) {
-    var req = new XMLHttpRequest();
-    if (!req.responseURL)
-    {
-      req.responseURL = '/service/upload?fmt=extended,raw';
-    }
-    req.open('POST', '/service/upload?fmt=extended,raw', true);
-    req.setRequestHeader('Cache-Control', 'no-cache');
-    req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    req.setRequestHeader('Content-Type',  'application/octet-stream' + ';');
-    req.setRequestHeader('X-Zimbra-Csrf-Token', window.csrfToken);
-    req.setRequestHeader('Content-Disposition', 'attachment; filename='+ resource.getName() + ';');
-    req.onload = (function(_this, resources, ids, callback) {
-      return function(result) {
-        var resp = eval('[' + this.responseText + ']'),
-          respObj;
-        respObj = resp[2];
-        if (!!(respObj[0].aid)) { ids.push(respObj[0].aid); }
-        // ew also have these fields: ct (content type), filename, s(size)
-        _this._getFirstResource(resources, ids, callback);
-      };
-    }(this, resources, ids, callback));
-    req.send(data);
-  };
+OwnCloudTabView.prototype._onAttachmentsRetrieved = function(urls, idsToAttach) {
+  var i;
+  for (i = 0; i < urls.length; i+= 1) {
+    this._appendSharedLink(urls[i]);
+  }
+  this._attachItemsAndSaveDraft(idsToAttach);
+};
 
 /**
  * Callback invoked when the system has finished the upload/link of the files.
- * @param {DavResource[]} resourcesToLink
- * @param {number} resourcesCountToLink
- * @param {number[]} idsToLink IDs of the objects lined.
- * @param {DavResource[]} resourcesToAttach
- * @param {number} resourcesCountToAttach
- * @param {number[]} idsToAttach IDs of the objects attached.
+ * @param {string[]} idsToAttach IDs of the objects attached.
  * @private
  */
-OwnCloudTabView.prototype._onUploadOrAttachFinished =
-  function(resourcesToLink, resourcesCountToLink, idsToLink, resourcesToAttach, resourcesCountToAttach, idsToAttach) {
+OwnCloudTabView.prototype._attachItemsAndSaveDraft =
+  function(idsToAttach) {
     var viewType = appCtxt.getCurrentViewType(),
-      controller,
-      callback = new AjxCallback(
-        this,
-        this._onUploadOrAttachFinished,
-        [resourcesToLink, resourcesCountToLink, idsToLink, resourcesToAttach, resourcesCountToAttach, idsToAttach]
-      );
+      controller;
 
-    if (resourcesToLink.length > 0) {
-      // Attach files and forlders as links.
-      this._getFirstLink(
-        resourcesToLink,
-        resourcesToLink.length,
-        callback
-      );
-    } else if(resourcesToAttach.length > 0) {
-      // Attach files as standard attachments.
-      this._getFirstResource(
-        resourcesToAttach,
-        idsToAttach,
-        callback
-      );
-    } else {
       if (viewType == ZmId.VIEW_COMPOSE)
       {
         controller = appCtxt.getApp(ZmApp.MAIL).getComposeController(appCtxt.getApp(ZmApp.MAIL).getCurrentSessionId(ZmId.VIEW_COMPOSE));
-        controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, [].concat(idsToLink).concat(idsToAttach).join(","));
+        controller.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, [].concat(idsToAttach).join(","));
       }
-      this._waitingDialog.popdown();
-    }
   };
 
 /**
  * Handle the data received from the ownCloud installation about the shared path.
- * @param {DavResource} resource
- * @param {DavResource[]} resources
- * @param {number} resCount
- * @param {AjxCallback} callback
- * @param {{}} data
+ * @param {{name: string, link: string}} url
  * @private
  */
-OwnCloudTabView.prototype._createShareCbk =
-  function(resource, resources, resCount, callback, data) {
-    // Data contains:
-    //   id: {number}
-    //   message: {string}
-    //   status: {string}
-    //   statuscode: {number}
-    //   token: {string}
-    //   url: "{oc-url}/index.php/s/{token-string}"
-    //   console.log(arguments);
-
+OwnCloudTabView.prototype._appendSharedLink =
+  function(url) {
     var composeView = appCtxt.getCurrentView(),
       composeMode = composeView.getHtmlEditor().getMode(),
       content = composeView.getHtmlEditor().getContent(),
-      sep;
+      sep,
+      linkData = url.name + ": " + url.link;
 
     if(composeMode == 'text/plain') {
       sep = "\r\n";
@@ -375,17 +231,15 @@ OwnCloudTabView.prototype._createShareCbk =
     }
 
     if(content.indexOf('<hr id="') > 0) {
-      content = content.replace('<hr id="', data.url + sep + '<hr id="');
+      content = content.replace('<hr id="', linkData + sep + '<hr id="');
     } else if(content.indexOf('<div id="') > 0) {
-      content = content.replace('<div id="', data.url + sep + '<div id="');
+      content = content.replace('<div id="', linkData + sep + '<div id="');
     } else if(content.indexOf('</body') > 0) {
-      content = content.replace('</body', data.url + sep + '</body');
+      content = content.replace('</body', linkData + sep + '</body');
     } else if(content.indexOf('----') > 0) {
-      content = content.replace('----', data.url + sep + '----');
+      content = content.replace('----', linkData + sep + '----');
     } else {
-      content = content + sep + data.url + sep;
+      content = content + sep + linkData + sep;
     }
     composeView.getHtmlEditor().setContent(content);
-
-   this._getFirstLink(resources, resCount, callback);
   };

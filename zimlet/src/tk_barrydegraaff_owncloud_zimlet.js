@@ -270,7 +270,8 @@ ownCloudZimlet.prototype.showAttachmentDialog =
         this._attachDialog,
         this,
         this._davConnector,
-        this._ownCloudConnector
+        this._ownCloudConnector,
+        new OwnCloudCommons(this._davConnector, this._ownCloudConnector, this._davForZimbraConnector)
       );
     }
 

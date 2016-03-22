@@ -7,6 +7,7 @@ zimlet: clean
 		src/DavForZimbraConnector.js \
 		src/mime.js \
 		src/OwnCloudApp.js \
+		src/OwnCloudCommons.js \
 		src/OwnCloudConnector.js \
 		src/OwnCloudListView.js \
 		src/OwnCloudTabView.js \

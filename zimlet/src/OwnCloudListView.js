@@ -1,4 +1,4 @@
-function OwnCloudListView(parent, appName, ocZimletApp) {
+function OwnCloudListView(parent, appName, ocZimletApp, ocCommons) {
   DwtListView.call(this, {
     parent: parent,
     headerList: this._getHeaderList()
@@ -6,6 +6,7 @@ function OwnCloudListView(parent, appName, ocZimletApp) {
 
   this._appName = appName;
   this._ocZimletApp = ocZimletApp;
+  this._ocCommons = ocCommons;
   this._listeners = {};
 
   this.createHeaderHtml(ZmItem.F_NAME);
@@ -26,7 +27,7 @@ OwnCloudListView.prototype._getHeaderList = function () {
   headers.push(new DwtListHeaderItem({
     field: ZmItem.F_TYPE,
     icon: "GenericDoc",
-    width: ZmDetailListView.COLWIDTH_ICON,
+    width: 20,
     name: ZmMsg.icon
   }));
   headers.push(new DwtListHeaderItem({field: ZmItem.F_NAME, text: ZmMsg._name, sortable: ZmItem.F_NAME}));
@@ -206,7 +207,7 @@ OwnCloudListView.prototype._getActionMenuOps = function() {
 };
 
 OwnCloudListView.prototype._sendFileListener = function(ev) {
-  console.log(ev);
+
 };
 
 OwnCloudListView.prototype._sendFileAsAttachmentListener = function(ev) {
@@ -215,4 +216,20 @@ OwnCloudListView.prototype._sendFileAsAttachmentListener = function(ev) {
 
 OwnCloudListView.prototype._openInOwnCloudListener = function(ev) {
   this._ocZimletApp.openResourceInBrowser(this.getSelection());
+};
+
+OwnCloudListView.prototype._sendFilesListCbk = function(names, urls, inNewWindow) {
+  var action = ZmOperation.NEW_MESSAGE,
+    msg = new ZmMailMsg(),
+    subjOverride = new AjxListFormat().format(names),
+    htmlCompose = appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML,
+    extraBodyText = urls.join(htmlCompose ? "<br>" : "\n");
+
+  AjxDispatcher.run("Compose", {
+    action: action,
+    inNewWindow: inNewWindow,
+    msg: msg,
+    subjOverride: subjOverride,
+    extraBodyText: extraBodyText
+  });
 };

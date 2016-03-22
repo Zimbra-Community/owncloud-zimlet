@@ -31,6 +31,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
     <include>DavConnector.js</include>
     <include>DavForZimbraConnector.js</include>
     <include>OwnCloudApp.js</include>
+    <include>OwnCloudCommons.js</include>
     <include>OwnCloudConnector.js</include>
     <include>OwnCloudListView.js</include>
     <include>OwnCloudTabView.js</include>
