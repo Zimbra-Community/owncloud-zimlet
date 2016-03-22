@@ -1,4 +1,19 @@
-function OwnCloudListView(parent, appName, ocZimletApp, ocCommons) {
+/**
+ * List view to display the content of the DAV navigator.
+ * @param {DwtShell} parent
+ * @param {string} appName
+ * @param {OwnCloudApp} ocZimletApp
+ * @param {OwnCloudCommons} ocCommons
+ * @param {AjxCallback} onFolderSelectedCbk
+ * @constructor
+ */
+function OwnCloudListView(
+  parent,
+  appName,
+  ocZimletApp,
+  ocCommons,
+  onFolderSelectedCbk
+) {
   DwtListView.call(this, {
     parent: parent,
     headerList: this._getHeaderList()
@@ -7,6 +22,7 @@ function OwnCloudListView(parent, appName, ocZimletApp, ocCommons) {
   this._appName = appName;
   this._ocZimletApp = ocZimletApp;
   this._ocCommons = ocCommons;
+  this._onFolderSelectedCbk = onFolderSelectedCbk;
   this._listeners = {};
 
   this.createHeaderHtml(ZmItem.F_NAME);
@@ -17,6 +33,16 @@ function OwnCloudListView(parent, appName, ocZimletApp, ocCommons) {
   this._listeners[ZmOperation.OPEN_IN_OWNCLOUD]	= this._openInOwnCloudListener.bind(this);
 
   this.addActionListener(new AjxListener(this, this._listActionListener));
+  this.addSelectionListener(new AjxListener(this, this._onItemSelected));
+
+  this._dragSrc = new DwtDragSource(Dwt.DND_DROP_MOVE);
+  this._dragSrc.addDragListener(new AjxListener(this, OwnCloudApp._dragListener));
+  this.setDragSource(this._dragSrc);
+
+  this._dropTgt = new DwtDropTarget("DavResource");
+  this._dropTgt.markAsMultiple();
+  this._dropTgt.addDropListener(new AjxListener(this, OwnCloudApp._dropListener, [ocZimletApp]));
+  this.setDropTarget(this._dropTgt);
 }
 
 OwnCloudListView.prototype = new DwtListView();
@@ -275,4 +301,18 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
 
 OwnCloudListView.prototype._openInOwnCloudListener = function(ev) {
   this._ocZimletApp.openResourceInBrowser(this.getSelection());
+};
+
+OwnCloudListView.prototype._onItemSelected = function(ev) {
+  if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
+    var item = ev.item;
+
+    if (item.isDirectory()) {
+      if (typeof this._onFolderSelectedCbk !== "undefined") {
+        this._onFolderSelectedCbk.run(item);
+      }
+    } else {
+      // TODO: Handle the case of a double click on a file.
+    }
+  }
 };

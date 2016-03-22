@@ -671,3 +671,10 @@ ownCloudZimlet.prototype._openOwnCloudTab =
   function() {
 
   };
+
+ownCloudZimlet.prototype.runAppFunction =
+  function(functionName) {
+    if (functionName === "runRefresh") {
+      // A refresh is requested
+    }
+  };

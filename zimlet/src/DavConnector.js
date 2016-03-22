@@ -97,6 +97,10 @@
   DavResource.prototype = {};
   DavResource.prototype.constructor = DavResource;
 
+  DavResource.prototype.toString = function() {
+    return "DavResource";
+  };
+
   /**
    * Extract data from a raw json object and convert it to DAV Entity.
    * @param {{}} rawEntity

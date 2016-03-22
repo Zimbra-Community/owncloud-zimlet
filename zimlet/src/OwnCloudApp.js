@@ -6,32 +6,46 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
   this._ownCloudConnector = ownCloudConnector;
   this._davForZimbraConnector = davForZimbraConnector;
 
+  this._currentPath = "/";
+
   var overView = app.getOverview(),
     toolbar = app.getToolbar(),
-    treeView;
+    treeView,
+    dragSource,
+    dropTarget;
   overView.clear();
   overView.setTreeView(OwnCloudApp.TREE_ID);
 
   treeView = overView.getTreeView(OwnCloudApp.TREE_ID);
+  treeView.addTreeListener(new AjxListener(this, this._onItemExpanded));
+  treeView.addSelectionListener(new AjxListener(this, this._onItemSelected));
+
+  dragSource = new DwtDragSource(Dwt.DND_DROP_MOVE);
+  dragSource.addDragListener(new AjxListener(this, OwnCloudApp._dragListener));
+  treeView.setDragSource(dragSource);
+
+  dropTarget = new DwtDropTarget("DavResource");
+  dropTarget.markAsMultiple();
+  dropTarget.addDropListener(new AjxListener(treeView, OwnCloudApp._dropListener, [this]));
+  treeView.setDropTarget(dropTarget);
+
   this._parentTreeItem = new DwtHeaderTreeItem({
     parent: treeView,
     text: ZmMsg.folders,
     className: "FirstOverviewHeader overviewHeader"
   });
-  treeView.addTreeListener(new AjxListener(this, this._onItemExpanded));
-  treeView.addSelectionListener(new AjxListener(this, this._onItemSelected));
-
 
   this._listView = new OwnCloudListView(
     app.getController().getView(),
     app._name,
     this,
-    new OwnCloudCommons(davConnector, ownCloudConnector, davForZimbraConnector)
+    new OwnCloudCommons(davConnector, ownCloudConnector, davForZimbraConnector),
+    new AjxListener(this, this._onFolderSelectedOnListView)
   );
 
   this.appActive(true);
   this._initTree(
-    "/",
+    this._currentPath,
     this._parentTreeItem,
     new AjxCallback(
       this,
@@ -156,8 +170,10 @@ OwnCloudApp.prototype._onItemSelected = function(/** @type {DwtSelectionEvent} *
     var treeItem = ev.dwtObj,
       davResource = treeItem.getData('DavResource');
 
+    this._currentPath = davResource.getHref();
+
     this._initTree(
-      davResource.getHref(),
+      this._currentPath,
       treeItem,
       new AjxCallback(
         this,
@@ -215,4 +231,93 @@ OwnCloudApp.prototype.openResourceInBrowser = function(resources) {
   if (window && window.open) {
     window.open(url.join(""), "_blank");
   }
+};
+
+/**
+ * Get the folder tree item by his href.
+ * @param {DwtTreeItem} parent
+ * @param {string} baseRef
+ * @param {string[]} path
+ * @returns {DavResource}
+ * @private
+ */
+OwnCloudApp.prototype._getFolderByHref = function(parent, baseRef, path) {
+  var children = parent.getChildren(),
+    currentName = path.shift(),
+    data,
+    i;
+
+  for (i = 0; i < children.length; i += 1) {
+    data = children[i].getData('DavResource');
+    if (data.getHref() === baseRef) {
+      return children[i];
+    } else if (data.getName() === currentName) {
+      return this._getFolderByHref(children[i], baseRef, path);
+    }
+  }
+};
+
+/**
+ * Handle the double click of a folder in the list view.
+ * @param {DavResource} resource
+ * @private
+ */
+OwnCloudApp.prototype._onFolderSelectedOnListView = function(resource) {
+  var slices = resource.getHref().split("/"),
+    treeItem;
+
+  slices.shift();
+  slices.pop();
+  treeItem = this._getFolderByHref(this._parentTreeItem, resource.getHref(), slices);
+  if (typeof treeItem === "undefined") { return; }
+  treeItem.setExpanded(true, false, true);
+
+  this._currentPath = resource.getHref();
+
+  this._initTree(
+    this._currentPath,
+    treeItem,
+    new AjxCallback(
+      this,
+      this._showFolderData
+    )
+  );
+};
+
+OwnCloudApp._dragListener = function(ev) {
+  if (ev.action == DwtDragEvent.SET_DATA) {
+    ev.srcData = {data: ev.srcControl.getDnDSelection()};
+  }
+};
+
+OwnCloudApp._dropListener = function(ocApp, ev) {
+  var data = ev.srcData.data,
+    div = this.getTargetItemDiv(ev.uiEvent),
+    dropFolder = this.getItemFromElement(div);
+
+  if (ev.action == DwtDropEvent.DRAG_ENTER) {
+    ev.doIt = (dropFolder && (dropFolder.toString() === "DavResource") && (dropFolder.isDirectory()));
+    this.dragSelect(div);
+  } else if (ev.action == DwtDropEvent.DRAG_DROP) {
+    this.dragDeselect(div);
+    ocApp._handleDropOnFolder(data, dropFolder);
+  } else if (ev.action == DwtDropEvent.DRAG_LEAVE) {
+    view.dragDeselect(div);
+  } else if (ev.action == DwtDropEvent.DRAG_OP_CHANGED) {
+    // nothing
+  }
+};
+
+OwnCloudApp.prototype._handleDropOnFolder = function(resource, target) {
+  this._davConnector.move(
+    resource.getHref(),
+    target.getHref(),
+    false,
+    new AjxCallback(this, function() {
+      console.log(arguments);
+    }),
+    new AjxCallback(this, function() {
+      console.log(arguments);
+    })
+  );
 };
