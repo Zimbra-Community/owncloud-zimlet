@@ -17,7 +17,9 @@ cp !(zal*).jar /opt/zimbra/lib/ext/ownCloud/
 cp *.jar /opt/zimbra/lib/ext/ownCloud/
 
 echo "  Deploying zimlet..."
-su - zimbra -c "zmzimletctl deploy $(pwd)/tk_barrydegraaff_owncloud_zimlet.zip"
+cp -f tk_barrydegraaff_owncloud_zimlet.zip /tmp
+su - zimbra -c "zmzimletctl deploy /tmp/tk_barrydegraaff_owncloud_zimlet.zip"
 su - zimbra -c "zmprov fc all"
+rm -Rf /tmp/tk_barrydegraaff_owncloud_zimlet.zip
 
 echo -e "\n\n  Extension jar and zimlet deployed, restart your mailbox server to load the extension.\n\n"
