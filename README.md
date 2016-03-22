@@ -54,10 +54,10 @@ Restart your mailbox to let the extension to be loaded:
 
 	[zimbra@server zimbra]$ zmmailboxdctl restart
 
-### Do you backup using zmmailbox tgz? Please be advised of proxy problems
+Configure your proxy:
 
-I am sorry to inform you that exporting tgz files is considered broken by Zimbra: [https://bugzilla.zimbra.com/show_bug.cgi?id=101760](https://bugzilla.zimbra.com/show_bug.cgi?id=101760). 
-Installing the proxy may break the tgz export feature a bit more, it is advised you bypass the proxy when using zmmailbox. Please see: [https://bugzilla.zimbra.com/show_bug.cgi?id=101760#c11](https://bugzilla.zimbra.com/show_bug.cgi?id=101760#c11)
+	[zimbra@server zimbra]$ zmprov mc default +zimbraProxyAllowedDomains your-owncloud-server.com
+
 
 ========================================================================
 
