@@ -11,6 +11,7 @@ function OwnCloudListView(
   parent,
   appName,
   ocZimletApp,
+  davConnector,
   ocCommons,
   onFolderSelectedCbk
 ) {
@@ -21,6 +22,7 @@ function OwnCloudListView(
 
   this._appName = appName;
   this._ocZimletApp = ocZimletApp;
+  this._davConnector = davConnector;
   this._ocCommons = ocCommons;
   this._onFolderSelectedCbk = onFolderSelectedCbk;
   this._listeners = {};
@@ -31,6 +33,9 @@ function OwnCloudListView(
   this._listeners[ZmOperation.SEND_FILE]			  = this._sendFileListener.bind(this);
   this._listeners[ZmOperation.SEND_FILE_AS_ATT]	= this._sendFileAsAttachmentListener.bind(this);
   this._listeners[ZmOperation.OPEN_IN_OWNCLOUD]	= this._openInOwnCloudListener.bind(this);
+  this._listeners[ZmOperation.DELETE]	= this._deleteListener.bind(this);
+  this._listeners[ZmOperation.RENAME_FILE]	= this._renameFileListener.bind(this);
+  this._listeners[ZmOperation.RENAME_FOLDER]	= this._renameFolderListener.bind(this);
 
   this.addActionListener(new AjxListener(this, this._listActionListener));
   this.addSelectionListener(new AjxListener(this, this._onItemSelected));
@@ -134,30 +139,50 @@ OwnCloudListView.prototype._getCellContents = function (htmlArr, idx, item, fiel
   return idx;
 };
 
-OwnCloudListView.prototype._resetOperations = function (parent, num) {
-  var resources = this.getSelection(), // returns DavResource[]
-    directoriesInvolved = false,
+OwnCloudListView.prototype._resetOperations = function (parent, resource, resources) {
+  var directoriesInvolved = false,
+    operations = this._getActionMenuOps(),
+    operationsEnabled = [],
+    menuItem,
     i;
 
-  for (i = 0; i<  resources.length; i += 1) {
+  parent.enableAll(false);
+  parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(false);
+  parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(false);
+
+  for (i = 0; i <  resources.length; i += 1) {
     if (resources[i].isDirectory()) {
       directoriesInvolved = true;
+      break;
     }
   }
 
-  parent.enable([
+  operationsEnabled = [
     ZmOperation.SEND_FILE,
     ZmOperation.SEND_FILE_AS_ATT,
-    ZmOperation.OPEN_IN_OWNCLOUD
-  ], true);
+    ZmOperation.OPEN_IN_OWNCLOUD,
+    ZmOperation.DELETE
+  ];
 
-  if (directoriesInvolved || num > 1) {
+  if (resources.length === 1) {
+    if (resource.isDirectory()) {
+      operationsEnabled.push(ZmOperation.RENAME_FOLDER);
+      parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(true);
+    } else {
+      operationsEnabled.push(ZmOperation.RENAME_FILE);
+      parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(true);
+    }
+  }
+
+  parent.enable(operationsEnabled, true);
+
+  if (directoriesInvolved || resources.length > 1) {
     parent.enable([
       ZmOperation.SEND_FILE_AS_ATT
     ], false);
   }
 
-  if (num > 1) {
+  if (resources.length > 1) {
     parent.enable([
       ZmOperation.OPEN_IN_OWNCLOUD
     ], false);
@@ -165,19 +190,19 @@ OwnCloudListView.prototype._resetOperations = function (parent, num) {
 };
 
 OwnCloudListView.prototype._listActionListener = function (ev) {
-  var actionMenu = this.getActionMenu();
-  this._resetOperations(actionMenu, this.getSelectionCount());
+  var actionMenu = this.getActionMenu(ev.item, this.getSelection());
+  this._resetOperations(actionMenu, ev.item, this.getSelection());
   actionMenu.popup(0, ev.docX, ev.docY);
   // if (ev.ersatz) {
   //   actionMenu.setSelectedItem(0); // menu popped up via keyboard nav
   // }
 };
 
-OwnCloudListView.prototype.getActionMenu = function () {
+OwnCloudListView.prototype.getActionMenu = function (resource, resources) {
   if (!this._actionMenu) {
     this._initializeActionMenu();
     //DBG.timePt("_initializeActionMenu");
-    this._resetOperations(this._actionMenu, 0);
+    this._resetOperations(this._actionMenu, resource, resources);
     //DBG.timePt("this._resetOperation(actionMenu)");
   }
   return this._actionMenu;
@@ -219,17 +244,15 @@ OwnCloudListView.prototype._addMenuListeners = function (menu) {
 };
 
 OwnCloudListView.prototype._getActionMenuOps = function() {
-  var list = [
-    // ZmOperation.OPEN_FILE,
-    // ZmOperation.SAVE_FILE,
-    // ZmOperation.EDIT_FILE,
+  return [
+    ZmOperation.RENAME_FILE,
+    ZmOperation.RENAME_FOLDER,
+    ZmOperation.DELETE,
+    ZmOperation.SEP,
     ZmOperation.SEND_FILE,
     ZmOperation.SEND_FILE_AS_ATT,
     ZmOperation.OPEN_IN_OWNCLOUD
   ];
-
-  // list.push(ZmOperation.SEP);
-  return list;
 };
 
 OwnCloudListView.prototype._sendFileListener = function(ev) {
@@ -316,3 +339,104 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
     }
   }
 };
+
+OwnCloudListView.prototype._deleteListener = function() {
+  // console.log(arguments);
+};
+
+OwnCloudListView.prototype._renameFileListener = function() {
+  var renameFileDialog = new DwtDialog({parent: appCtxt.getShell()}),
+    folder = this.getSelection()[0],
+    composite = new DwtComposite({ parent: renameFileDialog }),
+    label,
+    input;
+
+  renameFileDialog.setView(composite);
+
+  label = new DwtLabel({
+    parent: composite
+  });
+  label.setText(ZmMsg.newName + ":");
+
+  input = new DwtInputField({
+    parent: composite,
+    hint: folder.getName()
+  });
+  renameFileDialog.setTitle(ZmMsg.rename + ": " + folder.getName());
+  renameFileDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._renameFileCallback, [folder, input, renameFileDialog]));
+  renameFileDialog.addEnterListener(new AjxListener(this, this._renameFileCallback, [folder, input, renameFileDialog]));
+  renameFileDialog.popup();
+};
+
+OwnCloudListView.prototype._renameFileCallback = function(file, input, dialog, ev) {
+  if (input.getValue() === file.getName()) { return; }
+  dialog.getButton(DwtDialog.OK_BUTTON).setEnabled(false);
+  dialog.getButton(DwtDialog.CANCEL_BUTTON).setEnabled(false);
+
+  this._davConnector.move(
+    file.getHref(),
+    file.getPath() + "/" + input.getValue(),
+    false,
+    new AjxCallback(this, function(dialog, result) {
+      dialog.popdown();
+      if (result === true) {
+
+      } else {
+        // console.log(arguments);
+      }
+    }, [dialog]),
+    new AjxCallback(this, function(dialog) {
+      dialog.popdown();
+      // console.log(arguments);
+    }, [dialog])
+  );
+};
+
+OwnCloudListView.prototype._renameFolderListener = function(ev) {
+  var renameFolderDialog = new DwtDialog({parent: appCtxt.getShell()}),
+    folder = this.getSelection()[0],
+    composite = new DwtComposite({ parent: renameFolderDialog }),
+    label,
+    input;
+
+  renameFolderDialog.setView(composite);
+
+  label = new DwtLabel({
+    parent: composite
+  });
+  label.setText(ZmMsg.newName + ":");
+
+  input = new DwtInputField({
+    parent: composite,
+    hint: folder.getName()
+  });
+  renameFolderDialog.setTitle(ZmMsg.renameFolder + ": " + folder.getName());
+  renameFolderDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._renameFolderCallback, [folder, input, renameFolderDialog]));
+  renameFolderDialog.addEnterListener(new AjxListener(this, this._renameFolderCallback, [folder, input, renameFolderDialog]));
+  renameFolderDialog.popup();
+};
+
+OwnCloudListView.prototype._renameFolderCallback = function(folder, input, dialog, ev) {
+  if (input.getValue() === folder.getName()) { return; }
+  dialog.getButton(DwtDialog.OK_BUTTON).setEnabled(false);
+  dialog.getButton(DwtDialog.CANCEL_BUTTON).setEnabled(false);
+
+  this._davConnector.move(
+    folder.getHref(),
+    folder.getPath() + "/" + input.getValue() + "/",
+    false,
+    new AjxCallback(this, function(dialog, result) {
+      dialog.popdown();
+      if (result === true) {
+
+      } else {
+        // console.log(arguments);
+      }
+    }, [dialog]),
+    new AjxCallback(this, function(dialog) {
+      dialog.popdown();
+      // console.log(arguments);
+    }, [dialog])
+  );
+};
+
