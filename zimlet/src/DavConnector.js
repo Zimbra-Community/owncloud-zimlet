@@ -20,6 +20,7 @@
     COPY: 'COPY',
     DELETE: 'DELETE',
     GET: 'GET',
+    GET_LINK: 'GET_LINK',
     MKCOL: 'MKCOL',
     MOVE: 'MOVE',
     PROPFIND: 'PROPFIND',
@@ -265,6 +266,19 @@
   };
 
   /**
+   * Create a temporary link to download a file.
+   * Retrieve a temporary link to start the download a resource.
+   * @param {string} path
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
+   */
+  DavConnector.prototype.getDownloadLink = function(path, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+    soapDoc.set('path', path);
+    DavConnector._sendRequest(DavAction.GET_LINK, soapDoc, callback, errorCallback);
+  };
+
+  /**
    * Perform a MKCOL request
    * Create a collection
    * @param {string} path
@@ -394,6 +408,9 @@
     {
       callback.run(response[action]);
     } else if (action === DavAction.GET)
+    {
+      callback.run(response[action]);
+    } else if (action === DavAction.GET_LINK)
     {
       callback.run(response[action]);
     }

@@ -7,10 +7,6 @@ import com.github.sardine.SardineFactory;
 import com.github.sardine.impl.SardineException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.openzal.zal.Item;
-import org.openzal.zal.MailItemType;
-import org.openzal.zal.Mailbox;
-import org.openzal.zal.MailboxManager;
 
 import javax.xml.namespace.QName;
 import java.io.BufferedReader;
@@ -117,6 +113,18 @@ public class DavSoapConnector
     }
     inputStream.close();
     return sb;
+  }
+
+  /**
+   * Perform a GET request and return the content as stream.
+   * Retrieve the contents of a resource.
+   * @param path The resource path.
+   * @return The content of the file, inside a StringBuilder.
+   * @throws IOException
+   */
+  public InputStream getAsStream(String path) throws IOException
+  {
+    return mSardine.get(buildUrl(path));
   }
 
   /**

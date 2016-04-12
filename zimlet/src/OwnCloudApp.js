@@ -8,9 +8,6 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
 
   this._currentPath = "/";
 
-  dragSource = new DwtDragSource(Dwt.DND_DROP_MOVE);
-  dropTarget = new DwtDropTarget("DavResource");
-
   var overView = app.getOverview(),
     toolbar = app.getToolbar(),
     treeView,

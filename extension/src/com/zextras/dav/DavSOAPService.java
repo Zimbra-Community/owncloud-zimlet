@@ -20,11 +20,11 @@ public class DavSOAPService implements SoapService
    */
   private final HashMap<QName, SoapHandler> mServiceMap;
 
-  public DavSOAPService(final Provisioning provisioning)
+  public DavSOAPService(final Provisioning provisioning, final Map<String, DownloadJob> downloadJobMap)
   {
     mServiceMap = new HashMap<QName, SoapHandler>()
     {{
-      put(DavSOAPHandler.REQUEST_QNAME, new DavSOAPHandler(provisioning));
+      put(DavSOAPHandler.REQUEST_QNAME, new DavSOAPHandler(provisioning, downloadJobMap));
     }};
   }
 

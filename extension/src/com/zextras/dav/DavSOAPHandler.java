@@ -24,10 +24,12 @@ public class DavSOAPHandler implements SoapHandler
   public static final QName REQUEST_QNAME = new QName("davSoapConnector", NAMESPACE);
 
   private final Provisioning mProvisioning;
+  private final Map<String, DownloadJob> mDownloadJobMap;
 
-  public DavSOAPHandler(Provisioning provisioning)
+  public DavSOAPHandler(Provisioning provisioning, Map<String, DownloadJob> downloadJobMap)
   {
     mProvisioning = provisioning;
+    mDownloadJobMap = downloadJobMap;
   }
 
   /**
@@ -112,13 +114,30 @@ public class DavSOAPHandler implements SoapHandler
         case GET:
           {
             soapResponse.setValue(
-              "GET",
+              command.name(),
               connector.get(
                 zimbraContext.getParameter("path", "/")
               ).toString()
             );
           }
           break;
+        case GET_LINK:
+        {
+          DownloadJob job = new DownloadJob(
+            connector,
+            zimbraContext.getParameter("path", "/")
+          );
+          while (mDownloadJobMap.containsKey(job.getToken()))
+          {
+            job.regenerateToken();
+          }
+          mDownloadJobMap.put(job.getToken(), job);
+          soapResponse.setValue(
+            command.name(),
+            job.getDownloadUrl()
+          );
+        }
+        break;
         case PUT:
           {
             if (path == null)

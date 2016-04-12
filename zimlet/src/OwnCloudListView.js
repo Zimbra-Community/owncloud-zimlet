@@ -33,9 +33,10 @@ function OwnCloudListView(
   this._listeners[ZmOperation.SEND_FILE]			  = this._sendFileListener.bind(this);
   this._listeners[ZmOperation.SEND_FILE_AS_ATT]	= this._sendFileAsAttachmentListener.bind(this);
   this._listeners[ZmOperation.OPEN_IN_OWNCLOUD]	= this._openInOwnCloudListener.bind(this);
-  this._listeners[ZmOperation.DELETE]	= this._deleteListener.bind(this);
-  this._listeners[ZmOperation.RENAME_FILE]	= this._renameFileListener.bind(this);
-  this._listeners[ZmOperation.RENAME_FOLDER]	= this._renameFolderListener.bind(this);
+  this._listeners[ZmOperation.DELETE] = this._deleteListener.bind(this);
+  this._listeners[ZmOperation.RENAME_FILE] = this._renameFileListener.bind(this);
+  this._listeners[ZmOperation.RENAME_FOLDER] = this._renameFolderListener.bind(this);
+  this._listeners[ZmOperation.SAVE_FILE] = this._saveFileListener.bind(this);
 
   this.addActionListener(new AjxListener(this, this._listActionListener));
   this.addSelectionListener(new AjxListener(this, this._onItemSelected));
@@ -149,6 +150,7 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   parent.enableAll(false);
   parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(false);
   parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(false);
+  parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(false);
 
   for (i = 0; i <  resources.length; i += 1) {
     if (resources[i].isDirectory()) {
@@ -170,7 +172,9 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
       parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(true);
     } else {
       operationsEnabled.push(ZmOperation.RENAME_FILE);
+      operationsEnabled.push(ZmOperation.SAVE_FILE);
       parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(true);
+      parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(true);
     }
   }
 
@@ -245,6 +249,7 @@ OwnCloudListView.prototype._addMenuListeners = function (menu) {
 
 OwnCloudListView.prototype._getActionMenuOps = function() {
   return [
+    ZmOperation.SAVE_FILE,
     ZmOperation.RENAME_FILE,
     ZmOperation.RENAME_FOLDER,
     ZmOperation.DELETE,
@@ -338,6 +343,19 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
       // TODO: Handle the case of a double click on a file.
     }
   }
+};
+
+OwnCloudListView.prototype._saveFileListener = function(ev) {
+  var davResource = this.getSelection()[0];
+
+  this._davConnector.getDownloadLink(
+    davResource.getHref(),
+    (function(_this, davResource) {
+      return function(token) {
+        _this.downloadFromLink(davResource, token);
+      };
+    }(this, davResource))
+  );
 };
 
 OwnCloudListView.prototype._deleteListener = function() {
@@ -438,5 +456,32 @@ OwnCloudListView.prototype._renameFolderCallback = function(folder, input, dialo
       // console.log(arguments);
     }, [dialog])
   );
+};
+
+OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
+  var href = token + "&name=" + davResource.getName() + "&contentType=" + davResource.getContentType();
+  if (typeof console !== "undefined" && typeof console.log !== "undefined")
+    console.log("Download: " + href);
+
+  // for non-IE
+  if (typeof window.ActiveXObject === "undefined") {
+    var save = document.createElement("a");
+    save.href = href;
+    save.target = "_blank";
+    save.download = davResource.getName();
+
+    var event = document.createEvent("MouseEvents");
+    event.initEvent("click", true, true);
+    save.dispatchEvent(event);
+    (window.URL || window.webkitURL).revokeObjectURL(save.href);
+  }
+  // for IE
+  else if ( !! window.ActiveXObject && document.execCommand)     {
+    var _window = window.open(href, "_blank");
+    _window.document.close();
+    _window.document.execCommand("SaveAs", true, davResource.getName());
+    _window.close();
+  }
+
 };
 
