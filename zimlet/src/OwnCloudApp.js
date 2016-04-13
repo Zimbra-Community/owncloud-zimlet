@@ -30,6 +30,10 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
   dropTarget.addDropListener(new AjxListener(treeView, OwnCloudApp._dropListener, [this]));
   treeView.setDropTarget(dropTarget);
 
+  // Create toolbar buttons
+  toolbar.createButton(ZmOperation.NEW_FILE, {text: ZmMsg.uploadDocs});
+  toolbar.addSelectionListener(ZmOperation.NEW_FILE, new AjxListener(this, this._uploadBtnLsnr));
+
   this._parentTreeItem = new DwtHeaderTreeItem({
     parent: treeView,
     text: ZmMsg.folders,
@@ -240,7 +244,7 @@ OwnCloudApp.prototype.openResourceInBrowser = function(resources) {
  * @param {DwtTreeItem} parent
  * @param {string} baseRef
  * @param {string[]} path
- * @returns {DavResource}
+ * @returns {DwtTreeItem}
  * @private
  */
 OwnCloudApp.prototype._getFolderByHref = function(parent, baseRef, path) {
@@ -248,6 +252,10 @@ OwnCloudApp.prototype._getFolderByHref = function(parent, baseRef, path) {
     currentName = path.shift(),
     data,
     i;
+
+  if (parent.getData("DavResource").getHref() === baseRef) {
+    return parent;
+  }
 
   for (i = 0; i < children.length; i += 1) {
     data = children[i].getData('DavResource');
@@ -343,5 +351,14 @@ OwnCloudApp.prototype.refreshView = function () {
       this,
       this._showFolderData
     )
+  );
+};
+
+OwnCloudApp.prototype._uploadBtnLsnr = function(ev) {
+  var dialog = new UploadToDavDialog(appCtxt.getShell());
+
+  dialog.popup(
+    this._currentPath,
+    new AjxCallback(this, this.refreshView)
   );
 };

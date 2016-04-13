@@ -36,6 +36,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
     <include>OwnCloudListView.js</include>
     <include>OwnCloudTabView.js</include>
     <include>OwnCloudTreeController.js</include>
+    <include>UploadToDavDialog.js</include>
     <include>tk_barrydegraaff_owncloud_zimlet.js</include>
     <include>mime.js</include>
     <include>ZmOwnCloudController.js</include>

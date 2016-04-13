@@ -24,7 +24,8 @@ public class DownloadHandler implements HttpHandler
   public void doGet(
     HttpServletRequest httpServletRequest,
     HttpServletResponse httpServletResponse
-  ) throws ServletException, IOException
+  )
+    throws ServletException, IOException
   {
     Map<String, String> paramsMap = new HashMap<String, String>();
 
@@ -68,11 +69,13 @@ public class DownloadHandler implements HttpHandler
   }
 
   @Override
-  public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException
+  public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+    throws ServletException, IOException
   {}
 
   @Override
-  public void doOptions(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException
+  public void doOptions(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+    throws ServletException, IOException
   {}
 
   @Override

@@ -232,6 +232,30 @@ public class DavSoapConnector
    * Save the contents of a resource to the server.
    * @param path
    * @param inputStream
+   * @throws IOException
+   */
+  public DavStatus put(String path, InputStream inputStream)
+    throws IOException
+  {
+    try
+    {
+      mSardine.put(
+        buildUrl(path),
+        inputStream
+      );
+    }
+    catch (SardineException se)
+    {
+      return DavStatus.fromCode(se.getStatusCode());
+    }
+    return DavStatus.Created;
+  }
+
+  /**
+   * Perform a PUT request.
+   * Save the contents of a resource to the server.
+   * @param path
+   * @param inputStream
    * @param contentType
    * @throws IOException
    */

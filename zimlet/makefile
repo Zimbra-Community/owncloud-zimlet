@@ -13,6 +13,7 @@ zimlet: clean
 		src/OwnCloudTabView.js \
 		src/OwnCloudTreeController.js \
 		tk_barrydegraaff_owncloud_zimlet.css \
+		src/UploadToDavDialog.js \
 		src/ZmOwnCloudController.js \
 		config_template.xml \
 		assets/*.* \
