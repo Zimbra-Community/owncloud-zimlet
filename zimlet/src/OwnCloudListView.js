@@ -340,26 +340,47 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
         this._onFolderSelectedCbk.run(item);
       }
     } else {
-      // TODO: Handle the case of a double click on a file.
+      this._saveFileListener(ev);
     }
   }
 };
 
 OwnCloudListView.prototype._saveFileListener = function(ev) {
   var davResource = this.getSelection()[0];
-
   this._davConnector.getDownloadLink(
     davResource.getHref(),
-    (function(_this, davResource) {
-      return function(token) {
-        _this.downloadFromLink(davResource, token);
-      };
-    }(this, davResource))
+    new AjxCallback(this, this.downloadFromLink, [davResource])
   );
 };
 
-OwnCloudListView.prototype._deleteListener = function() {
-  // console.log(arguments);
+OwnCloudListView.prototype._deleteListener = function(ev) {
+  var davResource = this.getSelection()[0],
+    deleteDialog = new DwtMessageDialog({
+      parent: appCtxt.getShell(),
+      buttons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]
+    });
+  deleteDialog.setMessage(
+    "Are you sure you want to delete " + davResource.getName() + " ?",
+    DwtMessageDialog.WARNING_STYLE,
+    ZmMsg.remove + " " + davResource.getName()
+  );
+  deleteDialog.setButtonListener(DwtDialog.YES_BUTTON, new AjxListener(this, this._deleteCallback, [davResource, deleteDialog]));
+  deleteDialog.addEnterListener(new AjxListener(this, this._deleteCallback, [davResource, deleteDialog]));
+  deleteDialog.popup();
+};
+
+OwnCloudListView.prototype._deleteCallback = function(davResource, dialog) {
+  this._davConnector.rm(
+    davResource.getHref(),
+    new AjxCallback(this, function(davResource, dialog, response) {
+      dialog.popdown();
+      this.refreshView();
+    }, [davResource, dialog]),
+    new AjxCallback(this, function(davResource, dialog, response) {
+      dialog.popdown();
+      this.refreshView();
+    }, [davResource, dialog])
+  );
 };
 
 OwnCloudListView.prototype._renameFileListener = function() {
@@ -397,15 +418,14 @@ OwnCloudListView.prototype._renameFileCallback = function(file, input, dialog, e
     false,
     new AjxCallback(this, function(dialog, result) {
       dialog.popdown();
+      this.refreshView();
       if (result === true) {
-
       } else {
-        // console.log(arguments);
       }
     }, [dialog]),
     new AjxCallback(this, function(dialog) {
       dialog.popdown();
-      // console.log(arguments);
+      this.refreshView();
     }, [dialog])
   );
 };
@@ -446,7 +466,7 @@ OwnCloudListView.prototype._renameFolderCallback = function(folder, input, dialo
     new AjxCallback(this, function(dialog, result) {
       dialog.popdown();
       if (result === true) {
-
+        this.refreshView();
       } else {
         // console.log(arguments);
       }
@@ -485,3 +505,6 @@ OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
 
 };
 
+OwnCloudListView.prototype.refreshView = function () {
+
+};
