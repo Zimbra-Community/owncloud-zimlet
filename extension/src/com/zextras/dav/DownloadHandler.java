@@ -59,9 +59,9 @@ public class DownloadHandler implements HttpHandler
           }
         } finally
         {
+          mDownloadJobMap.remove(job.getToken());
           outputStream.flush();
           fileStream.close();
-          mDownloadJobMap.remove(job.getToken());
         }
       }
     }
