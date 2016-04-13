@@ -323,14 +323,25 @@ OwnCloudApp.prototype._handleDropOnFolder = function(resource, target) {
     target.getHref() + resource.getName(),
     false,
     new AjxCallback(this, function(result) {
+      this.refreshView();
       if (result === true) {
-
       } else {
-        // console.log(arguments);
       }
     }),
     new AjxCallback(this, function() {
-      // console.log(arguments);
+      this.refreshView();
     })
+  );
+};
+
+
+OwnCloudApp.prototype.refreshView = function () {
+  this._initTree(
+    this._currentPath,
+    this._getFolderByHref(this._parentTreeItem, this._currentPath, this._currentPath.split("/")),
+    new AjxCallback(
+      this,
+      this._showFolderData
+    )
   );
 };

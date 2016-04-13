@@ -374,11 +374,11 @@ OwnCloudListView.prototype._deleteCallback = function(davResource, dialog) {
     davResource.getHref(),
     new AjxCallback(this, function(davResource, dialog, response) {
       dialog.popdown();
-      this.refreshView();
+      this._ocZimletApp.refreshView();
     }, [davResource, dialog]),
     new AjxCallback(this, function(davResource, dialog, response) {
       dialog.popdown();
-      this.refreshView();
+      this._ocZimletApp.refreshView();
     }, [davResource, dialog])
   );
 };
@@ -418,14 +418,14 @@ OwnCloudListView.prototype._renameFileCallback = function(file, input, dialog, e
     false,
     new AjxCallback(this, function(dialog, result) {
       dialog.popdown();
-      this.refreshView();
+      this._ocZimletApp.refreshView();
       if (result === true) {
       } else {
       }
     }, [dialog]),
     new AjxCallback(this, function(dialog) {
       dialog.popdown();
-      this.refreshView();
+      this._ocZimletApp.refreshView();
     }, [dialog])
   );
 };
@@ -465,15 +465,14 @@ OwnCloudListView.prototype._renameFolderCallback = function(folder, input, dialo
     false,
     new AjxCallback(this, function(dialog, result) {
       dialog.popdown();
+      this._ocZimletApp.refreshView();
       if (result === true) {
-        this.refreshView();
       } else {
-        // console.log(arguments);
       }
     }, [dialog]),
     new AjxCallback(this, function(dialog) {
       dialog.popdown();
-      // console.log(arguments);
+      this._ocZimletApp.refreshView();
     }, [dialog])
   );
 };
@@ -502,9 +501,5 @@ OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
     _window.document.execCommand("SaveAs", true, davResource.getName());
     _window.close();
   }
-
-};
-
-OwnCloudListView.prototype.refreshView = function () {
 
 };
