@@ -30,13 +30,13 @@ function OwnCloudListView(
   this.createHeaderHtml(ZmItem.F_NAME);
   this.setSize("100%", "100%");
 
-  this._listeners[ZmOperation.SEND_FILE]			  = this._sendFileListener.bind(this);
-  this._listeners[ZmOperation.SEND_FILE_AS_ATT]	= this._sendFileAsAttachmentListener.bind(this);
-  this._listeners[ZmOperation.OPEN_IN_OWNCLOUD]	= this._openInOwnCloudListener.bind(this);
-  this._listeners[ZmOperation.DELETE] = this._deleteListener.bind(this);
-  this._listeners[ZmOperation.RENAME_FILE] = this._renameFileListener.bind(this);
-  this._listeners[ZmOperation.RENAME_FOLDER] = this._renameFolderListener.bind(this);
-  this._listeners[ZmOperation.SAVE_FILE] = this._saveFileListener.bind(this);
+  this._listeners[ZmOperation.SEND_FILE]			  = (function(_this) { return function() {_this._sendFileListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.SEND_FILE_AS_ATT]	= (function(_this) { return function() {_this._sendFileAsAttachmentListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.OPEN_IN_OWNCLOUD]	= (function(_this) { return function() {_this._openInOwnCloudListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.DELETE]           = (function(_this) { return function() {_this._deleteListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.RENAME_FILE]      = (function(_this) { return function() {_this._renameFileListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.RENAME_FOLDER]    = (function(_this) { return function() {_this._renameFolderListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.SAVE_FILE]        = (function(_this) { return function() {_this._saveFileListener.apply(_this, arguments); }; })(this);
 
   this.addActionListener(new AjxListener(this, this._listActionListener));
   this.addSelectionListener(new AjxListener(this, this._onItemSelected));
