@@ -587,7 +587,7 @@ function(id, title, message) {
    switch(id) {
    case 1:
       //Default dialog
-      this._dialog = new ZmDialog( { title:title, parent:zimletInstance.getShell(), standardButtons:[DwtDialog.OK_BUTTON,DwtDialog.CANCEL_BUTTON], disposeOnPopDown:true } );
+      zimletInstance._dialog = new ZmDialog( { title:title, parent:zimletInstance.getShell(), standardButtons:[DwtDialog.OK_BUTTON,DwtDialog.CANCEL_BUTTON], disposeOnPopDown:true } );
       var username = appCtxt.getActiveAccount().name.match(/.*@/);
       username = username[0].replace('@','');
       html = "<div id=\"ownCloudZimletPrefDescr\"></div><div id='ownCloudZimletPref' style='width:500px; height: 500px; overflow:scroll'>To store an email or attachment in ownCloud, drag it onto the ownCloud icon.<br><br><table>"+      
