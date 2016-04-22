@@ -928,9 +928,11 @@ function(attachmentDlg)
    if(document.getElementById('shareType').value == 'attach')
    {
       var attBubble = document.getElementsByClassName("attBubbleContainer");
-      attBubble[0].style.backgroundImage = 'url(\'/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/progressround.gif\')';
-      attBubble[0].style.backgroundRepeat = "no-repeat";
-      attBubble[0].style.backgroundPosition = "right";    
+      for (var index = 0; index < attBubble.length; index++) {
+         attBubble[index].style.backgroundImage = 'url(\'/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/progressround.gif\')';
+         attBubble[index].style.backgroundRepeat = "no-repeat";
+         attBubble[index].style.backgroundPosition = "right";    
+      }   
       
       if (ownCloudSelect[0])
       {
@@ -988,7 +990,9 @@ function(attachmentDlg)
          }
    
          var attBubble = document.getElementsByClassName("attBubbleContainer");
-         attBubble[0].style.backgroundImage = 'url(\'\')';
+         for (var index = 0; index < attBubble.length; index++) {
+            attBubble[index].style.backgroundImage = 'url(\'\')';
+         }   
       }
    }
    else
