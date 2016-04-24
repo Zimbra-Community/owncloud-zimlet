@@ -612,6 +612,8 @@ function(id, title, message) {
       break;
    }
    zimletInstance._dialog._setAllowSelection();
+   document.getElementById(zimletInstance._dialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';
+   document.getElementById(zimletInstance._dialog.__internalId+'_title').style.textAlign = 'center';   
    zimletInstance._dialog.popup();
 };
 
