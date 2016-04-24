@@ -140,6 +140,7 @@ function(name, url) {
    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
    {
       this.displayDialog(1, 'Preferences', null);
+      return;
    }
 
    var client = new davlib.DavClient();
