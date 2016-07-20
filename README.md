@@ -9,7 +9,7 @@ Demo video:
 
 User manual : 
 
-Integrating ownCloud in Zimbra Collaboration Suite, currently tested on:
+Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9 and:
 - Windows: Internet Explorer 11, Microsoft Edge, Google Chrome, Firefox
 - Linux: Google Chrome, Firefox
 
@@ -19,11 +19,15 @@ This Zimlet is not available for use in Zimbra Desktop.
 
 Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
+Report security issues to barrydg@zetalliance.org (PGP fingerprint: 9e0e165f06b365ee1e47683e20f37303c20703f8)
+
+Stay up-to-date: new releases are announced on the users mailing list: http://lists.zetalliance.org/mailman/listinfo/users_lists.zetalliance.org
+
 ========================================================================
 
 ### Install prerequisites
-  - A running Zimbra server with Zimbra Proxy
-  - A running ownCloud server
+  - A running Zimbra server
+  - A running WebDAV server (for example ownCloud/Nextcloud)
 
 ### Build the ownCloud Extension and Zimlet
 The recommended method is to build from sources.

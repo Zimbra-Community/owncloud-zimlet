@@ -302,7 +302,7 @@ ownCloudZimlet.prototype._propfindShowAttDlgCbk =
  */
 ownCloudZimlet.prototype.doubleClicked =
   function() {
-    this._openOwnCloudTab();
+    this.displayDialog(1, 'Preferences', null);
   };
 
 /**
@@ -310,7 +310,7 @@ ownCloudZimlet.prototype.doubleClicked =
  */
 ownCloudZimlet.prototype.singleClicked =
   function() {
-     this._openOwnCloudTab();
+     this.displayDialog(1, 'Preferences', null);
   };
 
 /**
