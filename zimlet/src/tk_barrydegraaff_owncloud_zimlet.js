@@ -91,7 +91,7 @@ ownCloudZimlet.prototype.init =
     tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");
 
     try {
-      this.ownCloudTab = this.createApp("ownCloud", "", "ownCloud");
+      this.ownCloudTab = this.createApp("WebDAV", "", "WebDAV");
     } catch (err) { }
 
     if (appCtxt.get(ZmSetting.MAIL_ENABLED)) {
@@ -131,7 +131,7 @@ ownCloudZimlet.prototype.addAttachmentHandler =
 
     for (mimeType in ZmMimeTable._table) {
       if (!ZmMimeTable._table.hasOwnProperty(tmpMime)) { continue; }
-      this._msgController._listView[viewType].addAttachmentLinkHandler(mimeType, "ownCloud", tk_barrydegraaff_owncloud_zimlet_HandlerObject._addOwnCloudLink);
+      this._msgController._listView[viewType].addAttachmentLinkHandler(mimeType, "WebDAV", tk_barrydegraaff_owncloud_zimlet_HandlerObject._addOwnCloudLink);
     }
   };
 
@@ -147,7 +147,7 @@ ownCloudZimlet._addOwnCloudLink =
       "onClick=\"" +
       "window.tk_barrydegraaff_owncloud_zimlet_HandlerObject.saveAttachment('" + attachment.mid + "','" + attachment.part + "','" + attachment.label + "')" +
       "\">"+
-      "send to ownCloud" +
+      "send to WebDAV" +
       "</a>";
   };
 
@@ -206,7 +206,7 @@ ownCloudZimlet.prototype.saveAttachment =
  */
 ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
   function(mid, part, fileName) {
-    this.status('Sending \'' + fileName + '\' to ownCloud...', ZmStatusView.LEVEL_INFO);
+    this.status('Sending \'' + fileName + '\' to WebDAV...', ZmStatusView.LEVEL_INFO);
 
     this._davForZimbraConnector.sendMailAttachmentToDav(
       mid,
@@ -220,9 +220,9 @@ ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
 ownCloudZimlet.prototype._saveAttachmentOkCbk =
   function(mid, part, fileName, status) {
     if (status === 201) {
-      this.status('\'' + fileName + '\' sent to ownCloud', ZmStatusView.LEVEL_INFO);
+      this.status('\'' + fileName + '\' sent to WebDAV', ZmStatusView.LEVEL_INFO);
     } else {
-      this.status('\'' + fileName + '\' not sent ownCloud, error code: ' +  status, ZmStatusView.LEVEL_CRITICAL);
+      this.status('\'' + fileName + '\' not sent WebDAV, error code: ' +  status, ZmStatusView.LEVEL_CRITICAL);
     }
   };
 
@@ -241,7 +241,7 @@ ownCloudZimlet.prototype.initializeAttachPopup =
         _this.showAttachmentDialog()
       }
     })(this);
-    controller._createAttachMenuItem(menu, 'ownCloud', callback, "ATTACH_MENU_OWNCLOUD");
+    controller._createAttachMenuItem(menu, 'WebDAV', callback, "ATTACH_MENU_OWNCLOUD");
   };
 
 /**
@@ -262,7 +262,7 @@ ownCloudZimlet.prototype.removePrevAttDialogContent =
 ownCloudZimlet.prototype.showAttachmentDialog =
   function() {
     var attachDialog = this._attachDialog = appCtxt.getAttachDialog();
-    attachDialog.setTitle('Attach from ownCloud');
+    attachDialog.setTitle('Attach from WebDAV');
     this.removePrevAttDialogContent(attachDialog._getContentDiv().firstChild);
 
     if (!this.AttachContactsView || !this.AttachContactsView.attachDialog){
@@ -352,9 +352,9 @@ ownCloudZimlet.prototype._onDropTransfer =
   function(zmItem, status) {
     var name = this._getItemNameByType(zmItem);
     if (status === 201) {
-      this.status(name + ' sent to ownCloud', ZmStatusView.LEVEL_INFO);
+      this.status(name + ' sent to WebDAV', ZmStatusView.LEVEL_INFO);
     } else {
-      this.status(name + ' not sent ownCloud, error code: ' +  status, ZmStatusView.LEVEL_CRITICAL);
+      this.status(name + ' not sent WebDAV, error code: ' +  status, ZmStatusView.LEVEL_CRITICAL);
     }
   };
 
@@ -415,7 +415,7 @@ ownCloudZimlet.prototype._doDropPropfindCbk =
       } else if (tmpObj.type === 'TASK') {
         type = 'TASK';
       }
-      this.status('Sending ' + this._getItemNameByType(tmpObj) + ' to ownCloud...', ZmStatusView.LEVEL_INFO);
+      this.status('Sending ' + this._getItemNameByType(tmpObj) + ' to WebDAV...', ZmStatusView.LEVEL_INFO);
       this._davForZimbraConnector.sendItemToDav(
         type,
         id,
@@ -555,7 +555,7 @@ ownCloudZimlet.prototype.displayDialog =
           html,
           serverName = location.protocol + '//' + location.hostname;
         username = username[0].replace('@','');
-        html = "<div style='width:500px; height: 200px;'>To store an email or attachment in ownCloud, drag it onto the ownCloud icon.<br><br>" +
+        html = "<div style='width:500px; height: 200px;'>You can drag and drop emails and attachments onto the WebDAV icon, to store them on your WebDAV server.<br><br>" +
           "<table>"+
           "<tr>" +
           "<td>Username:&nbsp;</td>" +
