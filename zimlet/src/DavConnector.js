@@ -88,11 +88,6 @@
     /** @private {string[]} */ this._contentLanguage = contentLanguage;
     /** @private {string[]} */ this._supportedReports = supportedReports;
     /** @private {{}} */ this._customProps = customProps;
-    // Normalize the href
-    if (href.indexOf('/remote.php/webdav/') > -1) {
-      this._href = href.substr(18);
-    }
-
     this._children = [];
   }
   DavResource.prototype = {};

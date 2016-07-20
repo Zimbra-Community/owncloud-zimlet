@@ -88,7 +88,7 @@ OwnCloudListView.prototype._getCellContents = function (htmlArr, idx, item, fiel
   if (field === ZmItem.F_TYPE) {
 
     if (item.isDirectory()) {
-      htmlArr[idx++] = AjxImg.getImageHtml("folder");
+      htmlArr[idx++] = AjxImg.getImageHtml("Folder");
     } else {
       var type = ZmMimeTable.getInfo(item.getContentType());
 
