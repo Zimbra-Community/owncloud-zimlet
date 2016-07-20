@@ -310,6 +310,7 @@ ownCloudZimlet.prototype.doubleClicked =
  */
 ownCloudZimlet.prototype.singleClicked =
   function() {
+     this._openOwnCloudTab();
   };
 
 /**
@@ -588,6 +589,8 @@ ownCloudZimlet.prototype.displayDialog =
         break;
     }
     this._dialog._setAllowSelection();
+    document.getElementById(this._dialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';
+    document.getElementById(this._dialog.__internalId+'_title').style.textAlign = 'center';
     this._dialog.popup();
   };
 
