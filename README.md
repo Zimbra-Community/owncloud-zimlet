@@ -1,23 +1,23 @@
-Zimbra ownCloud Zimlet
+Zimbra WebDAV Zimlet
 ==========
 
-If you find Zimbra ownCloud Zimlet useful and want to support its continued development, you can make donations via:
+If you find Zimbra WebDAV Zimlet useful and want to support its continued development, you can make donations via:
 - PayPal: info@barrydegraaff.tk
 - Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A
 
-Demo video: https://www.youtube.com/watch?v=gfVLE22kJ6o
+Demo video: 
 
-User manual : http://barrydegraaff.github.io/owncloud/
+User manual : 
 
 Integrating ownCloud in Zimbra Collaboration Suite, currently tested on:
 - Windows: Internet Explorer 11, Microsoft Edge, Google Chrome, Firefox
 - Linux: Google Chrome, Firefox
 
-This Zimlet is designed for Zimbra version 8.6.
+This Zimlet is designed for Zimbra version 8.7.
 
 This Zimlet is not available for use in Zimbra Desktop.
 
-Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
+Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
 ========================================================================
 
@@ -67,7 +67,7 @@ Configure your proxy:
 
 ### License
 
-Copyright (C) 2015  Barry de Graaff
+Copyright (C) 2015-2016  Barry de Graaff
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

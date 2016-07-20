@@ -1,3 +1,0 @@
-     location /login/ {
-        proxy_pass https://oc-server/login/;
-     }
