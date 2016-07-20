@@ -57,7 +57,7 @@ OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback) {
   this._getWaitingDialog().setMessage(
     "Creating link(s) to attach to the message, please wait ... " + links.length  + " / " + (links.length + resources.length),
     DwtMessageDialog.INFO_STYLE,
-    "Retrieving attachments from ownCloud"
+    "Retrieving attachments from WebDAV"
   );
 
   var resource = resources.shift(),
