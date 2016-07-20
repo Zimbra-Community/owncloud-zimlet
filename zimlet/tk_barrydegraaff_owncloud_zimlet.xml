@@ -26,8 +26,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
         version="0.2.0"
         target="main compose-window view-window"
-        label="ownCloud"
-        description="Attach from and save to ownCloud">
+        label="WebDAV"
+        description="Attach from and save to WebDAV">
     <include>DavConnector.js</include>
     <include>DavForZimbraConnector.js</include>
     <include>OwnCloudApp.js</include>
@@ -41,7 +41,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
     <include>mime.js</include>
     <include>ZmOwnCloudController.js</include>
     <includeCSS>tk_barrydegraaff_owncloud_zimlet.css</includeCSS>
-    <zimletPanelItem label="ownCloud" icon="ownCloud-panelIcon">
+    <zimletPanelItem label="WebDAV" icon="ownCloud-panelIcon">
       <dragSource type="ZmConv" />
 		<dragSource type="ZmMailMsg" />
       <contextMenu>
