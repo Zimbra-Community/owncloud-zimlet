@@ -106,7 +106,7 @@ OwnCloudTabView.prototype._renderResource =
       treeItem = new DwtTreeItem({
         parent: parent,
         text: resource.getName(),
-        imageInfo: 'folder',
+        imageInfo: 'Folder',
         selectable: false
       });
       this._davConnector.propfind(

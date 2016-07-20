@@ -147,7 +147,7 @@ OwnCloudApp.prototype._renderTreeResource = function(parent, resource) {
       treeItem = new DwtTreeItem({
       parent: parent,
       text: resource.getName(),
-      imageInfo: 'folder',
+      imageInfo: 'Folder',
       selectable: true
     });
     treeItem.setData('DavResource', resource);

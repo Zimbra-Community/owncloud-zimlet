@@ -4,7 +4,7 @@ function OwnCloudTreeController() {
   // var treeItem = new DwtTreeItem({
   //     parent: this._folderTree,
   //     text: "1",
-  //     imageInfo: 'folder',
+  //     imageInfo: 'Folder',
   //     selectable: false
   //   });
 }
