@@ -91,7 +91,7 @@ public class OwnCloudSOAPHandler implements SoapHandler
             throw new RuntimeException("Missing 'path' argument for '" + command.name() + "' command.");
           }
           ShareType shareType = ShareType.fromCode(Integer.parseInt(zimbraContext.getParameter("shareType", "")));
-          String shareWith = zimbraContext.getParameter("path", null);
+          String shareWith = null;
           if ((shareType == ShareType.USER || shareType == ShareType.GROUP) && shareWith == null)
           {
             throw new RuntimeException("Missing 'shareType' argument for '" + command.name() + "' command with share type '" + shareType.name() + "'.");

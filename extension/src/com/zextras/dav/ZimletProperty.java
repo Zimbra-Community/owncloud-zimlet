@@ -13,4 +13,6 @@ public class ZimletProperty
 
 //  public static String STORE_PASSWORD = "owncloud_zimlet_store_pass";
   public static String DAV_MAIL_FOLDER = "owncloud_zimlet_default_folder";
+
+  public static String OC_PATH = "owncloud_zimlet_oc_folder";
 }

@@ -95,7 +95,8 @@
     errorCallback
   ) {
     publicUpload = (publicUpload === true || publicUpload === false)? publicUpload : void 0;
-
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+    path = path.replace(zimletInstance.getUserProperty('owncloud_zimlet_server_path'),'');
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('path', path);
     soapDoc.set('shareType', shareType);

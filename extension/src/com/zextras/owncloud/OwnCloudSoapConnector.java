@@ -57,6 +57,7 @@ public class OwnCloudSoapConnector
       url.getProtocol(),
       url.getHost(),
       port,
+      userProperties.get(ZimletProperty.OC_PATH),
       userProperties.get(ZimletProperty.DAV_USER_USERNAME),
       userProperties.get(ZimletProperty.DAV_USER_PASSWORD)
     );

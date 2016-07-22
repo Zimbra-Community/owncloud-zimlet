@@ -32,18 +32,20 @@ import java.net.ProxySelector;
 
 public class OwnCloudClient
 {
-  public static String OCS_SHARE_PATH = "/ocs/v1.php/apps/files_sharing/api/v1";
+  public static String OCS_SHARE_PATH = "ocs/v1.php/apps/files_sharing/api/v1";
 
   private final CloseableHttpClient mHttpClient;
   private final CredentialsProvider mCredentialsProvider;
   private final String mProtocol;
   private final String mServerName;
   private final int mPort;
+  private final String mOcPrefix;
 
   public OwnCloudClient(
     String protocol,
     String serverName,
     int port,
+    String ocPrefix,
     String username,
     String password
   )
@@ -51,6 +53,7 @@ public class OwnCloudClient
     mProtocol = protocol;
     mServerName = serverName;
     mPort = port;
+    mOcPrefix = ocPrefix;
     mCredentialsProvider = getCredentialsProvider(username, password, null, null);
     mHttpClient = clientBuilder(null, mCredentialsProvider).build();
   }
@@ -66,7 +69,7 @@ public class OwnCloudClient
     return mProtocol + "://" +
       mCredentialsProvider.getCredentials(AuthScope.ANY).getUserPrincipal().getName() +
       ":" + mCredentialsProvider.getCredentials(AuthScope.ANY).getPassword() +
-      "@" + mServerName + ":" + mPort + OCS_SHARE_PATH;
+      "@" + mServerName + ":" + mPort + "/" + mOcPrefix + "/" + OCS_SHARE_PATH;
   }
 
   public <T> T exec(

@@ -45,35 +45,6 @@ ownCloudZimlet.prototype.init =
       this._handlePropfindError
     );
 
-    //Set global config
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['proxy_location'] = this.getConfig('proxy_location');
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_dav_uri'] = this.getConfig('proxy_location') + this.getConfig('dav_path');
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_link_sharing'] = this.getConfig('disable_link_sharing');
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this.getConfig('disable_password_storing');
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = this.getUserProperty('owncloud_zimlet_server_name');
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = this.getUserProperty('owncloud_zimlet_server_port');
-
-    //Set default value
-    if(!this.getUserProperty("owncloud_zimlet_username"))
-    {
-      this.setUserProperty("owncloud_zimlet_username", '', true);
-    }
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = this.getUserProperty("owncloud_zimlet_username");
-
-    //Set default value
-    if(!this.getUserProperty("owncloud_zimlet_password"))
-    {
-      this.setUserProperty("owncloud_zimlet_password", '', true);
-    }
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = this.getUserProperty("owncloud_zimlet_password");
-
-    //Set default value
-    if(!this.getUserProperty("owncloud_zimlet_default_folder"))
-    {
-      this.setUserProperty("owncloud_zimlet_default_folder", 'Documents', true);
-    }
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");
-
     try {
       this.ownCloudTab = this.createApp("WebDAV", "", "WebDAV");
     } catch (err) { }
@@ -539,7 +510,7 @@ ownCloudZimlet.prototype.displayDialog =
           html,
           serverName = location.protocol + '//' + location.hostname;
         username = username[0].replace('@','');
-        html = "<div style='width:500px; height: 200px;'>You can drag and drop emails and attachments onto the WebDAV icon, to store them on your WebDAV server.<br><br>" +
+        html = "<div style='width:500px; height: 250px;'>You can drag and drop emails and attachments onto the WebDAV icon, to store them on your WebDAV server.<br><br>" +
           "<table>"+
           "<tr>" +
           "<td>Username:&nbsp;</td>" +
@@ -558,10 +529,15 @@ ownCloudZimlet.prototype.displayDialog =
           "<td style='width:98%'><input style='width:50px' type='number' min='1' max='65535' id='owncloud_zimlet_server_port' value='"+(this.getUserProperty('owncloud_zimlet_server_port') ? this.getUserProperty('owncloud_zimlet_server_port') : ((location.protocol === 'https:') ? 443 : 80))+"'></td>" +
           "</tr>" +
           "<tr>" +
-          "<td>Path:&nbsp;</td>" +
+          "<td>DAV Path:&nbsp;</td>" +
           "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+(this.getUserProperty('owncloud_zimlet_server_path') ? this.getUserProperty('owncloud_zimlet_server_path') : this.getConfig('owncloud_zimlet_server_path'))+"'></td>" +
           "</tr>" +
           "<tr>" +
+          "<tr>" +
+          "<td>ownCloud/Nextcloud&nbsp;folder:&nbsp;</td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+(this.getUserProperty('owncloud_zimlet_oc_folder') ? this.getUserProperty('owncloud_zimlet_oc_folder') : this.getConfig('owncloud_zimlet_oc_folder'))+"'></td>" +
+          "</tr>" +
+          "<tr>" +          
           "<td>Default folder:&nbsp;</td>" +
           "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+this.getUserProperty('owncloud_zimlet_default_folder')+"'></td>" +
           "</tr>" +
@@ -607,7 +583,8 @@ ownCloudZimlet.prototype.prefSaveBtn =
       'owncloud_zimlet_server_path': document.getElementById('owncloud_zimlet_server_path').value,
       'owncloud_zimlet_username': document.getElementById('owncloud_zimlet_username').value,
       'owncloud_zimlet_password': document.getElementById('owncloud_zimlet_password').value,
-      'owncloud_zimlet_default_folder': document.getElementById('owncloud_zimlet_default_folder').value
+      'owncloud_zimlet_default_folder': document.getElementById('owncloud_zimlet_default_folder').value,
+      'owncloud_zimlet_oc_folder': document.getElementById('owncloud_zimlet_oc_folder').value
     },
       new AjxCallback(
         this,
