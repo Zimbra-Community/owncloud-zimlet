@@ -167,7 +167,7 @@ public class UploadHandler implements HttpHandler
         OutputStream outuputStream = httpServletResponse.getOutputStream();
         outuputStream.write(
           ("<html><head><script language='javascript'>\n" +
-            "function doit() { window.parent._uploadManager.loaded(200, '" + reqId + "', " + sb.toString() + "); }\n" +
+            "function doit() { window.parent._uploadManager.loaded(200, '" + reqId + "', '" + sb.toString() + "'); }\n" +
             "</script></head><body onload='doit()'></body></html>").getBytes()
         );
         outuputStream.flush();

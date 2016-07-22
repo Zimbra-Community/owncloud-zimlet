@@ -18,8 +18,6 @@
  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 
-AjxPackage.require("zimbraMail.share.view.dialog.ZmUploadDialog");
-
 function tk_barrydegraaff_owncloud_zimlet_HandlerObject() {
   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings = {};
   this._appView = void 0;
@@ -36,6 +34,8 @@ var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 ownCloudZimlet.prototype.init =
   function () {
     // Initialize the zimlet
+    // Force available the ZmUploadDialog component
+    AjxDispatcher.require(["Extras"]);
     this._davConnector = new DavConnector();
     this._ownCloudConnector = new OwnCloudConnector();
     this._davForZimbraConnector = new DavForZimbraConnector();
