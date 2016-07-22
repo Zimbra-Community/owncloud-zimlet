@@ -204,41 +204,6 @@ OwnCloudApp.prototype._handleRootPropfind = function(resources) {
   this._showFolderData(resources);
 };
 
-OwnCloudApp.prototype.openResourceInBrowser = function(resources) {
-  var resource = resources[0],
-    url,
-    protocol = "http://",
-    server = this._settings["owncloud_zimlet_server_name"];
-
-  if (/^https?:\/\//.test(server)) {
-    var re = server.match(/^(https?:\/\/)([\w\d\.]*)$/);
-    protocol = re[1];
-    server = re[2];
-  }
-
-  url = [
-    protocol,
-    // this._settings["owncloud_zimlet_username"], ":", this._settings["owncloud_zimlet_password"], "@",
-    server,
-    ":",
-    this._settings["owncloud_zimlet_server_port"]
-  ];
-
-  if (resource.isDirectory()) {
-    url.push("/apps/files/?dir=");
-    url.push(AjxStringUtil.urlComponentEncode(resource.getHref()));
-  } else {
-    url.push("/apps/files/?dir=");
-    url.push(AjxStringUtil.urlComponentEncode(resource.getPath()));
-    url.push("#");
-    url.push(AjxStringUtil.urlComponentEncode(resource.getHref()));
-  }
-
-  if (window && window.open) {
-    window.open(url.join(""), "_blank");
-  }
-};
-
 /**
  * Get the folder tree item by his href.
  * @param {DwtTreeItem} parent

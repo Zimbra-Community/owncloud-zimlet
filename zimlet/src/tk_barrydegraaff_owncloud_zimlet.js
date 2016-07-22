@@ -18,6 +18,8 @@
  along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 
+AjxPackage.require("zimbraMail.share.view.dialog.ZmUploadDialog");
+
 function tk_barrydegraaff_owncloud_zimlet_HandlerObject() {
   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings = {};
   this._appView = void 0;
@@ -33,24 +35,6 @@ var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
  */
 ownCloudZimlet.prototype.init =
   function () {
-    // Register operations in Zimbra
-    if (typeof ZmId['OPEN_IN_OWNCLOUD'] === "undefined") {
-      ZmId.OPEN_IN_OWNCLOUD = "OPEN_IN_OWNCLOUD";
-    }
-
-    if (typeof ZmMsg["OpenInOwnCloud"] === "undefined") {
-      ZmMsg.OpenInOwnCloud = "Open in ownCloud";
-    }
-
-    ZmOperation.registerOp(
-      ZmId.OPEN_IN_OWNCLOUD,
-      {
-        textKey: "OpenInOwnCloud",
-        image: "ownCloud-panelIcon",
-        showImageInToolbar: true
-      }
-    );
-
     // Initialize the zimlet
     this._davConnector = new DavConnector();
     this._ownCloudConnector = new OwnCloudConnector();

@@ -32,7 +32,6 @@ function OwnCloudListView(
 
   this._listeners[ZmOperation.SEND_FILE]			  = (function(_this) { return function() {_this._sendFileListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.SEND_FILE_AS_ATT]	= (function(_this) { return function() {_this._sendFileAsAttachmentListener.apply(_this, arguments); }; })(this);
-  this._listeners[ZmOperation.OPEN_IN_OWNCLOUD]	= (function(_this) { return function() {_this._openInOwnCloudListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.DELETE]           = (function(_this) { return function() {_this._deleteListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.RENAME_FILE]      = (function(_this) { return function() {_this._renameFileListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.RENAME_FOLDER]    = (function(_this) { return function() {_this._renameFolderListener.apply(_this, arguments); }; })(this);
@@ -162,7 +161,6 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   operationsEnabled = [
     ZmOperation.SEND_FILE,
     ZmOperation.SEND_FILE_AS_ATT,
-    ZmOperation.OPEN_IN_OWNCLOUD,
     ZmOperation.DELETE
   ];
 
@@ -183,12 +181,6 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   if (directoriesInvolved || resources.length > 1) {
     parent.enable([
       ZmOperation.SEND_FILE_AS_ATT
-    ], false);
-  }
-
-  if (resources.length > 1) {
-    parent.enable([
-      ZmOperation.OPEN_IN_OWNCLOUD
     ], false);
   }
 };
@@ -256,7 +248,6 @@ OwnCloudListView.prototype._getActionMenuOps = function() {
     ZmOperation.SEP,
     ZmOperation.SEND_FILE,
     ZmOperation.SEND_FILE_AS_ATT,
-    ZmOperation.OPEN_IN_OWNCLOUD
   ];
 };
 
@@ -325,10 +316,6 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
     extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
   });
   cc.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, [].concat(idsToAttach).join(","));
-};
-
-OwnCloudListView.prototype._openInOwnCloudListener = function(ev) {
-  this._ocZimletApp.openResourceInBrowser(this.getSelection());
 };
 
 OwnCloudListView.prototype._onItemSelected = function(ev) {
