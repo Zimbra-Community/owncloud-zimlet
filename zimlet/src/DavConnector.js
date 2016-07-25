@@ -361,7 +361,8 @@
       errorCallback = new AjxCallback(
         void 0, function(result) {
           if (!!console && !!console.error)
-            console.error(result);
+            //console.error(result);
+            var noop = null;
         }
       );
     }

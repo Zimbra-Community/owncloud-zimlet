@@ -50,13 +50,13 @@ public class DavSOAPHandler implements SoapHandler
 
     final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, Zimlet.NAME);
 
-    if (
-      userProperties.get(ZimletProperty.DAV_SERVER_NAME) == null ||
-      userProperties.get(ZimletProperty.DAV_SERVER_PORT) == null ||
-      userProperties.get(ZimletProperty.DAV_SERVER_PATH) == null ||
-      userProperties.get(ZimletProperty.DAV_USER_USERNAME) == null ||
+    if (!(
+      userProperties.get(ZimletProperty.DAV_SERVER_NAME) == null &&
+      userProperties.get(ZimletProperty.DAV_SERVER_PORT) == null &&
+      userProperties.get(ZimletProperty.DAV_SERVER_PATH) == null &&
+      userProperties.get(ZimletProperty.DAV_USER_USERNAME) == null &&
       userProperties.get(ZimletProperty.DAV_USER_PASSWORD) == null
-      )
+    ))
     {
       handleError(
         new RuntimeException("DAV Data connection not set for user '" + account.getName() + "'"),
