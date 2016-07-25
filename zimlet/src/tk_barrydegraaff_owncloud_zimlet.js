@@ -518,7 +518,7 @@ ownCloudZimlet.prototype.displayDialog =
           "</tr>" +
           "<tr>" +
           "<td>Password:</td>" +
-          "<td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(this.getUserProperty('owncloud_zimlet_password') ? this.getUserProperty('owncloud_zimlet_password') : this.getConfig('owncloud_zimlet_password'))+"'></td>" +
+          "<td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(this.getUserProperty('owncloud_zimlet_password') ? this.getUserProperty('owncloud_zimlet_password') : this.getConfig('owncloud_zimlet_password'))+"'><br><small>The password is stored in plain text in Zimbra LDAP. </small/></td>" +
           "</tr>" +
           "<tr>" +
           "<td>Server:&nbsp;</td>" +
