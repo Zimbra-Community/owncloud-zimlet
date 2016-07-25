@@ -278,7 +278,7 @@ ownCloudZimlet.prototype.menuItemSelected =
         this.displayDialog(1, 'Preferences', null);
         break;
       case "help":
-        window.open("/service/zimlet/_dev/tk_barrydegraaff_owncloud_zimlet/help/index.html");
+        window.open("/service/zimlet/tk_barrydegraaff_owncloud_zimlet/help/index.html");
         break;
     }
   };

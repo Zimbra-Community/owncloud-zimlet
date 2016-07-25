@@ -49,7 +49,7 @@ public class DavSOAPHandler implements SoapHandler
     final Account account = mProvisioning.assertAccountById(accountId);
 
     final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, Zimlet.NAME);
-
+/*
     if (!(
       userProperties.get(ZimletProperty.DAV_SERVER_NAME) == null &&
       userProperties.get(ZimletProperty.DAV_SERVER_PORT) == null &&
@@ -65,7 +65,7 @@ public class DavSOAPHandler implements SoapHandler
       );
       return;
     }
-
+*/
     {
       final URL serverUrl;
       try
