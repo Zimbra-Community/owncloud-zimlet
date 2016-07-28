@@ -5,7 +5,7 @@ If you find Zimbra WebDAV Client useful and want to support its continued develo
 - PayPal: info@barrydegraaff.tk
 - Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A
 
-Demo video: 
+Demo video: https://www.youtube.com/watch?v=8pVMoXkNt8c
 
 User manual : 
 
