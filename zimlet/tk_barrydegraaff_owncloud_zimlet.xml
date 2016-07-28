@@ -1,11 +1,10 @@
 <!--
 
-Zimbra ownCloud Zimlet
+Zimbra WebDAV Client
 
    https://github.com/barrydegraaff/owncloud-zimlet
-   https://www.indiegogo.com/projects/zimbra-owncloud-extension-zimlet
 
-Copyright (C) 2015  Barry de Graaff
+Copyright (C) 2015-2016  Barry de Graaff, Michele Olivo
 
 Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 
