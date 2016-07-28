@@ -53,15 +53,15 @@ Start the installer:
     
     [root@server tmp]# sudo -u zimbra tar -xzf /tmp/owncloud-extension.tar.gz -C /tmp/
     [root@server tmp]# cd /tmp/owncloud-extension && sudo ./install
-     
-Restart your mailbox to let the extension to be loaded:
-
-	[zimbra@server zimbra]$ zmmailboxdctl restart
 
 Configure your proxy:
 
 	[zimbra@server zimbra]$ zmprov mc default +zimbraProxyAllowedDomains your-owncloud-server.com
-    # You can also enable all domains see: https://wiki.zimbra.com/wiki/Zimlet_Developers_Guide:Proxy_Servlet_Setup security
+    # You can also enable all domains see: https://wiki.zimbra.com/wiki/Zimlet_Developers_Guide:Proxy_Servlet_Setup security  
+     
+Restart your mailbox to let the extension to be loaded:
+
+	[zimbra@server zimbra]$ zmmailboxdctl restart
 
 Known issues:
 
