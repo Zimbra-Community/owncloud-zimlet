@@ -29,7 +29,7 @@ Stay up-to-date: new releases are announced on the users mailing list: http://li
   - A running Zimbra server
   - A running WebDAV server (for example ownCloud/Nextcloud)
 
-### Build the ownCloud Extension and Zimlet
+### Build the Extension and Zimlet
 The recommended method is to build from sources.
 
     [user@host ~]$ yum install -y git ant                                      # On RedHat/Fedora/CentOS
@@ -44,7 +44,7 @@ The recommended method is to build from sources.
 
 You should find the package file `owncloud-extension.tar.gz` ready to be deployed, send it to your server.
 
-### Install the ownCloud Extension and Zimlet
+### Install the Extension and Zimlet
 Copy the package file `owncloud-extension.tar.gz` into `/tmp/`:
 
     [user@host owncloud-zimlet]$ scp owncloud-extension.tar.gz root@server:/tmp/owncloud-extension.tar.gz
@@ -61,6 +61,7 @@ Restart your mailbox to let the extension to be loaded:
 Configure your proxy:
 
 	[zimbra@server zimbra]$ zmprov mc default +zimbraProxyAllowedDomains your-owncloud-server.com
+    # You can also enable all domains see: https://wiki.zimbra.com/wiki/Zimlet_Developers_Guide:Proxy_Servlet_Setup security
 
 Known issues:
 
@@ -69,13 +70,9 @@ Known issues:
 
 ========================================================================
 
-### Contributors
-
-* Michele Olivo [ZeXtras](https://www.zextras.com/)
-
 ### License
 
-Copyright (C) 2015-2016  Barry de Graaff
+Copyright (C) 2015-2016  Barry de Graaff [Zeta Alliance](http://www.zetalliance.org/), Michele Olivo [ZeXtras](https://www.zextras.com/)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
