@@ -51,6 +51,7 @@ Copy the package file `owncloud-extension.tar.gz` into `/tmp/`:
     
 Start the installer:
     
+    [root@server tmp]# rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
     [root@server tmp]# sudo -u zimbra tar -xzf /tmp/owncloud-extension.tar.gz -C /tmp/
     [root@server tmp]# cd /tmp/owncloud-extension && sudo ./install
 
