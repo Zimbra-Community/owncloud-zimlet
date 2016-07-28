@@ -346,19 +346,18 @@ ownCloudZimlet.prototype._doDropPropfindCbk =
         [tmpObj, callback]
       );
 
-
-      if (tmpObj.id < 0) {
-        id = tmpObj.id * -1;
-      } else {
-        id = tmpObj.id;
-      }
-
       //if its a conversation i.e. 'ZmConv' object, get the first loaded message 'ZmMailMsg' object within that.
       if (tmpObj.TYPE === 'ZmConv') {
         var msgObj = tmpObj.srcObj; // get access to source-object
         msgObj = msgObj.getFirstHotMsg();
         tmpObj.id = msgObj.id;
         type = 'MESSAGE';
+      }
+
+      if (tmpObj.id < 0) {
+        id = tmpObj.id * -1;
+      } else {
+        id = tmpObj.id;
       }
 
       if (tmpObj.type === 'BRIEFCASE_ITEM') {
@@ -413,7 +412,7 @@ ownCloudZimlet.prototype._handlePropfindError =
     }
     else
     {
-      this.status('DAV Error ' + statusCode + ((typeof error.message !== "undefined") ? " - " + error.message : ""), ZmStatusView.LEVEL_CRITICAL);
+      this.status('DAV Error ' + statusCode, ZmStatusView.LEVEL_CRITICAL);
     }
   };
 
