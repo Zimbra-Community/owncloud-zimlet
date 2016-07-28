@@ -1,3 +1,7 @@
+/*
+This class handles uploads from the Zimbra webclient to the DAV server. 
+*/
+
 package com.zextras.dav;
 
 

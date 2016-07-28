@@ -16,6 +16,10 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64InputStream;
+import java.io.ByteArrayOutputStream;
+
+
 /**
  * This class provide an abstraction layer to handle a DAV Client return a JSON data.
  * The return values can be used into a SOAP response.
@@ -97,6 +101,14 @@ public class DavSoapConnector
   /**
    * Perform a GET request.
    * Retrieve the contents of a resource.
+   *
+   * This method should be replaced, as well as OwnCloudCommons.prototype._getResourceCbk in ownCloudCommons.js as
+   * this approach sends the file to attach from DAV server to the Client and then to the Zimbra server.
+   *
+   * Suggested solution is to call saveUpload method from FileUploadServlet.java from Zimbra Source or make
+   * a wrapper for this in OpenZAL and to send the attachment from DAV server, directly to Zimbra and only
+   * send the ID of the attachment to the client for saveDraft.
+   *
    * @param path The resource path.
    * @return The content of the file, inside a StringBuilder.
    * @throws IOException
@@ -105,7 +117,8 @@ public class DavSoapConnector
     throws IOException
   {
     InputStream inputStream = mSardine.get(buildUrl(path));
-    BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+    Base64InputStream b64is = new Base64InputStream(inputStream, true);
+    BufferedReader br = new BufferedReader(new InputStreamReader(b64is));
     StringBuilder sb = new StringBuilder();
     String line;
     while ((line = br.readLine()) != null) {
