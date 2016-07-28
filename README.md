@@ -1,7 +1,7 @@
-Zimbra WebDAV Zimlet
+Zimbra WebDAV Client
 ==========
 
-If you find Zimbra WebDAV Zimlet useful and want to support its continued development, you can make donations via:
+If you find Zimbra WebDAV Client useful and want to support its continued development, you can make donations via:
 - PayPal: info@barrydegraaff.tk
 - Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A
 
@@ -13,9 +13,9 @@ Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCl
 - Windows: Internet Explorer 11, Microsoft Edge, Google Chrome, Firefox
 - Linux: Google Chrome, Firefox
 
-This Zimlet is designed for Zimbra version 8.7.
+Designed for Zimbra version 8.7.
 
-This Zimlet is not available for use in Zimbra Desktop.
+Zimbra Desktop is not supported and does not work.
 
 Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
@@ -62,6 +62,10 @@ Configure your proxy:
 
 	[zimbra@server zimbra]$ zmprov mc default +zimbraProxyAllowedDomains your-owncloud-server.com
 
+Known issues:
+
+1. Passwords with characters like @ will not work, try to install this using a simple account and password (A-Za-z0-9).
+2. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
 
 ========================================================================
 
