@@ -17,8 +17,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64InputStream;
-import java.io.ByteArrayOutputStream;
-
 
 /**
  * This class provide an abstraction layer to handle a DAV Client return a JSON data.
