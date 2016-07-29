@@ -1,11 +1,13 @@
 Zimbra WebDAV Client
 ==========
 
+Please also check our development version: http://zimbra.org/extend/items/view/zimbra-webdav-client
+
 If you find Zimbra WebDAV Client useful and want to support its continued development, you can make donations via:
 - PayPal: info@barrydegraaff.tk
 - Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A
 
-Demo video: 
+Demo video: https://www.youtube.com/watch?v=8pVMoXkNt8c
 
 User manual : 
 
@@ -51,6 +53,7 @@ Copy the package file `owncloud-extension.tar.gz` into `/tmp/`:
     
 Start the installer:
     
+    [root@server tmp]# rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
     [root@server tmp]# sudo -u zimbra tar -xzf /tmp/owncloud-extension.tar.gz -C /tmp/
     [root@server tmp]# cd /tmp/owncloud-extension && sudo ./install
 
