@@ -70,6 +70,7 @@ Restart your mailbox to let the extension to be loaded:
 
 1. Passwords with characters like @ will not work, try to install this using a simple account and password (A-Za-z0-9).
 2. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
+3. Running a WebDAV server behind and NGINX reverse proxy won't work.
 
 ========================================================================
 
