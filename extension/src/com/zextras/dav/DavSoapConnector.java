@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.List;
+import java.net.URL;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 
@@ -43,6 +44,11 @@ public class DavSoapConnector
 
     mSardine = SardineFactory.begin(username, password);
     mSardine.enableCompression();
+    try {                                                                                                                                                                   
+        mSardine.enablePreemptiveAuthentication(new URL(url));
+    } catch(Exception ex) {
+
+    }
   }
 
   /**
