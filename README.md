@@ -19,6 +19,8 @@ Designed for Zimbra version 8.7.
 
 Zimbra Desktop is not supported and does not work.
 
+**Roadmap** : https://github.com/Zimbra-Community/owncloud-zimlet/wiki
+
 Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
 Report security issues to barrydg@zetalliance.org (PGP fingerprint: 9e0e165f06b365ee1e47683e20f37303c20703f8)
