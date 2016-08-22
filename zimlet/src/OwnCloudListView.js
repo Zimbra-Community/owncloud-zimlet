@@ -178,7 +178,7 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
 
   parent.enable(operationsEnabled, true);
 
-  if (directoriesInvolved || resources.length > 1) {
+  if (directoriesInvolved) {
     parent.enable([
       ZmOperation.SEND_FILE_AS_ATT
     ], false);
