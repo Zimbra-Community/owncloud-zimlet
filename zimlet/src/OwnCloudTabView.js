@@ -35,6 +35,16 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
   });
   this._checkbox.setText('Add file as shared link');
 
+  this._sharePasswordTxt =  new DwtText({ // feature available only in ownCloud installation.
+    parent: this,
+  });
+  this._sharePasswordTxt.setText('Optional password for shared link:');
+
+  this._sharePassword = new DwtInputField({ // feature available only in ownCloud installation.
+    parent: this,
+  });
+  this._sharePassword.setHtmlElementId('owncloudSharePassword');
+
   //Add a function to do a propfind on the onclick event in the tree (attach when composing)
   this._treeclick = function() {
   if(arguments[1].dwtObj)
@@ -174,7 +184,8 @@ OwnCloudTabView.prototype._attachFiles =
       new AjxCallback(
         this,
         this._onAttachmentsRetrieved
-      )
+      ),
+      this._sharePassword._inputField.value
     );
   };
 
@@ -231,11 +242,19 @@ OwnCloudTabView.prototype._attachItemsAndSaveDraft =
  */
 OwnCloudTabView.prototype._appendSharedLink =
   function(url) {
+    if(this._sharePassword._inputField.value)
+    {
+       var passwordText = "("+this._sharePassword._inputField.value+")";
+    }
+    else
+    {
+       var passwordText = "";
+    }
     var composeView = appCtxt.getCurrentView(),
       composeMode = composeView.getHtmlEditor().getMode(),
       content = composeView.getHtmlEditor().getContent(),
       sep,
-      linkData = url.name + ": " + url.link;
+      linkData = url.name + " "+passwordText+" : " + url.link;
 
     if(composeMode == 'text/plain') {
       sep = "\r\n";

@@ -22,7 +22,7 @@ OwnCloudCommons.prototype.getAttachmentLinks = function(davResources, callback) 
   this.getAttachments(davResources, [], callback);
 };
 
-OwnCloudCommons.prototype.getAttachments = function(resourcesToLink, resourcesToAttach, callback) {
+OwnCloudCommons.prototype.getAttachments = function(resourcesToLink, resourcesToAttach, callback, sharePassword) {
   this._getWaitingDialog().popup();
 
   var /** @type {string[]} */ links = [],
@@ -35,7 +35,8 @@ OwnCloudCommons.prototype.getAttachments = function(resourcesToLink, resourcesTo
       this,
       this._onUploadOrAttachFinished,
       [resourcesToLink, resourcesToLink.length, links, resourcesToAttach, resourcesToAttach.length, ids, callback]
-    )
+    ),
+    sharePassword
   );
 };
 
@@ -46,7 +47,7 @@ OwnCloudCommons.prototype.getAttachments = function(resourcesToLink, resourcesTo
  * @param {AjxCallback} callback
  * @private
  */
-OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback) {
+OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback, sharePassword) {
   if (resources.length < 1) {
     if (!!callback) {
       callback.run();
@@ -64,7 +65,7 @@ OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback) {
     internalCallback = new AjxCallback(
       this,
       this._createShareCbk,
-      [resource, resources, links, callback]
+      [resource, resources, links, callback, sharePassword]
     );
 
   this._ownCloudConnector.createShare(
@@ -72,7 +73,7 @@ OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback) {
     DavForZimbraShareType.PUBLIC_LINK,
     void 0,
     false,
-    void 0,
+    sharePassword ? sharePassword : void 0,
     DavForZimbraSharePermission.READ,
     internalCallback
   );
@@ -121,12 +122,12 @@ OwnCloudCommons.prototype._getFirstResource = function(resources, ids, callback)
  * @param {{}} data
  * @private
  */
-OwnCloudCommons.prototype._createShareCbk = function(resource, resources, links, callback, data) {
+OwnCloudCommons.prototype._createShareCbk = function(resource, resources, links, callback, sharePassword, data) {
   links.push({
     name: resource.getName(),
     link: data.url
   });
-  this._getFirstLink(resources, links, callback);
+  this._getFirstLink(resources, links, callback, sharePassword);
 };
 
 /**
