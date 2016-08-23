@@ -144,11 +144,6 @@ OwnCloudTabView.prototype._renderResource =
     return treeItem;
   };
 
-OwnCloudTabView.prototype._renderResourceNoop = 
-  function(parent, resource) {
-
-}
-
 /**
  * Attach files to a mail.
  * @param {ZmAttachDialog} attachmentDlg
