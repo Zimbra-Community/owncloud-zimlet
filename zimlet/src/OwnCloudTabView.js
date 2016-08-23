@@ -37,14 +37,17 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
 
   //Add a function to do a propfind on the onclick event in the tree (attach when composing)
   this._treeclick = function() {
-  this._davConnector.propfind(
-    arguments[1].dwtObj._data.DavResource.getHref(),
-    1,
-    new AjxCallback(
-    this,
-    this._renderPropFind,
-    [arguments[1].dwtObj._data.DavResource.getHref(), arguments[1].dwtObj]
-    ), this._zimletCtxt._defaultPropfindErrCbk );            
+  if(arguments[1].dwtObj)
+  {
+    this._davConnector.propfind(
+      arguments[1].dwtObj._data.DavResource.getHref(),
+      1,
+      new AjxCallback(
+      this,
+      this._renderPropFind,
+      [arguments[1].dwtObj._data.DavResource.getHref(), arguments[1].dwtObj]
+      ), this._zimletCtxt._defaultPropfindErrCbk );
+    }            
   };
   this._tree.addSelectionListener(new AjxListener(this, this._treeclick, {}));
   
@@ -91,6 +94,8 @@ OwnCloudTabView.prototype._populateTree =
  * @private
  */
 OwnCloudTabView.prototype._renderPropFind = function(href, parent, resources) {
+  //refresh the folder, remove old entries
+  parent.removeChildren();
   var i,
     children = resources[0].getChildren();
   // Display folders
@@ -118,7 +123,7 @@ OwnCloudTabView.prototype._renderPropFind = function(href, parent, resources) {
  */
 OwnCloudTabView.prototype._renderResource =
   function(parent, resource) {
-    var treeItem;
+    var treeItem = "";
     if (resource.isDirectory()) {
       treeItem = new DwtTreeItem({
         parent: parent,
