@@ -131,16 +131,6 @@ OwnCloudTabView.prototype._renderResource =
         imageInfo: 'Folder',
         selectable: true
       });
-      this._davConnector.propfind(
-        resource.getHref(),
-        1,
-        new AjxCallback(
-          this,
-          this._renderPropFindNoop,
-          [resource.getHref(), treeItem]
-        ),
-        this._zimletCtxt._defaultPropfindErrCbk
-      );
     } else {
       //indentation = resource.getHref().split('/').length - 2;
       treeItem = new DwtTreeItem({
