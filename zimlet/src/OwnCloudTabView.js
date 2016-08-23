@@ -20,24 +20,41 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
   DwtComposite.call(this, parent, void 0, Dwt.STATIC_STYLE);
   var acct = appCtxt.multiAccounts ? appCtxt.getAppViewMgr().getCurrentView().getFromAccount() : appCtxt.getActiveAccount();
   if (this.prevAccount && (acct.id == this.prevAccount.id)) {
-    this.setSize(Dwt.DEFAULT, "275");
+    this.setSize(Dwt.DEFAULT, "280");
     return;
   }
   this.prevAccount = acct;
-
+  this.parent.setScrollStyle(Dwt.SCROLL);
   this._tree = new DwtTree({
     parent: this,
     style: DwtTree.CHECKEDITEM_STYLE
   });
-  this._tree.setSize(Dwt.DEFAULT, "275");
-  this._tree.setScrollStyle(Dwt.SCROLL);
   this._checkbox = new DwtCheckbox({ // feature available only in ownCloud installation.
     parent: this,
     style: DwtCheckbox.TEXT_RIGHT
   });
   this._checkbox.setText('Add file as shared link');
+
+  //Add a function to do a propfind on the onclick event in the tree (attach when composing)
+  this._treeclick = function() {
+  this._davConnector.propfind(
+    arguments[1].dwtObj._data.DavResource.getHref(),
+    1,
+    new AjxCallback(
+    this,
+    this._renderPropFind,
+    [arguments[1].dwtObj._data.DavResource.getHref(), arguments[1].dwtObj]
+    ), this._zimletCtxt._defaultPropfindErrCbk );            
+  };
+  this._tree.addSelectionListener(new AjxListener(this, this._treeclick, {}));
+  
+  //Add scrollbar to avoid overflowing the attach dialog
+  var ZmAttachDialogcontainer = document.getElementsByClassName('ZmAttachDialog-container');
+  for (var index = 0; index < ZmAttachDialogcontainer.length; index++) {
+    ZmAttachDialogcontainer[index].style.overflowY = "scroll";
+    ZmAttachDialogcontainer[index].style.overflowX = "hidden";
+  }
   this._populateTree();
-  //this._createHtml1();
 }
 
 OwnCloudTabView.prototype = new DwtComposite;
@@ -107,14 +124,14 @@ OwnCloudTabView.prototype._renderResource =
         parent: parent,
         text: resource.getName(),
         imageInfo: 'Folder',
-        selectable: false
+        selectable: true
       });
       this._davConnector.propfind(
         resource.getHref(),
         1,
         new AjxCallback(
           this,
-          this._renderPropFind,
+          this._renderPropFindNoop,
           [resource.getHref(), treeItem]
         ),
         this._zimletCtxt._defaultPropfindErrCbk
@@ -128,8 +145,14 @@ OwnCloudTabView.prototype._renderResource =
       });
     }
     treeItem.setData('DavResource', resource);
+    treeItem.setExpanded(true);
     return treeItem;
   };
+
+OwnCloudTabView.prototype._renderResourceNoop = 
+  function(parent, resource) {
+
+}
 
 /**
  * Attach files to a mail.

@@ -412,7 +412,7 @@ ownCloudZimlet.prototype._handlePropfindError =
     }
     else
     {
-      this.status('DAV Error ' + statusCode, ZmStatusView.LEVEL_CRITICAL);
+      console.log('DAV Error ' + statusCode, ZmStatusView.LEVEL_CRITICAL);
     }
   };
 
