@@ -67,6 +67,13 @@ Configure your proxy:
 Restart your mailbox to let the extension to be loaded:
 
 	[zimbra@server zimbra]$ zmmailboxdctl restart
+	
+Enable the Zimlet:
+
+Go to the admin panel and go to Home->Configure->Zimlets check if the Status is Enabled, if not, right-click and do Toggle Status.
+
+Configure -> Class of service -> default (or your preferred COS) -> Zimlets  check if the Available option is checked and click Save.
+	
 
 ### Known issues:
 
