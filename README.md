@@ -42,7 +42,7 @@ The recommended method is to build from sources.
     [user@host ~]$ rm owncloud-zimlet -Rf
     [user@host ~]$ git clone https://github.com/barrydegraaff/owncloud-zimlet
     [user@host ~]$ cd owncloud-zimlet
-    [user@host owncloud-zimlet]$ git checkout soapServiceBarry
+    [user@host owncloud-zimlet]$ # skip this, and add version here after beta git checkout soapServiceBarry
     [user@host owncloud-zimlet]$ cd extension && ant download-libs && cd ..    # Optional: you can download the libraries manually
     [user@host owncloud-zimlet]$ make
 
