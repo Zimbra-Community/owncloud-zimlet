@@ -33,53 +33,28 @@ Stay up-to-date: new releases are announced on the users mailing list: http://li
   - A running Zimbra server
   - A running WebDAV server (for example ownCloud/Nextcloud)
 
-### Build the Extension and Zimlet
-The recommended method is to build from sources.
+### Installing
+Use the automated installer:
 
-    [user@host ~]$ yum install -y git ant                                      # On RedHat/Fedora/CentOS
-    [user@host ~]$ apt-get -y install git ant                                  # On Debian/Ubuntu
-    [user@host ~]$ cd ~
-    [user@host ~]$ rm owncloud-zimlet -Rf
-    [user@host ~]$ git clone https://github.com/barrydegraaff/owncloud-zimlet
-    [user@host ~]$ cd owncloud-zimlet
-    [user@host owncloud-zimlet]$ # skip this, and add version here after beta git checkout soapServiceBarry
-    [user@host owncloud-zimlet]$ cd extension && ant download-libs && cd ..    # Optional: you can download the libraries manually
-    [user@host owncloud-zimlet]$ make
+    wget https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/webdav-client-installer.sh -O /tmp/webdav-client-installer.sh
+    chmod +rx /tmp/webdav-client-installer.sh
+    /tmp/webdav-client-installer.sh
+   
 
-You should find the package file `owncloud-extension.tar.gz` ready to be deployed, send it to your server.
-
-### Install the Extension and Zimlet
-Copy the package file `owncloud-extension.tar.gz` into `/tmp/`:
-
-    [user@host owncloud-zimlet]$ scp owncloud-extension.tar.gz root@server:/tmp/owncloud-extension.tar.gz
-    
-Start the installer:
-    
-    [root@server tmp]# rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-    [root@server tmp]# sudo -u zimbra tar -xzf /tmp/owncloud-extension.tar.gz -C /tmp/
-    [root@server tmp]# cd /tmp/owncloud-extension && sudo ./install
-
-Configure your proxy:
+### Configure your proxy:
 
 	[zimbra@server zimbra]$ zmprov mc default +zimbraProxyAllowedDomains your-owncloud-server.com
     # You can also enable all domains see: https://wiki.zimbra.com/wiki/Zimlet_Developers_Guide:Proxy_Servlet_Setup security  
      
-Restart your mailbox to let the extension to be loaded:
+### Restart your mailbox to let the extension to be loaded:
 
 	[zimbra@server zimbra]$ zmmailboxdctl restart
 	
-Enable the Zimlet:
-
-Go to the admin panel and go to Home->Configure->Zimlets check if the Status is Enabled, if not, right-click and do Toggle Status.
-
-Configure -> Class of service -> default (or your preferred COS) -> Zimlets  check if the Available option is checked and click Save.
-	
-
 ### Known issues:
 
 1. Passwords with characters like @ will not work, try to install this using a simple account and password (A-Za-z0-9).
 2. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
-3. Running a WebDAV server behind and NGINX reverse proxy won't work.
+3. Running a WebDAV server behind and NGINX reverse proxy (from CentOS or Debian) won't work, it will work when proper options are enabled (as for example with zimbra-proxy, also based on NGINX).
 
 ========================================================================
 
