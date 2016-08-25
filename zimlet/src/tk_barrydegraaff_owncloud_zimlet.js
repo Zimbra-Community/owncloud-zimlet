@@ -34,6 +34,17 @@ var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 ownCloudZimlet.prototype.init =
   function () {
     // Initialize the zimlet
+    
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this._zimletContext.getConfig("disable_password_storing");
+
+    //Set default value
+    if(!this.getUserProperty("owncloud_zimlet_password"))
+    {
+       this.setUserProperty("owncloud_zimlet_password", '', true);
+    }
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = this.getUserProperty("owncloud_zimlet_password");
+
+    
     // Force available the ZmUploadDialog component
     AjxDispatcher.require(["Extras"]);
     this._davConnector = new DavConnector();
@@ -126,6 +137,12 @@ ownCloudZimlet.prototype.status =
  */
 ownCloudZimlet.saveAttachment =
   function(mid, part, label) {
+    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+    {
+       this.displayDialog(1, 'Preferences', null);
+       return;
+    }
+ 
     var zimletCtxt = appCtxt.getZimletMgr().getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     zimletCtxt.saveAttachment(mid, part, label);
   };
@@ -431,7 +448,7 @@ ownCloudZimlet.prototype._getItemNameByType =
 ownCloudZimlet.prototype._handlePropfindError =
   function(statusCode, error)
   {
-    if((!this.getConfig('owncloud_zimlet_password') || this.getConfig('owncloud_zimlet_password') === '') && statusCode == 401)
+    if(statusCode == 401)
     {
       this.status('Login credentials error', ZmStatusView.LEVEL_CRITICAL);
       this.displayDialog(1);
@@ -535,7 +552,19 @@ ownCloudZimlet.prototype.displayDialog =
           html,
           serverName = location.protocol + '//' + location.hostname;
         username = username[0].replace('@','');
-        html = "<div style='width:500px; height: 250px;'>You can drag and drop emails and attachments onto the WebDAV icon, to store them on your WebDAV server.<br><br>" +
+
+        var passwHtml = "";
+        if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
+        {
+           passwHtml += "<tr><td>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (this.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
+        }
+        else
+        {
+           passwHtml += "<tr><td style='color:#888888'>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true'  disabled></td><td><small style='color:#888888'>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
+        }     
+  
+
+        html = "<div style='width:500px; height: 300px;'>You can drag and drop emails and attachments onto the WebDAV icon, to store them on your WebDAV server.<br><br>" +
           "<table>"+
           "<tr>" +
           "<td>Username:&nbsp;</td>" +
@@ -543,9 +572,9 @@ ownCloudZimlet.prototype.displayDialog =
           "</tr>" +
           "<tr>" +
           "<td>Password:</td>" +
-          "<td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(this.getUserProperty('owncloud_zimlet_password') ? this.getUserProperty('owncloud_zimlet_password') : this.getConfig('owncloud_zimlet_password'))+"'><br><small>The password is stored in plain text in Zimbra LDAP. </small/></td>" +
+          "<td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] ? tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] : '')+"'><br></td>" +
           "</tr>" +
-          "<tr>" +
+          "<tr>" + passwHtml + 
           "<td>Server:&nbsp;</td>" +
           "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_name' value='"+(this.getUserProperty('owncloud_zimlet_server_name') ? this.getUserProperty('owncloud_zimlet_server_name') : serverName)+"'></td>" +
           "</tr>" +
@@ -602,12 +631,25 @@ ownCloudZimlet.prototype.prefSaveBtn =
       // https://oc.example.com/ turns into https://oc.example.com
       serverName = serverName.substring(0, serverName.length - 1);
     }
+
+    if(document.getElementById("owncloud_zimlet_store_pass").checked)
+    {
+       if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
+       {
+          this.setUserProperty("owncloud_zimlet_password", document.getElementById('owncloud_zimlet_password').value, false);
+       }   
+    }
+    else
+    {
+       this.setUserProperty("owncloud_zimlet_password", "", false);
+    }
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('owncloud_zimlet_password').value;
+
     this._saveUserProperties({
       'owncloud_zimlet_server_name': serverName,
       'owncloud_zimlet_server_port': document.getElementById('owncloud_zimlet_server_port').value,
       'owncloud_zimlet_server_path': document.getElementById('owncloud_zimlet_server_path').value,
       'owncloud_zimlet_username': document.getElementById('owncloud_zimlet_username').value,
-      'owncloud_zimlet_password': document.getElementById('owncloud_zimlet_password').value,
       'owncloud_zimlet_default_folder': document.getElementById('owncloud_zimlet_default_folder').value,
       'owncloud_zimlet_oc_folder': document.getElementById('owncloud_zimlet_oc_folder').value
     },
