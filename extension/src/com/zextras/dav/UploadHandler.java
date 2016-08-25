@@ -50,7 +50,7 @@ public class UploadHandler implements HttpHandler
   @Override
   public void doPost(
     HttpServletRequest httpServletRequest,
-    HttpServletResponse httpServletResponse
+    HttpServletResponse httpServletResponse,
   )
     throws ServletException, IOException
   {
@@ -122,7 +122,7 @@ public class UploadHandler implements HttpHandler
         Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
         userProperties.get(ZimletProperty.DAV_SERVER_PATH),
         userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-        zimbraContext.getParameter("dav_user_password", "")
+        "to-do zimbraContext.getParameter(\"dav_user_password\", "")"
       );
 
       ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
