@@ -59,6 +59,9 @@ Use the automated installer:
 See:
 https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting
 
+And:
+https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting#example-configuration
+
 ========================================================================
 
 ### License
