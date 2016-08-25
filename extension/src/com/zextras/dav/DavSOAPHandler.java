@@ -49,42 +49,24 @@ public class DavSOAPHandler implements SoapHandler
     final Account account = mProvisioning.assertAccountById(accountId);
 
     final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, Zimlet.NAME);
-/*
-    if (!(
-      userProperties.get(ZimletProperty.DAV_SERVER_NAME) == null &&
-      userProperties.get(ZimletProperty.DAV_SERVER_PORT) == null &&
-      userProperties.get(ZimletProperty.DAV_SERVER_PATH) == null &&
-      userProperties.get(ZimletProperty.DAV_USER_USERNAME) == null &&
-      userProperties.get(ZimletProperty.DAV_USER_PASSWORD) == null
-    ))
+
+    final URL serverUrl;
+    try
+    {
+      serverUrl = new URL(userProperties.get(ZimletProperty.DAV_SERVER_NAME));
+    } catch (MalformedURLException e)
+    {
+      handleError(e, soapResponse, zimbraExceptionContainer);
+      return;
+    }
+    if (!UserPropertyExtractor.checkPermissionOnTarget(serverUrl, account))
     {
       handleError(
-        new RuntimeException("DAV Data connection not set for user '" + account.getName() + "'"),
+        new RuntimeException("Proxy domain not allowed '" + serverUrl + "' for user '" + account.getName() + "'"),
         soapResponse,
         zimbraExceptionContainer
       );
       return;
-    }
-*/
-    {
-      final URL serverUrl;
-      try
-      {
-        serverUrl = new URL(userProperties.get(ZimletProperty.DAV_SERVER_NAME));
-      } catch (MalformedURLException e)
-      {
-        handleError(e, soapResponse, zimbraExceptionContainer);
-        return;
-      }
-      if (!UserPropertyExtractor.checkPermissionOnTarget(serverUrl, account))
-      {
-        handleError(
-          new RuntimeException("Proxy domain not allowed '" + serverUrl + "' for user '" + account.getName() + "'"),
-          soapResponse,
-          zimbraExceptionContainer
-        );
-        return;
-      }
     }
 
     final DavSoapConnector connector = new DavSoapConnector(

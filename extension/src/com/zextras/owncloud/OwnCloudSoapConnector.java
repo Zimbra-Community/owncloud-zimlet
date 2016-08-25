@@ -36,8 +36,7 @@ public class OwnCloudSoapConnector
         userProperties.get(ZimletProperty.DAV_SERVER_NAME) == null ||
         userProperties.get(ZimletProperty.DAV_SERVER_PORT) == null ||
         userProperties.get(ZimletProperty.DAV_SERVER_PATH) == null ||
-        userProperties.get(ZimletProperty.DAV_USER_USERNAME) == null ||
-        userProperties.get(ZimletProperty.DAV_USER_PASSWORD) == null
+        userProperties.get(ZimletProperty.DAV_USER_USERNAME) == null
       )
     {
       throw new RuntimeException("DAV Data connection not set for user '" + account.getName() + "'");
