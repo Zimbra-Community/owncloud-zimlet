@@ -139,7 +139,9 @@ ownCloudZimlet.saveAttachment =
   function(mid, part, label) {
     if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
     {
-       this.displayDialog(1, 'Preferences', null);
+       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+       zimletInstance.status('Password required', ZmStatusView.LEVEL_INFO);
+       zimletInstance.displayDialog(1, 'Preferences', null);
        return;
     }
  
@@ -306,6 +308,15 @@ ownCloudZimlet.prototype.menuItemSelected =
  */
 ownCloudZimlet.prototype.doDrop =
   function(zmObjects) {
+
+    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+    {
+       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+       zimletInstance.status('Password required', ZmStatusView.LEVEL_INFO);
+       zimletInstance.displayDialog(1, 'Preferences', null);
+       return;
+    }
+
     var propfindCbk = new AjxCallback(
       this,
       this._doDropPropfindCbk,
@@ -503,19 +514,26 @@ ownCloudZimlet.prototype._createFolderCallback =
  */
 ownCloudZimlet.prototype.appLaunch =
   function(appName) {
-    var app = appCtxt.getApp(appName);
-
-    if (typeof this._appView === "undefined") {
-      this._appView = new OwnCloudApp(
-        this,
-        app,
-        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings,
-        this._davConnector,
-        this._ownCloudConnector,
-        this._davForZimbraConnector
-      );
-    }
-  };
+   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+   {
+      var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+      zimletInstance.displayDialog(2, 'Sorry', 'You must first enter a password in the left menu.<br>You can find it under Zimlets -> WebDAV.<br><br>To try again, reload your browser (CTRL+R).');
+   }
+   else
+   {
+      var app = appCtxt.getApp(appName);
+      if (typeof this._appView === "undefined") {
+        this._appView = new OwnCloudApp(
+           this,
+           app,
+           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings,
+           this._davConnector,
+           this._ownCloudConnector,
+           this._davForZimbraConnector
+         );
+      }
+   }   
+};
 
 /**
  * This method gets called by the Zimlet framework each time the application is opened or closed.
@@ -538,13 +556,14 @@ ownCloudZimlet.prototype.onSelectApp =
  * @param {number} id Dialog ID for the zimlet.
  */
 ownCloudZimlet.prototype.displayDialog =
-  function(id) {
+  function(id, title, message) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     switch(id) {
       case 1:
-        //Default dialog
-        this._dialog = new ZmDialog({
+        //preferences dialog
+        zimletInstance._dialog = new ZmDialog({
           title: 'Preferences',
-          parent: this.getShell(),
+          parent: zimletInstance.getShell(),
           standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
           disposeOnPopDown: true
         });
@@ -556,7 +575,7 @@ ownCloudZimlet.prototype.displayDialog =
         var passwHtml = "";
         if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
         {
-           passwHtml += "<tr><td>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (this.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
+           passwHtml += "<tr><td>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (zimletInstance.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
         }
         else
         {
@@ -568,7 +587,7 @@ ownCloudZimlet.prototype.displayDialog =
           "<table>"+
           "<tr>" +
           "<td>Username:&nbsp;</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+(this.getUserProperty('owncloud_zimlet_username') ? this.getUserProperty('owncloud_zimlet_username') : username)+"'></td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_username') ? zimletInstance.getUserProperty('owncloud_zimlet_username') : username)+"'></td>" +
           "</tr>" +
           "<tr>" +
           "<td>Password:</td>" +
@@ -576,36 +595,42 @@ ownCloudZimlet.prototype.displayDialog =
           "</tr>" +
           "<tr>" + passwHtml + 
           "<td>Server:&nbsp;</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_name' value='"+(this.getUserProperty('owncloud_zimlet_server_name') ? this.getUserProperty('owncloud_zimlet_server_name') : serverName)+"'></td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_name' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_server_name') ? zimletInstance.getUserProperty('owncloud_zimlet_server_name') : serverName)+"'></td>" +
           "</tr>" +
           "<tr>" +
           "<td>Port:&nbsp;</td>" +
-          "<td style='width:98%'><input style='width:50px' type='number' min='1' max='65535' id='owncloud_zimlet_server_port' value='"+(this.getUserProperty('owncloud_zimlet_server_port') ? this.getUserProperty('owncloud_zimlet_server_port') : ((location.protocol === 'https:') ? 443 : 80))+"'></td>" +
+          "<td style='width:98%'><input style='width:50px' type='number' min='1' max='65535' id='owncloud_zimlet_server_port' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_server_port') ? zimletInstance.getUserProperty('owncloud_zimlet_server_port') : ((location.protocol === 'https:') ? 443 : 80))+"'></td>" +
           "</tr>" +
           "<tr>" +
           "<td>DAV Path:&nbsp;</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+(this.getUserProperty('owncloud_zimlet_server_path') ? this.getUserProperty('owncloud_zimlet_server_path') : this.getConfig('owncloud_zimlet_server_path'))+"'></td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_server_path') ? zimletInstance.getUserProperty('owncloud_zimlet_server_path') : zimletInstance.getConfig('owncloud_zimlet_server_path'))+"'></td>" +
           "</tr>" +
           "<tr>" +
           "<tr>" +
           "<td>ownCloud/Nextcloud&nbsp;folder:&nbsp;</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+(this.getUserProperty('owncloud_zimlet_oc_folder') ? this.getUserProperty('owncloud_zimlet_oc_folder') : this.getConfig('owncloud_zimlet_oc_folder'))+"'></td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_oc_folder') ? zimletInstance.getUserProperty('owncloud_zimlet_oc_folder') : zimletInstance.getConfig('owncloud_zimlet_oc_folder'))+"'></td>" +
           "</tr>" +
           "<tr>" +          
           "<td>Default folder:&nbsp;</td>" +
-          "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+this.getUserProperty('owncloud_zimlet_default_folder')+"'></td>" +
+          "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+zimletInstance.getUserProperty('owncloud_zimlet_default_folder')+"'></td>" +
           "</tr>" +
           "</table>" +
           "</div>";
-        this._dialog.setContent(html);
-        this._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.prefSaveBtn));
-        this._dialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(this, this.cancelBtn));
+        zimletInstance._dialog.setContent(html);
+        zimletInstance._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, zimletInstance.prefSaveBtn));
+        zimletInstance._dialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelBtn));
         break;
+   case 2:
+      //Default dialog
+      zimletInstance._dialog = new ZmDialog( { title:title, parent:zimletInstance.getShell(), standardButtons:[DwtDialog.OK_BUTTON], disposeOnPopDown:true } );
+      zimletInstance._dialog.setContent(message);
+      zimletInstance._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelBtn));
+      break;        
     }
-    this._dialog._setAllowSelection();
-    document.getElementById(this._dialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';
-    document.getElementById(this._dialog.__internalId+'_title').style.textAlign = 'center';
-    this._dialog.popup();
+    zimletInstance._dialog._setAllowSelection();
+    document.getElementById(zimletInstance._dialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';
+    document.getElementById(zimletInstance._dialog.__internalId+'_title').style.textAlign = 'center';
+    zimletInstance._dialog.popup();
   };
 
 /* This method is called when the dialog "CANCEL" button is clicked
