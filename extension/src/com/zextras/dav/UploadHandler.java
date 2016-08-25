@@ -122,7 +122,7 @@ public class UploadHandler implements HttpHandler
         Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
         userProperties.get(ZimletProperty.DAV_SERVER_PATH),
         userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-        userProperties.get(ZimletProperty.DAV_USER_PASSWORD)
+        zimbraContext.getParameter(dav_user_password, "")
       );
 
       ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());

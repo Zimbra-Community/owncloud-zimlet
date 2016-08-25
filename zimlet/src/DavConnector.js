@@ -347,6 +347,7 @@
    * @static
    */
   DavConnector._sendRequest = function(action, soapDoc, callback, errorCallback) {
+    soapDoc.set('dav_user_password', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
     // Injecting fake callbacks, the debug will be much faster.
     if (!callback) {
       callback = new AjxCallback(
