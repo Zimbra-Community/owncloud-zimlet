@@ -58,7 +58,7 @@ public class OwnCloudSoapConnector
       port,
       userProperties.get(ZimletProperty.OC_PATH),
       userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-      zimbraContext.getParameter(dav_user_password, "")
+      zimbraContext.getParameter("dav_user_password", "")
     );
   }
 

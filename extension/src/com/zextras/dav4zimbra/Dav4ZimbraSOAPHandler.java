@@ -92,7 +92,7 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
       Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
       userProperties.get(ZimletProperty.DAV_SERVER_PATH),
       userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-      zimbraContext.getParameter(dav_user_password, ""),
+      zimbraContext.getParameter("dav_user_password", ""),
       userProperties.get(ZimletProperty.DAV_MAIL_FOLDER)
     );
 
