@@ -292,9 +292,10 @@ ownCloudZimlet.prototype.singleClicked =
  */
 ownCloudZimlet.prototype.menuItemSelected =
   function(itemId) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     switch (itemId) {
       case "preferences":
-        this.displayDialog(1, 'Preferences', null);
+        zimletInstance.displayDialog(1, 'Preferences', null);
         break;
       case "help":
         window.open(zimletInstance.getResource("help/index.html"));
