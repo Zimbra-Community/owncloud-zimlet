@@ -42,8 +42,8 @@ set -e
 if [[ -z $GIT_CMD ]] || [[ -z $ANT_CMD ]]; then
    if [[ ! -z $YUM_CMD ]]; then
       yum install -y git ant make
-   elif [[ ! -z $APT_GET_CMD ]]; then
-      apt-get install -y git ant make
+   else
+      apt-get install -y git ant make default-jdk
    fi
 fi
 
@@ -73,7 +73,7 @@ ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | tr -d '\n' | sed -r 's/.* 
 echo "Downloading the correct ZAL Version (${ZAL_VERSION_EXTENDED} for zimbra ${ZIMBRA_VERSION})..."
 wget "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" -O "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
 mkdir -p /opt/zimbra/lib/ext/ownCloud
-rm /opt/zimbra/lib/ext/ownCloud/*.jar
+rm -f /opt/zimbra/lib/ext/ownCloud/*.jar
 cp "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
 cp !(zal*).jar /opt/zimbra/lib/ext/ownCloud/
 cp *.jar /opt/zimbra/lib/ext/ownCloud/
