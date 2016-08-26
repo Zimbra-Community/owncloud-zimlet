@@ -158,7 +158,7 @@ OwnCloudCommons.prototype._getResourceCbk = function(resource, resources, ids, c
   req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
   req.setRequestHeader('Content-Type',  'application/octet-stream' + ';');
   req.setRequestHeader('X-Zimbra-Csrf-Token', window.csrfToken);
-  req.setRequestHeader('Content-Disposition', 'attachment; filename="'+ resource.getName() + '";');
+  req.setRequestHeader('Content-Disposition', 'attachment; filename="'+ this.convertToEntities(resource.getName()) + '";');
   req.onload = (function(_this, resources, ids, callback) {
     return function(result) {
       var resp = eval('[' + this.responseText + ']'),
@@ -174,6 +174,26 @@ OwnCloudCommons.prototype._getResourceCbk = function(resource, resources, ids, c
   var blob = new Blob([dataBin], { type: 'octet/stream' });
   req.send(blob);
 };
+
+/* Function borrowed from Com_Zimbra_DnD
+ * Needed to support UTF-8 character (chinese and such) and encode it to &#xxxx; format e.g. HTML numeric character reference
+ * */
+OwnCloudCommons.prototype.convertToEntities = function (astr){
+	var bstr = '', cstr, i = 0;
+	for(i; i < astr.length; ++i){
+		if(astr.charCodeAt(i) > 127){
+			cstr = astr.charCodeAt(i).toString(10);
+			while(cstr.length < 4){
+				cstr = '0' + cstr;
+			}
+			bstr += '&#' + cstr + ';';
+		} else {
+			bstr += astr.charAt(i);
+		}
+	}
+	return bstr;
+}
+
 
 /** Array of bytes to base64 string decoding
  * See {@link https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding$revision/773109 MDN Base64 encoding and decoding}.
