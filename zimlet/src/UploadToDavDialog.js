@@ -49,7 +49,7 @@ UploadToDavDialog.prototype._createUploadHtml = function() {
 };
 
 UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
-  this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + folder;
+  this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + folder + "&password=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'];
   this._uploadFolder = folder;
   this._uploadCallback = callback;
   var aCtxt = ZmAppCtxt.handleWindowOpener();

@@ -46,7 +46,7 @@ public class UploadHandler implements HttpHandler
   )
     throws ServletException, IOException
   {}
-
+  /* This is called when the Upload button is used in the WebDAV Tab Application */
   @Override
   public void doPost(
     HttpServletRequest httpServletRequest,
@@ -122,7 +122,7 @@ public class UploadHandler implements HttpHandler
         Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
         userProperties.get(ZimletProperty.DAV_SERVER_PATH),
         userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-        userProperties.get(ZimletProperty.DAV_USER_PASSWORD)
+        paramsMap.get("password")
       );
 
       ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
