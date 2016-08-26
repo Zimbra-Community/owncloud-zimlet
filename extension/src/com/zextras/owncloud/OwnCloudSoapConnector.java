@@ -18,6 +18,7 @@ import com.zextras.owncloud.client.methods.*;
 import com.zextras.util.UserPropertyExtractor;
 import org.openzal.zal.Account;
 import org.openzal.zal.soap.SoapResponse;
+import org.openzal.zal.soap.ZimbraContext;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -29,7 +30,7 @@ public class OwnCloudSoapConnector
 {
   private final OwnCloudClient mOwnCloudClient;
 
-  public OwnCloudSoapConnector(Account account)
+  public OwnCloudSoapConnector(Account account, ZimbraContext zimbraContext)
   {
     final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, Zimlet.NAME);
     if (
@@ -58,7 +59,7 @@ public class OwnCloudSoapConnector
       port,
       userProperties.get(ZimletProperty.OC_PATH),
       userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-      userProperties.get(ZimletProperty.DAV_USER_PASSWORD)
+      zimbraContext.getParameter("dav_user_password", "")
     );
   }
 

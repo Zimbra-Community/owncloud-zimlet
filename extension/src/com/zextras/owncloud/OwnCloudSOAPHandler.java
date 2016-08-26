@@ -30,7 +30,7 @@ public class OwnCloudSOAPHandler implements SoapHandler
   {
     final String accountId = zimbraContext.getAuthenticatedAccontId();
     final Account account = mProvisioning.assertAccountById(accountId);
-    final OwnCloudSoapConnector connector = new OwnCloudSoapConnector(account);
+    final OwnCloudSoapConnector connector = new OwnCloudSoapConnector(account, zimbraContext);
 
     final String actionStr = zimbraContext.getParameter("action", "");
     final OwnCloudCommand command;
