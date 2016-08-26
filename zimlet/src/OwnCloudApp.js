@@ -90,26 +90,29 @@ OwnCloudApp.prototype._onItemExpanded = function(/** @type {DwtTreeEvent} */ ev)
 };
 
 OwnCloudApp.prototype._initTree = function(href, parent, callback) {
-  var tmpCallback = new AjxCallback(
-    this,
-    this._restoreExpansion,
-    [parent, parent.getExpanded(), callback]
-  );
-
-  parent.removeChildren();
-  this._appendLoadingTreeItem(parent);
-  parent.setExpanded(true, false, true);
-
-  this._davConnector.propfind(
-    href,
-    2,
-    new AjxCallback(
+  if (parent)
+  {
+    var tmpCallback = new AjxCallback(
       this,
-      this._renderTreePropFind,
-      [href, parent, tmpCallback]
-    ),
-    this._zimletCtxt._defaultPropfindErrCbk
-  );
+      this._restoreExpansion,
+      [parent, parent.getExpanded(), callback]
+    );
+  
+    parent.removeChildren();
+    this._appendLoadingTreeItem(parent);
+    parent.setExpanded(true, false, true);
+  
+    this._davConnector.propfind(
+      href,
+      2,
+      new AjxCallback(
+        this,
+        this._renderTreePropFind,
+        [href, parent, tmpCallback]
+      ),
+      this._zimletCtxt._defaultPropfindErrCbk
+    );
+  }
 };
 
 OwnCloudApp.prototype._restoreExpansion = function(treeItem, wasExpanded, callback, resources) {
