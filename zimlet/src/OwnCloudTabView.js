@@ -20,15 +20,20 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
   DwtComposite.call(this, parent, void 0, Dwt.STATIC_STYLE);
   var acct = appCtxt.multiAccounts ? appCtxt.getAppViewMgr().getCurrentView().getFromAccount() : appCtxt.getActiveAccount();
   if (this.prevAccount && (acct.id == this.prevAccount.id)) {
-    this.setSize(Dwt.DEFAULT, "280");
     return;
   }
+
   this.prevAccount = acct;
-  this.parent.setScrollStyle(Dwt.SCROLL);
+  this.parent.setScrollStyle(Dwt.CLIP);
   this._tree = new DwtTree({
     parent: this,
     style: DwtTree.CHECKEDITEM_STYLE
   });
+  this._tree.setSize("500px", "230px");
+  this._tree.setScrollStyle(Dwt.SCROLL);
+  //Add scrollbar to avoid overflowing the attach dialog
+  document.getElementById(this._tree.getHTMLElId()).style.overflowX = "hidden";
+
   this._checkbox = new DwtCheckbox({ // feature available only in ownCloud installation.
     parent: this,
     style: DwtCheckbox.TEXT_RIGHT
@@ -61,12 +66,6 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
   };
   this._tree.addSelectionListener(new AjxListener(this, this._treeclick, {}));
   
-  //Add scrollbar to avoid overflowing the attach dialog
-  var ZmAttachDialogcontainer = document.getElementsByClassName('ZmAttachDialog-container');
-  for (var index = 0; index < ZmAttachDialogcontainer.length; index++) {
-    ZmAttachDialogcontainer[index].style.overflowY = "scroll";
-    ZmAttachDialogcontainer[index].style.overflowX = "hidden";
-  }
   this._populateTree();
 }
 
