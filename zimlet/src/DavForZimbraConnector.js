@@ -105,6 +105,7 @@
       );
     }
     soapDoc.set('action', action);
+    soapDoc.set('dav_user_password', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
     var params = {
       soapDoc: soapDoc,
       asyncMode: true,
