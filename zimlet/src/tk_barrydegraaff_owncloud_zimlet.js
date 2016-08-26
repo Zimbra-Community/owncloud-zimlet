@@ -34,16 +34,98 @@ var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 ownCloudZimlet.prototype.init =
   function () {
     // Initialize the zimlet
+
+    /** Load default settings for new users **/
+       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this._zimletContext.getConfig("disable_password_storing");
+   
+       //Set default value
+       if(!this.getUserProperty("owncloud_zimlet_password"))
+       {
+          this.setUserProperty("owncloud_zimlet_password", '', true);
+       }
+       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = this.getUserProperty("owncloud_zimlet_password");
+   
+       //Set default value in case no owncloud_zimlet_server_name is set
+       if(!this.getUserProperty("owncloud_zimlet_server_name"))
+       {
+          if(this._zimletContext.getConfig("owncloud_zimlet_server_name"))
+          {
+             //Did the admin specify one? Use that:
+             this.setUserProperty("owncloud_zimlet_server_name", this._zimletContext.getConfig("owncloud_zimlet_server_name"), true);
+          }
+          else
+          {     
+             //Make a guess and use that 
+             this.setUserProperty("owncloud_zimlet_server_name", location.protocol + '//' + location.hostname, true);
+          }   
+       }
+       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = this.getUserProperty("owncloud_zimlet_server_name");
+   
+       //Set default value in case no owncloud_zimlet_server_port is set
+       if(!this.getUserProperty("owncloud_zimlet_server_port"))
+       {
+          if(this._zimletContext.getConfig("owncloud_zimlet_server_port"))
+          {
+             //Did the admin specify one? Use that:
+             this.setUserProperty("owncloud_zimlet_server_port", this._zimletContext.getConfig("owncloud_zimlet_server_port"), true);
+          }
+          else
+          {     
+             //Make a guess and use that 
+             this.setUserProperty("owncloud_zimlet_server_port", ((location.protocol === 'https:') ? 443 : 80), true);
+          }   
+       }
+       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = this.getUserProperty("owncloud_zimlet_server_port");
+   
+       //Set default value in case no owncloud_zimlet_server_path is set
+       if(!this.getUserProperty("owncloud_zimlet_server_path"))
+       {
+          if(this._zimletContext.getConfig("owncloud_zimlet_server_path"))
+          {
+             //Did the admin specify one? By default we do so use that:
+             this.setUserProperty("owncloud_zimlet_server_path", this._zimletContext.getConfig("owncloud_zimlet_server_path"), true);
+          }
+          else
+          {     
+             //Seems like the admins wants to clear this field, do it:
+             this.setUserProperty("owncloud_zimlet_server_path", "", true);
+          }   
+       }
+       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] = this.getUserProperty("owncloud_zimlet_server_path");
+   
+       //Set default value in case no owncloud_zimlet_oc_folder is set
+       if(!this.getUserProperty("owncloud_zimlet_oc_folder"))
+       {
+          if(this._zimletContext.getConfig("owncloud_zimlet_oc_folder"))
+          {
+             //Did the admin specify one? By default we do so use that:
+             this.setUserProperty("owncloud_zimlet_oc_folder", this._zimletContext.getConfig("owncloud_zimlet_oc_folder"), true);
+          }
+          else
+          {     
+             //Seems like the admins wants to clear this field, do it:
+             this.setUserProperty("owncloud_zimlet_oc_folder", "", true);
+          }   
+       }
+       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = this.getUserProperty("owncloud_zimlet_oc_folder");
+   
+       //Set default value in case no owncloud_zimlet_default_folder is set
+       if(!this.getUserProperty("owncloud_zimlet_default_folder"))
+       {
+          if(this._zimletContext.getConfig("owncloud_zimlet_default_folder"))
+          {
+             //Did the admin specify one? Use that:
+             this.setUserProperty("owncloud_zimlet_default_folder", this._zimletContext.getConfig("owncloud_zimlet_default_folder"), true);
+          }
+          else
+          {     
+             //Seems like the admins wants to clear this field, do it:
+             this.setUserProperty("owncloud_zimlet_default_folder", "", true);
+          }   
+       }
+       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");
+    /** End load default settings for new users **/
     
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this._zimletContext.getConfig("disable_password_storing");
-
-    //Set default value
-    if(!this.getUserProperty("owncloud_zimlet_password"))
-    {
-       this.setUserProperty("owncloud_zimlet_password", '', true);
-    }
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = this.getUserProperty("owncloud_zimlet_password");
-
     
     // Force available the ZmUploadDialog component
     AjxDispatcher.require(["Extras"]);
@@ -164,7 +246,7 @@ ownCloudZimlet.prototype.saveAttachment =
     );
 
     this._davConnector.propfind(
-      this.getUserProperty('owncloud_zimlet_default_folder'),
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
       1,
       propfindCbk,
       this._defaultPropfindErrCbk
@@ -325,7 +407,7 @@ ownCloudZimlet.prototype.doDrop =
     );
 
     this._davConnector.propfind(
-      this.getUserProperty('owncloud_zimlet_default_folder'),
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
       1,
       propfindCbk,
       this._defaultPropfindErrCbk
@@ -480,7 +562,7 @@ ownCloudZimlet.prototype._handlePropfindError =
 ownCloudZimlet.prototype.createFolder =
   function(callback, errorCallback) {
     this._davConnector.mkcol(
-      '/' + this.getUserProperty('owncloud_zimlet_default_folder'),
+      '/' + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
       new AjxCallback(
         this,
         this._createFolderCallback,
@@ -570,7 +652,6 @@ ownCloudZimlet.prototype.displayDialog =
         });
         var username = appCtxt.getActiveAccount().name.match(/.*@/),
           html,
-          serverName = location.protocol + '//' + location.hostname;
         username = username[0].replace('@','');
 
         var passwHtml = "";
@@ -596,24 +677,24 @@ ownCloudZimlet.prototype.displayDialog =
           "</tr>" +
           "<tr>" + passwHtml + 
           "<td>Server:&nbsp;</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_name' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_server_name') ? zimletInstance.getUserProperty('owncloud_zimlet_server_name') : serverName)+"'></td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_name' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']+"'></td>" +
           "</tr>" +
           "<tr>" +
           "<td>Port:&nbsp;</td>" +
-          "<td style='width:98%'><input style='width:50px' type='number' min='1' max='65535' id='owncloud_zimlet_server_port' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_server_port') ? zimletInstance.getUserProperty('owncloud_zimlet_server_port') : ((location.protocol === 'https:') ? 443 : 80))+"'></td>" +
+          "<td style='width:98%'><input style='width:50px' type='number' min='1' max='65535' id='owncloud_zimlet_server_port' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']+"'></td>" +
           "</tr>" +
           "<tr>" +
           "<td>DAV Path:&nbsp;</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_server_path') ? zimletInstance.getUserProperty('owncloud_zimlet_server_path') : zimletInstance.getConfig('owncloud_zimlet_server_path'))+"'></td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+"'></td>" +
           "</tr>" +
           "<tr>" +
           "<tr>" +
           "<td>ownCloud/Nextcloud&nbsp;folder:&nbsp;</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_oc_folder') ? zimletInstance.getUserProperty('owncloud_zimlet_oc_folder') : zimletInstance.getConfig('owncloud_zimlet_oc_folder'))+"'></td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"'></td>" +
           "</tr>" +
           "<tr>" +          
           "<td>Default folder:&nbsp;</td>" +
-          "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+zimletInstance.getUserProperty('owncloud_zimlet_default_folder')+"'></td>" +
+          "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']+"'></td>" +
           "</tr>" +
           "</table>" +
           "</div>";
@@ -717,6 +798,7 @@ ownCloudZimlet.prototype._saveUserProperties =
         this._saveUserProperties,
         [cloned, callback]
       );
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings[key] = value;
       this.setUserProperty(key, value, true, intCallback);
       return;
     }
