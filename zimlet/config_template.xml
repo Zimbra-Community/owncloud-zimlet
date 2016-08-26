@@ -21,3 +21,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 -->
 
 
+<zimletConfig name="tk_barrydegraaff_owncloud_zimlet" version="1.0">
+    <global>
+        <property name="disable_password_storing">false</property>
+    </global>
+</zimletConfig>
