@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link rel="shortcut icon" href="../icon.png" />
-<title>Zimbra ownCloud User Help</title>
+<title>Zimbra WebDAV User Help</title>
 
 <style type="text/css">
 h1
@@ -42,27 +42,27 @@ border: 1px solid #888888;
 
 <body style="font-family: sans-serif; font-size:14px;">    
 <div style="width:990px">
-<h1>Zimbra ownCloud Zimlet User Help</h1>
+<h1>Zimbra WebDAV Client User Help</h1>
 <h2>Contents</h2>
 <ul>
-<li><a href="#attach-from-owncloud">Sending attachments from ownCloud</a></li>
+<li><a href="#attach-from-owncloud">Sending attachments from WebDAV</a></li>
 <li><a href="#share-as-link">Sharing files with a public link</a></li>
-<li><a href="#emails-to-owncloud">Saving emails to ownCloud</a></li>
-<li><a href="#attachment-to-owncloud">Saving attachments to ownCloud</a></li>
-<li><a href="#briefcase-to-owncloud">Saving briefcase documents to ownCloud</a></li>
-<li><a href="#preferences">Configure ownCloud Zimlet</a></li>
-<li><a href="#about">About Zimbra ownCloud Zimlet</a></li>
+<li><a href="#emails-to-owncloud">Saving emails to WebDAV</a></li>
+<li><a href="#attachment-to-owncloud">Saving attachments to WebDAV</a></li>
+<li><a href="#briefcase-to-owncloud">Saving briefcase documents to WebDAV</a></li>
+<li><a href="#preferences">Configure WebDAV Client</a></li>
+<li><a href="#about">About Zimbra WebDAV Client</a></li>
 <li><a href="#licenses">License and third party FOSS libraries</a></li>
 </ul>
 <br>
 
 <br><br></section><section id="attach-from-owncloud">
-<h1>Sending attachments from ownCloud</h1>
-When composing email in Zimbra, you can attach files from ownCloud directly. Click the arrow next to <i>Attach</i>.<br>
+<h1>Sending attachments from WebDAV</h1>
+When composing email in Zimbra, you can attach files from WebDAV directly. Click the arrow next to <i>Attach</i>.<br>
 <br><img src="attach-menu.png" alt=""><br>
 <br>You can select files by checking them, also you can open folders by clicking on the blue folder icons. Click <i>Attach</i> when done.<br>
 <br><img src="attach-from-dialog.png" alt=""><br>
-<br>Attaching files may take some time, a progress round is displayed during this process. The message <i>Draft Saved</i> is displayed once your attachments are ready.<br>
+<br>Attaching files may take some time, a dialog is displayed during this process. The message <i>Draft Saved</i> is displayed once your attachments are ready.<br>
 <br><img src="attach-from-draft.png" alt=""><br>
 
 <hr><br>
@@ -74,71 +74,69 @@ Instead of sending files as attachments, you can also share file by means of a p
 <ul>
 <li>Link sharing does not work with <a target ="_blank" href="https://doc.owncloud.org/server/8.1/admin_manual/configuration_files/external_storage_configuration_gui.html">external storage</a> (Windows Shares)</li>
 <li>Link sharing may have been disabled by your administrator</li>
-<li>You can create only <a href="#link-share-exists">one public link for each file at a time</a></li>
+<li>This feature is only available if you use WebDAV Client with ownCloud and/or Nextcloud</li>
 </ul>
 
 Click the arrow next to <i>Attach</i>.<br>
 <br><img src="attach-menu.png" alt=""><br>
-<br>Select <i>Share as link</i><br>
+<br>Check the option <i>Add file as shared link</i>. You can also protect the shared link by typing a password in the <i>Optional password for shared link</i> field.<br>
 <br><img src="share-as-link-dialog.png" alt=""><br>
-<br>You can select files by checking them, also you can open folders by clicking on the blue folder icons. Click <i>Attach</i> when done.<br>
-<br><img src="share-as-link-dialog2.png" alt=""><br>
-<br>The selected files are displayed as links in the email body.<br>
+<br>You can select files by checking them, also you can open folders by clicking on the blue folder icons. Click <i>Attach</i> when done. The selected files are displayed as links in the email body.<br>
 <br><img src="share-as-link-result.png" alt=""><br>
-<section id="link-share-exists"><br>An exclamation mark appears for files that have already been shared with a public link. There can only be one public link defined for each file at a time. If you share the file again, a new link will be created, and the old link will no longer work.<br><br>  <img src="link-share-exists.png" alt=""><br></section
+</section
 <hr><br>
 
 
 <br><br></section><section id="emails-to-owncloud">
-<h1>Saving emails to ownCloud</h1>
-You can save emails including attachments to ownCloud by selecting them in your mailbox and drag and drop them on to the ownCloud panel.<br> Tip: You can select multiple emails by using the CTRL or SHIFT keys on your keyboard.<br>
+<h1>Saving emails to WebDAV</h1>
+You can save emails including attachments to WebDAV by selecting them in your mailbox and drag and drop them on to the WebDAV panel.<br> Tip: You can select multiple emails by using the CTRL or SHIFT keys on your keyboard.<br>
 <br><img src="multi-select.png" alt=""><br>
 <br><img src="drag-drop.png" alt=""><br>
-<br><img src="saving-multi-select.png" alt=""><br>
-<br>You can see the resulting files in ownCloud in the folder that is defined in your <a href="#preferences">preferences</a>. You can open EML files using an email client, for example Mozilla Thunderbird, Windows Essentials Mail or Apple Mail.<br>
+<br><img src="dodrop-saving.png" alt=""><br>
+<br>You can see the resulting files on the WebDAV server in the folder that is defined in your <a href="#preferences">preferences</a>. You can open EML files using an email client, for example Mozilla Thunderbird, Windows Essentials Mail or Apple Mail.<br>
 <br><img src="dodrop-result.png" alt=""><br>
 <hr><br>
 
 
 <br><br></section><section id="attachment-to-owncloud">
-<h1>Saving attachments to ownCloud</h1>
-You can save a single attachment by clicking on the <i>ownCloud</i> link that is displayed after each attachment in your inbox. The attachment is saved to ownCloud in the folder that is defined in your <a href="#preferences">preferences</a>.<br>
+<h1>Saving attachments to WebDAV</h1>
+You can save a single attachment by clicking on the <i>WebDAV</i> link that is displayed after each attachment in your inbox. The attachment is saved to WebDAV in the folder that is defined in your <a href="#preferences">preferences</a>.<br>
 <br><img src="save-attachment.png" alt=""><br>
 <hr><br>
 
 
 <br><br></section><section id="briefcase-to-owncloud">
-<h1>Saving briefcase documents to ownCloud</h1>
-You can save briefcase documents to ownCloud by selecting them from your briefcase and drag and drop them on to the ownCloud panel.<br> Tip: You can select multiple documents by using the CTRL or SHIFT keys on your keyboard.<br>
+<h1>Saving briefcase documents to WebDAV</h1>
+You can save briefcase documents to WebDAV by selecting them from your briefcase and drag and drop them on to the WebDAV panel.<br> Tip: You can select multiple documents by using the CTRL or SHIFT keys on your keyboard.<br>
 <br><img src="briefcase-drop.png" alt=""><br>
-<br>You can find your document in ownCloud in the folder that is defined in your <a href="#preferences">preferences</a>.<br>
+<br>You can find your document in WebDAV in the folder that is defined in your <a href="#preferences">preferences</a>.<br>
 <br><img src="briefcase-result.png" alt=""><br>
 <hr><br>
 
 
 <br><br></section><section id="preferences">
-<h1>Configure ownCloud Zimlet</h1>
-Find the ownCloud menu under <i>Zimlets</i> in your Zimbra web mail. Right click on ownCloud and select <i>Preferences</i>. <br>
+<h1>Configure WebDAV Client</h1>
+Find the WebDAV menu under <i>Zimlets</i> in your Zimbra web mail. Right click on WebDAV and select <i>Preferences</i>. <br>
 <br><img src="preferences-menu.png" alt=""><br>
 <br>
 <table>
-<tr><td>Username<sup>1</sup></td><td>Your ownCloud username, is set to your Zimbra username by default</td></tr>
-<tr><td>Password<sup>1</sup></td><td>Your ownCloud password</td></tr>
-<tr><td>Store password<sup>2</sup></td><td>If checked, the password is stored in plain text in Zimbra LDAP. If not checked you have to provide password for each session</td></tr>
-<tr><td><b>Default folder</b></td><td><b>Destination folder in ownCloud when saving emails, attachments and documents from Zimbra</b>
+<tr><td>Username</td><td>Your WebDAV username, is set to your Zimbra username by default</td></tr>
+<tr><td>Password</td><td>Your WebDAV password</td></tr>
+<tr><td>Store password<sup>1</sup></td><td>If checked, the password is stored in plain text in Zimbra LDAP. If not checked you have to provide password for each session</td></tr>
+<tr><td><b>Default folder</b></td><td><b>Destination folder in WebDAV when saving emails, attachments and documents from Zimbra</b>
 <br>The folder is automatically created when you click <i>OK</i>.</td></tr>
 </table>
 <br>
-<sup>1</sup> Your administrator may have configured <a href="https://github.com/barrydegraaff/owncloud-zimlet/blob/master/sso/Zimbra%20ownCloud%20Single-Sign-On.md">Single-Sign-On</a>, in that case you don't need to configure your username and password. <br>
-<sup>2</sup> <i>Store password</i> may have been disabled by your administrator.
+<sup>1</sup> <i>Store password</i> may have been disabled by your administrator.
 <br>
 <br><img src="preferences.png" alt=""><br>
-<br><img src="ownCloudTab.png" alt=""><br>
+The other fields should be automatically filled with correct details by your system administrator.
+<br>
 
 <br><br></section><section id="about">
-<h1>Zimbra ownCloud Zimlet</h1>If you find Zimbra ownCloud Zimlet useful and want to support its continued development, you can make donations via:
+<h1>Zimbra WebDAV Client</h1>If you find Zimbra WebDAV Client useful and want to support its continued development, you can make donations via:
 <ul>
-<li>PayPal: <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=info%40barrydegraaff%2etk&amp;lc=US&amp;item_name=Zimbra ownCloud%20Zimlet&amp;no_note=0&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest">info@barrydegraaff.tk</a></li>
+<li>PayPal: <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=info%40barrydegraaff%2etk&amp;lc=US&amp;item_name=Zimbra WebDAV%20Client&amp;no_note=0&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest">info@barrydegraaff.tk</a></li>
 <li>Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A</li>
 </ul>
 Please report <a href="https://github.com/barrydegraaff/owncloud-zimlet/issues">bugs</a>
@@ -154,7 +152,7 @@ Please report <a href="https://github.com/barrydegraaff/owncloud-zimlet/issues">
 
 <br><br></section><section id="licenses" style="width:650px">
 <h1>License and third party FOSS libraries</h1>
-Copyright (C) 2015&nbsp; Barry de Graaff 
+Copyright (C) 2015-2016 Barry de Graaff Zeta Alliance, Michele Olivo ZeXtras
 <br><br>This program is free software: you can redistribute it and/or modify
 <br> it under the terms of the GNU General Public License as published by
 <br> the Free Software Foundation, either version 3 of the License, or
@@ -167,10 +165,6 @@ Copyright (C) 2015&nbsp; Barry de Graaff
 <br> along with this program.&nbsp; If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
 <br>
 <br><br>
-<b>davclient.js - Low-level JavaScript WebDAV client implementation</b><br>
-Copyright (C) Sven vogler under terms of the GNU General Public License version 2<br><br>
-
-<b>ownCloud and the ownCloud Logo are a registered trademark of ownCloud, Inc.</b><br><br>
 
 <b>com_zimbra_attachmail, com_zimbra_dnd</b>
 <br>Zimbra Collaboration Suite Zimlets - Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc.
@@ -189,8 +183,8 @@ Copyright (C) Sven vogler under terms of the GNU General Public License version 
 <br>The Initial Developer of the Original Code is Zimbra, Inc. 
 <br>All portions of the code are Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014 Zimbra, Inc. All Rights Reserved. <br><br>
 
-<b>Icons ans logo</b><br>
-Icons and logo where taken from the tango-icon-theme package and where released to the Public Domain by the Tango Desktop Project.<br>
+<b>Logo</b><br>
+Copyright (C) 2016 Jorge de la Cruz.<br>
 <br><br>
 </section>
 <br>
