@@ -33,6 +33,8 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
   // Create toolbar buttons
   toolbar.createButton(ZmOperation.NEW_FILE, {text: ZmMsg.uploadDocs});
   toolbar.addSelectionListener(ZmOperation.NEW_FILE, new AjxListener(this, this._uploadBtnLsnr));
+  toolbar.createButton(ZmOperation.NEW_FOLDER, {text: ZmMsg.newFolder});
+  toolbar.addSelectionListener(ZmOperation.NEW_FOLDER, new AjxListener(this, this._newFolderListener));
 
   this._parentTreeItem = new DwtHeaderTreeItem({
     parent: treeView,
@@ -328,5 +330,45 @@ OwnCloudApp.prototype._uploadBtnLsnr = function(ev) {
   dialog.popup(
     this._currentPath,
     new AjxCallback(this, this.refreshView)
+  );
+};
+
+OwnCloudApp.prototype._newFolderListener = function(ev) {
+  var newFolderDialog = new DwtDialog({parent: appCtxt.getShell()}),
+    folder = this._currentPath,
+    composite = new DwtComposite({ parent: newFolderDialog }),
+    label,
+    input;
+
+  newFolderDialog.setView(composite);
+
+  label = new DwtLabel({
+    parent: composite
+  });
+  label.setText(ZmMsg.newFolder + ":");
+
+  input = new DwtInputField({
+    parent: composite
+  });
+  newFolderDialog.setTitle(ZmMsg.newFolder);
+  newFolderDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._newFolderCallback, [folder, input, newFolderDialog]));
+  newFolderDialog.addEnterListener(new AjxListener(this, this._newFolderCallback, [folder, input, newFolderDialog]));
+  newFolderDialog.popup();
+};
+
+OwnCloudApp.prototype._newFolderCallback = function(folder, input, dialog, ev) {
+  if (!input.getValue()) { return; }
+  dialog.getButton(DwtDialog.OK_BUTTON).setEnabled(false);
+  dialog.getButton(DwtDialog.CANCEL_BUTTON).setEnabled(false);
+
+  this._davConnector.mkcol(
+    ("/"+(folder + input.getValue()).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"")).replace('//','/'),
+    new AjxCallback(this, function(dialog, result) {
+      dialog.popdown();
+      this.refreshView();
+      if (result === true) {
+      } else {
+      }
+    }, [dialog])
   );
 };
