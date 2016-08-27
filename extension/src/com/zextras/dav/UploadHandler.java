@@ -147,7 +147,7 @@ public class UploadHandler implements HttpHandler
 
 
 
-          fileNames.add(item.getName());
+          fileNames.add(item.getName().replaceAll("\\\\|\\/|\\:|\\*|\\?|\\\"|\\<|\\>|\\||\\%|\\&|\\@|\\!|\\'|\\[|\\]", ""));
           connector.put(
             paramsMap.get("path") + item.getName(),
             item.getInputStream()
