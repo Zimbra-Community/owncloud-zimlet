@@ -361,11 +361,12 @@ OwnCloudApp.prototype._newFolderListener = function(ev) {
 
 OwnCloudApp.prototype._newFolderCallback = function(folder, input, dialog, ev) {
   if (!input.getValue()) { return; }
+  var inputValue = ownCloudZimlet.prototype.sanitizeFileName(input.getValue());
   dialog.getButton(DwtDialog.OK_BUTTON).setEnabled(false);
   dialog.getButton(DwtDialog.CANCEL_BUTTON).setEnabled(false);
 
   this._davConnector.mkcol(
-    ("/"+(folder + input.getValue()).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"")).replace('//','/'),
+    ("/"+(folder + inputValue).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"")).replace('//','/'),
     new AjxCallback(this, function(dialog, result) {
       dialog.popdown();
       this.refreshView();

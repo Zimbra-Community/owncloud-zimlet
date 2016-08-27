@@ -504,12 +504,13 @@ OwnCloudListView.prototype._newFolderListener = function(ev) {
 };
 
 OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, ev) {
-  if (input.getValue() === folder.getName()) { return; }
+  var inputValue = ownCloudZimlet.prototype.sanitizeFileName(input.getValue());
+  if (inputValue === folder.getName()) { return; }
   dialog.getButton(DwtDialog.OK_BUTTON).setEnabled(false);
   dialog.getButton(DwtDialog.CANCEL_BUTTON).setEnabled(false);
 
   this._davConnector.mkcol(
-    "/"+(folder.getHref() + input.getValue()).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], ""),
+    "/"+(folder.getHref() + inputValue).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], ""),
     new AjxCallback(this, function(dialog, result) {
       dialog.popdown();
       this._ocZimletApp.refreshView();
