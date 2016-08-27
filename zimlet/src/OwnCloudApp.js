@@ -326,7 +326,6 @@ OwnCloudApp.prototype.refreshView = function () {
 
 OwnCloudApp.prototype._uploadBtnLsnr = function(ev) {
   var dialog = new UploadToDavDialog(appCtxt.getShell());
-
   dialog.popup(
     this._currentPath,
     new AjxCallback(this, this.refreshView)
@@ -353,6 +352,10 @@ OwnCloudApp.prototype._newFolderListener = function(ev) {
   newFolderDialog.setTitle(ZmMsg.newFolder);
   newFolderDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._newFolderCallback, [folder, input, newFolderDialog]));
   newFolderDialog.addEnterListener(new AjxListener(this, this._newFolderCallback, [folder, input, newFolderDialog]));
+
+  //add tab group and focus on the input field
+  newFolderDialog._tabGroup.addMemberBefore(input,	newFolderDialog._tabGroup.getFirstMember());
+  newFolderDialog._tabGroup.setFocusMember(input);
   newFolderDialog.popup();
 };
 
