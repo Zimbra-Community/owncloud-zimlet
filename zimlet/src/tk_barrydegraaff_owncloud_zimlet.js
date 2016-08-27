@@ -125,7 +125,10 @@ ownCloudZimlet.prototype.init =
        }
        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");
     /** End load default settings for new users **/
-    
+
+   this._zimletContext._panelActionMenu.args[0][0].label = ZmMsg.preferences;
+   this._zimletContext._panelActionMenu.args[0][1].label = ZmMsg.help;
+   ownCloudZimlet.version=this._zimletContext.version;
     
     // Force available the ZmUploadDialog component
     AjxDispatcher.require(["Extras"]);
@@ -195,7 +198,7 @@ ownCloudZimlet._addOwnCloudLink =
       "onClick=\"" +
       "window.tk_barrydegraaff_owncloud_zimlet_HandlerObject.saveAttachment('" + attachment.mid + "','" + attachment.part + "','" + ownCloudZimlet.prototype.sanitizeFileName(attachment.label) + "')" +
       "\">"+
-      "send to WebDAV" +
+      "WebDAV" +
       "</a>";
   };
 
@@ -222,8 +225,8 @@ ownCloudZimlet.saveAttachment =
     if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
     {
        var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-       zimletInstance.status('Password required', ZmStatusView.LEVEL_INFO);
-       zimletInstance.displayDialog(1, 'Preferences', null);
+       zimletInstance.status(ZmMsg.requiredLabel + ' ' + ZmMsg.password, ZmStatusView.LEVEL_INFO);
+       zimletInstance.displayDialog(1, ZmMsg.preferences, null);
        return;
     }
  
@@ -262,7 +265,7 @@ ownCloudZimlet.prototype.saveAttachment =
  */
 ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
   function(mid, part, fileName) {
-    this.status('Sending \'' + fileName + '\' to WebDAV...', ZmStatusView.LEVEL_INFO);
+    this.status(ZmMsg.uploading + ' ' + fileName, ZmStatusView.LEVEL_INFO);
 
     this._davForZimbraConnector.sendMailAttachmentToDav(
       mid,
@@ -276,9 +279,9 @@ ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
 ownCloudZimlet.prototype._saveAttachmentOkCbk =
   function(mid, part, fileName, status) {
     if (status === 201) {
-      this.status('\'' + fileName + '\' sent to WebDAV', ZmStatusView.LEVEL_INFO);
+      this.status(ZmMsg.successfullyUploaded + ' ' + fileName, ZmStatusView.LEVEL_INFO);
     } else {
-      this.status('\'' + fileName + '\' not sent WebDAV, error code: ' +  status, ZmStatusView.LEVEL_CRITICAL);
+      this.status(ZmMsg.uploadFailed + status + ' ' + fileName, ZmStatusView.LEVEL_CRITICAL);
     }
   };
 
@@ -318,7 +321,7 @@ ownCloudZimlet.prototype.removePrevAttDialogContent =
 ownCloudZimlet.prototype.showAttachmentDialog =
   function() {
     var attachDialog = this._attachDialog = appCtxt.getAttachDialog();
-    attachDialog.setTitle('Attach from WebDAV');
+    attachDialog.setTitle(ZmMsg.attach + ' ' + (ZmMsg.from).toLowerCase() + ' WebDAV');
     this.removePrevAttDialogContent(attachDialog._getContentDiv().firstChild);
 
     if (!this.AttachContactsView || !this.AttachContactsView.attachDialog){
@@ -358,7 +361,7 @@ ownCloudZimlet.prototype._propfindShowAttDlgCbk =
  */
 ownCloudZimlet.prototype.doubleClicked =
   function() {
-    this.displayDialog(1, 'Preferences', null);
+    this.displayDialog(1, ZmMsg.preferences, null);
   };
 
 /**
@@ -366,7 +369,7 @@ ownCloudZimlet.prototype.doubleClicked =
  */
 ownCloudZimlet.prototype.singleClicked =
   function() {
-     this.displayDialog(1, 'Preferences', null);
+     this.displayDialog(1, ZmMsg.preferences, null);
   };
 
 /**
@@ -377,7 +380,7 @@ ownCloudZimlet.prototype.menuItemSelected =
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     switch (itemId) {
       case "preferences":
-        zimletInstance.displayDialog(1, 'Preferences', null);
+        zimletInstance.displayDialog(1, ZmMsg.preferences, null);
         break;
       case "help":
         window.open(zimletInstance.getResource("help/index.html"));
@@ -395,8 +398,8 @@ ownCloudZimlet.prototype.doDrop =
     if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
     {
        var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-       zimletInstance.status('Password required', ZmStatusView.LEVEL_INFO);
-       zimletInstance.displayDialog(1, 'Preferences', null);
+       zimletInstance.status(ZmMsg.requiredLabel + ' ' + ZmMsg.password, ZmStatusView.LEVEL_INFO);
+       zimletInstance.displayDialog(1, ZmMsg.preferences, null);
        return;
     }
 
@@ -444,11 +447,11 @@ ownCloudZimlet.prototype._onDropTransfer =
   function(zmItem, status) {
     var name = this._getItemNameByType(zmItem);
     if (status === 201) {
-      this.status(name + ' sent to WebDAV', ZmStatusView.LEVEL_INFO);
+      this.status(ZmMsg.successfullyUploaded + ' ' + fileName, ZmStatusView.LEVEL_INFO);
     } else {
-      this.status(name + ' not sent WebDAV, error code: ' +  status, ZmStatusView.LEVEL_CRITICAL);
+      this.status(ZmMsg.uploadFailed + status + ' ' + fileName, ZmStatusView.LEVEL_CRITICAL);
     }
-  };
+};
 
 /**
  * Send a list of ZmObjects to OwnCloud.
@@ -506,7 +509,7 @@ ownCloudZimlet.prototype._doDropPropfindCbk =
       } else if (tmpObj.type === 'TASK') {
         type = 'TASK';
       }
-      this.status('Sending ' + this._getItemNameByType(tmpObj) + ' to WebDAV...', ZmStatusView.LEVEL_INFO);
+      this.status(ZmMsg.uploading, ZmStatusView.LEVEL_INFO);
       this._davForZimbraConnector.sendItemToDav(
         type,
         id,
@@ -544,12 +547,12 @@ ownCloudZimlet.prototype._handlePropfindError =
   {
     if(statusCode == 401)
     {
-      this.status('Login credentials error', ZmStatusView.LEVEL_CRITICAL);
+      this.status(ZmMsg.password + ' ' + ZmMsg.error, ZmStatusView.LEVEL_CRITICAL);
       this.displayDialog(1);
     }
     else
     {
-      console.log('DAV Error ' + statusCode, ZmStatusView.LEVEL_CRITICAL);
+      console.log('DAV ' + ZmMsg.errorCap + ' ' + statusCode, ZmStatusView.LEVEL_CRITICAL);
     }
   };
 
@@ -645,7 +648,7 @@ ownCloudZimlet.prototype.displayDialog =
       case 1:
         //preferences dialog
         zimletInstance._dialog = new ZmDialog({
-          title: 'Preferences',
+          title: title,
           parent: zimletInstance.getShell(),
           standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
           disposeOnPopDown: true
@@ -657,45 +660,46 @@ ownCloudZimlet.prototype.displayDialog =
         var passwHtml = "";
         if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
         {
-           passwHtml += "<tr><td>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (zimletInstance.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
+           passwHtml += "<tr><td>"+ZmMsg.save+" " +(ZmMsg.password).toLowerCase()+":</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (zimletInstance.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
         }
         else
         {
-           passwHtml += "<tr><td style='color:#888888'>Store password:</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true'  disabled></td><td><small style='color:#888888'>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
+           passwHtml += "<tr><td style='color:#888888'>"+ZmMsg.save+" " +ZmMsg.password+":</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true'  disabled></td><td><small style='color:#888888'>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
         }     
   
 
-        html = "<div style='width:500px; height: 300px;'>You can drag and drop emails and attachments onto the WebDAV icon, to store them on your WebDAV server.<br><br>" +
+        html = "<div style='width:500px; height: 250px;'>" +
           "<table>"+
           "<tr>" +
-          "<td>Username:&nbsp;</td>" +
+          "<td>"+ZmMsg.usernameLabel+"</td>" +
           "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_username') ? zimletInstance.getUserProperty('owncloud_zimlet_username') : username)+"'></td>" +
           "</tr>" +
           "<tr>" +
-          "<td>Password:</td>" +
+          "<td>"+ZmMsg.passwordLabel+"</td>" +
           "<td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] ? tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] : '')+"'><br></td>" +
           "</tr>" +
           "<tr>" + passwHtml + 
-          "<td>Server:&nbsp;</td>" +
+          "<td>"+ZmMsg.sharedCalCalDAVServerLabel+"</td>" +
           "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_name' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']+"'></td>" +
           "</tr>" +
           "<tr>" +
-          "<td>Port:&nbsp;</td>" +
+          "<td>"+ZmMsg.portLabel+"</td>" +
           "<td style='width:98%'><input style='width:50px' type='number' min='1' max='65535' id='owncloud_zimlet_server_port' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']+"'></td>" +
           "</tr>" +
           "<tr>" +
-          "<td>DAV Path:&nbsp;</td>" +
+          "<td>DAV "+(ZmMsg.path).toLowerCase()+":</td>" +
           "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+"'></td>" +
           "</tr>" +
           "<tr>" +
           "<tr>" +
-          "<td>ownCloud/Nextcloud&nbsp;folder:&nbsp;</td>" +
+          "<td>"+ZmMsg.location+"&nbsp;ownCloud/Nextcloud:&nbsp;</td>" +
           "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"'></td>" +
           "</tr>" +
           "<tr>" +          
-          "<td>Default folder:&nbsp;</td>" +
+          "<td>"+ZmMsg.def + " " + (ZmMsg.folder).toLowerCase() + ":</td>" +
           "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']+"'></td>" +
           "</tr>" +
+          "<tr><td colspan=2><br><br><small>"+ZmMsg.versionLabel+" "+ownCloudZimlet.version +"</small></td></tr>"
           "</table>" +
           "</div>";
         zimletInstance._dialog.setContent(html);
