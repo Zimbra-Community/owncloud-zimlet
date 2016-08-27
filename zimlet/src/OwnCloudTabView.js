@@ -38,12 +38,12 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
     parent: this,
     style: DwtCheckbox.TEXT_RIGHT
   });
-  this._checkbox.setText('Add file as shared link');
+  this._checkbox.setText(ZmMsg.linkTo + " " + (ZmMsg.file).toLowerCase());
 
   this._sharePasswordTxt =  new DwtText({ // feature available only in ownCloud installation.
     parent: this,
   });
-  this._sharePasswordTxt.setText('Optional password for shared link:');
+  this._sharePasswordTxt.setText(ZmMsg.password+ " " + (ZmMsg.setup).toLowerCase()+':');
 
   this._sharePassword = new DwtInputField({ // feature available only in ownCloud installation.
     parent: this,
