@@ -169,6 +169,11 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   ];
 
   if (resources.length === 1) {
+     operationsEnabled = [
+       ZmOperation.SEND_FILE,
+       ZmOperation.SEND_FILE_AS_ATT,
+       ZmOperation.DELETE
+     ];     
     if (resource.isDirectory()) {
       operationsEnabled.push(ZmOperation.RENAME_FOLDER);
       parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(true);
@@ -180,6 +185,13 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
       parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(true);
       parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(true);
     }
+  }
+  else
+  {
+     operationsEnabled = [
+       ZmOperation.SEND_FILE,
+       ZmOperation.SEND_FILE_AS_ATT
+     ];
   }
 
   parent.enable(operationsEnabled, true);
