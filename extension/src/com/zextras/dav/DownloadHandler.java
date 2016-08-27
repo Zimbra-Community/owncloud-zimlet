@@ -42,7 +42,7 @@ public class DownloadHandler implements HttpHandler
     if (mDownloadJobMap.containsKey(token)) {
       DownloadJob job = mDownloadJobMap.get(token);
       if (!job.expired())  {
-        if(!inline.equals("true")) {
+        if(!"true".equals(inline)) {
           httpServletResponse.addHeader("Content-Disposition", "attachment");
         }
         if (paramsMap.containsKey("contentType"))
