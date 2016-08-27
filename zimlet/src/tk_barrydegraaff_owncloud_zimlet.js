@@ -817,3 +817,8 @@ ownCloudZimlet.prototype.runAppFunction =
       // A refresh is requested
     }
   };
+
+//Sanitize file names so they are allowed in Windows and add %, &, @ , !, ', [, ]
+ownCloudZimlet.prototype.sanitizeFileName = function (fileName) {
+   return fileName.replace(/\\|\/|\:|\*|\?|\"|\<|\>|\||\%|\&|\@|\!|\'|\[|\]/gm,"");
+};

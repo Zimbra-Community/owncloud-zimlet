@@ -158,7 +158,7 @@ OwnCloudCommons.prototype._getResourceCbk = function(resource, resources, ids, c
   req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
   req.setRequestHeader('Content-Type',  'application/octet-stream' + ';');
   req.setRequestHeader('X-Zimbra-Csrf-Token', window.csrfToken);
-  req.setRequestHeader('Content-Disposition', 'attachment; filename="'+ this.convertToEntities(resource.getName()) + '";');
+  req.setRequestHeader('Content-Disposition', 'attachment; filename="'+ this.convertToEntities(ownCloudZimlet.prototype.sanitizeFileName(resource.getName())) + '";');
   req.onload = (function(_this, resources, ids, callback) {
     return function(result) {
       var resp = eval('[' + this.responseText + ']'),
