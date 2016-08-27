@@ -219,7 +219,7 @@ OwnCloudApp.prototype._handleRootPropfind = function(resources) {
  */
 OwnCloudApp.prototype._getFolderByHref = function(parent, baseRef, path) {
   var children = parent.getChildren(),
-    currentName = path.shift(),
+    currentName = path[path.length-2],
     data,
     i;
 
