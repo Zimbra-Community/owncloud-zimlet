@@ -56,9 +56,9 @@ OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback, s
   }
 
   this._getWaitingDialog().setMessage(
-    "Creating link(s) to attach to the message, please wait ... " + links.length  + " / " + (links.length + resources.length),
+    ZmMsg.progress + " " + links.length  + " / " + (links.length + resources.length),
     DwtMessageDialog.INFO_STYLE,
-    "Retrieving attachments from WebDAV"
+    ZmMsg.progress
   );
 
   var resource = resources.shift(),
@@ -95,9 +95,9 @@ OwnCloudCommons.prototype._getFirstResource = function(resources, ids, callback)
   }
 
   this._getWaitingDialog().setMessage(
-    "Attaching file(s) to the message, please wait ... " + ids.length + " / " + (resources.length + ids.length),
+    ZmMsg.progress + " " + ids.length + " / " + (resources.length + ids.length),
     DwtMessageDialog.INFO_STYLE,
-    "Retrieving attachments from WebDAV"
+    ZmMsg.progress
   );
 
   var resource = resources.shift(),
