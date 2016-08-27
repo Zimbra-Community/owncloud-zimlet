@@ -111,9 +111,9 @@ public class Dav4ZimbraConnector extends DavSoapConnector
     {
       throw new RuntimeException("Mail item type '" + mailItemType + "' not handled.");
     }
-    fileName = fileName.replaceAll("\\\\|\\/|\\:|\\*|\\?|\\\"|\\<|\\>|\\||\\%|\\&|\\@|\\!|\\'|\\[|\\]", "");
+    String sanitizedFileName = fileName.replaceAll("\\\\|\\/|\\:|\\*|\\?|\\\"|\\<|\\>|\\||\\%|\\&|\\@|\\!|\\'|\\[|\\]", "");
     return put(
-      mZimbraMailsPath + "/" + fileName.replace("/", "_"),
+      mZimbraMailsPath + "/" + sanitizedFileName.replace("/", "_"),
       inputStream,
       mimeType
     );
