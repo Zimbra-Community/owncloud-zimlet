@@ -331,16 +331,18 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
 };
 
 OwnCloudListView.prototype._onItemSelected = function(ev) {
+  var item = ev.item;
 
   var davResource = this.getSelection()[0];
-  this._davConnector.getDownloadLink(
-    davResource.getHref(),
-    new AjxCallback(this, this.preview, [davResource])
-  );
+  if(!item.isDirectory() && davResource._href.match(/\.mp3$|\.mp4$|\.webm$|\.ogg$|\.ogv$|\.pdf$|\.jpg$|\.jpeg$|\.png$|\.txt$/i))
+  {
+     this._davConnector.getDownloadLink(
+       davResource.getHref(),
+       new AjxCallback(this, this.preview, [davResource])
+     );
+  }
 
   if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
-    var item = ev.item;
-
     if (item.isDirectory()) {
       if (typeof this._onFolderSelectedCbk !== "undefined") {
         this._onFolderSelectedCbk.run(item);
@@ -353,8 +355,7 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
 
 OwnCloudListView.prototype.preview = function(davResource, token) {
   var href = token + "&name=" + davResource.getName() + "&contentType=" + davResource.getContentType() + "&inline=true";
-   console.log(href);
-   document.getElementById('WebDAVPreview').src=href;
+  document.getElementById('WebDAVPreview').src=href;
 };
 
 
