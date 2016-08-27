@@ -1,6 +1,8 @@
 function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector, davForZimbraConnector) {
   this._zimletCtxt = zimletCtxt;
   this._app = app;
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+  app.setContent('<table><tr><td id="WebDAVListView"></td><td><iframe id="WebDAVPreview" src="'+zimletInstance.getResource("help/index.html")+'" style="width:800px; height:'+(Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110 ) +'px; border:0px"></td></tr></table>');
   this._settings = settings;
   this._davConnector = davConnector;
   this._ownCloudConnector = ownCloudConnector;
@@ -60,10 +62,9 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
       this._handleRootPropfind
     )
   );
+  this._listView.reparentHtmlElement("WebDAVListView");
+  this._listView.setScrollStyle(Dwt.SCROLL);
 }
-
-// OwnCloudAppView.prototype = new DwtComposite();
-// OwnCloudAppView.prototype.constructor = OwnCloudAppView;
 
 OwnCloudApp.TREE_ID = "OC_TREE_VIEW";
 
