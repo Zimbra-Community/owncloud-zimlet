@@ -324,7 +324,7 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
 };
 
 OwnCloudListView.prototype._onItemSelected = function(ev) {
-  //if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
+  if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
     var item = ev.item;
 
     if (item.isDirectory()) {
@@ -334,7 +334,7 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
     } else {
       this._saveFileListener(ev);
     }
-  //}
+  }
 };
 
 OwnCloudListView.prototype._saveFileListener = function(ev) {
