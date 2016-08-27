@@ -701,6 +701,18 @@ ownCloudZimlet.prototype.displayDialog =
         zimletInstance._dialog.setContent(html);
         zimletInstance._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, zimletInstance.prefSaveBtn));
         zimletInstance._dialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelBtn));
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_username'),0);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_password'),1);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_store_pass'),2);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_name'),3);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_port'),4);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_path'),5);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_oc_folder'),6);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_default_folder'),7);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('max_message_size'),8);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[1].__internalId));
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[2].__internalId));
+        zimletInstance._dialog._baseTabGroupSize = 10;        
         break;
    case 2:
       //Default dialog
