@@ -396,6 +396,9 @@ OwnCloudListView.prototype._renameFileListener = function() {
   renameFileDialog.setTitle(ZmMsg.rename + ": " + folder.getName());
   renameFileDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._renameFileCallback, [folder, input, renameFileDialog]));
   renameFileDialog.addEnterListener(new AjxListener(this, this._renameFileCallback, [folder, input, renameFileDialog]));
+  //add tab group and focus on the input field
+  renameFileDialog._tabGroup.addMemberBefore(input,renameFileDialog._tabGroup.getFirstMember());
+  renameFileDialog._tabGroup.setFocusMember(input);  
   renameFileDialog.popup();
 };
 
@@ -443,6 +446,9 @@ OwnCloudListView.prototype._renameFolderListener = function(ev) {
   renameFolderDialog.setTitle(ZmMsg.renameFolder + ": " + folder.getName());
   renameFolderDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._renameFolderCallback, [folder, input, renameFolderDialog]));
   renameFolderDialog.addEnterListener(new AjxListener(this, this._renameFolderCallback, [folder, input, renameFolderDialog]));
+  //add tab group and focus on the input field
+  renameFolderDialog._tabGroup.addMemberBefore(input,	renameFolderDialog._tabGroup.getFirstMember());
+  renameFolderDialog._tabGroup.setFocusMember(input);  
   renameFolderDialog.popup();
 };
 
@@ -489,6 +495,9 @@ OwnCloudListView.prototype._newFolderListener = function(ev) {
   newFolderDialog.setTitle(ZmMsg.newFolder);
   newFolderDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._newFolderCallback, [folder, input, newFolderDialog]));
   newFolderDialog.addEnterListener(new AjxListener(this, this._newFolderCallback, [folder, input, newFolderDialog]));
+  //add tab group and focus on the input field
+  newFolderDialog._tabGroup.addMemberBefore(input,	newFolderDialog._tabGroup.getFirstMember());
+  newFolderDialog._tabGroup.setFocusMember(input);  
   newFolderDialog.popup();
 };
 
