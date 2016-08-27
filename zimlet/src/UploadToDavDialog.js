@@ -88,11 +88,9 @@ UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
   }
   // In case of a single file upload show proper info message
 
+  //This is used to display the max attachment size, but we don't implement that here for the DAV server.
   var docSizeInfo = document.getElementById((id + "_info"));
-  var attSize = AjxUtil.formatSize(aCtxt.get(ZmSetting.DOCUMENT_SIZE_LIMIT) || 0, true);
-  if(docSizeInfo){
-    docSizeInfo.innerHTML = AjxMessageFormat.format(ZmMsg.attachmentLimitMsgSingleFile, attSize);
-  }
+  docSizeInfo.style.display = "none";
 
   // show
   DwtDialog.prototype.popup.call(this, loc);
@@ -135,28 +133,7 @@ UploadToDavDialog.prototype._addFileInputRow = function() {
 };
 
 UploadToDavDialog.prototype._handleFileSize = function(inputEl, sizeEl){
-
-  var files = inputEl.files;
-  if(!files) return;
-
-  var sizeStr = [], className, totalSize =0;
-  for(var i=0; i<files.length;i++){
-    var file = files[i];
-    var size = file.size || file.fileSize /*Safari*/;
-    var aCtxt = ZmAppCtxt.handleWindowOpener();
-    if(size > aCtxt.get(ZmSetting.DOCUMENT_SIZE_LIMIT))
-      className = "RedC";
-    totalSize += size;
-  }
-
-  if(sizeEl) {
-    sizeEl.innerHTML = "  ("+AjxUtil.formatSize(totalSize, true)+")";
-    if(className)
-      Dwt.addClass(sizeEl, "RedC");
-    else
-      Dwt.delClass(sizeEl, "RedC");
-  }
-
+return;
 };
 
 UploadToDavDialog.prototype._upload = function() {
@@ -169,16 +146,10 @@ UploadToDavDialog.prototype._upload = function() {
     if (!element.value) continue;
     this._msgInfo.innerHTML = "";
     if(this._supportsHTML5){
-      if(this._validateSize()){
         var f = element.files;
         for(var j=0; j<f.length; j++){
           files.push({name:f[j].name, fullname: f[j].name});
         }
-      }else{
-        var aCtxt = ZmAppCtxt.handleWindowOpener();
-        this._msgInfo.innerHTML = AjxMessageFormat.format(ZmMsg.attachmentSizeError, AjxUtil.formatSize(aCtxt.get(ZmSetting.DOCUMENT_SIZE_LIMIT)));
-        return;
-      }
     }else{
       var file = {
         fullname: element.value,
