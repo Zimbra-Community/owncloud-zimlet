@@ -354,7 +354,7 @@ OwnCloudListView.prototype._deleteListener = function(ev) {
       buttons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]
     });
   deleteDialog.setMessage(
-    "Are you sure you want to delete " + davResource.getName() + " ?",
+    (ZmMsg.confirmDeleteForever).replace(/{0,.*,1#|\|2#.*\}/g,"")+" <br>"+davResource.getName(),
     DwtMessageDialog.WARNING_STYLE,
     ZmMsg.remove + " " + davResource.getName()
   );
