@@ -36,12 +36,15 @@ public class DownloadHandler implements HttpHandler
       paramsMap.put(subParam[0], subParam[1]);
     }
     String token = paramsMap.get("token");
+    String inline = paramsMap.get("inline");
 
 
     if (mDownloadJobMap.containsKey(token)) {
       DownloadJob job = mDownloadJobMap.get(token);
       if (!job.expired())  {
-        httpServletResponse.addHeader("Content-Disposition", "attachment");
+        if(!inline.equals("true")) {
+          httpServletResponse.addHeader("Content-Disposition", "attachment");
+        }
         if (paramsMap.containsKey("contentType"))
         {
           httpServletResponse.addHeader("Content-Type", paramsMap.get("contentType"));
