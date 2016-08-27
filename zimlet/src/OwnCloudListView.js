@@ -62,23 +62,25 @@ OwnCloudListView.prototype._getHeaderList = function () {
     width: 20,
     name: ZmMsg.icon
   }));
-  headers.push(new DwtListHeaderItem({field: ZmItem.F_NAME, text: ZmMsg._name, sortable: ZmItem.F_NAME}));
+  //headers.push(new DwtListHeaderItem({field: ZmItem.F_NAME, text: ZmMsg._name, sortable: ZmItem.F_NAME}));
+  headers.push(new DwtListHeaderItem({field: ZmItem.F_NAME, text: ZmMsg._name}));
   headers.push(new DwtListHeaderItem({
     field: ZmItem.F_FILE_TYPE,
     text: ZmMsg.type,
-    width: ZmMsg.COLUMN_WIDTH_TYPE_DLV
+    width: ZmMsg.COLUMN_WIDTH_TYPE_DLV,
+    //sortable: ZmItem.F_FILE_TYPE
   }));
   headers.push(new DwtListHeaderItem({
     field: ZmItem.F_SIZE,
     text: ZmMsg.size,
     width: ZmMsg.COLUMN_WIDTH_SIZE_DLV,
-    sortable: ZmItem.F_SIZE
+    //sortable: ZmItem.F_SIZE
   }));
   headers.push(new DwtListHeaderItem({
     field: ZmItem.F_DATE,
     text: ZmMsg.modified,
     width: ZmMsg.COLUMN_WIDTH_DATE_DLV,
-    sortable: ZmItem.F_DATE
+    //sortable: ZmItem.F_DATE
   }));
   return headers;
 };
