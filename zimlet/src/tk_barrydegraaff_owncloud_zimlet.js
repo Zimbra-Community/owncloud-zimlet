@@ -279,9 +279,9 @@ ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
 ownCloudZimlet.prototype._saveAttachmentOkCbk =
   function(mid, part, fileName, status) {
     if (status === 201) {
-      this.status(ZmMsg.successfullyUploaded + ' ' + fileName, ZmStatusView.LEVEL_INFO);
+      this.status(ZmMsg.successfullyUploaded, ZmStatusView.LEVEL_INFO);
     } else {
-      this.status(ZmMsg.uploadFailed + status + ' ' + fileName, ZmStatusView.LEVEL_CRITICAL);
+      this.status(ZmMsg.uploadFailed + status, ZmStatusView.LEVEL_CRITICAL);
     }
   };
 
@@ -447,9 +447,9 @@ ownCloudZimlet.prototype._onDropTransfer =
   function(zmItem, status) {
     var name = this._getItemNameByType(zmItem);
     if (status === 201) {
-      this.status(ZmMsg.successfullyUploaded + ' ' + fileName, ZmStatusView.LEVEL_INFO);
+      this.status(ZmMsg.successfullyUploaded, ZmStatusView.LEVEL_INFO);
     } else {
-      this.status(ZmMsg.uploadFailed + status + ' ' + fileName, ZmStatusView.LEVEL_CRITICAL);
+      this.status(ZmMsg.uploadFailed + status, ZmStatusView.LEVEL_CRITICAL);
     }
 };
 
