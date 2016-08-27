@@ -193,7 +193,7 @@ ownCloudZimlet._addOwnCloudLink =
   function(attachment) {
     return "<a href='#' class='AttLink' style='text-decoration:underline;' " +
       "onClick=\"" +
-      "window.tk_barrydegraaff_owncloud_zimlet_HandlerObject.saveAttachment('" + attachment.mid + "','" + attachment.part + "','" + attachment.label + "')" +
+      "window.tk_barrydegraaff_owncloud_zimlet_HandlerObject.saveAttachment('" + attachment.mid + "','" + attachment.part + "','" + ownCloudZimlet.prototype.sanitizeFileName(attachment.label) + "')" +
       "\">"+
       "send to WebDAV" +
       "</a>";
