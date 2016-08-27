@@ -521,9 +521,7 @@ OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, 
 
 OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
   var href = token + "&name=" + davResource.getName() + "&contentType=" + davResource.getContentType();
-  if (typeof console !== "undefined" && typeof console.log !== "undefined")
-    console.log("Download: " + href);
-
+  
   // for non-IE
   if (typeof window.ActiveXObject === "undefined") {
     var save = document.createElement("a");
