@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+
 
 public class DownloadHandler implements HttpHandler
 {
@@ -56,9 +56,9 @@ public class DownloadHandler implements HttpHandler
           httpServletResponse.addHeader("Content-Disposition", "inline");
           httpServletResponse.addHeader("Accept-Ranges", "none");
           try {
-            TimeUnit.SECONDS.sleep(1);
+            Thread.sleep(1000);
           } catch(InterruptedException ex) {
-            
+            Thread.currentThread().interrupt();
           }
         }
       }
