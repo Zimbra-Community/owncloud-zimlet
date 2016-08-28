@@ -61,8 +61,6 @@ public class DownloadHandler implements HttpHandler
             Thread.currentThread().interrupt();
           }
         }
-      }
-
 
         DavSoapConnector connector = job.getConnector();
         InputStream fileStream = connector.getAsStream(job.getPath());
