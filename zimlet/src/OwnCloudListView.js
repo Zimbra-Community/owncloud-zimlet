@@ -334,7 +334,7 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   var item = ev.item;
 
   var davResource = this.getSelection()[0];
-  if(!item.isDirectory() && davResource._href.match(/\.mp3$|\.mp4$|\.webm$|\.ogg$|\.ogv$|\.pdf$|\.jpg$|\.jpeg$|\.png$|\.txt$/i))
+  if(!item.isDirectory() && davResource._href.match(/\.pdf$|\.jpg$|\.jpeg$|\.png$|\.txt$/i))
   {
      this._davConnector.getDownloadLink(
        davResource.getHref(),
