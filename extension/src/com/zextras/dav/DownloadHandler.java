@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class DownloadHandler implements HttpHandler
 {
@@ -42,6 +43,11 @@ public class DownloadHandler implements HttpHandler
     if (mDownloadJobMap.containsKey(token)) {
       DownloadJob job = mDownloadJobMap.get(token);
       if (!job.expired())  {
+        if (paramsMap.containsKey("contentType"))
+        {
+          httpServletResponse.addHeader("Content-Type", paramsMap.get("contentType"));
+        }
+
         if(!"true".equals(inline)) {
           httpServletResponse.addHeader("Content-Disposition", "attachment");
         }
@@ -49,11 +55,14 @@ public class DownloadHandler implements HttpHandler
         {
           httpServletResponse.addHeader("Content-Disposition", "inline");
           httpServletResponse.addHeader("Accept-Ranges", "none");
+          try {
+            TimeUnit.SECONDS.sleep(1);
+          } catch(InterruptedException ex) {
+            
+          }
         }
-        if (paramsMap.containsKey("contentType"))
-        {
-          httpServletResponse.addHeader("Content-Type", paramsMap.get("contentType"));
-        }
+      }
+
 
         DavSoapConnector connector = job.getConnector();
         InputStream fileStream = connector.getAsStream(job.getPath());
