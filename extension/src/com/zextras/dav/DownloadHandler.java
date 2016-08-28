@@ -45,6 +45,11 @@ public class DownloadHandler implements HttpHandler
         if(!"true".equals(inline)) {
           httpServletResponse.addHeader("Content-Disposition", "attachment");
         }
+        else
+        {
+          httpServletResponse.addHeader("Content-Disposition", "inline");
+          httpServletResponse.addHeader("Accept-Ranges", "none");
+        }
         if (paramsMap.containsKey("contentType"))
         {
           httpServletResponse.addHeader("Content-Type", paramsMap.get("contentType"));
