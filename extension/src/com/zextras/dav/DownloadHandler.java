@@ -53,13 +53,8 @@ public class DownloadHandler implements HttpHandler
         }
         else
         {
-          httpServletResponse.addHeader("Content-Disposition", "inline");
+          httpServletResponse.addHeader("Content-Disposition", "inline; filename=\""+paramsMap.get("name")+"\"");
           httpServletResponse.addHeader("Accept-Ranges", "none");
-          try {
-            Thread.sleep(1000);
-          } catch(InterruptedException ex) {
-            Thread.currentThread().interrupt();
-          }
         }
 
         DavSoapConnector connector = job.getConnector();
