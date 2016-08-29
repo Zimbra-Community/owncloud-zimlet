@@ -78,21 +78,26 @@ OwnCloudApp.prototype._getTreeView = function() {
 OwnCloudApp.prototype.appActive = function(active) {};
 
 OwnCloudApp.prototype._onItemExpanded = function(/** @type {DwtTreeEvent} */ ev) {
-  if (ev.detail === DwtTree.ITEM_EXPANDED) {
-    var treeItem = ev.dwtObj || ev.item,
-      resource = treeItem.getData('DavResource'),
-      href = resource.getHref();
-
-    this._initTree(
-      href,
-      treeItem,
-      new AjxCallback(
-        treeItem,
-        treeItem.setExpanded,
-        [true, false, true]
-      )
-    );
-  }
+   try {
+     if (ev.detail === DwtTree.ITEM_EXPANDED) {
+       var treeItem = ev.dwtObj || ev.item,
+         resource = treeItem.getData('DavResource'),
+         href = resource.getHref();
+   
+       this._initTree(
+         href,
+         treeItem,
+         new AjxCallback(
+           treeItem,
+           treeItem.setExpanded,
+           [true, false, true]
+         )
+       );
+     }
+   }
+   catch (err) {
+      console.log(err);
+   }
 };
 
 OwnCloudApp.prototype._initTree = function(href, parent, callback) {
@@ -181,21 +186,28 @@ OwnCloudApp.prototype._appendLoadingTreeItem = function(parent) {
 };
 
 OwnCloudApp.prototype._onItemSelected = function(/** @type {DwtSelectionEvent} */ ev) {
-  if (ev.detail === DwtTree.ITEM_SELECTED) {
-    var treeItem = ev.dwtObj,
-      davResource = treeItem.getData('DavResource');
-
-    this._currentPath = davResource.getHref();
-
-    this._initTree(
-      this._currentPath,
-      treeItem,
-      new AjxCallback(
-        this,
-        this._showFolderData
-      )
-    );
-  }
+  try {
+     if (ev.detail === DwtTree.ITEM_SELECTED) {
+       var treeItem = ev.dwtObj,
+         davResource = treeItem.getData('DavResource');
+   
+       this._currentPath = davResource.getHref();
+       treeItem.setExpanded(true);
+   
+       this._initTree(
+         this._currentPath,
+         treeItem,
+         new AjxCallback(
+           this,
+           this._showFolderData
+         )
+       );
+     }
+   }  
+   catch (err)
+   {
+      console.log(err);
+   }     
 };
 
 OwnCloudApp.prototype._showFolderData = function(/** @type {DavResource[]} */ davResources) {
@@ -318,6 +330,12 @@ OwnCloudApp.prototype._handleDropOnFolder = function(resource, target) {
 
 
 OwnCloudApp.prototype.refreshView = function () {
+  //This should not be here, its a bug. After app init currentPath equals /, but then the refresh in the root will not work, unless
+  //another folder is loaded first.
+  if(this._currentPath == '/')
+  {
+     this._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
+  }
   this._initTree(
     this._currentPath,
     this._getFolderByHref(this._parentTreeItem, this._currentPath, this._currentPath.split("/")),
