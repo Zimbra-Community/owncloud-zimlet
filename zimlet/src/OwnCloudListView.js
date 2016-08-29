@@ -342,6 +342,12 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
      );
   }
 
+  var appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110 );
+  var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-200 );
+  this.setSize(appWidth/2+"px",appHeight+"px");
+  document.getElementById('WebDAVPreview').style.width=appWidth/2+'px';
+  document.getElementById('WebDAVPreview').style.height=appHeight+'px';
+
   if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
     if (item.isDirectory()) {
       //if (typeof this._onFolderSelectedCbk !== "undefined") {
