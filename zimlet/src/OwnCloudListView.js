@@ -344,9 +344,9 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
 
   if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
     if (item.isDirectory()) {
-      if (typeof this._onFolderSelectedCbk !== "undefined") {
-        this._onFolderSelectedCbk.run(item);
-      }
+      //if (typeof this._onFolderSelectedCbk !== "undefined") {
+      //  this._onFolderSelectedCbk.run(item);
+      //}
     } else {
       this._saveFileListener(ev);
     }
@@ -387,12 +387,12 @@ OwnCloudListView.prototype._deleteCallback = function(davResource, dialog) {
   this._davConnector.rm(
     davResource.getHref(),
     new AjxCallback(this, function(davResource, dialog, response) {
-      dialog.popdown();
       this._ocZimletApp.refreshView();
+      dialog.popdown();
     }, [davResource, dialog]),
     new AjxCallback(this, function(davResource, dialog, response) {
-      dialog.popdown();
       this._ocZimletApp.refreshView();
+      dialog.popdown();      
     }, [davResource, dialog])
   );
 };
@@ -434,15 +434,15 @@ OwnCloudListView.prototype._renameFileCallback = function(file, input, dialog, e
     file.getPath() + "/" + input.getValue(),
     false,
     new AjxCallback(this, function(dialog, result) {
-      dialog.popdown();
       this._ocZimletApp.refreshView();
+      dialog.popdown();      
       if (result === true) {
       } else {
       }
     }, [dialog]),
     new AjxCallback(this, function(dialog) {
-      dialog.popdown();
       this._ocZimletApp.refreshView();
+      dialog.popdown();      
     }, [dialog])
   );
 };
@@ -484,15 +484,15 @@ OwnCloudListView.prototype._renameFolderCallback = function(folder, input, dialo
     folder.getPath() + "/" + input.getValue() + "/",
     false,
     new AjxCallback(this, function(dialog, result) {
-      dialog.popdown();
       this._ocZimletApp.refreshView();
+      dialog.popdown();      
       if (result === true) {
       } else {
       }
     }, [dialog]),
     new AjxCallback(this, function(dialog) {
-      dialog.popdown();
       this._ocZimletApp.refreshView();
+      dialog.popdown();
     }, [dialog])
   );
 };
@@ -532,11 +532,8 @@ OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, 
   this._davConnector.mkcol(
     "/"+(folder.getHref() + inputValue).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], ""),
     new AjxCallback(this, function(dialog, result) {
-      dialog.popdown();
       this._ocZimletApp.refreshView();
-      if (result === true) {
-      } else {
-      }
+      dialog.popdown();
     }, [dialog])
   );  
 };
