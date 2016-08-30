@@ -676,7 +676,7 @@ ownCloudZimlet.prototype.displayDialog =
           "</tr>" +
           "<tr>" +
           "<td>"+ZmMsg.passwordLabel+"</td>" +
-          "<td><input style='width:98%' type='password' id='owncloud_zimlet_password' value='"+(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] ? tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] : '')+"'><br></td>" +
+          "<td><input style='width:98%' type='password' onkeyup='ownCloudZimlet.prototype.verifyPassword()' id='owncloud_zimlet_password' value='"+(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] ? tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] : '')+"'><br><div id='WebDAVPasswordHint'></td>" +
           "</tr>" +
           "<tr>" + passwHtml + 
           "<td>"+ZmMsg.sharedCalCalDAVServerLabel+"</td>" +
@@ -730,6 +730,18 @@ ownCloudZimlet.prototype.displayDialog =
     document.getElementById(zimletInstance._dialog.__internalId+'_title').style.textAlign = 'center';
     zimletInstance._dialog.popup();
   };
+
+/* Method to verify password does not include @ signs and so on
+ */
+ownCloudZimlet.prototype.verifyPassword = function ()
+{
+   var owncloud_zimlet_password = document.getElementById('owncloud_zimlet_password').value;
+   if((!owncloud_zimlet_password.match(/^[a-z0-9\-\_]+$/i)) && (owncloud_zimlet_password.length > 0))
+   {
+      document.getElementById('WebDAVPasswordHint').innerHTML = "<small><b style='color:red'>Passwords with characters like @ will not work, if you have troubles try using a simple account and password (A-Za-z0-9-_)</b></small>";
+   }   
+   
+}
 
 /* This method is called when the dialog "CANCEL" button is clicked
  */
