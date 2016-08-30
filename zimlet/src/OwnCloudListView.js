@@ -431,13 +431,14 @@ OwnCloudListView.prototype._renameFileListener = function() {
 };
 
 OwnCloudListView.prototype._renameFileCallback = function(file, input, dialog, ev) {
-  if (input.getValue() === file.getName()) { return; }
+  var inputValue = ownCloudZimlet.prototype.sanitizeFileName(input.getValue());
+  if (inputValue === file.getName()) { return; }
   dialog.getButton(DwtDialog.OK_BUTTON).setEnabled(false);
   dialog.getButton(DwtDialog.CANCEL_BUTTON).setEnabled(false);
 
   this._davConnector.move(
     file.getHref(),
-    file.getPath() + "/" + input.getValue(),
+    file.getPath() + "/" + inputValue,
     false,
     new AjxCallback(this, function(dialog, result) {
       this._ocZimletApp.refreshView();
@@ -481,13 +482,14 @@ OwnCloudListView.prototype._renameFolderListener = function(ev) {
 };
 
 OwnCloudListView.prototype._renameFolderCallback = function(folder, input, dialog, ev) {
-  if (input.getValue() === folder.getName()) { return; }
+  var inputValue = ownCloudZimlet.prototype.sanitizeFileName(input.getValue());
+  if (inputValue === folder.getName()) { return; }
   dialog.getButton(DwtDialog.OK_BUTTON).setEnabled(false);
   dialog.getButton(DwtDialog.CANCEL_BUTTON).setEnabled(false);
 
   this._davConnector.move(
     folder.getHref(),
-    folder.getPath() + "/" + input.getValue() + "/",
+    folder.getPath() + "/" + inputValue + "/",
     false,
     new AjxCallback(this, function(dialog, result) {
       this._ocZimletApp.refreshView();
