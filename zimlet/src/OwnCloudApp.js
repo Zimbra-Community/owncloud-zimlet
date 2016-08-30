@@ -192,7 +192,6 @@ OwnCloudApp.prototype._onItemSelected = function(/** @type {DwtSelectionEvent} *
          davResource = treeItem.getData('DavResource');
    
        this._currentPath = davResource.getHref();
-       treeItem.setExpanded(true);
    
        this._initTree(
          this._currentPath,
