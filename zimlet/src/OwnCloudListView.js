@@ -360,7 +360,7 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
 };
 
 OwnCloudListView.prototype.preview = function(davResource, token) {
-  var href = token + "&name=" + davResource.getName() + "&contentType=" + davResource.getContentType() + "&inline=true";
+  var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType() + "&inline=true";
   document.getElementById('WebDAVPreview').src=href;
 };
 
@@ -546,7 +546,7 @@ OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, 
 
 
 OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
-  var href = token + "&name=" + davResource.getName() + "&contentType=" + davResource.getContentType();
+  var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
   
   // for non-IE
   if (typeof window.ActiveXObject === "undefined") {
