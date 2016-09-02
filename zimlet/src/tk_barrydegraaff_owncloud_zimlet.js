@@ -848,5 +848,6 @@ ownCloudZimlet.prototype.runAppFunction =
 
 //Sanitize file names so they are allowed in Windows and add %, &, @ , !, ', [, ]
 ownCloudZimlet.prototype.sanitizeFileName = function (fileName) {
-   return fileName.replace(/\\|\/|\:|\*|\?|\"|\<|\>|\||\%|\&|\@|\!|\'|\[|\]/gm,"");
+   //Also remove double spaces
+   return fileName.replace(/\\|\/|\:|\*|\?|\"|\<|\>|\||\%|\&|\@|\!|\'|\[|\]/gm,"").replace(/ +(?= )/g,'');
 };
