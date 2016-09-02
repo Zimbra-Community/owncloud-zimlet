@@ -846,8 +846,8 @@ ownCloudZimlet.prototype.runAppFunction =
     }
   };
 
-//Sanitize file names so they are allowed in Windows and add %, &, @ , !, ', [, ]
+//Sanitize file names so they are allowed in Windows and add %, &, @ , !, ', [, ], (, ), ;, =, +, $, ,, #
 ownCloudZimlet.prototype.sanitizeFileName = function (fileName) {
    //Also remove double spaces
-   return fileName.replace(/\\|\/|\:|\*|\?|\"|\<|\>|\||\%|\&|\@|\!|\'|\[|\]/gm,"").replace(/ +(?= )/g,'');
+   return fileName.replace(/\\|\/|\:|\*|\?|\"|\<|\>|\||\%|\&|\@|\!|\'|\[|\]|\(|\)|\;|\=|\+|\$|\,|\#/gm,"").replace(/ +(?= )/g,'');
 };
