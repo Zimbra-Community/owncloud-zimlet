@@ -158,7 +158,7 @@ public class DavSoapConnector
   {
     mSardine.move(
       buildUrl(path),
-      buildUrl(destPath),
+      buildUrl(destPath.replace("%20", " ")),
       overwrite
     );
     return true;
