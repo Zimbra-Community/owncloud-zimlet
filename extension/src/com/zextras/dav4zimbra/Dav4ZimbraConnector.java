@@ -142,7 +142,7 @@ public class Dav4ZimbraConnector extends DavSoapConnector
     final Message message = mailbox.getMessageById(mailbox.newOperationContext(), mid);
     final MimePart attachment = getAttachment(message, part);
     return put(
-      mZimbraMailsPath + "/" + getFileName(fileName, getMessageSubject(message), attachment, part).replace("/", "_"),
+      mZimbraMailsPath + "/" + fileName.replace("/", "_"),
       attachment.getInputStream(),
       attachment.getContentType()
     );
