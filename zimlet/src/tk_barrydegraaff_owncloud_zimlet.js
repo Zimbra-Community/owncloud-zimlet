@@ -270,9 +270,9 @@ ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
     this._davForZimbraConnector.sendMailAttachmentToDav(
       mid,
       part,
-      fileName,
-      new AjxCallback(this, this._saveAttachmentOkCbk, [mid, part, fileName]),
-      new AjxCallback(this, this._saveAttachmentErrCbk, [mid, part, fileName])
+      encodeURIComponent(ownCloudZimlet.prototype.sanitizeFileName(fileName)),
+      new AjxCallback(this, this._saveAttachmentOkCbk, [mid, part, ownCloudZimlet.prototype.sanitizeFileName(fileName)]),
+      new AjxCallback(this, this._saveAttachmentErrCbk, [mid, part, ownCloudZimlet.prototype.sanitizeFileName(fileName)])
     );
   };
 
