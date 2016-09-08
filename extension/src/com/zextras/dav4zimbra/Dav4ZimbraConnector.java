@@ -158,6 +158,8 @@ public class Dav4ZimbraConnector extends DavSoapConnector
     * WARNING: getFileName method is not UTF8 proof and its use should be avoided
     * see: https://github.com/Zimbra-Community/owncloud-zimlet/issues/73
     * and https://github.com/Zimbra-Community/owncloud-zimlet/commit/bb67b170f6867bd2ddbb85249f696ed55262ee94
+    * After looking deeper it seem like getFileName method was designed to encode filenames for inside a mime header and
+    * as such is not to be used for sending over http (eg. use with URI/URL). 
     *  
     */
   private String getFileName(Contact item)
