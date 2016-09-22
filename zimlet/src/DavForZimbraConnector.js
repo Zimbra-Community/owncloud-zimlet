@@ -73,7 +73,15 @@
     soapDoc.set('mid', mid);
     soapDoc.set('part', part);
     soapDoc.set('fileName', fileName);
-    soapDoc.set('targetFolder', targetFolder);
+    console.log(targetFolder);
+    if (targetFolder)
+    {
+       soapDoc.set('targetFolder', targetFolder);
+    }
+    else
+    {
+       soapDoc.set('targetFolder', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']);
+    }   
     DavForZimbraConnector._sendRequest(DavForZimbraAction.SEND_MAIL_ATTACHMENT_TO_DAV, soapDoc, callback, errorCallback);
   };
 

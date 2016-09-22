@@ -32,11 +32,6 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
     mProvisioning = provisioning;
   }
 
-  public static <T> T coalesce(T ...items) {
-    for(T i : items) if(i != null) return i;
-    return null;
-  }
-
   /**
    * Handle a SOAP request.
    * @param zimbraContext The zimbra contest.
@@ -95,7 +90,7 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
       mMailboxManager,
       userProperties.get(ZimletProperty.DAV_SERVER_NAME),
       Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
-      coalesce(zimbraContext.getParameter("targetFolder", ""), userProperties.get(ZimletProperty.DAV_SERVER_PATH)),
+      zimbraContext.getParameter("targetFolder", userProperties.get(ZimletProperty.DAV_SERVER_PATH)),
       userProperties.get(ZimletProperty.DAV_USER_USERNAME),
       zimbraContext.getParameter("dav_user_password", ""),
       userProperties.get(ZimletProperty.DAV_MAIL_FOLDER)
