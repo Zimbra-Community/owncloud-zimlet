@@ -68,11 +68,12 @@
    * @param {AjxCallback=} callback
    * @param {AjxCallback=} errorCallback
    */
-  DavForZimbraConnector.prototype.sendMailAttachmentToDav = function(mid, part, fileName, callback, errorCallback) {
+  DavForZimbraConnector.prototype.sendMailAttachmentToDav = function(mid, part, fileName, callback, errorCallback, targetFolder) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('mid', mid);
     soapDoc.set('part', part);
     soapDoc.set('fileName', fileName);
+    soapDoc.set('targetFolder', targetFolder);
     DavForZimbraConnector._sendRequest(DavForZimbraAction.SEND_MAIL_ATTACHMENT_TO_DAV, soapDoc, callback, errorCallback);
   };
 

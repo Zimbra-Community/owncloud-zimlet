@@ -29,5 +29,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
         <property name="owncloud_zimlet_server_path">/owncloud/remote.php/webdav/</property>
         <property name="owncloud_zimlet_oc_folder">/owncloud</property>
         <property name="owncloud_zimlet_default_folder"></property>
+        <property name="owncloud_zimlet_ask_folder_each_time">false</property>
     </global>
 </zimletConfig>
