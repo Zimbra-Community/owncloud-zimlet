@@ -18,11 +18,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 owncloud_zimlet_disable_rename_delete_folder
 To avoid bugs like: 
-https://github.com/owncloud/core/issues/4874
-https://github.com/owncloud/core/issues/24828
-Also found that on ownCloud 8 if a user renames an external storage mount point
-(which is not supported by ownCloud), the external storage folder is duplicated
-into local storage.
+
 
 -->
 
@@ -36,6 +32,6 @@ into local storage.
         <property name="owncloud_zimlet_oc_folder">/owncloud</property>
         <property name="owncloud_zimlet_default_folder"></property>
         <property name="owncloud_zimlet_ask_folder_each_time">false</property>
-        <property name="owncloud_zimlet_disable_rename_delete_new_folder">true</property>
+        <property name="owncloud_zimlet_disable_rename_delete_new_folder">false</property>
     </global>
 </zimletConfig>
