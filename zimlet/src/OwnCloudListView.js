@@ -1,4 +1,5 @@
 /**
+/**
  * List view to display the content of the DAV navigator.
  * @param {DwtShell} parent
  * @param {string} appName
@@ -41,14 +42,14 @@ function OwnCloudListView(
   this.addActionListener(new AjxListener(this, this._listActionListener));
   this.addSelectionListener(new AjxListener(this, this._onItemSelected));
 
-  this._dragSrc = new DwtDragSource(Dwt.DND_DROP_MOVE);
-  this._dragSrc.addDragListener(new AjxListener(this, OwnCloudApp._dragListener));
-  this.setDragSource(this._dragSrc);
+//  this._dragSrc = new DwtDragSource(Dwt.DND_DROP_MOVE);
+//  this._dragSrc.addDragListener(new AjxListener(this, OwnCloudApp._dragListener));
+//  this.setDragSource(this._dragSrc);
 
-  this._dropTgt = new DwtDropTarget("DavResource");
-  this._dropTgt.markAsMultiple();
-  this._dropTgt.addDropListener(new AjxListener(this, OwnCloudApp._dropListener, [ocZimletApp]));
-  this.setDropTarget(this._dropTgt);
+//  this._dropTgt = new DwtDropTarget("DavResource");
+//  this._dropTgt.markAsMultiple();
+//  this._dropTgt.addDropListener(new AjxListener(this, OwnCloudApp._dropListener, [ocZimletApp]));
+//  this.setDropTarget(this._dropTgt);
 }
 
 OwnCloudListView.prototype = new DwtListView();

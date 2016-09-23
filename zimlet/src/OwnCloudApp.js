@@ -14,12 +14,13 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
 
   var overView = app.getOverview(),
     toolbar = app.getToolbar(),
-    treeView,
-    dragSource = new DwtDragSource(Dwt.DND_DROP_MOVE),
-    dropTarget = new DwtDropTarget("DavResource");
+    treeView;
+    //,
+    //dragSource = new DwtDragSource(Dwt.DND_DROP_MOVE),
+    //dropTarget = new DwtDropTarget("DavResource");
 
   overView.clear();
-  overView.setDropTarget(dropTarget);
+  //overView.setDropTarget(dropTarget);
   overView.setTreeView(OwnCloudApp.TREE_ID);
 
   treeView = overView.getTreeView(OwnCloudApp.TREE_ID);
@@ -27,12 +28,12 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
   treeView.addSelectionListener(new AjxListener(this, this._onItemSelected));
 
 
-  dragSource.addDragListener(new AjxListener(this, OwnCloudApp._dragListener));
-  treeView.setDragSource(dragSource);
+//  dragSource.addDragListener(new AjxListener(this, OwnCloudApp._dragListener));
+//  treeView.setDragSource(dragSource);
 
-  dropTarget.markAsMultiple();
-  dropTarget.addDropListener(new AjxListener(treeView, OwnCloudApp._dropListener, [this]));
-  treeView.setDropTarget(dropTarget);
+//  dropTarget.markAsMultiple();
+//  dropTarget.addDropListener(new AjxListener(treeView, OwnCloudApp._dropListener, [this]));
+//  treeView.setDropTarget(dropTarget);
 
   // Create toolbar buttons
   toolbar.createButton(ZmOperation.NEW_FILE, {text: ZmMsg.uploadDocs});
