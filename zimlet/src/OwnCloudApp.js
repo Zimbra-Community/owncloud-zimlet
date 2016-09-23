@@ -38,8 +38,12 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
   // Create toolbar buttons
   toolbar.createButton(ZmOperation.NEW_FILE, {text: ZmMsg.uploadDocs});
   toolbar.addSelectionListener(ZmOperation.NEW_FILE, new AjxListener(this, this._uploadBtnLsnr));
-  toolbar.createButton(ZmOperation.NEW_FOLDER, {text: ZmMsg.newFolder});
-  toolbar.addSelectionListener(ZmOperation.NEW_FOLDER, new AjxListener(this, this._newFolderListener));
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+  if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_rename_delete_new_folder")=='false')
+  {
+     toolbar.createButton(ZmOperation.NEW_FOLDER, {text: ZmMsg.newFolder});
+     toolbar.addSelectionListener(ZmOperation.NEW_FOLDER, new AjxListener(this, this._newFolderListener));
+  }   
 
   this._parentTreeItem = new DwtHeaderTreeItem({
     parent: treeView,

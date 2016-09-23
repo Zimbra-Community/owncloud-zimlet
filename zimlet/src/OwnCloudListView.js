@@ -169,14 +169,27 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
     ZmOperation.DELETE
   ];
 
-  if (resources.length === 1) { 
-    parent.getMenuItem(ZmOperation.DELETE).setVisible(true);   
+  if (resources.length === 1) {     
     if (resource.isDirectory()) {
-      operationsEnabled.push(ZmOperation.RENAME_FOLDER);
-      parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(true);
-      operationsEnabled.push(ZmOperation.NEW_FOLDER);
-      parent.getMenuItem(ZmOperation.NEW_FOLDER).setVisible(true);      
+      var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+      if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_rename_delete_new_folder")=='true')
+      {
+         parent.getMenuItem(ZmOperation.DELETE).setVisible(false);   
+         operationsEnabled.push(ZmOperation.RENAME_FOLDER);
+         parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(false);
+         operationsEnabled.push(ZmOperation.NEW_FOLDER);
+         parent.getMenuItem(ZmOperation.NEW_FOLDER).setVisible(false);      
+      }
+      else
+      {
+         parent.getMenuItem(ZmOperation.DELETE).setVisible(true);   
+         operationsEnabled.push(ZmOperation.RENAME_FOLDER);
+         parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(true);
+         operationsEnabled.push(ZmOperation.NEW_FOLDER);
+         parent.getMenuItem(ZmOperation.NEW_FOLDER).setVisible(true);      
+      }
     } else {
+      parent.getMenuItem(ZmOperation.DELETE).setVisible(true);   
       operationsEnabled.push(ZmOperation.RENAME_FILE);
       operationsEnabled.push(ZmOperation.SAVE_FILE);
       parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(true);
