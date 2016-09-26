@@ -22,6 +22,12 @@
 # This script installs the zimlet to the _dev folder of Zimbra
 
 rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-mkdir /opt/zimbra/zimlets-deployed/_dev/
+mkdir /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 cp -rv tk_barrydegraaff_owncloud_zimlet/ /opt/zimbra/zimlets-deployed/_dev/
+
+cp -v zimlet/tk_barrydegraaff_owncloud_zimlet.* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+cp zimlet/src/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+cp -rv zimlet/help /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+cp zimlet/assets/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+
 su zimbra -c "/opt/zimbra/bin/zmprov fc all"
