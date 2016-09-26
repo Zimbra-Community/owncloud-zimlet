@@ -899,13 +899,25 @@ ownCloudZimlet.prototype.prefSaveBtn =
        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = "false";
     }
 
+    this.setUserProperty("owncloud_zimlet_server_name", serverName, false);
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = serverName;
+
+    this.setUserProperty("owncloud_zimlet_server_port", document.getElementById('owncloud_zimlet_server_port').value, false);
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = document.getElementById('owncloud_zimlet_server_port').value;
+
+    this.setUserProperty("owncloud_zimlet_server_path", document.getElementById('owncloud_zimlet_server_path').value, false);
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] = document.getElementById('owncloud_zimlet_server_path').value;
+
+    this.setUserProperty("owncloud_zimlet_username", document.getElementById('owncloud_zimlet_username').value, false);
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = document.getElementById('owncloud_zimlet_username').value;
+
+    this.setUserProperty("owncloud_zimlet_default_folder", document.getElementById('owncloud_zimlet_default_folder').value, false);
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = document.getElementById('owncloud_zimlet_default_folder').value;
+
+    this.setUserProperty("owncloud_zimlet_oc_folder", document.getElementById('owncloud_zimlet_oc_folder').value, true);
+    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = document.getElementById('owncloud_zimlet_oc_folder').value;
+
     this._saveUserProperties({
-      'owncloud_zimlet_server_name': serverName,
-      'owncloud_zimlet_server_port': document.getElementById('owncloud_zimlet_server_port').value,
-      'owncloud_zimlet_server_path': document.getElementById('owncloud_zimlet_server_path').value,
-      'owncloud_zimlet_username': document.getElementById('owncloud_zimlet_username').value,
-      'owncloud_zimlet_default_folder': document.getElementById('owncloud_zimlet_default_folder').value,
-      'owncloud_zimlet_oc_folder': document.getElementById('owncloud_zimlet_oc_folder').value
     },
       new AjxCallback(
         this,
