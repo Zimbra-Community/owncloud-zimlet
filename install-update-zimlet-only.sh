@@ -23,7 +23,6 @@
 
 rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 mkdir /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-cp -rv tk_barrydegraaff_owncloud_zimlet/ /opt/zimbra/zimlets-deployed/_dev/
 
 cp -v zimlet/tk_barrydegraaff_owncloud_zimlet.* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 cp zimlet/src/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
