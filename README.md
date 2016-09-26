@@ -1,4 +1,4 @@
-Zimbra WebDAV Client (Beta)
+Zimbra WebDAV Client (RC1)
 ==========
 
 Please also check our development version: http://zimbra.org/extend/items/view/zimbra-webdav-client

@@ -808,7 +808,7 @@ ownCloudZimlet.prototype.displayDialog =
            folderSelector = folderSelector + '<input type="radio" name="ownCloudZimletfolderSelector" id="ownCloudZimlet'+displayName+'" value="'+folders[x]+'">'+displayName+'<br>';
         }
         
-        html = "<div style='width:500px; height: 250px;'>" +
+        html = "<div style='width:500px; height: 250px; overflow-y:scroll; overflow-x:hidden'>" +
           "<form id=\"ownCloudZimletfolderSelector\">" +
           folderSelector +
           "</form>" +
