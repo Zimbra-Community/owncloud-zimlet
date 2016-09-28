@@ -142,8 +142,12 @@ ownCloudZimlet.prototype.init =
        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = this.getUserProperty("owncloud_zimlet_ask_folder_each_time");
     /** End load default settings for new users **/
 
-   this._zimletContext._panelActionMenu.args[0][0].label = ZmMsg.preferences;
-   this._zimletContext._panelActionMenu.args[0][1].label = ZmMsg.help;
+   try {
+      this._zimletContext._panelActionMenu.args[0][0].label = ZmMsg.preferences;
+      this._zimletContext._panelActionMenu.args[0][1].label = ZmMsg.help;
+   } catch (err)
+   {
+   }   
    ownCloudZimlet.version=this._zimletContext.version;
     
     // Force available the ZmUploadDialog component
