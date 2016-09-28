@@ -38,12 +38,17 @@ ownCloudZimlet.prototype.init =
     /** Load default settings for new users **/
        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this._zimletContext.getConfig("disable_password_storing");
    
+       //do not call setUserProperty as that is not available for external accounts
        //Set default value
        if(!this.getUserProperty("owncloud_zimlet_password"))
        {
-          this.setUserProperty("owncloud_zimlet_password", '', true);
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = '';   
        }
-       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = this.getUserProperty("owncloud_zimlet_password");
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = this.getUserProperty("owncloud_zimlet_password");   
+       }
+       
    
        //Set default value in case no owncloud_zimlet_server_name is set
        if(!this.getUserProperty("owncloud_zimlet_server_name"))
@@ -51,15 +56,18 @@ ownCloudZimlet.prototype.init =
           if(this._zimletContext.getConfig("owncloud_zimlet_server_name"))
           {
              //Did the admin specify one? Use that:
-             this.setUserProperty("owncloud_zimlet_server_name", this._zimletContext.getConfig("owncloud_zimlet_server_name"), true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = this._zimletContext.getConfig("owncloud_zimlet_server_name");
           }
           else
           {     
              //Make a guess and use that 
-             this.setUserProperty("owncloud_zimlet_server_name", location.protocol + '//' + location.hostname, true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = location.protocol + '//' + location.hostname;
           }   
        }
-       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = this.getUserProperty("owncloud_zimlet_server_name");
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = this.getUserProperty("owncloud_zimlet_server_name");
+       }   
    
        //Set default value in case no owncloud_zimlet_server_port is set
        if(!this.getUserProperty("owncloud_zimlet_server_port"))
@@ -67,15 +75,18 @@ ownCloudZimlet.prototype.init =
           if(this._zimletContext.getConfig("owncloud_zimlet_server_port"))
           {
              //Did the admin specify one? Use that:
-             this.setUserProperty("owncloud_zimlet_server_port", this._zimletContext.getConfig("owncloud_zimlet_server_port"), true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = this._zimletContext.getConfig("owncloud_zimlet_server_port");
           }
           else
           {     
              //Make a guess and use that 
-             this.setUserProperty("owncloud_zimlet_server_port", ((location.protocol === 'https:') ? 443 : 80), true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = ((location.protocol === 'https:') ? 443 : 80);
           }   
        }
-       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = this.getUserProperty("owncloud_zimlet_server_port");
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = this.getUserProperty("owncloud_zimlet_server_port");
+       }   
    
        //Set default value in case no owncloud_zimlet_server_path is set
        if(!this.getUserProperty("owncloud_zimlet_server_path"))
@@ -83,15 +94,18 @@ ownCloudZimlet.prototype.init =
           if(this._zimletContext.getConfig("owncloud_zimlet_server_path"))
           {
              //Did the admin specify one? By default we do so use that:
-             this.setUserProperty("owncloud_zimlet_server_path", this._zimletContext.getConfig("owncloud_zimlet_server_path"), true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] = this._zimletContext.getConfig("owncloud_zimlet_server_path");
           }
           else
           {     
              //Seems like the admins wants to clear this field, do it:
-             this.setUserProperty("owncloud_zimlet_server_path", "", true);
+              tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] = "";
           }   
        }
-       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] = this.getUserProperty("owncloud_zimlet_server_path");
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] = this.getUserProperty("owncloud_zimlet_server_path");
+       }   
    
        //Set default value in case no owncloud_zimlet_oc_folder is set
        if(!this.getUserProperty("owncloud_zimlet_oc_folder"))
@@ -99,15 +113,18 @@ ownCloudZimlet.prototype.init =
           if(this._zimletContext.getConfig("owncloud_zimlet_oc_folder"))
           {
              //Did the admin specify one? By default we do so use that:
-             this.setUserProperty("owncloud_zimlet_oc_folder", this._zimletContext.getConfig("owncloud_zimlet_oc_folder"), true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = this._zimletContext.getConfig("owncloud_zimlet_oc_folder");
           }
           else
           {     
              //Seems like the admins wants to clear this field, do it:
-             this.setUserProperty("owncloud_zimlet_oc_folder", "", true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = "";
           }   
        }
-       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = this.getUserProperty("owncloud_zimlet_oc_folder");
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = this.getUserProperty("owncloud_zimlet_oc_folder");
+       }   
    
        //Set default value in case no owncloud_zimlet_default_folder is set
        if(!this.getUserProperty("owncloud_zimlet_default_folder"))
@@ -115,15 +132,18 @@ ownCloudZimlet.prototype.init =
           if(this._zimletContext.getConfig("owncloud_zimlet_default_folder"))
           {
              //Did the admin specify one? Use that:
-             this.setUserProperty("owncloud_zimlet_default_folder", this._zimletContext.getConfig("owncloud_zimlet_default_folder"), true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this._zimletContext.getConfig("owncloud_zimlet_default_folder");
           }
           else
           {     
              //Seems like the admins wants to clear this field, do it:
-             this.setUserProperty("owncloud_zimlet_default_folder", "", true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = "";
           }   
        }
-       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");
+       }   
 
        //Set default value in case no owncloud_zimlet_ask_folder_each_time is set
        if(!this.getUserProperty("owncloud_zimlet_ask_folder_each_time"))
@@ -131,15 +151,18 @@ ownCloudZimlet.prototype.init =
           if(this._zimletContext.getConfig("owncloud_zimlet_ask_folder_each_time"))
           {
              //Did the admin specify one? Use that:
-             this.setUserProperty("owncloud_zimlet_ask_folder_each_time", this._zimletContext.getConfig("owncloud_zimlet_ask_folder_each_time"), true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = this._zimletContext.getConfig("owncloud_zimlet_ask_folder_each_time");
           }
           else
           {     
              //Seems like the admins wants to clear this field, do it:
-             this.setUserProperty("owncloud_zimlet_ask_folder_each_time", "", true);
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = "";
           }   
        }
-       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = this.getUserProperty("owncloud_zimlet_ask_folder_each_time");
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = this.getUserProperty("owncloud_zimlet_ask_folder_each_time");
+       }   
     /** End load default settings for new users **/
 
    try {
