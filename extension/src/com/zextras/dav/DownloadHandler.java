@@ -49,7 +49,7 @@ public class DownloadHandler implements HttpHandler
         }
 
         if(!"true".equals(inline)) {
-          httpServletResponse.addHeader("Content-Disposition", "attachment; filename=\""+paramsMap.get("name")+"\"");");
+          httpServletResponse.addHeader("Content-Disposition", "attachment; filename=\""+paramsMap.get("name")+"\"");
         }
         else
         {
