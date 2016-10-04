@@ -33,5 +33,7 @@ To avoid bugs like:
         <property name="owncloud_zimlet_default_folder"></property>
         <property name="owncloud_zimlet_ask_folder_each_time">false</property>
         <property name="owncloud_zimlet_disable_rename_delete_new_folder">false</property>
+        <property name="owncloud_zimlet_extra_toolbar_button_title">Open ownCloud tab</property>
+        <property name="owncloud_zimlet_extra_toolbar_button_url">https://owncloud.com</property>
     </global>
 </zimletConfig>

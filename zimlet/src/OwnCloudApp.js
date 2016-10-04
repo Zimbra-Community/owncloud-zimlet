@@ -36,9 +36,16 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
 //  treeView.setDropTarget(dropTarget);
 
   // Create toolbar buttons
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+  if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title"))
+  {
+     toolbar.createButton(ZmOperation.OP_OPEN_IN_TAB, {text: zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title")});
+     toolbar.addSelectionListener(ZmOperation.OP_OPEN_IN_TAB, new AjxListener(this, this.extraBtnLsnr));
+  }
+  
   toolbar.createButton(ZmOperation.NEW_FILE, {text: ZmMsg.uploadDocs});
   toolbar.addSelectionListener(ZmOperation.NEW_FILE, new AjxListener(this, this._uploadBtnLsnr));
-  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+  
   if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_rename_delete_new_folder")=='false')
   {
      toolbar.createButton(ZmOperation.NEW_FOLDER, {text: ZmMsg.newFolder});
@@ -348,6 +355,10 @@ OwnCloudApp.prototype.refreshView = function () {
       this._showFolderData
     )
   );
+};
+OwnCloudApp.prototype.extraBtnLsnr = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   window.open(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_url"))
 };
 
 OwnCloudApp.prototype._uploadBtnLsnr = function(ev) {
