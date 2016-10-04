@@ -563,25 +563,5 @@ OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, 
 
 OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
-  
-  // for non-IE
-  if (typeof window.ActiveXObject === "undefined") {
-    var save = document.createElement("a");
-    save.href = href;
-    save.target = "_blank";
-    save.download = davResource.getName();
-
-    var event = document.createEvent("MouseEvents");
-    event.initEvent("click", true, true);
-    save.dispatchEvent(event);
-    (window.URL || window.webkitURL).revokeObjectURL(save.href);
-  }
-  // for IE
-  else if ( !! window.ActiveXObject && document.execCommand)     {
-    var _window = window.open(href, "_blank");
-    _window.document.close();
-    _window.document.execCommand("SaveAs", true, davResource.getName());
-    _window.close();
-  }
-
+  window.open(href);
 };
