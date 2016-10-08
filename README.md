@@ -56,10 +56,10 @@ It is recommended that the administrator reviews the config_template.xml WebDAV 
 
 Please note that a preference set by the user has priority over a preference set in config_template. And config_template has priority over best guess preferences.
 
-| property name  | default value   | guessed value |  description  |
+| property name  | default value   |  description  | guessed value |
 |---|---|---|---|
-| disable_password_storing  | false  |   | When true, users can not store their passwords in plain text in LDAP  |
-| owncloud_zimlet_server_name  |   | location.protocol + '//' + location.hostname  | URL to your WebDAV/ownCloud server. Example: https://myowncloud.com  |
+| disable_password_storing  | false  |  When true, users can not store their passwords in plain text in LDAP  | |
+| owncloud_zimlet_server_name  |   | URL to your WebDAV/ownCloud server. Example: https://myowncloud.com  |location.protocol + '//' + location.hostname  | 
 | owncloud_zimlet_server_port  |   |   |   |
 | owncloud_zimlet_server_path  | /owncloud/remote.php/webdav/   |   |   |
 | owncloud_zimlet_oc_folder  | /owncloud  |   |   |
