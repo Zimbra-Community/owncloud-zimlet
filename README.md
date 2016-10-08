@@ -48,7 +48,7 @@ Use the automated installer:
 
 ### Configure it for your users (optional)
 
-Zimbra WebDAV Client tries to guess the correct preferences for your users. But you can also configure the defaults and other options for the WebDAV Client. You find the configuration in `/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml`:
+Zimbra WebDAV Client tries to guess the correct preferences for your users. But you can also configure the defaults and other options for the WebDAV Client. This simplifies things for your users. You can find the configuration in `/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml`:
 
 | property name  | default value   | description  |
 |---|---|---|
