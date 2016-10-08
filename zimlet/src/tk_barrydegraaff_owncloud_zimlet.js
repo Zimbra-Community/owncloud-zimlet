@@ -169,6 +169,10 @@ ownCloudZimlet.prototype.init =
       this._zimletContext._panelActionMenu.args[0][0].label = ZmMsg.preferences;
       this._zimletContext._panelActionMenu.args[0][1].label = ZmMsg.help;
       document.getElementById('zti__main_Mail__'+this._zimletContext._id+'_textCell').innerHTML = this._zimletContext.getConfig("owncloud_zimlet_app_title");
+      document.getElementById('zti__main_Contacts__'+this._zimletContext._id+'_textCell').innerHTML = this._zimletContext.getConfig("owncloud_zimlet_app_title");
+      document.getElementById('zti__main_Calendar__'+this._zimletContext._id+'_textCell').innerHTML = this._zimletContext.getConfig("owncloud_zimlet_app_title");
+      document.getElementById('zti__main_Tasks__'+this._zimletContext._id+'_textCell').innerHTML = this._zimletContext.getConfig("owncloud_zimlet_app_title");
+      document.getElementById('zti__main_Briefcase__'+this._zimletContext._id+'_textCell').innerHTML = this._zimletContext.getConfig("owncloud_zimlet_app_title");
    } catch (err)
    {
    }   
@@ -238,11 +242,12 @@ ownCloudZimlet.prototype.addAttachmentHandler =
  */
 ownCloudZimlet._addOwnCloudLink =
   function(attachment) {
+     var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     return "<a href='#' class='AttLink' style='text-decoration:underline;' " +
       "onClick=\"" +
       "window.tk_barrydegraaff_owncloud_zimlet_HandlerObject.saveAttachment('" + attachment.mid + "','" + attachment.part + "','" + ownCloudZimlet.prototype.sanitizeFileName(attachment.label) + "')" +
       "\">"+
-      "WebDAV" +
+      zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title") +
       "</a>";
   };
 
@@ -374,12 +379,13 @@ ownCloudZimlet.prototype._saveAttachmentErrCbk =
  */
 ownCloudZimlet.prototype.initializeAttachPopup =
   function(menu, controller) {
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     var callback = (function(_this) {
       return function() {
         _this.showAttachmentDialog()
       }
     })(this);
-    controller._createAttachMenuItem(menu, 'WebDAV', callback, "ATTACH_MENU_OWNCLOUD");
+    controller._createAttachMenuItem(menu, zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title"), callback, "ATTACH_MENU_OWNCLOUD");
   };
 
 /**
@@ -400,7 +406,8 @@ ownCloudZimlet.prototype.removePrevAttDialogContent =
 ownCloudZimlet.prototype.showAttachmentDialog =
   function() {
     var attachDialog = this._attachDialog = appCtxt.getAttachDialog();
-    attachDialog.setTitle(ZmMsg.attach + ' ' + (ZmMsg.from).toLowerCase() + ' WebDAV');
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+    attachDialog.setTitle(ZmMsg.attach + ' ' + (ZmMsg.from).toLowerCase() + ' ' +  zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title"));
     this.removePrevAttDialogContent(attachDialog._getContentDiv().firstChild);
 
     if (!this.AttachContactsView || !this.AttachContactsView.attachDialog){
@@ -682,7 +689,7 @@ ownCloudZimlet.prototype.appLaunch =
    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
    {
       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-      zimletInstance.displayDialog(2, 'Sorry', 'You must first enter a password in the left menu.<br>You can find it under Zimlets -> WebDAV.<br><br>To try again, reload your browser (CTRL+R).');
+      zimletInstance.displayDialog(2, 'Sorry', 'You must first enter a password in the left menu.<br>You can find it under Zimlets -> '+zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title")+'.<br><br>To try again, reload your browser (CTRL+R).');
    }
    else
    {
@@ -713,8 +720,19 @@ ownCloudZimlet.prototype.appActive =
     }
   };
 
-ownCloudZimlet.prototype.onSelectApp =
-  function(id) {};
+ownCloudZimlet.prototype.onShowView =
+  function(view) {
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+    try {
+       zimletInstance._zimletContext._panelActionMenu.args[0][0].label = ZmMsg.preferences;
+       zimletInstance._zimletContext._panelActionMenu.args[0][1].label = ZmMsg.help;
+       document.getElementById('zti__main_Mail__'+zimletInstance._zimletContext._id+'_textCell').innerHTML = zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
+       document.getElementById('zti__main_Contacts__'+zimletInstance._zimletContext._id+'_textCell').innerHTML = zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
+       document.getElementById('zti__main_Calendar__'+zimletInstance._zimletContext._id+'_textCell').innerHTML = zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
+       document.getElementById('zti__main_Tasks__'+zimletInstance._zimletContext._id+'_textCell').innerHTML = zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
+       document.getElementById('zti__main_Briefcase__'+zimletInstance._zimletContext._id+'_textCell').innerHTML = zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
+    } catch (err) {}
+};
 
 /**
  * Display the settings dialog.
@@ -755,7 +773,7 @@ ownCloudZimlet.prototype.displayDialog =
           "</tr>" +
           "<tr>" +
           "<td>"+ZmMsg.passwordLabel+"</td>" +
-          "<td><input style='width:98%' type='password' onkeyup='ownCloudZimlet.prototype.verifyPassword()' id='owncloud_zimlet_password' value='"+(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] ? tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] : '')+"'><br><div id='WebDAVPasswordHint'></td>" +
+          "<td><input style='width:50%' type='password' onkeyup='ownCloudZimlet.prototype.verifyPassword()' id='owncloud_zimlet_password' value='"+(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] ? tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] : '')+"'>&nbsp;<button id=\"showhide\" type=\"button\" onkeyup=\"ownCloudZimlet.prototype.toggle_password('owncloud_zimlet_password')\" onclick=\"ownCloudZimlet.prototype.toggle_password('owncloud_zimlet_password')\">"+(ZmMsg.show).toLowerCase() + '/' + (ZmMsg.hide).toLowerCase()+"</button><br><div id='WebDAVPasswordHint'></td>" +
           "</tr>" +
           "<tr>" + passwHtml + 
           "<td>"+ZmMsg.sharedCalCalDAVServerLabel+"</td>" +
@@ -877,6 +895,21 @@ ownCloudZimlet.prototype.verifyPassword = function ()
       document.getElementById('WebDAVPasswordHint').innerHTML = "<small><b style='color:red'>Passwords with characters like @ will not work, if you have troubles try using a simple account and password (A-Za-z0-9-_)</b></small>";
    }   
    
+}
+
+/** Function to handle a show/hide button for password type input fields
+ */
+ownCloudZimlet.prototype.toggle_password = function (target) {
+   var tag = document.getElementById(target);
+   
+   if (tag.getAttribute('type') == 'password')
+   {
+      tag.setAttribute('type', 'text');
+   }
+   else 
+   {
+      tag.setAttribute('type', 'password');   
+   }
 }
 
 /* This method is called when the dialog "CANCEL" button is clicked
