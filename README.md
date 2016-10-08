@@ -58,7 +58,7 @@ Please note that a preference set by the user has priority over a preference set
 
 | property name  | default value   | guessed value |  description  |
 |---|---|---|---|
-| disable_password_storing  | false  |   | When true, users can not store their passwords in (plain text) in LDAP  |
+| disable_password_storing  | false  |   | When true, users can not store their passwords in plain text in LDAP  |
 | owncloud_zimlet_server_name  |   | location.protocol + '//' + location.hostname  | URL to your WebDAV/ownCloud server. Example: https://myowncloud.com  |
 | owncloud_zimlet_server_port  |   |   |   |
 | owncloud_zimlet_server_path  | /owncloud/remote.php/webdav/   |   |   |
