@@ -64,7 +64,7 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_server_path  | /owncloud/remote.php/webdav/   | Part of the URL where server handles WebDAV protocol without protocol and hostname. |   |
 | owncloud_zimlet_oc_folder  | /owncloud  | Location where ownCloud/nextCloud is installed without protocol and hostname.  |    |
 | owncloud_zimlet_default_folder  |   | Default location where to upload files from Zimbra to WebDAV.  |   |
-| owncloud_zimlet_ask_folder_each_time  | false  | When true, ask the user each time to choose destination folder. When the user uploads an attachment to WebDAV. The destination folder can be the default folder and sub folders in the default folder. |   |
+| owncloud_zimlet_ask_folder_each_time  | false  | When true, ask the user each time to choose destination folder when uploading an attachment to WebDAV. The destination folder can be the default folder and folders in top level of the default folder. |   |
 | owncloud_zimlet_disable_rename_delete_new_folder  | false  | When true, rename folder, new folder and delete folder operations are hidden from the UI. To avoid bugs in ownCloud 8 with external storage.  |   |
 | owncloud_zimlet_extra_toolbar_button_title  | Open ownCloud tab  |   |   |
 | owncloud_zimlet_extra_toolbar_button_url  | /owncloud  |   |   |
