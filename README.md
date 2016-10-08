@@ -1,8 +1,6 @@
 Zimbra WebDAV Client (RC1)
 ==========
 
-Please also check our development version: http://zimbra.org/extend/items/view/zimbra-webdav-client
-
 If you find Zimbra WebDAV Client useful and want to support its continued development, you can make donations via:
 - PayPal: info@barrydegraaff.tk
 - Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A
