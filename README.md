@@ -45,7 +45,26 @@ Use the automated installer:
 
 	[zimbra@server zimbra]$ zmprov mc default +zimbraProxyAllowedDomains your-owncloud-server.com
     # You can also enable all domains see: https://wiki.zimbra.com/wiki/Zimlet_Developers_Guide:Proxy_Servlet_Setup security  
-     
+
+### Configure the defauls for your users
+
+Zimbra WebDAV Client tries to guess the correct preferences for your users. But the sysadmin can also configure the default values and configure other options for the WebDAV Client. To do so edit `/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml`:
+
+| property name  | default value   | description  |
+|---|---|---|
+| disable_password_storing  | false  |   |
+| owncloud_zimlet_server_name  |   |   |
+| owncloud_zimlet_server_port  |   |   |
+| owncloud_zimlet_server_path  | /owncloud/remote.php/webdav/   |   |
+| owncloud_zimlet_oc_folder  | /owncloud  |   |
+| owncloud_zimlet_default_folder  |   |   |
+| owncloud_zimlet_ask_folder_each_time  | false  |   |
+| owncloud_zimlet_disable_rename_delete_new_folder  | false  |   |
+| owncloud_zimlet_extra_toolbar_button_title  | Open ownCloud tab  |   |
+| owncloud_zimlet_extra_toolbar_button_url  | /owncloud  |   |
+| owncloud_zimlet_app_title  | WebDAV  |   |
+
+
 ### Restart your mailbox to let the extension to be loaded:
 
 	[zimbra@server zimbra]$ zmmailboxdctl restart
