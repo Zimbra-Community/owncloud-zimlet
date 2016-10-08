@@ -46,23 +46,29 @@ Use the automated installer:
 	[zimbra@server zimbra]$ zmprov mc default +zimbraProxyAllowedDomains your-owncloud-server.com
     # You can also enable all domains see: https://wiki.zimbra.com/wiki/Zimlet_Developers_Guide:Proxy_Servlet_Setup security  
 
-### Configure it for your users (optional)
+### Configuring preferences
 
-Zimbra WebDAV Client tries to guess the correct preferences for your users. But you can also configure the defaults and other options for the WebDAV Client. This simplifies things for your users. You can find the configuration in `/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml`:
+Each user can configure the WebDAV Client for themselves by clicking Preferences in the Zimlet menu.
 
-| property name  | default value   | description  |
+Initially the Preferences dialog will be filled with best guess values OR values provided by the administrator in config_template.xml.
+
+It is recommended that the administrator reviews the config_template.xml WebDAV Client and change it to fit the needs. Doing this simplifies things for your users. You can find the configuration in `/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml`.
+
+Please note that a preference set by the user has priority over a preference set in config_template. And config_template has priority over best guess preferences.
+
+| property name  | default value   | guessed value |  description  |
 |---|---|---|
-| disable_password_storing  | false  | When true, users can not store their passwords in (plain text) in LDAP  |
-| owncloud_zimlet_server_name  |   | URL to your WebDAV/ownCloud server. Example: https://myowncloud.com  |
-| owncloud_zimlet_server_port  |   |   |
-| owncloud_zimlet_server_path  | /owncloud/remote.php/webdav/   |   |
-| owncloud_zimlet_oc_folder  | /owncloud  |   |
-| owncloud_zimlet_default_folder  |   |   |
-| owncloud_zimlet_ask_folder_each_time  | false  |   |
-| owncloud_zimlet_disable_rename_delete_new_folder  | false  |   |
-| owncloud_zimlet_extra_toolbar_button_title  | Open ownCloud tab  |   |
-| owncloud_zimlet_extra_toolbar_button_url  | /owncloud  |   |
-| owncloud_zimlet_app_title  | WebDAV  |   |
+| disable_password_storing  | false  |   | When true, users can not store their passwords in (plain text) in LDAP  |
+| owncloud_zimlet_server_name  |   | location.protocol + '//' + location.hostname  | URL to your WebDAV/ownCloud server. Example: https://myowncloud.com  |
+| owncloud_zimlet_server_port  |   |   |   |
+| owncloud_zimlet_server_path  | /owncloud/remote.php/webdav/   |   |   |
+| owncloud_zimlet_oc_folder  | /owncloud  |   |   |
+| owncloud_zimlet_default_folder  |   |   |   |
+| owncloud_zimlet_ask_folder_each_time  | false  |   |   |
+| owncloud_zimlet_disable_rename_delete_new_folder  | false  |   |   |
+| owncloud_zimlet_extra_toolbar_button_title  | Open ownCloud tab  |   |   |
+| owncloud_zimlet_extra_toolbar_button_url  | /owncloud  |   |   |
+| owncloud_zimlet_app_title  | WebDAV  |   |   |
 
 
 ### Restart your mailbox to let the extension to be loaded:
