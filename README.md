@@ -49,12 +49,19 @@ Use the automated installer:
 ### Restart your mailbox to let the extension to be loaded:
 
 	[zimbra@server zimbra]$ zmmailboxdctl restart
-	
+
+### Un-installing
+
+	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+	rm -Rf /opt/zimbra/lib/ext/ownCloud/
+	[zimbra@server zimbra]$ zmmailboxdctl restart    
+
 ### Known issues:
 
 1. Passwords with characters like @ will not work, try to install this using a simple account and password (A-Za-z0-9).
 2. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
 3. Running a WebDAV server behind and NGINX reverse proxy (from CentOS or Debian) won't work, it will work when proper options are enabled (as for example with zimbra-proxy, also based on NGINX).
+4. On 8.6 the installer does not install OpenZAL Library properly, see : https://github.com/Zimbra-Community/owncloud-zimlet/issues/82
 
 See:
 https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting
