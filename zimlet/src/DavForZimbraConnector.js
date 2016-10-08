@@ -73,7 +73,6 @@
     soapDoc.set('mid', mid);
     soapDoc.set('part', part);
     soapDoc.set('fileName', fileName);
-    console.log(targetFolder);
     if (targetFolder)
     {
        soapDoc.set('targetFolder', targetFolder);
