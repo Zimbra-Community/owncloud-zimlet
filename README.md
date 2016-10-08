@@ -50,9 +50,9 @@ Use the automated installer:
 
 Each user can configure the WebDAV Client for themselves by clicking Preferences in the Zimlet menu.
 
-Initially the Preferences dialog will be filled with best guess values OR values provided by the administrator in config_template.xml.
+Initially the Preferences dialog will be filled with best guess values and values provided by the administrator in config_template.xml.
 
-It is recommended that the administrator reviews the config_template.xml WebDAV Client and change it to fit the needs. Doing this simplifies things for your users. You can find the configuration in `/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml`.
+It is recommended that the administrator reviews the config_template.xml and change it to fit the needs. Doing this simplifies things for your users. You can find the configuration in `/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml`.
 
 Please note that a preference set by the user has priority over a preference set in config_template. And config_template has priority over best guess preferences.
 
@@ -60,10 +60,10 @@ Please note that a preference set by the user has priority over a preference set
 |---|---|---|---|
 | disable_password_storing  | false  |  When true, users can not store their passwords in plain text in LDAP  | |
 | owncloud_zimlet_server_name  |   | URL to your WebDAV/ownCloud server. Example: https://myowncloud.com  |location.protocol + '//' + location.hostname  | 
-| owncloud_zimlet_server_port  |   |   | ((location.protocol === 'https:') ? 443 : 80)  |
-| owncloud_zimlet_server_path  | /owncloud/remote.php/webdav/   |   |   |
-| owncloud_zimlet_oc_folder  | /owncloud  |   |   |
-| owncloud_zimlet_default_folder  |   |   |   |
+| owncloud_zimlet_server_port  |   | Port number for your WebDAV/ownCloud server | ((location.protocol === 'https:') ? 443 : 80)  |
+| owncloud_zimlet_server_path  | /owncloud/remote.php/webdav/   | Part of the URL where server handles WebDAV protocol without protocol and hostname. |   |
+| owncloud_zimlet_oc_folder  | /owncloud  | Location where ownCloud/nextCloud is installed without protocol and hostname.  |    |
+| owncloud_zimlet_default_folder  |   | Default location where to upload files from Zimbra to WebDAV.  |   |
 | owncloud_zimlet_ask_folder_each_time  | false  |   |   |
 | owncloud_zimlet_disable_rename_delete_new_folder  | false  |   |   |
 | owncloud_zimlet_extra_toolbar_button_title  | Open ownCloud tab  |   |   |
