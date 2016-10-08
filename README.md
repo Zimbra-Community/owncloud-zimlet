@@ -54,7 +54,11 @@ Use the automated installer:
 
 	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 	rm -Rf /opt/zimbra/lib/ext/ownCloud/
-	[zimbra@server zimbra]$ zmmailboxdctl restart    
+	[zimbra@server zimbra]$ zmmailboxdctl restart   
+	
+### Translations
+
+The Zimbra WebDAV Client uses built-in language strings from Zimbra, as such it is translated for all languages that are supported by Zimbra. 
 
 ### Known issues:
 
