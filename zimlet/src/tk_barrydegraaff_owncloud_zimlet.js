@@ -168,6 +168,7 @@ ownCloudZimlet.prototype.init =
    try {
       this._zimletContext._panelActionMenu.args[0][0].label = ZmMsg.preferences;
       this._zimletContext._panelActionMenu.args[0][1].label = ZmMsg.help;
+      document.getElementById('zti__main_Mail__'+this._zimletContext._id+'_textCell').innerHTML = this._zimletContext.getConfig("owncloud_zimlet_app_title");
    } catch (err)
    {
    }   
@@ -185,7 +186,7 @@ ownCloudZimlet.prototype.init =
     );
 
     try {
-      this.ownCloudTab = this.createApp("WebDAV", "", "WebDAV");
+      this.ownCloudTab = this.createApp(this._zimletContext.getConfig("owncloud_zimlet_app_title"), "", "WebDAV");
     } catch (err) { }
 
     if (appCtxt.get(ZmSetting.MAIL_ENABLED)) {

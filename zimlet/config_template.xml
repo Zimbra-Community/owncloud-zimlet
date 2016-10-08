@@ -35,5 +35,6 @@ To avoid bugs like:
         <property name="owncloud_zimlet_disable_rename_delete_new_folder">false</property>
         <property name="owncloud_zimlet_extra_toolbar_button_title">Open ownCloud tab</property>
         <property name="owncloud_zimlet_extra_toolbar_button_url">/owncloud</property>
+        <property name="owncloud_zimlet_app_title">WebDAV</property>
     </global>
 </zimletConfig>
