@@ -46,7 +46,7 @@ Use the automated installer:
 	[zimbra@server zimbra]$ zmprov mc default +zimbraProxyAllowedDomains your-owncloud-server.com
     # You can also enable all domains see: https://wiki.zimbra.com/wiki/Zimlet_Developers_Guide:Proxy_Servlet_Setup security  
 
-### Configure the defauls for your users
+### Configure the defauls for your users (optional)
 
 Zimbra WebDAV Client tries to guess the correct preferences for your users. But the sysadmin can also configure the default values and configure other options for the WebDAV Client. To do so edit `/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml`:
 
