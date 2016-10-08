@@ -52,8 +52,8 @@ Zimbra WebDAV Client tries to guess the correct preferences for your users. But 
 
 | property name  | default value   | description  |
 |---|---|---|
-| disable_password_storing  | false  |   |
-| owncloud_zimlet_server_name  |   |   |
+| disable_password_storing  | false  | When true, users can not store their passwords in (plain text) in LDAP  |
+| owncloud_zimlet_server_name  |   | URL to your WebDAV/ownCloud server. Example: https://myowncloud.com  |
 | owncloud_zimlet_server_port  |   |   |
 | owncloud_zimlet_server_path  | /owncloud/remote.php/webdav/   |   |
 | owncloud_zimlet_oc_folder  | /owncloud  |   |
