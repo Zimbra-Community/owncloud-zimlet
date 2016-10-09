@@ -21,7 +21,7 @@ Zimbra Desktop is not supported and does not work.
 
 Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
-Report security issues to barrydg@zetalliance.org (PGP fingerprint: 9e0e165f06b365ee1e47683e20f37303c20703f8)
+Report security issues to info@barrydegraaff.tk (PGP fingerprint: 97f4694a1d9aedad012533db725ddd156d36a2d0)
 
 Stay up-to-date: new releases are announced on the users mailing list: http://lists.zetalliance.org/mailman/listinfo/users_lists.zetalliance.org
 
