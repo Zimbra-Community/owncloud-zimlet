@@ -83,7 +83,7 @@ Please note that a preference set by the user has priority over a preference set
 
 The Zimbra WebDAV Client uses built-in language strings from Zimbra, as such it is translated for all languages that are supported by Zimbra. 
 
-### Known issues:
+### Known issues and troubleshooting:
 
 1. Passwords with characters like @ will not work, try to install this using a simple account and password (A-Za-z0-9).
 2. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
