@@ -688,8 +688,14 @@ ownCloudZimlet.prototype.appLaunch =
   function(appName) {
    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
    {
-      var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-      zimletInstance.displayDialog(2, 'Sorry', 'You must first enter a password in the left menu.<br>You can find it under Zimlets -> '+zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title")+'.<br><br>To try again, reload your browser (CTRL+R).');
+     this.passView = new DwtComposite(this.getShell()); 
+     this.passView.setSize("250", "150"); 
+     this.passView.getHtmlElement().innerHTML = 'You need to provide your WebDAV password: <br><table><tr><td colspan="2">Password: </td><td><input id="mypass" type="password"></td></tr></table>';
+	
+     // pass the title, view & buttons information to create dialog box
+     this.passDialog = new ZmDialog({title:"Password Needed", view:this.passView, parent:this.getShell(), standardButtons:[DwtDialog.OK_BUTTON]});
+     this.passDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._okPassListen, appName)); 
+     this.passDialog.popup(); //show the dialog
    }
    else
    {
@@ -705,6 +711,24 @@ ownCloudZimlet.prototype.appLaunch =
          );
       }
    }   
+};
+
+ownCloudZimlet.prototype._okPassListen =
+   function(appName) {
+     var pass = document.getElementById("mypass").value;
+     tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = pass;
+     this.passDialog.popdown();
+      var app = appCtxt.getApp(appName);
+      if (typeof this._appView === "undefined") {
+        this._appView = new OwnCloudApp(
+           this,
+           app,
+           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings,
+           this._davConnector,
+           this._ownCloudConnector,
+           this._davForZimbraConnector
+         );
+      }
 };
 
 /**
