@@ -35,23 +35,38 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
 //  dropTarget.addDropListener(new AjxListener(treeView, OwnCloudApp._dropListener, [this]));
 //  treeView.setDropTarget(dropTarget);
 
-  // Create toolbar buttons
-  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
-  if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title"))
-  {
-     toolbar.createButton(ZmOperation.OP_OPEN_IN_TAB, {text: zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title")});
-     toolbar.addSelectionListener(ZmOperation.OP_OPEN_IN_TAB, new AjxListener(this, this.extraBtnLsnr));
-  }
-  
-  toolbar.createButton(ZmOperation.NEW_FILE, {text: ZmMsg.uploadDocs});
-  toolbar.addSelectionListener(ZmOperation.NEW_FILE, new AjxListener(this, this._uploadBtnLsnr));
-  
-  if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_rename_delete_new_folder")=='false')
-  {
-     toolbar.createButton(ZmOperation.NEW_FOLDER, {text: ZmMsg.newFolder});
-     toolbar.addSelectionListener(ZmOperation.NEW_FOLDER, new AjxListener(this, this._newFolderListener));
-  }   
-
+   /* When a user sets a wrong password, the WebDAV Client app is initialized wrongly, then the user
+   * is shown a dialog to review the settings and try again. At that point the app gets re-initialized.
+   * only the toolbar buttons are already there, therefore check and don't dupe them 
+   */
+   
+   try {
+      var getButton = toolbar.getButton('NEW_FILE');
+   } catch (err) {}
+   
+   if ((getButton) && (!getButton.isDisposed() ))
+   {
+      //button already defined
+   }
+   else
+   {     
+      // Create toolbar buttons
+      var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+      if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title"))
+      {
+         toolbar.createButton(ZmOperation.OP_OPEN_IN_TAB, {text: zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title")});
+         toolbar.addSelectionListener(ZmOperation.OP_OPEN_IN_TAB, new AjxListener(this, this.extraBtnLsnr));
+      }
+     
+      toolbar.createButton(ZmOperation.NEW_FILE, {text: ZmMsg.uploadDocs});
+      toolbar.addSelectionListener(ZmOperation.NEW_FILE, new AjxListener(this, this._uploadBtnLsnr));
+     
+      if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_rename_delete_new_folder")=='false')
+      {
+         toolbar.createButton(ZmOperation.NEW_FOLDER, {text: ZmMsg.newFolder});
+         toolbar.addSelectionListener(ZmOperation.NEW_FOLDER, new AjxListener(this, this._newFolderListener));
+      }   
+   }   
   this._parentTreeItem = new DwtHeaderTreeItem({
     parent: treeView,
     text: ZmMsg.folders,

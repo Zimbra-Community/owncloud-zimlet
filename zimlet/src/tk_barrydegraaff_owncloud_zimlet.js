@@ -39,6 +39,19 @@ ownCloudZimlet.prototype.init =
        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this._zimletContext.getConfig("disable_password_storing");
    
        //do not call setUserProperty as that is not available for external accounts
+
+       //Set default value
+       if(!this.getUserProperty("owncloud_zimlet_username"))
+       {
+          var username = appCtxt.getActiveAccount().name.match(/.*@/);
+          username = username[0].replace('@','');
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = username;   
+       }
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = this.getUserProperty("owncloud_zimlet_username");   
+       }
+
        //Set default value
        if(!this.getUserProperty("owncloud_zimlet_password"))
        {
@@ -258,7 +271,7 @@ ownCloudZimlet._addOwnCloudLink =
  */
 ownCloudZimlet.prototype.status =
   function(text, type) {
-    var transitions = [ ZmToast.FADE_IN, ZmToast.PAUSE, ZmToast.FADE_OUT ];
+    var transitions = [ ZmToast.FADE_IN, ZmToast.PAUSE, ZmToast.PAUSE, ZmToast.PAUSE, ZmToast.FADE_OUT ];
     appCtxt.getAppController().setStatusMsg(text, type, null, transitions);
   };
 
@@ -631,14 +644,15 @@ ownCloudZimlet.prototype._getItemNameByType =
 ownCloudZimlet.prototype._handlePropfindError =
   function(statusCode, error)
   {
-    if(statusCode == 401)
+    if(error.message == 'Unexpected response (401 Unauthorized)')
     {
       this.status(ZmMsg.password + ' ' + ZmMsg.error, ZmStatusView.LEVEL_CRITICAL);
-      this.displayDialog(1);
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['errorstatus']='401';
+      this.displayDialog(1, ZmMsg.preferences, null);
     }
     else
     {
-      console.log('DAV ' + ZmMsg.errorCap + ' ' + statusCode, ZmStatusView.LEVEL_CRITICAL);
+      this.status('DAV ' + ZmMsg.errorCap + ' ' + error.message, ZmStatusView.LEVEL_CRITICAL);
     }
   };
 
@@ -686,24 +700,44 @@ ownCloudZimlet.prototype._createFolderCallback =
  */
 ownCloudZimlet.prototype.appLaunch =
   function(appName) {
-    /* first check if we have the user's password */
-    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-    {
-      this.passView = new DwtComposite(this.getShell()); 
-      this.passView.setSize("250", "150"); 
-      this.passView.getHtmlElement().innerHTML = 'You need to provide your WebDAV password: <br><table><tr><td colspan="2">Password: </td><td><input id="mypass" type="password"></td></tr></table>';
-      /* TODO: a tickbox whether the user wants to save the password in LDAP (if allowed) */
-      this.passDialog = new ZmDialog({title:"Password Needed", view:this.passView, parent:this.getShell(), standardButtons:[DwtDialog.OK_BUTTON]});
-      this.passDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._okPassListen, appName)); 
-      this.passDialog.popup();
-      /* if we don't, the dialog will ask for it and the handler will continue the launch */
-    }
-    else
-    {
-      /* if we do have the password, we can start */
-      this.realLaunch(appName);
-    }   
+  
 };
+
+	
+ownCloudZimlet.prototype.onSelectApp = function (appName) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   if(appName == zimletInstance.ownCloudTab)
+   {
+      if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['errorstatus']=='401')
+      {         
+         this.displayDialog(1, ZmMsg.preferences, null);         
+      }
+      else
+      {     
+         /* first check if we have the user's password, and see if the app is already loaded */
+         var app = appCtxt.getApp(appName);
+         if (typeof this._appView === "undefined") {
+            if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+            {
+               this.passView = new DwtComposite(this.getShell()); 
+               this.passView.setSize("350", "150"); 
+               this.passView.getHtmlElement().innerHTML = '<input id="tk_barrydegraaff_owncloud_zimlet-mypass" type="password">';
+               /* TODO: a tickbox whether the user wants to save the password in LDAP (if allowed) */
+               this.passDialog = new ZmDialog({title: zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title")+ ' ' + ZmMsg.passwordLabel.replace(':',''), view:this.passView, parent:this.getShell(),  standardButtons:[DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON]});
+               this.passDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._okPassListen, appName)); 
+               this.passDialog.setEnterListener(new AjxListener(this, this._okPassListen, appName));
+               this.passDialog.popup();
+               /* if we don't, the dialog will ask for it and the handler will continue the launch */
+            }
+            else
+            {
+               /* if we do have the password, we can start */
+               this.realLaunch(appName);
+            } 
+         }
+      }
+   }
+}
 
 ownCloudZimlet.prototype.realLaunch =
   function(appName) {
@@ -722,11 +756,30 @@ ownCloudZimlet.prototype.realLaunch =
 };
 
 ownCloudZimlet.prototype._okPassListen =
-   function(appName) {
-     var pass = document.getElementById("mypass").value;
-     tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = pass;
-     this.passDialog.popdown();
-     this.realLaunch(appName);
+   function(appName) 
+   {
+      var pass = document.getElementById("tk_barrydegraaff_owncloud_zimlet-mypass").value;
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = pass;
+
+      if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
+      {
+         this.setUserProperty("owncloud_zimlet_password", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'], false);
+      }    
+      else
+      {
+         this.setUserProperty("owncloud_zimlet_password", "", false);
+      }
+
+      this.setUserProperty("owncloud_zimlet_default_folder", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'], false);
+      this.setUserProperty("owncloud_zimlet_oc_folder", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'], false);
+      this.setUserProperty("owncloud_zimlet_server_name", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'], false);
+      this.setUserProperty("owncloud_zimlet_server_path", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], false);
+      this.setUserProperty("owncloud_zimlet_username", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], false);
+      this.setUserProperty("owncloud_zimlet_default_folder", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'], false);
+      this.setUserProperty("owncloud_zimlet_server_port", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'], true);
+        
+      this.passDialog.popdown();
+      this.realLaunch(appName);
 };
 
 /**
@@ -772,8 +825,8 @@ ownCloudZimlet.prototype.displayDialog =
           standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
           disposeOnPopDown: true
         });
-        var username = appCtxt.getActiveAccount().name.match(/.*@/),
-          html,
+        var html = '';
+        var username = appCtxt.getActiveAccount().name.match(/.*@/);
         username = username[0].replace('@','');
 
         var passwHtml = "";
@@ -791,7 +844,7 @@ ownCloudZimlet.prototype.displayDialog =
           "<table>"+
           "<tr>" +
           "<td>"+ZmMsg.usernameLabel+"</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+(zimletInstance.getUserProperty('owncloud_zimlet_username') ? zimletInstance.getUserProperty('owncloud_zimlet_username') : username)+"'></td>" +
+          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']+"'></td>" +
           "</tr>" +
           "<tr>" +
           "<td>"+ZmMsg.passwordLabel+"</td>" +
@@ -824,6 +877,7 @@ ownCloudZimlet.prototype.displayDialog =
           "</div>";
         zimletInstance._dialog.setContent(html);
         zimletInstance._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, zimletInstance.prefSaveBtn));
+        zimletInstance._dialog.setEnterListener(new AjxListener(zimletInstance, zimletInstance.prefSaveBtn));
         zimletInstance._dialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelBtn));
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_username'),0);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_password'),1);
@@ -949,68 +1003,82 @@ ownCloudZimlet.prototype.cancelBtn =
 /**
  * This method is called when the dialog "OK" button is clicked in preferences
  */
-ownCloudZimlet.prototype.prefSaveBtn =
-  function() {
-    var serverName = document.getElementById('owncloud_zimlet_server_name').value;
-    if (/\/$/.test(serverName)) {
-      // Trim the unwanted ending of the server name like
-      // https://oc.example.com/ turns into https://oc.example.com
-      serverName = serverName.substring(0, serverName.length - 1);
-    }
+ownCloudZimlet.prototype.prefSaveBtn = function() 
+{
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   var serverName = document.getElementById('owncloud_zimlet_server_name').value;
+   if (/\/$/.test(serverName)) {
+     // Trim the unwanted ending of the server name like
+     // https://oc.example.com/ turns into https://oc.example.com
+     serverName = serverName.substring(0, serverName.length - 1);
+   }
+   if(document.getElementById("owncloud_zimlet_store_pass").checked)
+   {
+      if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
+      {
+         this.setUserProperty("owncloud_zimlet_password", document.getElementById('owncloud_zimlet_password').value, false);
+      }   
+   }
+   else
+   {
+      this.setUserProperty("owncloud_zimlet_password", "", false);
+   }
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('owncloud_zimlet_password').value;
 
-    if(document.getElementById("owncloud_zimlet_store_pass").checked)
-    {
-       if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
-       {
-          this.setUserProperty("owncloud_zimlet_password", document.getElementById('owncloud_zimlet_password').value, false);
-       }   
-    }
-    else
-    {
-       this.setUserProperty("owncloud_zimlet_password", "", false);
-    }
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('owncloud_zimlet_password').value;
+   if(document.getElementById("owncloud_zimlet_ask_folder_each_time").checked)
+   {
+      this.setUserProperty("owncloud_zimlet_ask_folder_each_time", "true", false);
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = "true";
+   }
+   else
+   {
+      this.setUserProperty("owncloud_zimlet_ask_folder_each_time", "false", false);
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = "false";
+   }
 
-    if(document.getElementById("owncloud_zimlet_ask_folder_each_time").checked)
-    {
-       this.setUserProperty("owncloud_zimlet_ask_folder_each_time", "true", false);
-       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = "true";
-    }
-    else
-    {
-       this.setUserProperty("owncloud_zimlet_ask_folder_each_time", "false", false);
-       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = "false";
-    }
+   this.setUserProperty("owncloud_zimlet_server_name", serverName, false);
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = serverName;
 
-    this.setUserProperty("owncloud_zimlet_server_name", serverName, false);
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = serverName;
+   this.setUserProperty("owncloud_zimlet_server_port", document.getElementById('owncloud_zimlet_server_port').value, false);
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = document.getElementById('owncloud_zimlet_server_port').value;
 
-    this.setUserProperty("owncloud_zimlet_server_port", document.getElementById('owncloud_zimlet_server_port').value, false);
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'] = document.getElementById('owncloud_zimlet_server_port').value;
+   this.setUserProperty("owncloud_zimlet_server_path", document.getElementById('owncloud_zimlet_server_path').value, false);
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] = document.getElementById('owncloud_zimlet_server_path').value;
 
-    this.setUserProperty("owncloud_zimlet_server_path", document.getElementById('owncloud_zimlet_server_path').value, false);
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] = document.getElementById('owncloud_zimlet_server_path').value;
+   this.setUserProperty("owncloud_zimlet_username", document.getElementById('owncloud_zimlet_username').value, false);
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = document.getElementById('owncloud_zimlet_username').value;
 
-    this.setUserProperty("owncloud_zimlet_username", document.getElementById('owncloud_zimlet_username').value, false);
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = document.getElementById('owncloud_zimlet_username').value;
+   this.setUserProperty("owncloud_zimlet_default_folder", document.getElementById('owncloud_zimlet_default_folder').value, false);
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = document.getElementById('owncloud_zimlet_default_folder').value;
 
-    this.setUserProperty("owncloud_zimlet_default_folder", document.getElementById('owncloud_zimlet_default_folder').value, false);
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = document.getElementById('owncloud_zimlet_default_folder').value;
+   this.setUserProperty("owncloud_zimlet_oc_folder", document.getElementById('owncloud_zimlet_oc_folder').value, true);
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = document.getElementById('owncloud_zimlet_oc_folder').value;
 
-    this.setUserProperty("owncloud_zimlet_oc_folder", document.getElementById('owncloud_zimlet_oc_folder').value, true);
-    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = document.getElementById('owncloud_zimlet_oc_folder').value;
+   this._saveUserProperties({
+   },
+     new AjxCallback(
+       this,
+       function () {
+         this.createFolder();
+         this.cancelBtn();
+       }
+     )
+   );
 
-    this._saveUserProperties({
-    },
-      new AjxCallback(
-        this,
-        function () {
-          this.createFolder();
-          this.cancelBtn();
-        }
-      )
-    );
-  };
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['errorstatus']='';
+
+   var app = appCtxt.getApp(zimletInstance.ownCloudTab);
+   if (typeof this._appView !== "undefined") {
+     this._appView = new OwnCloudApp(
+       this,
+       app,
+       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings,
+       this._davConnector,
+       this._ownCloudConnector,
+       this._davForZimbraConnector
+     );
+   }  
+};
 
 /**
  * Save all the parameters (one at time) and invoke a callback when the cycle is finished.
