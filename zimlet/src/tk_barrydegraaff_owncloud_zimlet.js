@@ -686,31 +686,39 @@ ownCloudZimlet.prototype._createFolderCallback =
  */
 ownCloudZimlet.prototype.appLaunch =
   function(appName) {
-   if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-   {
-     this.passView = new DwtComposite(this.getShell()); 
-     this.passView.setSize("250", "150"); 
-     this.passView.getHtmlElement().innerHTML = 'You need to provide your WebDAV password: <br><table><tr><td colspan="2">Password: </td><td><input id="mypass" type="password"></td></tr></table>';
-	
-     // pass the title, view & buttons information to create dialog box
-     this.passDialog = new ZmDialog({title:"Password Needed", view:this.passView, parent:this.getShell(), standardButtons:[DwtDialog.OK_BUTTON]});
-     this.passDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._okPassListen, appName)); 
-     this.passDialog.popup(); //show the dialog
-   }
-   else
-   {
-      var app = appCtxt.getApp(appName);
-      if (typeof this._appView === "undefined") {
-        this._appView = new OwnCloudApp(
-           this,
-           app,
-           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings,
-           this._davConnector,
-           this._ownCloudConnector,
-           this._davForZimbraConnector
-         );
-      }
-   }   
+    /* first check if we have the user's password */
+    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
+    {
+      this.passView = new DwtComposite(this.getShell()); 
+      this.passView.setSize("250", "150"); 
+      this.passView.getHtmlElement().innerHTML = 'You need to provide your WebDAV password: <br><table><tr><td colspan="2">Password: </td><td><input id="mypass" type="password"></td></tr></table>';
+      /* TODO: a tickbox whether the user wants to save the password in LDAP (if allowed) */
+      this.passDialog = new ZmDialog({title:"Password Needed", view:this.passView, parent:this.getShell(), standardButtons:[DwtDialog.OK_BUTTON]});
+      this.passDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._okPassListen, appName)); 
+      this.passDialog.popup();
+      /* if we don't, the dialog will ask for it and the handler will continue the launch */
+    }
+    else
+    {
+      /* if we do have the password, we can start */
+      this.realLaunch(appName);
+    }   
+};
+
+ownCloudZimlet.prototype.realLaunch =
+  function(appName) {
+    /* TODO: check if the password is correct */
+    var app = appCtxt.getApp(appName);
+    if (typeof this._appView === "undefined") {
+      this._appView = new OwnCloudApp(
+        this,
+        app,
+        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings,
+        this._davConnector,
+        this._ownCloudConnector,
+        this._davForZimbraConnector
+      );
+    }
 };
 
 ownCloudZimlet.prototype._okPassListen =
@@ -718,17 +726,7 @@ ownCloudZimlet.prototype._okPassListen =
      var pass = document.getElementById("mypass").value;
      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = pass;
      this.passDialog.popdown();
-      var app = appCtxt.getApp(appName);
-      if (typeof this._appView === "undefined") {
-        this._appView = new OwnCloudApp(
-           this,
-           app,
-           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings,
-           this._davConnector,
-           this._ownCloudConnector,
-           this._davForZimbraConnector
-         );
-      }
+     this.realLaunch(appName);
 };
 
 /**
