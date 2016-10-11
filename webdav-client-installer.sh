@@ -76,7 +76,6 @@ mkdir -p /opt/zimbra/lib/ext/ownCloud
 rm -f /opt/zimbra/lib/ext/ownCloud/*.jar
 cp "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
 cp !(zal*).jar /opt/zimbra/lib/ext/ownCloud/
-cp *.jar /opt/zimbra/lib/ext/ownCloud/
 ls -hal /opt/zimbra/lib/ext/ownCloud/
 
 echo "Installing Zimlet"
