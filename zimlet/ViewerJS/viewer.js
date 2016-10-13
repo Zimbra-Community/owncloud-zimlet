@@ -136,7 +136,7 @@ function Viewer(viewerPlugin, parameters) {
         aboutButton.className = "toolbarButton textButton about";
         aboutButton.title = "About";
         aboutButton.innerHTML = "ViewerJS";
-        aboutButton.style = "display:none";
+        aboutButton.style.cssText = "display:none";
         toolbarRight.appendChild(aboutButton);
 
         // Attach events to the above
