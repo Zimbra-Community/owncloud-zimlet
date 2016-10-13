@@ -348,7 +348,7 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   var item = ev.item;
 
   var davResource = this.getSelection()[0];
-  if(!item.isDirectory() && davResource._href.match(/\.pdf$|\.jpg$|\.jpeg$|\.png$|\.txt$/i))
+  if(!item.isDirectory() && davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$/i))
   {
      this._davConnector.getDownloadLink(
        davResource.getHref(),
@@ -374,8 +374,17 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
 };
 
 OwnCloudListView.prototype.preview = function(davResource, token) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType() + "&inline=true";
-  document.getElementById('WebDAVPreview').src=href;
+  if(davResource._href.match(/\.txt$/i))
+  {
+     document.getElementById('WebDAVPreview').src=href;
+  }
+  else
+  {
+     document.getElementById('WebDAVPreview').src=zimletInstance.getResource('icon.png');
+     setTimeout(function(){ document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href; }, 500);
+  }
 };
 
 

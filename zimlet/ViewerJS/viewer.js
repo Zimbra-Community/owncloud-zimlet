@@ -854,6 +854,9 @@ function Viewer(viewerPlugin, parameters) {
         };
 
     function estimateTypeByHeaderContentType( documentUrl, cb ) {
+       var regexp = /.*contentType=(.*?)&inline=true$/g;
+       var match = regexp.exec(window.location.href);
+
        //Here are some changes for Zimbra WebDAV Client
        //The viewerJs is used from form https://github.com/vandernorth/ViewerJS
        //var xhr                = new XMLHttpRequest();
@@ -861,7 +864,7 @@ function Viewer(viewerPlugin, parameters) {
             var mimetype, matchingPluginData;
            // if ( xhr.readyState === 4 ) {
                // if ( (xhr.status >= 200 && xhr.status < 300) || xhr.status === 0 ) {
-                    mimetype = 'application/pdf'; //to-do get the mimetype from the url passed
+                    mimetype = match[1]; //Zimbra WebDAV Client get the mimetype from the url passed
 
                     if ( mimetype ) {
                         pluginRegistry.some(function ( pluginData ) {

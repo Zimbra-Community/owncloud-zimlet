@@ -54,7 +54,7 @@ function ODFViewerPlugin() {
         pluginCSS = /**@type{!HTMLStyleElement}*/(document.createElementNS(document.head.namespaceURI, 'style'));
         pluginCSS.setAttribute('media', 'screen, print, handheld, projection');
         pluginCSS.setAttribute('type', 'text/css');
-        pluginCSS.appendChild(document.createTextNode(ODFViewerPlugin_css));
+        //pluginCSS.appendChild(document.createTextNode(ODFViewerPlugin_css));
         document.head.appendChild(pluginCSS);
     }
 

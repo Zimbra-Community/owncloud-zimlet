@@ -18,8 +18,9 @@ zimlet: clean
 		config_template.xml \
 		assets/*.* \
 		tk_barrydegraaff_owncloud_zimlet.xml
-	zip -u tk_barrydegraaff_owncloud_zimlet.zip \
-		help/*.*
+	zip -u -r tk_barrydegraaff_owncloud_zimlet.zip \
+		help/*.* \
+		ViewerJS/* \
 
 clean:
 	rm -f tk_barrydegraaff_owncloud_zimlet.zip
