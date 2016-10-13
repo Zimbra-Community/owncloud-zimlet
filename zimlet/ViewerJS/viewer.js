@@ -130,11 +130,13 @@ function Viewer(viewerPlugin, parameters) {
         aboutDialogCentererCell.appendChild(aboutDialog);
 
         // Create button to open dialog that says "ViewerJS"
+        
         aboutButton = document.createElement('button');
         aboutButton.id = "about";
         aboutButton.className = "toolbarButton textButton about";
         aboutButton.title = "About";
         aboutButton.innerHTML = "ViewerJS";
+        aboutButton.style = "display:none";
         toolbarRight.appendChild(aboutButton);
 
         // Attach events to the above
@@ -143,8 +145,7 @@ function Viewer(viewerPlugin, parameters) {
         });
         document.getElementById('aboutDialogCloseButton').addEventListener('click', function () {
                 hideAboutDialog();
-        });
-
+        });       
     }
 
     function showAboutDialog() {
@@ -870,7 +871,7 @@ function Viewer(viewerPlugin, parameters) {
                         pluginRegistry.some(function ( pluginData ) {
                             if ( pluginData.supportsMimetype(mimetype) ) {
                                 matchingPluginData = pluginData;
-                                console.log('Found plugin by mimetype and xhr head: ' + mimetype);
+                                //console.log('Found plugin by mimetype and xhr head: ' + mimetype);
                                 // store the mimetype globally
                                 window.mimetype = mimetype;
                                 return true;
