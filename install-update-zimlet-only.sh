@@ -28,5 +28,6 @@ cp -v zimlet/tk_barrydegraaff_owncloud_zimlet.* /opt/zimbra/zimlets-deployed/_de
 cp zimlet/src/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 cp -rv zimlet/help /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 cp zimlet/assets/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+cp -rv zimlet/ViewerJS /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 
 su zimbra -c "/opt/zimbra/bin/zmprov fc all"
