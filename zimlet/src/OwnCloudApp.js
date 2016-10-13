@@ -3,7 +3,7 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
   this._app = app;
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   var appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110 );
-  var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-200 );
+  var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-document.getElementById('zov__main_'+zimletInstance.ownCloudTab).style.width.replace('px','')-15 );
   app.setContent('<table><tr><td id="WebDAVListView"></td><td><iframe id="WebDAVPreview" src="'+zimletInstance.getResource("help/index.html")+'" style="width:'+appWidth/2+'px; height:'+  appHeight +'px; border:0px"></td></tr></table>');
   this._settings = settings;
   this._davConnector = davConnector;
