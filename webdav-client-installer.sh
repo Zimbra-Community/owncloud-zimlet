@@ -41,7 +41,7 @@ set -e
 
 if [[ -z $GIT_CMD ]] || [[ -z $ANT_CMD ]]; then
    if [[ ! -z $YUM_CMD ]]; then
-      yum install -y git ant make
+      yum install -y git ant make zip
    else
       apt-get install -y git ant make default-jdk
    fi
