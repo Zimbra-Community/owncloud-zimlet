@@ -289,7 +289,11 @@ function Viewer(viewerPlugin, parameters) {
         document.title = parameters.title;
         var documentName = document.getElementById('documentName');
         documentName.innerHTML = "";
-        documentName.appendChild(documentName.ownerDocument.createTextNode(parameters.title));
+        var regexp = /.*name=(.*?)&contentType.*$/g;
+        var match = regexp.exec(window.location.href);
+        console.log(match);
+
+        documentName.appendChild(documentName.ownerDocument.createTextNode(decodeURIComponent(match[1])));
 
         viewerPlugin.onLoad = function () {
             document.getElementById('pluginVersion').innerHTML = viewerPlugin.getPluginVersion();
@@ -857,7 +861,6 @@ function Viewer(viewerPlugin, parameters) {
     function estimateTypeByHeaderContentType( documentUrl, cb ) {
        var regexp = /.*contentType=(.*?)&inline=true$/g;
        var match = regexp.exec(window.location.href);
-
        //Here are some changes for Zimbra WebDAV Client
        //The viewerJs is used from form https://github.com/vandernorth/ViewerJS
        //var xhr                = new XMLHttpRequest();
