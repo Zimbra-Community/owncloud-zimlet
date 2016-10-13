@@ -291,7 +291,6 @@ function Viewer(viewerPlugin, parameters) {
         documentName.innerHTML = "";
         var regexp = /.*name=(.*?)&contentType.*$/g;
         var match = regexp.exec(window.location.href);
-        console.log(match);
 
         documentName.appendChild(documentName.ownerDocument.createTextNode(decodeURIComponent(match[1])));
 
