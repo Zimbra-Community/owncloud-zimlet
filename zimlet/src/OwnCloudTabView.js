@@ -43,7 +43,7 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
   this._sharePasswordTxt =  new DwtText({ // feature available only in ownCloud installation.
     parent: this,
   });
-  this._sharePasswordTxt.setText(ZmMsg.password+ " " + (ZmMsg.setup).toLowerCase()+':');
+  this._sharePasswordTxt.setText(ZmMsg.password+ " (" + (ZmMsg.optionalInvitees).toLowerCase() +")"+':');
 
   this._sharePassword = new DwtInputField({ // feature available only in ownCloud installation.
     parent: this,

@@ -278,10 +278,23 @@ OwnCloudListView.prototype._getActionMenuOps = function() {
 };
 
 OwnCloudListView.prototype._sendFileListener = function(ev) {
-  var
+   this.sharePassView = new DwtComposite(appCtxt.getShell()); 
+   this.sharePassView.setSize("350", "150"); 
+   this.sharePassView.getHtmlElement().innerHTML = '<input id="tk_barrydegraaff_owncloud_zimlet-sharedLinkPass" type="sharePassword">';
+   this.sharePassDialog = new ZmDialog({title: ZmMsg.password+ " (" + (ZmMsg.optionalInvitees).toLowerCase() +")", view:this.sharePassView, parent:appCtxt.getShell(),  standardButtons:[DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON], disposeOnPopDown: true});
+   this.sharePassDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._okSharePassListen, ev)); 
+   this.sharePassDialog.setEnterListener(new AjxListener(this, this._okSharePassListen, ev));
+   this.sharePassDialog.popup(); 
+};
+
+OwnCloudListView.prototype._okSharePassListen = function(ev) {
+ this.sharedLinkPass = document.getElementById('tk_barrydegraaff_owncloud_zimlet-sharedLinkPass').value;
+ var
     /** @type {DavResource[]} */ resourcesToLink = this.getSelection(),
     /** @type {DavResource[]} */ resourcesToAttach = [],
-    /** @type {string[]} */  resNames = [];
+    /** @type {string[]} */  resNames = [];   
+    
+  this.sharePassDialog.popdown();  
 
   for (var i = 0; i < resourcesToLink.length; i+= 1) {
     resNames.push(resourcesToLink[i].getName());
@@ -294,9 +307,9 @@ OwnCloudListView.prototype._sendFileListener = function(ev) {
       this,
       this._sendFilesListCbk,
       [resNames]
-    )
-  );
-};
+    ), this.sharedLinkPass
+  ); 
+}
 
 OwnCloudListView.prototype._sendFileAsAttachmentListener = function(ev) {
   var
@@ -326,12 +339,21 @@ OwnCloudListView.prototype._sendFileAsAttachmentListener = function(ev) {
 };
 
 OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAttach) {
+  if(this.sharedLinkPass)
+  {
+     var passwordText = "("+this.sharedLinkPass+")";
+  }
+  else
+  {
+     var passwordText = "";
+  }
+       
   var cc = AjxDispatcher.run("GetComposeController"),
     htmlCompose = appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML,
     extraBodyText = [];
 
   for (var i = 0; i < urls.length; i+= 1) {
-    extraBodyText.push(urls[i].name + ": " + urls[i].link);
+    extraBodyText.push(urls[i].name + " "+passwordText+" : " + urls[i].link);
   }
 
   cc._setView({
