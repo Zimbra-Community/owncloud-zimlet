@@ -177,6 +177,10 @@ ownCloudZimlet.prototype.init =
           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = this.getUserProperty("owncloud_zimlet_ask_folder_each_time");
        }   
     /** End load default settings for new users **/
+   
+   //sort by name asc by default, do we want to store this in the ldap?
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_item'] = 'na';
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_asc'] = true; 
 
    try {
       this._zimletContext._panelActionMenu.args[0][0].label = ZmMsg.preferences;

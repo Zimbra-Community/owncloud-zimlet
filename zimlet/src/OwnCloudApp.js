@@ -213,6 +213,7 @@ OwnCloudApp.prototype._appendLoadingTreeItem = function(parent) {
 };
 
 OwnCloudApp.prototype._onItemSelected = function(/** @type {DwtSelectionEvent} */ ev) {
+  this._lastSelectedTreeItem = ev.dwtObj;
   try {
      if (ev.detail === DwtTree.ITEM_SELECTED) {
        var treeItem = ev.dwtObj,
@@ -362,9 +363,15 @@ OwnCloudApp.prototype.refreshView = function () {
   {
      this._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
   }
+  
+   if(!this._lastSelectedTreeItem)
+   {
+      this._lastSelectedTreeItem = this._getFolderByHref(this._parentTreeItem, this._currentPath, this._currentPath.split("/"));
+   }   
+  
   this._initTree(
     this._currentPath,
-    this._getFolderByHref(this._parentTreeItem, this._currentPath, this._currentPath.split("/")),
+    this._lastSelectedTreeItem,
     new AjxCallback(
       this,
       this._showFolderData

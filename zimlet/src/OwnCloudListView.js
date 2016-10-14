@@ -63,28 +63,51 @@ OwnCloudListView.prototype._getHeaderList = function () {
     width: 20,
     name: ZmMsg.icon
   }));
-  //headers.push(new DwtListHeaderItem({field: ZmItem.F_NAME, text: ZmMsg._name, sortable: ZmItem.F_NAME}));
-  headers.push(new DwtListHeaderItem({field: ZmItem.F_NAME, text: ZmMsg._name}));
+  headers.push(new DwtListHeaderItem({field: ZmItem.F_NAME, text: ZmMsg._name,sortable: ZmItem.F_NAME}));
   headers.push(new DwtListHeaderItem({
     field: ZmItem.F_FILE_TYPE,
     text: ZmMsg.type,
     width: ZmMsg.COLUMN_WIDTH_TYPE_DLV,
-    //sortable: ZmItem.F_FILE_TYPE
+    sortable: ZmItem.F_FILE_TYPE
   }));
   headers.push(new DwtListHeaderItem({
     field: ZmItem.F_SIZE,
     text: ZmMsg.size,
     width: ZmMsg.COLUMN_WIDTH_SIZE_DLV,
-    //sortable: ZmItem.F_SIZE
+    sortable: ZmItem.F_SIZE
   }));
   headers.push(new DwtListHeaderItem({
     field: ZmItem.F_DATE,
     text: ZmMsg.modified,
     width: ZmMsg.COLUMN_WIDTH_DATE_DLV,
-    //sortable: ZmItem.F_DATE
+    sortable: ZmItem.F_DATE
   }));
   return headers;
 };
+
+OwnCloudListView.prototype._sortColumn =
+function(columnItem, bSortAsc) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_item'] = columnItem._field;
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_asc'] = bSortAsc;  
+
+   if(zimletInstance._appView._currentPath == '/')
+   {
+      zimletInstance._appView._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
+   }
+   if(!zimletInstance._appView._lastSelectedTreeItem)
+   {
+      zimletInstance._appView._lastSelectedTreeItem = zimletInstance._appView._getFolderByHref(zimletInstance._appView._parentTreeItem, zimletInstance._appView._currentPath, zimletInstance._appView._currentPath.split("/"));
+   }   
+   zimletInstance._appView._initTree(
+     zimletInstance._appView._currentPath,
+     zimletInstance._appView._lastSelectedTreeItem,
+     new AjxCallback(
+       zimletInstance._appView,
+       zimletInstance._appView._showFolderData
+     )
+   );
+}
 
 OwnCloudListView.prototype._getCellContents = function (htmlArr, idx, item, field, colIdx, params) {
 
@@ -139,7 +162,6 @@ OwnCloudListView.prototype._getCellContents = function (htmlArr, idx, item, fiel
     htmlArr[idx++] = item.toString ? item.toString() : item;
 
   }
-
   return idx;
 };
 
@@ -383,7 +405,6 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   this.setSize(appWidth/2+"px",appHeight+"px");
   document.getElementById('WebDAVPreview').style.width=appWidth/2+'px';
   document.getElementById('WebDAVPreview').style.height=appHeight+'px';
-
   if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
     if (item.isDirectory()) {
       //if (typeof this._onFolderSelectedCbk !== "undefined") {

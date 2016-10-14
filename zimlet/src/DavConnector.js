@@ -196,9 +196,52 @@
    * Get the resource children.
    * @return {DavResource[]}
    */
-  DavResource.prototype.getChildren = function() {
-    return this._children;
-  };
+  DavResource.prototype.getChildren = function() 
+  {
+      return this._children.sort(function(a, b) {
+         switch(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_item']) {
+            case 'na':
+               var nameA = a._href.toUpperCase(); // ignore upper and lowercase
+               var nameB = b._href.toUpperCase(); // ignore upper and lowercase
+            break;
+            case 'sz':
+               var nameA = a._contentLength; 
+               var nameB = b._contentLength; 
+            break;
+            case 'ft':
+               var nameA = a._contentType; 
+               var nameB = b._contentType; 
+            break;
+            case 'dt':
+               var nameA = a._modified; 
+               var nameB = b._modified; 
+            break;
+      }
+   
+      if (nameA < nameB) {
+         if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_asc']==true)
+         {
+            return -1;
+         }
+         else
+         {
+            return 1;   
+         }
+      }
+      if (nameA > nameB) {
+         if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_asc']==true)
+         {
+            return 1;
+         }
+         else
+         {
+            return -1;   
+         }
+      }      
+      // names must be equal
+      return 0;
+      });
+  };  
 
   /**
    * Remove all resource children.
