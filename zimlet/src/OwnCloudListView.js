@@ -615,5 +615,5 @@ OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, 
 
 OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
-  window.open(href);
+  window.location.assign(href);
 };
