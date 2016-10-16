@@ -44,7 +44,7 @@ if [[ -z $GIT_CMD ]] || [[ -z $ANT_CMD ]] || [[ -z $ZIP_CMD ]]; then
    if [[ ! -z $YUM_CMD ]]; then
       yum install -y git ant make zip
    else
-      apt-get install -y git ant make default-jdk
+      apt-get install -y git ant make default-jdk zip
    fi
 fi
 
