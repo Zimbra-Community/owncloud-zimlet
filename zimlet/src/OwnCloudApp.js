@@ -286,6 +286,7 @@ OwnCloudApp.prototype._getFolderByHref = function(parent, baseRef, path) {
  * @private
  */
 OwnCloudApp.prototype._onFolderSelectedOnListView = function(resource) {
+/*
   var slices = resource.getHref().split("/"),
     treeItem;
 
@@ -305,15 +306,18 @@ OwnCloudApp.prototype._onFolderSelectedOnListView = function(resource) {
       this._showFolderData
     )
   );
+/*
 };
 
 OwnCloudApp._dragListener = function(ev) {
-  if (ev.action == DwtDragEvent.SET_DATA) {
+/*  if (ev.action == DwtDragEvent.SET_DATA) {
     ev.srcData = {data: ev.srcControl.getDnDSelection()};
   }
+*/ 
 };
 
 OwnCloudApp._dropListener = function(ocApp, ev) {
+/*   
   var data = ev.srcData.data,
     div = this.getTargetItemDiv(ev.uiEvent),
     dropFolder = this.getItemFromElement(div);
@@ -333,9 +337,11 @@ OwnCloudApp._dropListener = function(ocApp, ev) {
   } else if (ev.action == DwtDropEvent.DRAG_OP_CHANGED) {
     // nothing
   }
+*/
 };
 
 OwnCloudApp.prototype._handleDropOnFolder = function(resource, target) {
+/*
   if (!target.isDirectory()) {
     return; // We can only move a file into a folder.
   }
@@ -353,12 +359,14 @@ OwnCloudApp.prototype._handleDropOnFolder = function(resource, target) {
       this.refreshView();
     })
   );
+*/
 };
 
 
 OwnCloudApp.prototype.refreshView = function () {
   //This should not be here, its a bug. After app init currentPath equals /, but then the refresh in the root will not work, unless
   //another folder is loaded first.
+
   if(this._currentPath == '/')
   {
      this._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
@@ -366,6 +374,7 @@ OwnCloudApp.prototype.refreshView = function () {
   
    if(!this._lastSelectedTreeItem)
    {
+      this._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
       this._lastSelectedTreeItem = this._getFolderByHref(this._parentTreeItem, this._currentPath, this._currentPath.split("/"));
    }   
   
@@ -378,6 +387,7 @@ OwnCloudApp.prototype.refreshView = function () {
     )
   );
 };
+
 OwnCloudApp.prototype.extraBtnLsnr = function() {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
    window.open(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_url"))
@@ -428,10 +438,15 @@ OwnCloudApp.prototype._newFolderCallback = function(folder, input, dialog, ev) {
     ("/"+(folder + inputValue).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"")).replace('//','/'),
     new AjxCallback(this, function(dialog, result) {
       dialog.popdown();
-      this.refreshView();
-      if (result === true) {
-      } else {
-      }
-    }, [dialog])
+         this._davConnector.propfind(
+         this._currentPath,
+         1,
+         new AjxCallback(
+          this,
+          this._showFolderData
+         ),
+         this._zimletCtxt._defaultPropfindErrCbk
+         );
+     }, [dialog])
   );
 };

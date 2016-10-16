@@ -407,9 +407,16 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   document.getElementById('WebDAVPreview').style.height=appHeight+'px';
   if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
     if (item.isDirectory()) {
-      //if (typeof this._onFolderSelectedCbk !== "undefined") {
-      //  this._onFolderSelectedCbk.run(item);
-      //}
+      zimletInstance._appView._davConnector.propfind(
+        ev.item._href,
+        1,
+        new AjxCallback(
+          zimletInstance._appView,
+          zimletInstance._appView._showFolderData
+        ),
+        zimletInstance._appView._zimletCtxt._defaultPropfindErrCbk
+      );
+      zimletInstance._appView._currentPath = ev.item._href;
     } else {
       this._saveFileListener(ev);
     }
@@ -598,6 +605,7 @@ OwnCloudListView.prototype._newFolderListener = function(ev) {
 };
 
 OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, ev) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   var inputValue = ownCloudZimlet.prototype.sanitizeFileName(input.getValue());
   if (inputValue === folder.getName()) { return; }
   dialog.getButton(DwtDialog.OK_BUTTON).setEnabled(false);
@@ -606,12 +614,19 @@ OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, 
   this._davConnector.mkcol(
     "/"+(folder.getHref() + inputValue).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], ""),
     new AjxCallback(this, function(dialog, result) {
-      this._ocZimletApp.refreshView();
       dialog.popdown();
+         zimletInstance._appView._davConnector.propfind(
+         zimletInstance._appView._currentPath,
+         1,
+         new AjxCallback(
+          zimletInstance._appView,
+          zimletInstance._appView._showFolderData
+         ),
+         zimletInstance._appView._zimletCtxt._defaultPropfindErrCbk
+         );      
     }, [dialog])
   );  
 };
-
 
 OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
