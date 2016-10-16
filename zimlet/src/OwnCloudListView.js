@@ -5,7 +5,6 @@
  * @param {string} appName
  * @param {OwnCloudApp} ocZimletApp
  * @param {OwnCloudCommons} ocCommons
- * @param {AjxCallback} onFolderSelectedCbk
  * @constructor
  */
 function OwnCloudListView(
@@ -13,8 +12,7 @@ function OwnCloudListView(
   appName,
   ocZimletApp,
   davConnector,
-  ocCommons,
-  onFolderSelectedCbk
+  ocCommons
 ) {
   DwtListView.call(this, {
     parent: parent,
@@ -25,7 +23,6 @@ function OwnCloudListView(
   this._ocZimletApp = ocZimletApp;
   this._davConnector = davConnector;
   this._ocCommons = ocCommons;
-  this._onFolderSelectedCbk = onFolderSelectedCbk;
   this._listeners = {};
 
   this.createHeaderHtml(ZmItem.F_NAME);
@@ -376,9 +373,6 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
     if (item.isDirectory()) {
       zimletInstance._appView._currentPath = ev.item._href;
       zimletInstance._appView.refreshViewPropfind();
-      if (typeof this._onFolderSelectedCbk !== "undefined") {
-        this._onFolderSelectedCbk.run(item);
-      }
     } else {
       this._saveFileListener(ev);
     }

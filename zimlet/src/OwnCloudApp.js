@@ -66,8 +66,7 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
     app._name,
     this,
     this._davConnector,
-    new OwnCloudCommons(davConnector, ownCloudConnector, davForZimbraConnector),
-    new AjxListener(this, this._onFolderSelectedOnListView)
+    new OwnCloudCommons(davConnector, ownCloudConnector, davForZimbraConnector)
   );
 
   this.appActive(true);
@@ -107,7 +106,6 @@ OwnCloudApp.prototype._onItemExpanded = function(/** @type {DwtTreeEvent} */ ev)
      }
    }
    catch (err) {
-      console.log(err);
    }
 };
 
@@ -216,7 +214,6 @@ OwnCloudApp.prototype._onItemSelected = function(/** @type {DwtSelectionEvent} *
    }  
    catch (err)
    {
-      console.log(err);
    }     
 };
 
@@ -228,6 +225,14 @@ OwnCloudApp.prototype._showFolderData = function(/** @type {DavResource[]} */ da
   for (i = 0; i < children.length; i += 1) {
     this._listView.addItem(children[i]);
   }
+
+  var treeItem = this._getFolderByHref(resource.getHref());
+  var tmpCallback = new AjxCallback(
+    this,
+    this._expandMe,
+    [treeItem]
+  );
+  this._renderTreePropFind (resource.getHref(), treeItem, tmpCallback, davResources);
 };
 
 OwnCloudApp.prototype._handleRootPropfind = function(resources) {
@@ -246,6 +251,13 @@ OwnCloudApp.prototype._handleRootPropfind = function(resources) {
  */
 OwnCloudApp.prototype._getFolderByHref = function(href, treeItems) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   
+   //root level
+   if(zimletInstance._appView._parentTreeItem._data.DavResource._href == href)
+   {
+      return zimletInstance._appView._parentTreeItem;
+   }
+   
    if(!treeItems)
    {
       var treeItems = zimletInstance._appView._parentTreeItem._children._array;
@@ -271,31 +283,6 @@ OwnCloudApp.prototype._getFolderByHref = function(href, treeItems) {
       }
    }
    return false;
-};
-
-/**
- * Handle the double click of a folder in the list view. Keep the folder tree in sync with the list view.
- * @param {DavResource} resource
- * @private
- */
-OwnCloudApp.prototype._onFolderSelectedOnListView = function(resource) {
-  var treeItem = this._getFolderByHref(resource.getHref());
-  var tmpCallback = new AjxCallback(
-    this,
-    this._expandMe,
-    [treeItem]
-  );
-
-  this._davConnector.propfind(
-      resource.getHref(),
-      2,
-      new AjxCallback(
-        this,
-        this._renderTreePropFind,
-        [resource.getHref(), treeItem, tmpCallback]
-      ),
-      this._zimletCtxt._defaultPropfindErrCbk
-    );
 };
 
 OwnCloudApp.prototype._expandMe = function(treeItem) {
