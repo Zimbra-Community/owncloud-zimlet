@@ -213,7 +213,6 @@ OwnCloudApp.prototype._appendLoadingTreeItem = function(parent) {
 };
 
 OwnCloudApp.prototype._onItemSelected = function(/** @type {DwtSelectionEvent} */ ev) {
-  this._lastSelectedTreeItem = ev.dwtObj;
   try {
      if (ev.detail === DwtTree.ITEM_SELECTED) {
        var treeItem = ev.dwtObj,
@@ -366,7 +365,9 @@ OwnCloudApp.prototype._handleDropOnFolder = function(resource, target) {
 OwnCloudApp.prototype.refreshView = function () {
   //This should not be here, its a bug. After app init currentPath equals /, but then the refresh in the root will not work, unless
   //another folder is loaded first.
-
+  
+  // This is a legacy method, use this.refreshViewPropfind() instead //
+/*
   if(this._currentPath == '/')
   {
      this._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
@@ -386,6 +387,7 @@ OwnCloudApp.prototype.refreshView = function () {
       this._showFolderData
     )
   );
+*/ 
 };
 
 OwnCloudApp.prototype.extraBtnLsnr = function() {
@@ -397,9 +399,22 @@ OwnCloudApp.prototype._uploadBtnLsnr = function(ev) {
   var dialog = new UploadToDavDialog(appCtxt.getShell());
   dialog.popup(
     this._currentPath,
-    new AjxCallback(this, this.refreshView)
+    new AjxCallback(this, this.refreshViewPropfind)
   );
 };
+
+OwnCloudApp.prototype.refreshViewPropfind = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   zimletInstance._appView._davConnector.propfind(
+   zimletInstance._appView._currentPath,
+   1,
+   new AjxCallback(
+    zimletInstance._appView,
+    zimletInstance._appView._showFolderData
+   ),
+   zimletInstance._appView._zimletCtxt._defaultPropfindErrCbk
+   );
+};   
 
 OwnCloudApp.prototype._newFolderListener = function(ev) {
   var newFolderDialog = new DwtDialog({parent: appCtxt.getShell()}),
@@ -438,15 +453,7 @@ OwnCloudApp.prototype._newFolderCallback = function(folder, input, dialog, ev) {
     ("/"+(folder + inputValue).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"")).replace('//','/'),
     new AjxCallback(this, function(dialog, result) {
       dialog.popdown();
-         this._davConnector.propfind(
-         this._currentPath,
-         1,
-         new AjxCallback(
-          this,
-          this._showFolderData
-         ),
-         this._zimletCtxt._defaultPropfindErrCbk
-         );
+      this.refreshViewPropfind();
      }, [dialog])
   );
 };
