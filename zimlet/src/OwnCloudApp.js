@@ -15,25 +15,13 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
   var overView = app.getOverview(),
     toolbar = app.getToolbar(),
     treeView;
-    //,
-    //dragSource = new DwtDragSource(Dwt.DND_DROP_MOVE),
-    //dropTarget = new DwtDropTarget("DavResource");
 
   overView.clear();
-  //overView.setDropTarget(dropTarget);
   overView.setTreeView(OwnCloudApp.TREE_ID);
 
   treeView = overView.getTreeView(OwnCloudApp.TREE_ID);
   treeView.addTreeListener(new AjxListener(this, this._onItemExpanded));
   treeView.addSelectionListener(new AjxListener(this, this._onItemSelected));
-
-
-//  dragSource.addDragListener(new AjxListener(this, OwnCloudApp._dragListener));
-//  treeView.setDragSource(dragSource);
-
-//  dropTarget.markAsMultiple();
-//  dropTarget.addDropListener(new AjxListener(treeView, OwnCloudApp._dropListener, [this]));
-//  treeView.setDropTarget(dropTarget);
 
    /* When a user sets a wrong password, the WebDAV Client app is initialized wrongly, then the user
    * is shown a dialog to review the settings and try again. At that point the app gets re-initialized.
@@ -97,10 +85,6 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
 }
 
 OwnCloudApp.TREE_ID = "OC_TREE_VIEW";
-
-OwnCloudApp.prototype._getTreeView = function() {
-  return this._app.getOverView().getTreeView(OwnCloudApp.TREE_ID);
-};
 
 OwnCloudApp.prototype.appActive = function(active) {};
 
@@ -253,142 +237,70 @@ OwnCloudApp.prototype._handleRootPropfind = function(resources) {
 
 /**
  * Get the folder tree item by his href.
- * @param {DwtTreeItem} parent
- * @param {string} baseRef
- * @param {string[]} path
- * @returns {DwtTreeItem}
+ * This is a dumb method that iterates recursively through a DwtTree and looks for the DwtItem with given href.
+ * So we can use it to append children to
+ * Initially you can call this method with ONLY the href parameter. The treeItems parameter is for internal recursive call (don't pass it).
+ * @param {string} href
+ * @param {treeItems} treeItems
  * @private
  */
-OwnCloudApp.prototype._getFolderByHref = function(parent, baseRef, path) {
-  var children = parent.getChildren(),
-    currentName = path[path.length-2],
-    data,
-    i;
-
-  if (parent.getData("DavResource").getHref() === baseRef) {
-    return parent;
-  }
-
-  for (i = 0; i < children.length; i += 1) {
-    data = children[i].getData('DavResource');
-    if (data.getHref() === baseRef) {
-      return children[i];
-    } else if (data.getName() === currentName) {
-      return this._getFolderByHref(children[i], baseRef, path);
-    }
-  }
+OwnCloudApp.prototype._getFolderByHref = function(href, treeItems) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   if(!treeItems)
+   {
+      var treeItems = zimletInstance._appView._parentTreeItem._children._array;
+   }
+   for(var x=0; x<=treeItems.length; x++)
+   {
+      try {
+         if(treeItems[x]._data.DavResource._href == href)
+         {
+            return treeItems[x];
+         }
+      } catch (err) {}; //avoid type errors on tree items that have no dav content
+      
+      try {
+         if(treeItems[x]._children._array)
+         {
+            var gotChild = this._getFolderByHref(href, treeItems[x]._children._array);
+         } 
+      } catch (err) {}; //avoid type errors on tree items that have no dav content  
+      if(gotChild)
+      {
+         return gotChild;
+      }
+   }
+   return false;
 };
 
 /**
- * Handle the double click of a folder in the list view.
+ * Handle the double click of a folder in the list view. Keep the folder tree in sync with the list view.
  * @param {DavResource} resource
  * @private
  */
 OwnCloudApp.prototype._onFolderSelectedOnListView = function(resource) {
-/*
-  var slices = resource.getHref().split("/"),
-    treeItem;
-
-  slices.shift();
-  slices.pop();
-  treeItem = this._getFolderByHref(this._parentTreeItem, resource.getHref(), slices);
-  if (typeof treeItem === "undefined") { return; }
-  treeItem.setExpanded(true, false, true);
-
-  this._currentPath = resource.getHref();
-
-  this._initTree(
-    this._currentPath,
-    treeItem,
-    new AjxCallback(
-      this,
-      this._showFolderData
-    )
+  var treeItem = this._getFolderByHref(resource.getHref());
+  var tmpCallback = new AjxCallback(
+    this,
+    this._expandMe,
+    [treeItem]
   );
-/*
+
+  this._davConnector.propfind(
+      resource.getHref(),
+      2,
+      new AjxCallback(
+        this,
+        this._renderTreePropFind,
+        [resource.getHref(), treeItem, tmpCallback]
+      ),
+      this._zimletCtxt._defaultPropfindErrCbk
+    );
 };
 
-OwnCloudApp._dragListener = function(ev) {
-/*  if (ev.action == DwtDragEvent.SET_DATA) {
-    ev.srcData = {data: ev.srcControl.getDnDSelection()};
-  }
-*/ 
-};
-
-OwnCloudApp._dropListener = function(ocApp, ev) {
-/*   
-  var data = ev.srcData.data,
-    div = this.getTargetItemDiv(ev.uiEvent),
-    dropFolder = this.getItemFromElement(div);
-
-  if (ev.action == DwtDropEvent.DRAG_ENTER) {
-    // if (!data.isDirectory()) {
-      ev.doIt = (dropFolder && (dropFolder.toString() === "DavResource") && (dropFolder.isDirectory()));
-    // } else {
-    //   ev.doIt = false;
-    // }
-    this.dragSelect(div);
-  } else if (ev.action == DwtDropEvent.DRAG_DROP) {
-    this.dragDeselect(div);
-    ocApp._handleDropOnFolder(data, dropFolder);
-  } else if (ev.action == DwtDropEvent.DRAG_LEAVE) {
-    view.dragDeselect(div);
-  } else if (ev.action == DwtDropEvent.DRAG_OP_CHANGED) {
-    // nothing
-  }
-*/
-};
-
-OwnCloudApp.prototype._handleDropOnFolder = function(resource, target) {
-/*
-  if (!target.isDirectory()) {
-    return; // We can only move a file into a folder.
-  }
-  this._davConnector.move(
-    resource.getHref(),
-    target.getHref() + resource.getName(),
-    false,
-    new AjxCallback(this, function(result) {
-      this.refreshView();
-      if (result === true) {
-      } else {
-      }
-    }),
-    new AjxCallback(this, function() {
-      this.refreshView();
-    })
-  );
-*/
-};
-
-
-OwnCloudApp.prototype.refreshView = function () {
-  //This should not be here, its a bug. After app init currentPath equals /, but then the refresh in the root will not work, unless
-  //another folder is loaded first.
-  
-  // This is a legacy method, use this.refreshViewPropfind() instead //
-/*
-  if(this._currentPath == '/')
-  {
-     this._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
-  }
-  
-   if(!this._lastSelectedTreeItem)
-   {
-      this._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
-      this._lastSelectedTreeItem = this._getFolderByHref(this._parentTreeItem, this._currentPath, this._currentPath.split("/"));
-   }   
-  
-  this._initTree(
-    this._currentPath,
-    this._lastSelectedTreeItem,
-    new AjxCallback(
-      this,
-      this._showFolderData
-    )
-  );
-*/ 
-};
+OwnCloudApp.prototype._expandMe = function(treeItem) {
+   treeItem.setExpanded(true, false, true);
+};  
 
 OwnCloudApp.prototype.extraBtnLsnr = function() {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 

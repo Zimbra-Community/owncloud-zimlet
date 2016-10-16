@@ -41,15 +41,6 @@ function OwnCloudListView(
 
   this.addActionListener(new AjxListener(this, this._listActionListener));
   this.addSelectionListener(new AjxListener(this, this._onItemSelected));
-
-//  this._dragSrc = new DwtDragSource(Dwt.DND_DROP_MOVE);
-//  this._dragSrc.addDragListener(new AjxListener(this, OwnCloudApp._dragListener));
-//  this.setDragSource(this._dragSrc);
-
-//  this._dropTgt = new DwtDropTarget("DavResource");
-//  this._dropTgt.markAsMultiple();
-//  this._dropTgt.addDropListener(new AjxListener(this, OwnCloudApp._dropListener, [ocZimletApp]));
-//  this.setDropTarget(this._dropTgt);
 }
 
 OwnCloudListView.prototype = new DwtListView();
@@ -220,17 +211,12 @@ OwnCloudListView.prototype._listActionListener = function (ev) {
   var actionMenu = this.getActionMenu(ev.item, this.getSelection());
   this._resetOperations(actionMenu, ev.item, this.getSelection());
   actionMenu.popup(0, ev.docX, ev.docY);
-  // if (ev.ersatz) {
-  //   actionMenu.setSelectedItem(0); // menu popped up via keyboard nav
-  // }
 };
 
 OwnCloudListView.prototype.getActionMenu = function (resource, resources) {
   if (!this._actionMenu) {
     this._initializeActionMenu();
-    //DBG.timePt("_initializeActionMenu");
     this._resetOperations(this._actionMenu, resource, resources);
-    //DBG.timePt("this._resetOperation(actionMenu)");
   }
   return this._actionMenu;
 };
@@ -254,9 +240,6 @@ OwnCloudListView.prototype._initializeActionMenu = function () {
   };
   this._actionMenu = new ZmActionMenu(menuParams);
   this._addMenuListeners(this._actionMenu);
-  // if (appCtxt.get(ZmSetting.TAGGING_ENABLED)) {
-  //   this._setupTagMenu(this._actionMenu);
-  // }
 };
 
 OwnCloudListView.prototype._addMenuListeners = function (menu) {
@@ -393,6 +376,9 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
     if (item.isDirectory()) {
       zimletInstance._appView._currentPath = ev.item._href;
       zimletInstance._appView.refreshViewPropfind();
+      if (typeof this._onFolderSelectedCbk !== "undefined") {
+        this._onFolderSelectedCbk.run(item);
+      }
     } else {
       this._saveFileListener(ev);
     }
