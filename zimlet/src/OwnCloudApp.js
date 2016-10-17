@@ -246,9 +246,7 @@ OwnCloudApp.prototype._showFolderData = function(/** @type {DavResource[]} */ da
 OwnCloudApp.prototype._handleRootPropfind = function(resources) {
   this._parentTreeItem.setExpanded(true, false, true);
   this._showFolderData(resources);
-  //this._shareLinkClickedHandler(); 
   this.appActive(true);
-  //hierzo 
 };
 
 OwnCloudApp.prototype._shareLinkClickedHandler = function() {
