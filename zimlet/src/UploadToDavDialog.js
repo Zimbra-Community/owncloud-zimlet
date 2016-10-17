@@ -116,7 +116,7 @@ UploadToDavDialog.prototype._addFileInputRow = function() {
 
   var cell1 = row.insertCell(-1);
   cell1.innerHTML = [
-    "<input id='", inputId, "' type='file' name='", ZmUploadDialog.UPLOAD_FIELD_NAME, "' size=30>"
+    "<input id='", inputId, "' type='file' multiple name='", ZmUploadDialog.UPLOAD_FIELD_NAME, "' size=30>"
   ].join("");
 
   var cell2 = row.insertCell(-1);
