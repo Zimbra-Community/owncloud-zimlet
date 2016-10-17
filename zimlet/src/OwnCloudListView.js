@@ -412,10 +412,17 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
   {
      document.getElementById('WebDAVPreview').src=href;
   }
-  else
+  else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$/i))
   {
      document.getElementById('WebDAVPreview').src=zimletInstance.getResource('icon.png');
      setTimeout(function(){ document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href; }, 500);
+  }
+  else
+  {
+     //This condition occurs only when clicking internal user shares
+     var regexp = /.*name=(.*?)&contentType.*$/g;
+     var match = regexp.exec(href);
+     document.getElementById('WebDAVPreview').contentDocument.write('<button onclick="+window.location.assign(\''+href+'\');this.parentNode.removeChild(this);">'+ZmMsg.download + " " + decodeURIComponent(match[1])+'</button>');
   }
 };
 

@@ -269,12 +269,24 @@ OwnCloudApp.prototype._shareLinkClickedHandler = function() {
 
 OwnCloudApp.prototype._shareLinkClickedHandlerCbk = function(davResource)
 {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
    if(davResource[0].isDirectory())
    {
       this._showFolderData(davResource);
    }
    else
    {
+       //call _shareLinkClickedHandler on the folder of the shared file, so the browser shows that too
+       this._davConnector.propfind(
+         davResource[0].getHref().substring(0, davResource[0].getHref().lastIndexOf("/"))+'/',
+         2,
+         new AjxCallback(
+           this,
+           this._shareLinkClickedHandlerCbk
+         ),
+         this._zimletCtxt._defaultPropfindErrCbk
+       );
+
        this._davConnector.getDownloadLink(
        davResource[0].getHref(),
        new AjxCallback(this._listView, this._listView.preview, [davResource[0]])
