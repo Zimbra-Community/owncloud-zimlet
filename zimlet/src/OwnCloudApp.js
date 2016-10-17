@@ -69,7 +69,6 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
     new OwnCloudCommons(davConnector, ownCloudConnector, davForZimbraConnector)
   );
 
-  this.appActive(true);
   this._initTree(
     this._currentPath,
     this._parentTreeItem,
@@ -78,6 +77,7 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
       this._handleRootPropfind
     )
   );
+
   this._listView.setSize(appWidth/2+"px",appHeight+"px");
   this._listView.reparentHtmlElement("WebDAVListView");
   this._listView.setScrollStyle(Dwt.SCROLL);
@@ -85,7 +85,12 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
 
 OwnCloudApp.TREE_ID = "OC_TREE_VIEW";
 
-OwnCloudApp.prototype.appActive = function(active) {};
+OwnCloudApp.prototype.appActive = function(active) {
+   if(active)
+   { 
+        this._shareLinkClickedHandler(); 
+   } 
+};
 
 OwnCloudApp.prototype._onItemExpanded = function(/** @type {DwtTreeEvent} */ ev) {
    try {
@@ -150,8 +155,11 @@ OwnCloudApp.prototype._renderTreePropFind = function(href, parent, callback, res
     rootFolder = resources[0],
     children = rootFolder.getChildren();
 
-  parent.removeChildren();
-  parent.setData('DavResource', rootFolder);
+  if(parent)
+  {
+     parent.removeChildren();
+     parent.setData('DavResource', rootFolder);
+  }
   for (i = 0; i < children.length; i += 1) {
     if (children[i].isDirectory())
     {
@@ -238,7 +246,43 @@ OwnCloudApp.prototype._showFolderData = function(/** @type {DavResource[]} */ da
 OwnCloudApp.prototype._handleRootPropfind = function(resources) {
   this._parentTreeItem.setExpanded(true, false, true);
   this._showFolderData(resources);
+  //this._shareLinkClickedHandler(); 
+  this.appActive(true);
+  //hierzo 
 };
+
+OwnCloudApp.prototype._shareLinkClickedHandler = function() {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+  if(zimletInstance.shareLinkClicked)
+  {
+     this._davConnector.propfind(
+         zimletInstance.shareLinkClicked,
+         2,
+         new AjxCallback(
+           this,
+           this._shareLinkClickedHandlerCbk
+         ),
+         this._zimletCtxt._defaultPropfindErrCbk
+       );
+
+     zimletInstance.shareLinkClicked = '';
+  }  
+};  
+
+OwnCloudApp.prototype._shareLinkClickedHandlerCbk = function(davResource)
+{
+   if(davResource[0].isDirectory())
+   {
+      this._showFolderData(davResource);
+   }
+   else
+   {
+       this._davConnector.getDownloadLink(
+       davResource[0].getHref(),
+       new AjxCallback(this._listView, this._listView.preview, [davResource[0]])
+     );
+   }   
+}
 
 /**
  * Get the folder tree item by his href.
@@ -253,10 +297,12 @@ OwnCloudApp.prototype._getFolderByHref = function(href, treeItems) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    
    //root level
-   if(zimletInstance._appView._parentTreeItem._data.DavResource._href == href)
-   {
-      return zimletInstance._appView._parentTreeItem;
-   }
+   try {
+      if(zimletInstance._appView._parentTreeItem._data.DavResource._href == href)
+      {
+         return zimletInstance._appView._parentTreeItem;
+      }
+   } catch (err) {}
    
    if(!treeItems)
    {
@@ -286,7 +332,9 @@ OwnCloudApp.prototype._getFolderByHref = function(href, treeItems) {
 };
 
 OwnCloudApp.prototype._expandMe = function(treeItem) {
-   treeItem.setExpanded(true, false, true);
+   try {
+      treeItem.setExpanded(true, false, true);
+   } catch (err) {}   
 };  
 
 OwnCloudApp.prototype.extraBtnLsnr = function() {

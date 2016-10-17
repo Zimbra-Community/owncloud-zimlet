@@ -23,7 +23,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
-        version="0.5.3"
+        version="0.5.4"
         target="main compose-window view-window"
         label="WebDAV"
         description="Attach from and save to WebDAV">
@@ -59,4 +59,9 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
       <property type="string" label="" name="owncloud_zimlet_oc_folder" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_ask_folder_each_time" rows="1"/>
    </userProperties>
+    <contentObject>
+        <matchOn>
+            <regex>zimbradav([^\s]+)</regex>
+        </matchOn>
+    </contentObject>   
 </zimlet>
