@@ -29,26 +29,35 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
     parent: this,
     style: DwtTree.CHECKEDITEM_STYLE
   });
-  this._tree.setSize("500px", "230px");
+  this._tree.setSize("500px", "220px");
   this._tree.setScrollStyle(Dwt.SCROLL);
   //Add scrollbar to avoid overflowing the attach dialog
   document.getElementById(this._tree.getHTMLElId()).style.overflowX = "hidden";
 
-  this._checkbox = new DwtCheckbox({ // feature available only in ownCloud installation.
+  this._checkbox = new DwtRadioButton({ // feature available only in ownCloud installation.
     parent: this,
-    style: DwtCheckbox.TEXT_RIGHT
+    style: DwtCheckbox.TEXT_RIGHT,
+    checked: true,
+    name: 'ownCloudZimletShareTypeSelector'
   });
-  this._checkbox.setText(ZmMsg.linkTo + " " + (ZmMsg.file).toLowerCase());
+  this._checkbox.setText(ZmMsg.shareWithPublic + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase());
 
-  this._sharePasswordTxt =  new DwtText({ // feature available only in ownCloud installation.
+  this._sharePasswordTxt =  new DwtText({ 
     parent: this,
   });
-  this._sharePasswordTxt.setText(ZmMsg.password+ " (" + (ZmMsg.optionalInvitees).toLowerCase() +")"+':');
 
   this._sharePassword = new DwtInputField({ // feature available only in ownCloud installation.
     parent: this,
   });
   this._sharePassword.setHtmlElementId('owncloudSharePassword');
+  this._sharePassword._inputField.placeholder = (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase();
+
+  this._checkboxi = new DwtRadioButton({ // feature available only in ownCloud installation.
+    parent: this,
+    style: DwtCheckbox.TEXT_RIGHT,
+    name: 'ownCloudZimletShareTypeSelector'
+  });
+  this._checkboxi.setText(ZmMsg.shareWithUserOrGroup + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase());
 
   //Add a function to do a propfind on the onclick event in the tree (attach when composing)
   this._treeclick = function() {
@@ -160,6 +169,28 @@ OwnCloudTabView.prototype._renderResource =
  */
 OwnCloudTabView.prototype._attachFiles =
   function(attachmentDlg) {
+     if(this._checkboxi.getInputElement().checked)
+     {
+        var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+        var resourcesToLink = this._getSelectedItems(this._tree.getChildren());
+        attachmentDlg.popdown();
+        var cc = AjxDispatcher.run("GetComposeController"),
+          htmlCompose = appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML,
+          extraBodyText = [];
+      
+        for (var i = 0; i < resourcesToLink.length; i+= 1) {
+          extraBodyText.push(resourcesToLink[i].getName() + " : " + 'zimbradav:/'+encodeURI(resourcesToLink[i].getHref()));
+        }
+      
+        cc._setView({
+          action: ZmOperation.NEW_MESSAGE,
+          inNewWindow: false,
+          msg: new ZmMailMsg(),
+          subjOverride: zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title") + " " + ZmMsg.share,
+          extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
+        });        
+        return;
+     }
     attachmentDlg.popdown();
 
     var
