@@ -293,6 +293,7 @@ function Viewer(viewerPlugin, parameters) {
         var match = regexp.exec(window.location.href);
 
         documentName.appendChild(documentName.ownerDocument.createTextNode(decodeURIComponent(match[1])));
+        document.title = decodeURIComponent(match[1]);
 
         viewerPlugin.onLoad = function () {
             document.getElementById('pluginVersion').innerHTML = viewerPlugin.getPluginVersion();
