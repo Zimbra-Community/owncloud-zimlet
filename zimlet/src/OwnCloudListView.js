@@ -265,15 +265,22 @@ OwnCloudListView.prototype._getActionMenuOps = function() {
 
 OwnCloudListView.prototype._sendFileListener = function(ev) {
    this.sharePassView = new DwtComposite(appCtxt.getShell()); 
-   this.sharePassView.setSize("350", "150"); 
-   this.sharePassView.getHtmlElement().innerHTML = '<input id="tk_barrydegraaff_owncloud_zimlet-sharedLinkPass" type="sharePassword">';
-   this.sharePassDialog = new ZmDialog({title: ZmMsg.password+ " (" + (ZmMsg.optionalInvitees).toLowerCase() +")", view:this.sharePassView, parent:appCtxt.getShell(),  standardButtons:[DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON], disposeOnPopDown: true});
+   this.sharePassView.setSize("450", "100"); 
+   var html = "<div style='width:450px; height: 100px; overflow-x: hidden; overflow-y: hidden;'><form id=\"ownCloudZimletShareTypeSelectorFrm\"><table style='width:100%'>";
+   html += '<tr><td><input type="radio" checked name="ownCloudZimletShareTypeSelector" value="public"></td><td>'+ZmMsg.shareWithPublic+'</td></tr>';
+   html += '<tr><td></td><td><input placeholder="'+ (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase()+'" id="tk_barrydegraaff_owncloud_zimlet-sharedLinkPass" type="sharePassword"></td></tr>';
+   html += "<tr><td colspan='2'><hr><br></td></tr>";
+   html += '<tr><td><input type="radio" name="ownCloudZimletShareTypeSelector" value="internal"></td><td>'+ZmMsg.shareWithUserOrGroup+'</td></tr></table></form>';
+   this.sharePassView.getHtmlElement().innerHTML = html;
+   this.sharePassDialog = new ZmDialog({title: ZmMsg.sendLink, view:this.sharePassView, parent:appCtxt.getShell(),  standardButtons:[DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON], disposeOnPopDown: true});
    this.sharePassDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._okSharePassListen, ev)); 
    this.sharePassDialog.setEnterListener(new AjxListener(this, this._okSharePassListen, ev));
    this.sharePassDialog.popup(); 
 };
 
 OwnCloudListView.prototype._okSharePassListen = function(ev) {
+ var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+ var ownCloudZimletShareType = document.getElementById("ownCloudZimletShareTypeSelectorFrm").elements["ownCloudZimletShareTypeSelector"].value;
  this.sharedLinkPass = document.getElementById('tk_barrydegraaff_owncloud_zimlet-sharedLinkPass').value;
  var
     /** @type {DavResource[]} */ resourcesToLink = this.getSelection(),
@@ -281,20 +288,39 @@ OwnCloudListView.prototype._okSharePassListen = function(ev) {
     /** @type {string[]} */  resNames = [];   
     
   this.sharePassDialog.popdown();  
-
-  for (var i = 0; i < resourcesToLink.length; i+= 1) {
-    resNames.push(resourcesToLink[i].getName());
+    
+ if(ownCloudZimletShareType == 'public')
+ {  
+     for (var i = 0; i < resourcesToLink.length; i+= 1) {
+       resNames.push(resourcesToLink[i].getName());
+     }    
+     this._ocCommons.getAttachments(
+       resourcesToLink,
+       resourcesToAttach,
+       new AjxCallback(
+         this,
+         this._sendFilesListCbk,
+         [resNames]
+       ), this.sharedLinkPass
+     ); 
   }
-
-  this._ocCommons.getAttachments(
-    resourcesToLink,
-    resourcesToAttach,
-    new AjxCallback(
-      this,
-      this._sendFilesListCbk,
-      [resNames]
-    ), this.sharedLinkPass
-  ); 
+  else{
+     var cc = AjxDispatcher.run("GetComposeController"),
+       htmlCompose = appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML,
+       extraBodyText = [];
+   
+     for (var i = 0; i < resourcesToLink.length; i+= 1) {
+       extraBodyText.push(resourcesToLink[i].getName() + " : " + 'zimbradav:/'+encodeURI(resourcesToLink[i].getHref()));
+     }
+   
+     cc._setView({
+       action: ZmOperation.NEW_MESSAGE,
+       inNewWindow: false,
+       msg: new ZmMailMsg(),
+       subjOverride: zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title") + " " + ZmMsg.share,
+       extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
+     });
+  }
 }
 
 OwnCloudListView.prototype._sendFileAsAttachmentListener = function(ev) {
