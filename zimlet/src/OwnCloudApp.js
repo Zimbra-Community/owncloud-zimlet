@@ -197,7 +197,7 @@ OwnCloudApp.prototype._appendLoadingTreeItem = function(parent) {
   var tmpTreeItem = new DwtTreeItem({
     parent: parent,
     text: ZmMsg.loading,
-    imageInfo: 'ownCloud-panelIcon',
+    imageInfo: 'ownCloud-loading',
     selectable: false
   });
 };

@@ -414,8 +414,8 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
   }
   else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$/i))
   {
-     document.getElementById('WebDAVPreview').src=zimletInstance.getResource('icon.png');
-     setTimeout(function(){ document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href; }, 500);
+     document.getElementById('WebDAVPreview').src=zimletInstance.getResource('pixel.png');
+     setTimeout(function(){ document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href; }, 200);
   }
   else
   {
