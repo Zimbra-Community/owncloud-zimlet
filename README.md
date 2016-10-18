@@ -36,13 +36,7 @@ Use the automated installer:
 
     wget https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/webdav-client-installer.sh -O /tmp/webdav-client-installer.sh
     chmod +rx /tmp/webdav-client-installer.sh
-    /tmp/webdav-client-installer.sh
-   
-
-### Configure your proxy:
-
-	[zimbra@server zimbra]$ zmprov mc default +zimbraProxyAllowedDomains your-owncloud-server.com
-    # You can also enable all domains see: https://wiki.zimbra.com/wiki/Zimlet_Developers_Guide:Proxy_Servlet_Setup security  
+    /tmp/webdav-client-installer.sh 
 
 ### Configuring preferences
 
@@ -72,6 +66,20 @@ Please note that a preference set by the user has priority over a preference set
 ### Restart your mailbox to let the extension to be loaded:
 
 	[zimbra@server zimbra]$ zmmailboxdctl restart
+
+### Restrict allowed DAV Servers
+
+As of version 0.5.6 your clients **can connect to all dav servers by default**,  you can restrict the allowed DAV servers to connect to in:
+
+    /opt/zimbra/lib/ext/ownCloud/config.properties
+    allowdomains=allowme.example.com;allowmealso.example.com
+
+No service restart is needed after changing this file.
+
+If you installed WebDAV Client before, you should remove your DAV servers from zimbraProxyAllowedDomains.
+
+    zmprov gc default zimbraProxyAllowedDomains
+    zmprov mc default -zimbraProxyAllowedDomains allowme.example.com
 
 ### Un-installing
 
