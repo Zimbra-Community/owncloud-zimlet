@@ -219,7 +219,6 @@ ownCloudZimlet.prototype.init =
 
     ZmOverviewController.CONTROLLER[OwnCloudApp.TREE_ID] = "OwnCloudTreeController";
 
-    this.createFolder();
   };
 
 /**
@@ -686,15 +685,18 @@ ownCloudZimlet.prototype._handlePropfindError =
  */
 ownCloudZimlet.prototype.createFolder =
   function(callback, errorCallback) {
-    this._davConnector.mkcol(
-      '/' + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
-      new AjxCallback(
-        this,
-        this._createFolderCallback,
-        [callback, errorCallback]
-      )
-    );
-  };
+    if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'])
+    {
+       this._davConnector.mkcol(
+         '/' + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
+         new AjxCallback(
+           this,
+           this._createFolderCallback,
+           [callback, errorCallback]
+         )
+       );
+   }
+};
 
 /**
  * Callback invoked when a folder is created.
