@@ -32,3 +32,9 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
  height: 18px;
  overflow: hidden;
 }
+.ImgownCloud-loading {
+ background: url("pixel.png") no-repeat 0 0;
+ width: 18px;
+ height: 18px;
+ overflow: hidden;
+}
