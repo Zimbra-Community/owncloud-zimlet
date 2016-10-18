@@ -24,10 +24,7 @@
 rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 mkdir /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 
-cp -v zimlet/tk_barrydegraaff_owncloud_zimlet.* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-cp zimlet/src/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-cp -rv zimlet/help /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-cp zimlet/assets/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-cp -rv zimlet/ViewerJS /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-
+cp -rv zimlet/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+rm -f /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/tk_barrydegraaff_owncloud_zimlet.zip
+rm -f /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/makefile
 su zimbra -c "/opt/zimbra/bin/zmprov fc all"
