@@ -128,7 +128,7 @@ public class UploadHandler implements HttpHandler
       ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
       //hard coded upload limiit to 1GB
       upload.setSizeMax(1048576000);
-      upload.setFileSizeMax(1048576000);;
+      upload.setFileSizeMax(1048576000);
       try
       {
         List<FileItem> items = upload.parseRequest(httpServletRequest);
