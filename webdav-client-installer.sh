@@ -77,6 +77,9 @@ mkdir -p /opt/zimbra/lib/ext/ownCloud
 rm -f /opt/zimbra/lib/ext/ownCloud/*.jar
 cp "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
 cp !(zal*).jar /opt/zimbra/lib/ext/ownCloud/
+
+echo "allowdomains=*" > /opt/zimbra/lib/ext/ownCloud/config.properties
+
 ls -hal /opt/zimbra/lib/ext/ownCloud/
 
 echo "Installing Zimlet"
@@ -89,11 +92,23 @@ su - zimbra -c "zmprov fc all"
 echo "--------------------------------------------------------------------------------------------------------------
 Zimbra WebDAV Client installed successful
 
-You still need to configure what servers it is allowed to connect to and restart to load the changes:
+To load the extension:
 
 su zimbra
-zmprov mc default +zimbraProxyAllowedDomains your-owncloud-or-davserver-here.com
 zmmailboxdctl restart
+
+  As of version 0.5.6 your clients CAN CONNECT TO ALL DAV SERVERS BY DEFAULT,
+  you can restrict the allowed DAV servers to connect to in:
+
+  /opt/zimbra/lib/ext/ownCloud/config.properties
+  allowdomains=allowme.example.com;allowmealso.example.com
+  - No service restart is needed after changing this file.
+
+  If you installed WebDAV Client before, you should remove your DAV servers
+  from zimbraProxyAllowedDomains:
+  zmprov gc default zimbraProxyAllowedDomains
+  zmprov mc default -zimbraProxyAllowedDomains allowme.example.com
+
 "
 
 rm -Rf $TMPFOLDER
