@@ -61,6 +61,7 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_extra_toolbar_button_title  | Open ownCloud tab  | If a value is set, show an additional button in the WebDAV tab to open in a new browser window the url set in owncloud_zimlet_extra_toolbar_button_url.  |   |
 | owncloud_zimlet_extra_toolbar_button_url  | /owncloud  | See: owncloud_zimlet_extra_toolbar_button_title |   |
 | owncloud_zimlet_app_title  | WebDAV  | Change this if you want to rebrand WebDAV Client for your users. For example: ownCloud. |   |
+| owncloud_zimlet_max_upload_size  | 104857600  (100MB) | Maximum upload size for upload dialog. (MB*1024*1024) |   |
 
 
 ### Restart your mailbox to let the extension to be loaded:

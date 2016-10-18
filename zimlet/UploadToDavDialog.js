@@ -10,6 +10,7 @@ UploadToDavDialog.prototype.constructor = UploadToDavDialog;
 UploadToDavDialog.UPLOAD_URL = "/service/extension/dav_upload/";
 
 UploadToDavDialog.prototype._createUploadHtml = function() {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   var id = this._htmlElId;
   var aCtxt = ZmAppCtxt.handleWindowOpener();
   if (!aCtxt) {
@@ -42,19 +43,20 @@ UploadToDavDialog.prototype._createUploadHtml = function() {
   //Info Section
   var docSizeInfo = document.getElementById((id+"_info"));
   if(docSizeInfo){
-    var attSize = AjxUtil.formatSize(aCtxt.get(ZmSetting.DOCUMENT_SIZE_LIMIT) || 0, true);
+    var attSize = AjxUtil.formatSize(zimletInstance._zimletContext.getConfig("owncloud_zimlet_max_upload_size") || 0, true);
     docSizeInfo.innerHTML = AjxMessageFormat.format(ZmMsg.attachmentLimitMsg, attSize);
   }
 
 };
 
 UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + folder + "&password=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'];
   this._uploadFolder = folder;
   this._uploadCallback = callback;
   var aCtxt = ZmAppCtxt.handleWindowOpener();
 
-  this._supportsHTML5 = AjxEnv.supportsHTML5File && (aCtxt.get(ZmSetting.DOCUMENT_SIZE_LIMIT) != null);
+  this._supportsHTML5 = AjxEnv.supportsHTML5File && (zimletInstance._zimletContext.getConfig("owncloud_zimlet_max_upload_size") != null);
 
   this.setTitle(ZmMsg.uploadDocs);
 
@@ -90,7 +92,10 @@ UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
 
   //This is used to display the max attachment size, but we don't implement that here for the DAV server.
   var docSizeInfo = document.getElementById((id + "_info"));
-  docSizeInfo.style.display = "none";
+  var attSize = AjxUtil.formatSize(zimletInstance._zimletContext.getConfig("owncloud_zimlet_max_upload_size") || 0, true);
+  if(docSizeInfo){
+    docSizeInfo.innerHTML = AjxMessageFormat.format(ZmMsg.attachmentLimitMsgSingleFile, attSize);
+  }
 
   // show
   DwtDialog.prototype.popup.call(this, loc);
@@ -133,10 +138,31 @@ UploadToDavDialog.prototype._addFileInputRow = function() {
 };
 
 UploadToDavDialog.prototype._handleFileSize = function(inputEl, sizeEl){
-return;
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+  var files = inputEl.files;
+  if(!files) return;
+
+  var sizeStr = [], className, totalSize =0;
+  for(var i=0; i<files.length;i++){
+    var file = files[i];
+    var size = file.size || file.fileSize /*Safari*/;
+    var aCtxt = ZmAppCtxt.handleWindowOpener();
+    if(size > zimletInstance._zimletContext.getConfig("owncloud_zimlet_max_upload_size"))
+      className = "RedC";
+    totalSize += size;
+  }
+
+  if(sizeEl) {
+    sizeEl.innerHTML = "  ("+AjxUtil.formatSize(totalSize, true)+")";
+    if(className)
+      Dwt.addClass(sizeEl, "RedC");
+    else
+      Dwt.delClass(sizeEl, "RedC");
+  }
 };
 
 UploadToDavDialog.prototype._upload = function() {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
   var form = this._uploadForm;
   var files = [];
   var elements = form.elements;
@@ -146,10 +172,16 @@ UploadToDavDialog.prototype._upload = function() {
     if (!element.value) continue;
     this._msgInfo.innerHTML = "";
     if(this._supportsHTML5){
+      if(this._validateSize()){
         var f = element.files;
         for(var j=0; j<f.length; j++){
           files.push({name:f[j].name, fullname: f[j].name});
         }
+      }else{
+        var aCtxt = ZmAppCtxt.handleWindowOpener();
+        this._msgInfo.innerHTML = AjxMessageFormat.format(ZmMsg.attachmentSizeError, AjxUtil.formatSize(zimletInstance._zimletContext.getConfig("owncloud_zimlet_max_upload_size")));
+        return;
+      }
     }else{
       var file = {
         fullname: element.value,
@@ -161,7 +193,6 @@ UploadToDavDialog.prototype._upload = function() {
   if (files.length == 0) {
     return;
   }
-  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   this.setContent('<div style="width:456px; text-align:center"><img src="'+zimletInstance.getResource("progressround.gif")+'"></div>');
   this.setButtonEnabled(DwtDialog.OK_BUTTON, false);
   this.setButtonEnabled(DwtDialog.CANCEL_BUTTON, false);
@@ -181,6 +212,7 @@ UploadToDavDialog.prototype._upload = function() {
 };
 
 UploadToDavDialog.prototype._validateSize = function() {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
   var atts = document.getElementsByName(ZmUploadDialog.UPLOAD_FIELD_NAME);
   var file, size;
   for (var i = 0; i < atts.length; i++){
@@ -190,7 +222,7 @@ UploadToDavDialog.prototype._validateSize = function() {
       var f = file[j];
       size = f.size || f.fileSize /*Safari*/;
       var aCtxt = ZmAppCtxt.handleWindowOpener();
-      if(size > aCtxt.get(ZmSetting.DOCUMENT_SIZE_LIMIT)){
+      if(size > zimletInstance._zimletContext.getConfig("owncloud_zimlet_max_upload_size")){
         return false;
       }
     }
