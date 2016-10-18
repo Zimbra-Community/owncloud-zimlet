@@ -102,6 +102,7 @@ zmmailboxdctl restart
 
   /opt/zimbra/lib/ext/ownCloud/config.properties
   allowdomains=allowme.example.com;allowmealso.example.com
+
   - No service restart is needed after changing this file.
 
   If you installed WebDAV Client before, you should remove your DAV servers
