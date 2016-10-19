@@ -51,7 +51,7 @@ UploadToDavDialog.prototype._createUploadHtml = function() {
 
 UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-  this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + folder + "&password=" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'];
+  this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + folder;
   this._uploadFolder = folder;
   this._uploadCallback = callback;
   var aCtxt = ZmAppCtxt.handleWindowOpener();
@@ -121,7 +121,7 @@ UploadToDavDialog.prototype._addFileInputRow = function() {
 
   var cell1 = row.insertCell(-1);
   cell1.innerHTML = [
-    "<input id='", inputId, "' type='file' multiple name='", ZmUploadDialog.UPLOAD_FIELD_NAME, "' size=30>"
+    "<input id='", inputId, "' type='file' multiple name='", ZmUploadDialog.UPLOAD_FIELD_NAME, "' size=30><input type='hidden' name='password' value='"+  tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']+"'>"
   ].join("");
 
   var cell2 = row.insertCell(-1);

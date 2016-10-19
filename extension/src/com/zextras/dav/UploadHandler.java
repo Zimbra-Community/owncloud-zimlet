@@ -117,14 +117,6 @@ public class UploadHandler implements HttpHandler
         }
       }
 
-      final DavSoapConnector connector = new DavSoapConnector(
-        userProperties.get(ZimletProperty.DAV_SERVER_NAME),
-        Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
-        userProperties.get(ZimletProperty.DAV_SERVER_PATH),
-        userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-        paramsMap.get("password")
-      );
-
       ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
       //hard coded upload limiit to 1GB
       upload.setSizeMax(1048576000);
@@ -135,6 +127,25 @@ public class UploadHandler implements HttpHandler
         List<String> fileNames = new ArrayList<String>();
 
         String reqId = "";
+        String password = "";
+
+        for (FileItem item : items) {
+          if (item.isFormField()) {
+            if (item.getFieldName().equals("password")) {
+              // correlate this file upload session's request and response
+              password = item.getString();
+            }
+          }
+        }
+
+        final DavSoapConnector connector = new DavSoapConnector(
+                userProperties.get(ZimletProperty.DAV_SERVER_NAME),
+                Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
+                userProperties.get(ZimletProperty.DAV_SERVER_PATH),
+                userProperties.get(ZimletProperty.DAV_USER_USERNAME),
+                password
+        );
+
 
         for (FileItem item : items) {
           if (item.isFormField())
