@@ -674,6 +674,10 @@ ownCloudZimlet.prototype._handlePropfindError =
     else
     {
       this.status('DAV ' + ZmMsg.errorCap + ' ' + error.message, ZmStatusView.LEVEL_CRITICAL);
+      if((error.message.indexOf('SunCertPathBuilderException') > -1) || (error.message.indexOf('SSLProtocolException') > -1))
+      {
+         this.displayDialog(2, ZmMsg.goToHelp, '<button target="_blank" onclick="window.open(\'https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting#zal-soap-unknown-exception-javaxnetsslsslprotocolexception-handshake-alert-unrecognized_name\')">Troubleshooting guide for administrators.</button>'); 
+      }
     }
   };
 
