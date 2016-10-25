@@ -25,11 +25,20 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
 
   this.prevAccount = acct;
   this.parent.setScrollStyle(Dwt.CLIP);
+
+  this._checkboxf = new DwtRadioButton({ // feature available only in ownCloud installation.
+    parent: this,
+    style: DwtCheckbox.TEXT_RIGHT,
+    checked: true,
+    name: 'ownCloudZimletShareTypeSelector'
+  });
+  this._checkboxf.setText(ZmMsg.attach.charAt(0).toUpperCase() + ZmMsg.attach.slice(1)  + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
+
   this._tree = new DwtTree({
     parent: this,
     style: DwtTree.CHECKEDITEM_STYLE
   });
-  this._tree.setSize("500px", "220px");
+  this._tree.setSize("500px", "190px");
   this._tree.setScrollStyle(Dwt.SCROLL);
   //Add scrollbar to avoid overflowing the attach dialog
   document.getElementById(this._tree.getHTMLElId()).style.overflowX = "hidden";
@@ -37,10 +46,9 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
   this._checkbox = new DwtRadioButton({ // feature available only in ownCloud installation.
     parent: this,
     style: DwtCheckbox.TEXT_RIGHT,
-    checked: true,
     name: 'ownCloudZimletShareTypeSelector'
   });
-  this._checkbox.setText(ZmMsg.shareWithPublic + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase());
+  this._checkbox.setText(ZmMsg.shareWithPublic + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
 
   this._sharePasswordTxt =  new DwtText({ 
     parent: this,
@@ -57,7 +65,7 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
     style: DwtCheckbox.TEXT_RIGHT,
     name: 'ownCloudZimletShareTypeSelector'
   });
-  this._checkboxi.setText(ZmMsg.shareWithUserOrGroup + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase());
+  this._checkboxi.setText(ZmMsg.shareWithUserOrGroup + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
 
   //Add a function to do a propfind on the onclick event in the tree (attach when composing)
   this._treeclick = function() {
@@ -174,21 +182,32 @@ OwnCloudTabView.prototype._attachFiles =
         var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
         var resourcesToLink = this._getSelectedItems(this._tree.getChildren());
         attachmentDlg.popdown();
-        var cc = AjxDispatcher.run("GetComposeController"),
-          htmlCompose = appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML,
-          extraBodyText = [];
-      
         for (var i = 0; i < resourcesToLink.length; i+= 1) {
-          extraBodyText.push(resourcesToLink[i].getName() + " : " + 'zimbradav:/'+encodeURI(resourcesToLink[i].getHref()));
+            var composeView = appCtxt.getCurrentView(),
+               composeMode = composeView.getHtmlEditor().getMode(),
+               content = composeView.getHtmlEditor().getContent(),
+               sep,
+               linkData = resourcesToLink[i].getName() + " : " + 'zimbradav:/'+encodeURI(resourcesToLink[i].getHref());
+         
+             if(composeMode == 'text/plain') {
+               sep = "\r\n";
+             } else {
+               sep = "<br>";
+             }
+         
+             if(content.indexOf('<hr id="') > 0) {
+               content = content.replace('<hr id="', linkData + sep + '<hr id="');
+             } else if(content.indexOf('<div id="') > 0) {
+               content = content.replace('<div id="', linkData + sep + '<div id="');
+             } else if(content.indexOf('</body') > 0) {
+               content = content.replace('</body', linkData + sep + '</body');
+             } else if(content.indexOf('----') > 0) {
+               content = content.replace('----', linkData + sep + '----');
+             } else {
+               content = content + sep + linkData + sep;
+             }
+             composeView.getHtmlEditor().setContent(content);
         }
-      
-        cc._setView({
-          action: ZmOperation.NEW_MESSAGE,
-          inNewWindow: false,
-          msg: new ZmMailMsg(),
-          subjOverride: zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title") + " " + ZmMsg.share,
-          extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
-        });        
         return;
      }
     attachmentDlg.popdown();
