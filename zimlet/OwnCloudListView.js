@@ -619,6 +619,8 @@ OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
       var iframe = document.createElement('iframe');
       iframe.id = "OwnCloudListViewhiddenDownloader";
       iframe.style.visibility = 'hidden';  
+      iframe.style.width = '0px';
+      iframe.style.height = '0px';  
       document.body.appendChild(iframe);
    }
    document.getElementById('OwnCloudListViewhiddenDownloader').src=href;
