@@ -87,13 +87,13 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
     }
 
     final Dav4ZimbraConnector connector = new Dav4ZimbraConnector(
-      mMailboxManager,
-      userProperties.get(ZimletProperty.DAV_SERVER_NAME),
-      Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
-      zimbraContext.getParameter("targetFolder", userProperties.get(ZimletProperty.DAV_SERVER_PATH)),
-      userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-      zimbraContext.getParameter("dav_user_password", ""),
-      userProperties.get(ZimletProperty.DAV_MAIL_FOLDER)
+            mMailboxManager,
+            userProperties.get(ZimletProperty.DAV_SERVER_NAME),
+            Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
+            userProperties.get(ZimletProperty.DAV_SERVER_PATH),
+            userProperties.get(ZimletProperty.DAV_USER_USERNAME),
+            zimbraContext.getParameter("dav_user_password", ""),
+            zimbraContext.getParameter("targetFolder", userProperties.get(ZimletProperty.DAV_MAIL_FOLDER))
     );
 
     final String actionStr = zimbraContext.getParameter("action", "");

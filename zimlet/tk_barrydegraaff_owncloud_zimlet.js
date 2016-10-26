@@ -357,23 +357,25 @@ ownCloudZimlet.prototype._okBtnFolderSelect =
   function(mid, part, fileName, result) {
     var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     var ownCloudZimletfolderSelector = document.getElementById("ownCloudZimletfolderSelector");
-    if(!ownCloudZimletfolderSelector.elements["ownCloudZimletfolderSelector"].value)
+    var selectedTargetFolder = ownCloudZimletfolderSelector.elements["ownCloudZimletfolderSelector"].value
+    if(!selectedTargetFolder)
     {       
        zimletInstance.cancelBtn();
        return;
     }
     
     this.status(ZmMsg.uploading + ' ' + fileName, ZmStatusView.LEVEL_INFO);
-   
     this._davForZimbraConnector.sendMailAttachmentToDav(
       mid,
       part,
       encodeURIComponent(ownCloudZimlet.prototype.sanitizeFileName(fileName)),
       new AjxCallback(this, this._saveAttachmentOkCbk, [mid, part, ownCloudZimlet.prototype.sanitizeFileName(fileName)]),
       new AjxCallback(this, this._saveAttachmentErrCbk, [mid, part, ownCloudZimlet.prototype.sanitizeFileName(fileName)]),
-      ownCloudZimletfolderSelector.elements["ownCloudZimletfolderSelector"].value
+      selectedTargetFolder
     );
+
     zimletInstance.cancelBtn();
+    
   };
 
 ownCloudZimlet.prototype._saveAttachmentOkCbk =
@@ -950,12 +952,12 @@ ownCloudZimlet.prototype.displayDialog =
         var folderSelector = "";
         for(var x=0; x < folders.length; x++)
         {
-           var displayName = folders[x].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],'').replace(/\"|\//g,'');
+           var displayName = folders[x].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],'');
            if (displayName == '')
            {
               displayName = '/';
            }
-           folderSelector = folderSelector + '<input type="radio" name="ownCloudZimletfolderSelector" id="ownCloudZimlet'+displayName+'" value="'+folders[x]+'">'+displayName+'<br>';
+           folderSelector = folderSelector + '<input type="radio" name="ownCloudZimletfolderSelector" id="ownCloudZimlet'+displayName+'" value="'+displayName+'">'+displayName+'<br>';
         }
         
         html = "<div style='width:500px; height: 250px; overflow-y:scroll; overflow-x:hidden'>" +
