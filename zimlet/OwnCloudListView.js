@@ -613,6 +613,13 @@ OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, 
 };
 
 OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
-  var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
-  window.location.assign(href);
+   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
+   if(!document.getElementById('OwnCloudListViewhiddenDownloader'))
+   {
+      var iframe = document.createElement('iframe');
+      iframe.id = "OwnCloudListViewhiddenDownloader";
+      iframe.style.visibility = 'hidden';  
+      document.body.appendChild(iframe);
+   }
+   document.getElementById('OwnCloudListViewhiddenDownloader').src=href;
 };
