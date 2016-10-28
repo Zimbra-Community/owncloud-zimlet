@@ -1,8 +1,8 @@
 #!/bin/bash
 shopt -s extglob
 
-ZAL_VERSION="1.10"
-ZAL_VERSION_EXTENDED="1.10.6"
+ZAL_VERSION="1.11"
+ZAL_VERSION_EXTENDED="1.11.2"
 
 ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | tr -d '\n' | sed -r 's/.* ([0-9\.]+[0-9]).*/\1/')
 

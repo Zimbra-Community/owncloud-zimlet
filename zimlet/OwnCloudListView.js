@@ -382,13 +382,31 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   var item = ev.item;
 
   var davResource = this.getSelection()[0];
-  if(!item.isDirectory() && davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$/i))
-  {
-     this._davConnector.getDownloadLink(
-       davResource.getHref(),
-       new AjxCallback(this, this.preview, [davResource])
-     );
+  
+  //check if document conversion is available on the server
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", '/service/extension/dav_download/');
+  xhr.send();
+  var _this = this;
+  xhr.onload = function(e) 
+  {     
+     if(xhr.responseText == 'true')
+     {
+        var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$/i;
+     }
+     else
+     {
+        var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$/i;
+     }
+     if(!item.isDirectory() && davResource._href.match(regex))
+     {
+        _this._davConnector.getDownloadLink(
+          davResource.getHref(),
+          new AjxCallback(_this, _this.preview, [davResource])
+        );
+     }
   }
+
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   var appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110);
   var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-document.getElementById('zov__main_'+zimletInstance.ownCloudTab).style.width.replace('px','')-15);
@@ -412,7 +430,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
   {
      document.getElementById('WebDAVPreview').src=href;
   }
-  else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$/i))
+  else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$/i))
   {
      document.getElementById('WebDAVPreview').src=zimletInstance.getResource('pixel.png');
      setTimeout(function(){ document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href; }, 200);

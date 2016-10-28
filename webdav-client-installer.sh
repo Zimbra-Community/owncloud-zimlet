@@ -30,6 +30,9 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+echo ""
+echo "Do you want to enable experimental document preview (CentOS7 only)? Y/n:"
+read YN;
 
 echo "Check if git and ant are installed."
 set +e
@@ -58,6 +61,7 @@ TMPFOLDER="$(mktemp -d /tmp/webdav-client-installer.XXXXXXXX)"
 echo "Download WebDAV Client to $TMPFOLDER"
 cd $TMPFOLDER
 git clone https://github.com/barrydegraaff/owncloud-zimlet
+#cp -r /root/owncloud-zimlet $TMPFOLDER
 
 echo "Compiling WebDAV Client"
 cd owncloud-zimlet
@@ -68,8 +72,8 @@ make
 echo "Installing server extension to /opt/zimbra/lib/ext/ownCloud"
 cd $TMPFOLDER/owncloud-zimlet/dist/owncloud-extension/
 shopt -s extglob
-ZAL_VERSION="1.10"
-ZAL_VERSION_EXTENDED="1.10.6"
+ZAL_VERSION="1.11"
+ZAL_VERSION_EXTENDED="1.11.2"
 ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | tr -d '\n' | sed -r 's/.* ([0-9\.]+[0-9]).*/\1/')
 echo "Downloading the correct ZAL Version (${ZAL_VERSION_EXTENDED} for zimbra ${ZIMBRA_VERSION})..."
 wget "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" -O "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
@@ -88,6 +92,21 @@ unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d 
 
 echo "Flushing Zimlet Cache"
 su - zimbra -c "zmprov fc all"
+
+if [ "$YN" == 'Y' ];   
+then
+   echo "Install LibreOffice"
+   cp -v $TMPFOLDER/owncloud-zimlet/bin/* /usr/local/sbin/
+   yum install -y libreoffice-headless.x86_64 libreoffice.x86_64
+   
+   echo "Configure docconvert user and set up sudo in /etc/sudoers.d/99_zimbra-docconvert"
+   set +e
+   adduser docconvert
+   set -e
+   echo "zimbra     ALL=(docconvert) NOPASSWD: ALL" > /etc/sudoers.d/99_zimbra-docconvert
+   usermod -a -G zimbra docconvert
+   usermod -a -G docconvert zimbra   
+fi
 
 echo "--------------------------------------------------------------------------------------------------------------
 Zimbra WebDAV Client installed successful

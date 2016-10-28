@@ -3,14 +3,14 @@
         Build file for the Zimbra Extension.
     </description>
 
-    <property name="zal-version"          value="1.10"/>
-    <property name="zal-version-extended" value="1.10.6"/>
+    <property name="zal-version"          value="1.11"/>
+    <property name="zal-version-extended" value="1.11.2"/>
     <!--
         In order to build the extension, is not necessary the target zimbra version,
         any version of the target jar is good for the build. Be sure to install the
         correct version at runtime.
     -->
-    <property name="zimbra-version"       value="8.7.0"/>
+    <property name="zimbra-version"       value="8.7.1"/>
 
     <property name="lib"   value="lib/"/>
     <property name="build" value="build/"/>
@@ -35,8 +35,8 @@
                includeantruntime="false"
                debug="true"
                debuglevel="lines,vars,source"
-               target="1.6"
-               source="1.6">
+               target="1.7"
+               source="1.7">
             <classpath>
                 <path refid="libraries" />
             </classpath>

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if ! [[ $1 ]]
+then
+        echo "argument required"
+        exit 0;
+fi
+
+cd /tmp
+sudo -u docconvert rm -f $1
+
+

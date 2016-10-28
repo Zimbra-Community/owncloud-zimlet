@@ -870,6 +870,21 @@ function Viewer(viewerPlugin, parameters) {
                // if ( (xhr.status >= 200 && xhr.status < 300) || xhr.status === 0 ) {
                     mimetype = match[1]; //Zimbra WebDAV Client get the mimetype from the url passed
 
+                    //These mimetypes are converted on the server on the fly
+                    if(      
+                    (mimetype == 'application/vnd.ms-excel') ||
+                    (mimetype == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ||
+                    (mimetype == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
+                    (mimetype == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') ||
+                    (mimetype == 'application/vnd.ms-powerpoint') ||
+                    (mimetype == 'application/msword') ||
+                    (mimetype == 'application/vnd.oasis.opendocument.presentation') ||
+                    (mimetype == 'application/vnd.oasis.opendocument.spreadsheet') ||
+                    (mimetype == 'application/vnd.oasis.opendocument.text'))
+                    {
+                       mimetype = 'application/pdf';
+                    }                    
+
                     if ( mimetype ) {
                         pluginRegistry.some(function ( pluginData ) {
                             if ( pluginData.supportsMimetype(mimetype) ) {
