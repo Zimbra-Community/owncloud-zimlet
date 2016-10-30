@@ -13,6 +13,6 @@ then
 fi
 
 cd /tmp
-sudo -u docconvert /usr/local/sbin/djvu2pdf $1 >> /tmp/debugski
+sudo -u docconvert /usr/local/sbin/djvu2pdf $1
 sudo -u docconvert /usr/bin/chmod ugo+rwx /tmp/docconvert*.pdf
 
