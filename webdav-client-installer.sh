@@ -60,7 +60,7 @@ su - zimbra -c "zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet"
 TMPFOLDER="$(mktemp -d /tmp/webdav-client-installer.XXXXXXXX)"
 echo "Download WebDAV Client to $TMPFOLDER"
 cd $TMPFOLDER
-git clone https://github.com/barrydegraaff/owncloud-zimlet
+git clone --depth=1 https://github.com/barrydegraaff/owncloud-zimlet
 #cp -r /root/owncloud-zimlet $TMPFOLDER
 
 echo "Compiling WebDAV Client"
