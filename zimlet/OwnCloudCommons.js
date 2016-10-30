@@ -161,12 +161,20 @@ OwnCloudCommons.prototype._getResourceCbk = function(resource, resources, ids, c
   req.setRequestHeader('Content-Disposition', 'attachment; filename="'+ this.convertToEntities(ownCloudZimlet.prototype.sanitizeFileName(resource.getName())) + '";');
   req.onload = (function(_this, resources, ids, callback) {
     return function(result) {
-      var resp = eval('[' + this.responseText + ']'),
-        respObj;
-      respObj = resp[2];
-      if (!!(respObj[0].aid)) { ids.push(respObj[0].aid); }
-      // ew also have these fields: ct (content type), filename, s(size)
-      _this._getFirstResource(resources, ids, callback);
+      try 
+      { 
+         var resp = eval('[' + this.responseText + ']'),
+           respObj;
+         respObj = resp[2];
+         if (!!(respObj[0].aid)) { ids.push(respObj[0].aid); }
+         // ew also have these fields: ct (content type), filename, s(size)
+         _this._getFirstResource(resources, ids, callback);
+      }
+      catch (err)
+      {
+         ownCloudZimlet.prototype.status(ZmMsg.errorAttachmentTooBig, ZmStatusView.LEVEL_CRITICAL);
+         _this._getFirstResource(resources, ids, callback);
+      }   
     };
   }(this, resources, ids, callback));
 
