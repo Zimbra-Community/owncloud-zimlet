@@ -217,7 +217,7 @@ select {
 }
 
 #toolbarMiddleContainer, #toolbarLeft {
-    visibility: hidden;
+ /*   visibility: hidden;*/
 }
 
 #toolbarMiddleContainer {
