@@ -64,6 +64,8 @@ public class DownloadHandler implements HttpHandler {
                         extension = "odp";
                     case "application/vnd.oasis.opendocument.text":
                         extension = "odt";
+                    case "image/vnd.djvu":
+                        extension = "djvu";
                 }
 
                 if (("true".equals(inline)) && (!"false".equals(extension))) {
@@ -92,8 +94,11 @@ public class DownloadHandler implements HttpHandler {
                         }
 
                         try {
-                            this.runCommand("/usr/local/sbin/docconvert " + tmpFileName + "." + extension);
-
+                            if ("djvu".equals(extension)) {
+                                this.runCommand("/usr/local/sbin/zimbra-djvu2pdf " + tmpFileName + "." + extension);
+                            } else {
+                                this.runCommand("/usr/local/sbin/docconvert " + tmpFileName + "." + extension);
+                            }
                             httpServletResponse.addHeader("Content-Type", "application/pdf");
                             httpServletResponse.addHeader("Content-Disposition", "attachment; filename=\"" + paramsMap.get("name") + ".pdf\"");
                             httpServletResponse.addHeader("Accept-Ranges", "none");

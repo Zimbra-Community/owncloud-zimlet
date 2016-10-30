@@ -1,0 +1,18 @@
+#!/bin/bash
+# yum install -y libreoffice-headless.x86_64 libreoffice.x86_64
+# adduser docconvert
+# chmod +x /usr/local/sbin/docconvert
+# echo "zimbra     ALL=(docconvert) NOPASSWD: ALL" > /etc/sudoers.d/99_zimbra-docconvert
+# usermod -a -G zimbra docconvert
+# usermod -a -G docconvert zimbra
+
+if ! [[ $1 ]]
+then
+    	echo "argument required"
+        exit 0;
+fi
+
+cd /tmp
+sudo -u docconvert /usr/local/sbin/djvu2pdf $1 >> /tmp/debugski
+sudo -u docconvert /usr/bin/chmod ugo+rwx /tmp/docconvert*.pdf
+

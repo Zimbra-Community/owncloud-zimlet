@@ -392,7 +392,7 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   {     
      if(xhr.responseText == 'true')
      {
-        var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$/i;
+        var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i;
      }
      else
      {
@@ -424,13 +424,25 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
 };
 
 OwnCloudListView.prototype.preview = function(davResource, token) {
+  var contentType = ""
+  var regex = /\.djvu$/i;
+  if(davResource._href.match(regex))
+  {
+     contentType = 'image/vnd.djvu';
+  }
+  else
+  {
+     contentType = davResource.getContentType();
+  }
+  
+  
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-  var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType() + "&inline=true";
+  var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&inline=true";
   if(davResource._href.match(/\.txt$/i))
   {
      document.getElementById('WebDAVPreview').src=href;
   }
-  else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$/i))
+  else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i))
   {
      document.getElementById('WebDAVPreview').src=zimletInstance.getResource('pixel.png');
      setTimeout(function(){ document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href; }, 200);
