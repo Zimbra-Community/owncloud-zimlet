@@ -48,24 +48,34 @@ public class DownloadHandler implements HttpHandler {
                 switch (paramsMap.get("contentType")) {
                     case "application/msword":
                         extension = "doc";
+                        break;
                     case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
                         extension = "docx";
+                        break;
                     case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
                         extension = "xlsx";
+                        break;
                     case "application/vnd.ms-excel":
                         extension = "xls";
+                        break;
                     case "application/vnd.ms-powerpoint":
                         extension = "ppt";
+                        break;
                     case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
                         extension = "pptx";
+                        break;
                     case "application/vnd.oasis.opendocument.spreadsheet":
                         extension = "ods";
+                        break;
                     case "application/vnd.oasis.opendocument.presentation":
                         extension = "odp";
+                        break;
                     case "application/vnd.oasis.opendocument.text":
                         extension = "odt";
+                        break;
                     case "image/vnd.djvu":
                         extension = "djvu";
+                        break;
                 }
 
                 if (("true".equals(inline)) && (!"false".equals(extension))) {
