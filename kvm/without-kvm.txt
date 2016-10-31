@@ -3,6 +3,7 @@ http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.
 
 Then select the Option 'Install CentOS 7' and hit the TAB button on your keyboard.
 
+remove from kernel boot parameter inst.stage2=hd....
 append to the kernel boot parameter line:
 inst.ks=https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/kvm/centos7-owncloud.cfg
 and hit enter
