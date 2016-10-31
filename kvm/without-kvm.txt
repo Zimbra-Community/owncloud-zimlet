@@ -1,0 +1,10 @@
+Download the operating system CentOS 6 64 bit.
+http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso
+
+Then select the Option 'Install CentOS 7' and hit the TAB button on your keyboard.
+
+append to the kernel boot parameter line:
+inst.ks=https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/kvm/centos7-owncloud.cfg
+and hit enter
+
+This should automate the full installation to owncloud
