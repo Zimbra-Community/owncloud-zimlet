@@ -356,8 +356,7 @@ ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
 ownCloudZimlet.prototype._okBtnFolderSelect =
   function(mid, part, fileName, result) {
     var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-    var ownCloudZimletfolderSelector = document.getElementById("ownCloudZimletfolderSelector");
-    var selectedTargetFolder = ownCloudZimletfolderSelector.elements["ownCloudZimletfolderSelector"].value
+    var selectedTargetFolder = document.getElementById("ownCloudZimletfolderSelector").value;
     if(!selectedTargetFolder)
     {       
        zimletInstance.cancelBtn();
@@ -957,13 +956,13 @@ ownCloudZimlet.prototype.displayDialog =
            {
               displayName = '/';
            }
-           folderSelector = folderSelector + '<input type="radio" name="ownCloudZimletfolderSelector" id="ownCloudZimlet'+displayName+'" value="'+displayName+'">'+displayName+'<br>';
+           folderSelector = folderSelector + '<input type="radio" name="ownCloudZimletfolderSelector" onclick="document.getElementById(\'ownCloudZimletfolderSelector\').value=\''+displayName+'\'">'+displayName+'<br>';
         }
         
         html = "<div style='width:500px; height: 250px; overflow-y:scroll; overflow-x:hidden'>" +
-          "<form id=\"ownCloudZimletfolderSelector\">" +
+          "<form>" +
           folderSelector +
-          "</form>" +
+          "<input type=\"hidden\" id=\"ownCloudZimletfolderSelector\" value=\"\"</form>" +
           "</div>";
         zimletInstance._dialog.setContent(html);
 
