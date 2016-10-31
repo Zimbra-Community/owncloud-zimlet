@@ -129,7 +129,7 @@ OwnCloudApp.prototype._initTree = function(href, parent, callback) {
   
     this._davConnector.propfind(
       href,
-      2,
+      1,
       new AjxCallback(
         this,
         this._renderTreePropFind,
@@ -255,7 +255,7 @@ OwnCloudApp.prototype._shareLinkClickedHandler = function() {
   {
      this._davConnector.propfind(
          zimletInstance.shareLinkClicked,
-         2,
+         1,
          new AjxCallback(
            this,
            this._shareLinkClickedHandlerCbk
@@ -279,7 +279,7 @@ OwnCloudApp.prototype._shareLinkClickedHandlerCbk = function(davResource)
        //call _shareLinkClickedHandler on the folder of the shared file, so the browser shows that too
        this._davConnector.propfind(
          davResource[0].getHref().substring(0, davResource[0].getHref().lastIndexOf("/"))+'/',
-         2,
+         1,
          new AjxCallback(
            this,
            this._shareLinkClickedHandlerCbk
