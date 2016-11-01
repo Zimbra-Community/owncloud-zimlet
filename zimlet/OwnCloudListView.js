@@ -81,7 +81,14 @@ OwnCloudListView.prototype._sortColumn =
 function(columnItem, bSortAsc) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_item'] = columnItem._field;
-   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_asc'] = bSortAsc;  
+   if(bSortAsc == true)
+   {
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_asc'] = false;  
+   }
+   else
+   {   
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_asc'] = true;  
+   }
    zimletInstance._appView.refreshViewPropfind();
 }
 
