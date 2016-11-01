@@ -105,7 +105,10 @@ then
    set -e
    echo "zimbra     ALL=(docconvert) NOPASSWD: ALL" > /etc/sudoers.d/99_zimbra-docconvert
    usermod -a -G zimbra docconvert
-   usermod -a -G docconvert zimbra   
+   usermod -a -G docconvert zimbra  
+   
+   echo "setting up fall back clean-up in /etc/cron.d/docconvert-clean"
+   /usr/bin/echo "*/5 * * * * root /usr/bin/find /tmp -cmin +5 -type f -name 'docconvert*' -exec rm -f {} \;" > /etc/cron.d/docconvert-clean 
 fi
 
 echo "--------------------------------------------------------------------------------------------------------------
