@@ -193,7 +193,7 @@ UploadToDavDialog.prototype._upload = function() {
   if (files.length == 0) {
     return;
   }
-  this.setContent('<div style="width:456px; text-align:center"><img src="'+zimletInstance.getResource("progressround.gif")+'"></div>');
+  document.getElementById(this.__internalId + '_info').innerHTML = '<div style="width:456px; text-align:center"><img src="'+zimletInstance.getResource("progressround.gif")+'"></div>';
   this.setButtonEnabled(DwtDialog.OK_BUTTON, false);
   this.setButtonEnabled(DwtDialog.CANCEL_BUTTON, false);
 
