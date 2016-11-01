@@ -43,6 +43,10 @@ function OwnCloudListView(
 OwnCloudListView.prototype = new DwtListView();
 OwnCloudListView.prototype.constructor = OwnCloudListView;
 
+OwnCloudListView.prototype._handleColHeaderResize = function () {
+   //Currently not implemented   
+};
+
 OwnCloudListView.prototype._getHeaderList = function () {
   var headers = [];
   headers.push(new DwtListHeaderItem({
