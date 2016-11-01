@@ -67,7 +67,7 @@ OwnCloudListView.prototype._getHeaderList = function () {
   headers.push(new DwtListHeaderItem({
     field: ZmItem.F_DATE,
     text: ZmMsg.modified,
-    width: ZmMsg.COLUMN_WIDTH_DATE_DLV,
+    width: 110,
     sortable: ZmItem.F_DATE
   }));
   return headers;
@@ -124,7 +124,7 @@ OwnCloudListView.prototype._getCellContents = function (htmlArr, idx, item, fiel
   } else if (field === ZmItem.F_DATE) {
 
     if (typeof item.getModified() !== "undefined") {
-      htmlArr[idx++] = AjxDateUtil.simpleComputeDateStr(item.getModified());
+      htmlArr[idx++] = AjxDateUtil.simpleComputeDateStr(item.getModified()) + " " + AjxDateUtil.computeTimeString(item.getModified());
     } else {
       htmlArr[idx++] = ZmMsg.unknown;
     }
