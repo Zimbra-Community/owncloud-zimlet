@@ -47,6 +47,10 @@ OwnCloudListView.prototype._handleColHeaderResize = function () {
    //Currently not implemented   
 };
 
+OwnCloudListView.prototype._mouseMoveListener = function () {
+   //Currently not implemented   
+};
+
 OwnCloudListView.prototype._getHeaderList = function () {
   var headers = [];
   headers.push(new DwtListHeaderItem({
