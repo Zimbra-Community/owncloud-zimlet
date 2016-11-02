@@ -205,8 +205,6 @@
    * @static
    */
   OwnCloudConnector._parseResponse = function(action, callback, errorCallback, result) {
-     console.log(action);
-     console.log(result);
     var response = result.getResponse().response;
     if (result.isException() && !!errorCallback) {
       errorCallback.run(result);
