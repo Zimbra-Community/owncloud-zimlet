@@ -94,7 +94,7 @@ The Zimbra WebDAV Client uses built-in language strings from Zimbra, as such it 
 
 ### Known issues and troubleshooting:
 
-1. Passwords with characters like @ will not work, try to install this using a simple account and password (A-Za-z0-9).
+1. _Passwords with characters like @ will not work, try to install this using a simple account and password (A-Za-z0-9)._ fixed in 0.6.2.
 2. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
 3. Running a WebDAV server behind and NGINX reverse proxy (from CentOS or Debian) won't work, it will work when proper options are enabled (as for example with zimbra-proxy, also based on NGINX).
 

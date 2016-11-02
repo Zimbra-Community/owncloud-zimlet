@@ -183,7 +183,8 @@
       );
     }
     soapDoc.set('action', action);
-    soapDoc.set('dav_user_password', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+    soapDoc.set('dav_user_password', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']));
+    soapDoc.set('dav_user_username', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']));
     var params = {
       soapDoc: soapDoc,
       asyncMode: true,
@@ -204,6 +205,8 @@
    * @static
    */
   OwnCloudConnector._parseResponse = function(action, callback, errorCallback, result) {
+     console.log(action);
+     console.log(result);
     var response = result.getResponse().response;
     if (result.isException() && !!errorCallback) {
       errorCallback.run(result);

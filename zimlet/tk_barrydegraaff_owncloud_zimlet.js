@@ -997,7 +997,7 @@ ownCloudZimlet.prototype.verifyPassword = function ()
    var owncloud_zimlet_password = document.getElementById('owncloud_zimlet_password').value;
    if((!owncloud_zimlet_password.match(/^[a-z0-9\-\_]+$/i)) && (owncloud_zimlet_password.length > 0))
    {
-      document.getElementById('WebDAVPasswordHint').innerHTML = "<small><b style='color:red'>Passwords with characters like @ will not work, if you have troubles try using a simple account and password (A-Za-z0-9-_)</b></small>";
+      document.getElementById('WebDAVPasswordHint').innerHTML = "<small><b style='color:#cccccc'>Passwords with special characters may not work, if you have troubles try using a simple account and password (A-Za-z0-9-_)</b></small>";
    }   
    
 }
