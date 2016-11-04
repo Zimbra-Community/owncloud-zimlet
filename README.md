@@ -62,6 +62,7 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_extra_toolbar_button_url  | /owncloud  | See: owncloud_zimlet_extra_toolbar_button_title |   |
 | owncloud_zimlet_app_title  | WebDAV  | Change this if you want to rebrand WebDAV Client for your users. For example: ownCloud. |   |
 | owncloud_zimlet_max_upload_size  | 104857600  (100MB) | Maximum upload size for upload dialog MB * 1024 * 1024. The back-end has a hardcoded maximum of 1048576000 (1GB). |   |
+| owncloud_zimlet_preview_delay  | 200 | Delay in milliseconds between loading previews, if your previews stuck, set this to 400. |   |
 
 
 ### Restart your mailbox to let the extension to be loaded:
@@ -97,6 +98,7 @@ The Zimbra WebDAV Client uses built-in language strings from Zimbra, as such it 
 1. _Passwords with characters like @ will not work, try to install this using a simple account and password (A-Za-z0-9)._ fixed in 0.6.2.
 2. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
 3. Running a WebDAV server behind and NGINX reverse proxy (from CentOS or Debian) won't work, it will work when proper options are enabled (as for example with zimbra-proxy, also based on NGINX).
+4. Previews stay stuck on first viewed document, see owncloud_zimlet_preview_delay above.
 
 See:
 https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting
