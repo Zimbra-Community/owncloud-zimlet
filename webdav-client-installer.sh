@@ -106,7 +106,12 @@ then
    
    echo "Configure docconvert user and set up sudo in /etc/sudoers.d/99_zimbra-docconvert"
    set +e
-   adduser docconvert
+   
+   if [[ ! -z $YUM_CMD ]]; then
+      adduser docconvert
+   else
+      useradd docconvert
+   fi   
    set -e
    echo "zimbra     ALL=(docconvert) NOPASSWD: ALL" > /etc/sudoers.d/99_zimbra-docconvert
    usermod -a -G zimbra docconvert
