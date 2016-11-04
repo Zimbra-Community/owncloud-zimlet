@@ -37,6 +37,7 @@ https://github.com/Zimbra-Community/owncloud-zimlet#configuring-preferences
         <property name="owncloud_zimlet_extra_toolbar_button_title">Open ownCloud tab</property>
         <property name="owncloud_zimlet_extra_toolbar_button_url">/owncloud</property>
         <property name="owncloud_zimlet_app_title">WebDAV</property>
-        <property name="owncloud_zimlet_max_upload_size">104857600</property>        
+        <property name="owncloud_zimlet_max_upload_size">104857600</property>
+        <property name="owncloud_zimlet_preview_delay">200</property>
     </global>
 </zimletConfig>

@@ -460,7 +460,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
   else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i))
   {
      document.getElementById('WebDAVPreview').src=zimletInstance.getResource('pixel.png');
-     setTimeout(function(){ document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href; }, 200);
+     setTimeout(function(){ document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href; }, zimletInstance._zimletContext.getConfig("owncloud_zimlet_preview_delay"));
   }
   else
   {
