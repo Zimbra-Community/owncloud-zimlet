@@ -14,5 +14,5 @@ fi
 
 cd /tmp
 sudo -u docconvert /usr/bin/soffice --convert-to pdf $1 --headless
-sudo -u docconvert /usr/bin/chmod ugo+rwx /tmp/docconvert*.pdf
+sudo -u docconvert chmod ugo+rwx /tmp/docconvert*.pdf
 

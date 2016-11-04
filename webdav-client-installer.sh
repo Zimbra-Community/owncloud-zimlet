@@ -31,7 +31,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 echo ""
-echo "Do you want to enable experimental document preview (CentOS7 only)? Y/n:"
+echo "Do you want to enable experimental document preview (tested on CentOS 7 and Ubuntu Ubuntu 14.04)? Y/n:"
 read YN;
 
 echo "Check if git and ant are installed."
@@ -96,8 +96,13 @@ su - zimbra -c "zmprov fc all"
 if [ "$YN" == 'Y' ];   
 then
    echo "Install LibreOffice"
-   cp -v $TMPFOLDER/owncloud-zimlet/bin/* /usr/local/sbin/
-   yum install -y libreoffice-headless.x86_64 libreoffice.x86_64
+   cp -v $TMPFOLDER/owncloud-zimlet/bin/* /usr/local/sbin/   
+
+   if [[ ! -z $YUM_CMD ]]; then
+      yum install -y libreoffice-headless libreoffice
+   else
+      apt-get install -y libreoffice
+   fi
    
    echo "Configure docconvert user and set up sudo in /etc/sudoers.d/99_zimbra-docconvert"
    set +e
@@ -108,7 +113,7 @@ then
    usermod -a -G docconvert zimbra  
    
    echo "setting up fall back clean-up in /etc/cron.d/docconvert-clean"
-   /usr/bin/echo "*/5 * * * * root /usr/bin/find /tmp -cmin +5 -type f -name 'docconvert*' -exec rm -f {} \;" > /etc/cron.d/docconvert-clean 
+   echo "*/5 * * * * root /usr/bin/find /tmp -cmin +5 -type f -name 'docconvert*' -exec rm -f {} \;" > /etc/cron.d/docconvert-clean 
 fi
 
 echo "--------------------------------------------------------------------------------------------------------------
