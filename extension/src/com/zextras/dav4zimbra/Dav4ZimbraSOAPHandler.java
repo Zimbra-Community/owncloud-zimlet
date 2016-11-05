@@ -51,10 +51,10 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
     final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, Zimlet.NAME);
 
     if (
-      userProperties.get(ZimletProperty.DAV_SERVER_NAME) == null ||
-      userProperties.get(ZimletProperty.DAV_SERVER_PORT) == null ||
-      userProperties.get(ZimletProperty.DAV_SERVER_PATH) == null ||
-      userProperties.get(ZimletProperty.DAV_USER_USERNAME) == null
+        zimbraContext.getParameter("owncloud_zimlet_server_name", "") == null ||
+        zimbraContext.getParameter("owncloud_zimlet_server_port", "") == null ||
+        zimbraContext.getParameter("owncloud_zimlet_server_path", "") == null ||
+        zimbraContext.getParameter("owncloud_zimlet_username", "") == null
       )
     {
       handleError(
@@ -69,7 +69,7 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
       final URL serverUrl;
       try
       {
-        serverUrl = new URL(userProperties.get(ZimletProperty.DAV_SERVER_NAME));
+        serverUrl = new URL(zimbraContext.getParameter("owncloud_zimlet_server_name", ""));
       } catch (MalformedURLException e)
       {
         handleError(e, soapResponse, zimbraExceptionContainer);
@@ -88,11 +88,11 @@ public class Dav4ZimbraSOAPHandler implements SoapHandler
 
     final Dav4ZimbraConnector connector = new Dav4ZimbraConnector(
             mMailboxManager,
-            userProperties.get(ZimletProperty.DAV_SERVER_NAME),
-            Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
-            userProperties.get(ZimletProperty.DAV_SERVER_PATH),
-            userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-            zimbraContext.getParameter("dav_user_password", ""),
+            zimbraContext.getParameter("owncloud_zimlet_server_name", ""),
+            Integer.parseInt(zimbraContext.getParameter("owncloud_zimlet_server_port", "")),
+            zimbraContext.getParameter("owncloud_zimlet_server_path", ""),
+            zimbraContext.getParameter("owncloud_zimlet_username", ""),
+            zimbraContext.getParameter("owncloud_zimlet_password", ""),
             zimbraContext.getParameter("targetFolder", userProperties.get(ZimletProperty.DAV_MAIL_FOLDER))
     );
 

@@ -15,7 +15,6 @@ import com.zextras.owncloud.client.handlers.ShareResponseHandler;
 import com.zextras.owncloud.client.handlers.SharesResponseHandler;
 import com.zextras.owncloud.client.handlers.StatusResponseHandler;
 import com.zextras.owncloud.client.methods.*;
-import com.zextras.util.UserPropertyExtractor;
 import org.openzal.zal.Account;
 import org.openzal.zal.soap.SoapResponse;
 import org.openzal.zal.soap.ZimbraContext;
@@ -32,22 +31,21 @@ public class OwnCloudSoapConnector
 
   public OwnCloudSoapConnector(Account account, ZimbraContext zimbraContext)
   {
-    final Map<String, String> userProperties = UserPropertyExtractor.getZimletUserProperties(account, Zimlet.NAME);
     if (
-        userProperties.get(ZimletProperty.DAV_SERVER_NAME) == null ||
-        userProperties.get(ZimletProperty.DAV_SERVER_PORT) == null ||
-        userProperties.get(ZimletProperty.DAV_SERVER_PATH) == null ||
-        userProperties.get(ZimletProperty.DAV_USER_USERNAME) == null
+        zimbraContext.getParameter("owncloud_zimlet_server_name", "") == null ||
+        zimbraContext.getParameter("owncloud_zimlet_server_port", "") == null ||
+        zimbraContext.getParameter("owncloud_zimlet_server_path", "") == null ||
+        zimbraContext.getParameter("owncloud_zimlet_username", "") == null
       )
     {
       throw new RuntimeException("DAV Data connection not set for user '" + account.getName() + "'");
     }
 
     final URL url;
-    final int port = Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT));
+    final int port = Integer.parseInt(zimbraContext.getParameter("owncloud_zimlet_server_port", ""));
     try
     {
-      url = new URL(userProperties.get(ZimletProperty.DAV_SERVER_NAME) + ":" + port);
+      url = new URL(zimbraContext.getParameter("owncloud_zimlet_server_name", "") + ":" + port);
     } catch (MalformedURLException e)
     {
       throw new RuntimeException(e);
@@ -57,9 +55,9 @@ public class OwnCloudSoapConnector
       url.getProtocol(),
       url.getHost(),
       port,
-      userProperties.get(ZimletProperty.OC_PATH),
-      zimbraContext.getParameter("dav_user_username", ""),
-      zimbraContext.getParameter("dav_user_password", "")
+      zimbraContext.getParameter("owncloud_zimlet_oc_folder", ""),
+      zimbraContext.getParameter("owncloud_zimlet_username", ""),
+      zimbraContext.getParameter("owncloud_zimlet_password", "")
     );
   }
 

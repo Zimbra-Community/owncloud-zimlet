@@ -53,7 +53,7 @@ public class DavSOAPHandler implements SoapHandler
     final URL serverUrl;
     try
     {
-      serverUrl = new URL(userProperties.get(ZimletProperty.DAV_SERVER_NAME));
+      serverUrl = new URL(zimbraContext.getParameter("owncloud_zimlet_server_name", ""));
     } catch (MalformedURLException e)
     {
       handleError(e, soapResponse, zimbraExceptionContainer);
@@ -70,11 +70,11 @@ public class DavSOAPHandler implements SoapHandler
     }
 
     final DavSoapConnector connector = new DavSoapConnector(
-      userProperties.get(ZimletProperty.DAV_SERVER_NAME),
-      Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
-      userProperties.get(ZimletProperty.DAV_SERVER_PATH),
-      userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-      zimbraContext.getParameter("dav_user_password", "")
+      zimbraContext.getParameter("owncloud_zimlet_server_name", ""),
+      Integer.parseInt(zimbraContext.getParameter("owncloud_zimlet_server_port", "")),
+      zimbraContext.getParameter("owncloud_zimlet_server_path", ""),
+      zimbraContext.getParameter("owncloud_zimlet_username", ""),
+      zimbraContext.getParameter("owncloud_zimlet_password", "")
     );
 
     final String actionStr = zimbraContext.getParameter("action", "");

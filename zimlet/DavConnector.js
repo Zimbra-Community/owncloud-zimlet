@@ -390,7 +390,12 @@
    * @static
    */
   DavConnector._sendRequest = function(action, soapDoc, callback, errorCallback) {
-    soapDoc.set('dav_user_password', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+    soapDoc.set('owncloud_zimlet_password', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+    soapDoc.set('owncloud_zimlet_username', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']);
+    soapDoc.set('owncloud_zimlet_server_name', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']);
+    soapDoc.set('owncloud_zimlet_server_port', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']);
+    soapDoc.set('owncloud_zimlet_server_path', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']);
+    soapDoc.set('owncloud_zimlet_oc_folder', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']); 
     // Injecting fake callbacks, the debug will be much faster.
     if (!callback) {
       callback = new AjxCallback(
