@@ -132,7 +132,7 @@ if [ -f $TMPFOLDER/upgrade/config.properties ]; then
    echo "Restoring config.properties"
    cd $TMPFOLDER/upgrade/
    wget https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar
-   java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config.properties /opt/zimbra/lib/ext/ownCloud/config.properties $TMPFOLDER/upgrade/config.properties
+   java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config.properties /opt/zimbra/lib/ext/ownCloud/config.properties
 fi
 
 echo "--------------------------------------------------------------------------------------------------------------
