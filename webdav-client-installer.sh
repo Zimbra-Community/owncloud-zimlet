@@ -58,6 +58,12 @@ su - zimbra -c "zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet"
 
 
 TMPFOLDER="$(mktemp -d /tmp/webdav-client-installer.XXXXXXXX)"
+echo "Saving existing configuration to $TMPFOLDER/upgrade"
+if [ -f /opt/zimbra/lib/ext/ownCloud/config.properties ]; then
+   mkdir $TMPFOLDER/upgrade
+   cp /opt/zimbra/lib/ext/ownCloud/config.properties $TMPFOLDER/upgrade
+fi
+
 echo "Download WebDAV Client to $TMPFOLDER"
 cd $TMPFOLDER
 git clone --depth=1 https://github.com/barrydegraaff/owncloud-zimlet
@@ -82,6 +88,7 @@ rm -f /opt/zimbra/lib/ext/ownCloud/*.jar
 cp "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
 cp !(zal*).jar /opt/zimbra/lib/ext/ownCloud/
 
+# Here we set the template for config.properties, if upgrading we alter it further down
 echo "allowdomains=*" > /opt/zimbra/lib/ext/ownCloud/config.properties
 
 ls -hal /opt/zimbra/lib/ext/ownCloud/
@@ -119,6 +126,13 @@ then
    
    echo "setting up fall back clean-up in /etc/cron.d/docconvert-clean"
    echo "*/5 * * * * root /usr/bin/find /tmp -cmin +5 -type f -name 'docconvert*' -exec rm -f {} \;" > /etc/cron.d/docconvert-clean 
+fi
+
+if [ -f $TMPFOLDER/upgrade/config.properties ]; then
+   echo "Restoring config.properties"
+   cd $TMPFOLDER/upgrade/
+   wget https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar
+   java -jar $TMPFOLDER/upgrade/config.properties /opt/zimbra/lib/ext/ownCloud/config.properties $TMPFOLDER/upgrade/config.properties
 fi
 
 echo "--------------------------------------------------------------------------------------------------------------
