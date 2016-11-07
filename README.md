@@ -42,11 +42,11 @@ Use the automated installer:
 
 Each user can configure the WebDAV Client for themselves by clicking Preferences in the Zimlet menu.
 
-Initially the Preferences dialog will be filled with best guess values and values provided by the administrator in config_template.xml.
+Initially the Preferences dialog will be filled with best guess values and values provided by the administrator in config.properties.
 
-It is recommended that the administrator reviews the config_template.xml and change it to fit the needs. Doing this simplifies things for your users. You can find the configuration in `/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml`.
+It is recommended that the administrator reviews the config.properties and change it to fit the needs. Doing this simplifies things for your users. You can find the configuration in `/opt/zimbra/lib/ext/ownCloud/config.properties`.
 
-Please note that a preference set by the user has priority over a preference set in config_template. And config_template has priority over best guess preferences.
+Please note that a preference set by the user has priority over a preference set in config.properties. And config.properties has priority over best guess preferences.
 
 | property name  | default value   |  description  | guessed value |
 |---|---|---|---|
@@ -64,6 +64,10 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_max_upload_size  | 104857600  (100MB) | Maximum upload size for upload dialog MB * 1024 * 1024. The back-end has a hardcoded maximum of 1048576000 (1GB). |   |
 | owncloud_zimlet_preview_delay  | 200 | Delay in milliseconds between loading previews, if your previews stuck, set this to 400. |   |
 
+After changing config.properties run the following: 
+
+    wget https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar -O /tmp/prop2xml.jar
+    java -jar /tmp/prop2xml.jar /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
 
 ### Restart your mailbox to let the extension to be loaded:
 
