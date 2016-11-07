@@ -50,6 +50,7 @@ Please note that a preference set by the user has priority over a preference set
 
 | property name  | default value   |  description  | guessed value |
 |---|---|---|---|
+| allowdomains | * | A semicolon separated DAV server allow list. Default * allows all. Example: *.example.com;myzimbra.com |  |
 | disable_password_storing  | false  |  When true, users can not store their passwords in plain text in LDAP  | |
 | owncloud_zimlet_server_name  |   | URL to your WebDAV/ownCloud server. Example: https://myowncloud.com  |location.protocol + '//' + location.hostname  | 
 | owncloud_zimlet_server_port  |   | Port number for your WebDAV/ownCloud server. Example: 443 | ((location.protocol === 'https:') ? 443 : 80)  |
