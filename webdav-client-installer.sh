@@ -30,21 +30,6 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-MAILBOXD="$(su - zimbra << 'EOF'
-        source ~/bin/zmshutil ;
-        zmsetvars ;
-        ldapsearch -LLL -x -H $ldap_master_url -D $zimbra_ldap_userdn -w $zimbra_ldap_password \
-                -b "cn=$(zmhostname),cn=servers,cn=zimbra" \
-                zimbraServiceEnabled=mailbox zimbraServiceEnabled | grep mailbox || true
-EOF
-)"
-
-if [ ! -z "${MAILBOXD}" ] ;
-        then echo "mailboxd is enabled on this server"
-        else echo "mailboxd is not present on this server"
-        exit 1
-fi
-
 echo ""
 echo "Do you want to enable experimental document preview (tested on CentOS 7 and Ubuntu 14.04)? Y/n:"
 read YN;
