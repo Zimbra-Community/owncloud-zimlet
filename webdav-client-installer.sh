@@ -59,10 +59,13 @@ su - zimbra -c "zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet"
 
 TMPFOLDER="$(mktemp -d /tmp/webdav-client-installer.XXXXXXXX)"
 echo "Saving existing configuration to $TMPFOLDER/upgrade"
+mkdir $TMPFOLDER/upgrade
 if [ -f /opt/zimbra/lib/ext/ownCloud/config.properties ]; then
-   mkdir $TMPFOLDER/upgrade
    cp /opt/zimbra/lib/ext/ownCloud/config.properties $TMPFOLDER/upgrade
+else
+   touch $TMPFOLDER/upgrade/config.properties
 fi
+
 
 echo "Download WebDAV Client to $TMPFOLDER"
 cd $TMPFOLDER
@@ -142,15 +145,15 @@ then
    echo "*/5 * * * * root /usr/bin/find /tmp -cmin +5 -type f -name 'docconvert*' -exec rm -f {} \;" > /etc/cron.d/docconvert-clean 
 fi
 
-if [ -f $TMPFOLDER/upgrade/config.properties ]; then
-   echo "Restoring config.properties"
-   cd $TMPFOLDER/upgrade/
-   wget https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar
-   java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config.properties /opt/zimbra/lib/ext/ownCloud/config.properties
-   echo "Generating config_template.xml"
-   wget https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar
-   java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
-fi
+
+echo "Restoring config.properties"
+cd $TMPFOLDER/upgrade/
+wget https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar
+java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config.properties /opt/zimbra/lib/ext/ownCloud/config.properties
+echo "Generating config_template.xml"
+wget https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar
+java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
+
 
 echo "--------------------------------------------------------------------------------------------------------------
 Zimbra WebDAV Client installed successful
