@@ -14,7 +14,7 @@ ocpath='/var/www/html/'
 
 if ! [ -d \$ocpath ]
 then
-	echo "fuck no!"
+	echo "/var/www/html/ not found, abort!"
 	exit 0;
 fi
 
@@ -79,6 +79,19 @@ then
         echo "That link you gave me didn't work, please try again!"
         exit 0;
 fi
+
+if ! [ -d /var/www/html/data ]
+then
+	echo "/var/www/html/data not found, abort!"
+	exit 0;
+fi
+
+if ! [ -d /var/www/html/config ]
+then
+	echo "/var/www/html/config not found, abort!"
+	exit 0;
+fi
+
 mv /var/www/html/data /var/www/
 mv /var/www/html/config /var/www/
 rm -rf /var/www/html
