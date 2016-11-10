@@ -15,11 +15,11 @@ read dum;
 cat > /root/setpermissions.sh << EOF
 #!/bin/bash
 
-ocpath='/var/www/html/'
+ocpath='/var/www/html/owncloud/'
 
 if ! [ -d \$ocpath ]
 then
-	echo "/var/www/html/ not found, abort!"
+	echo "/var/www/html/owncloud/ not found, abort!"
 	exit 0;
 fi
 
@@ -60,12 +60,12 @@ if [ -f \${ocpath}/data/.htaccess ]
   chown \${rootuser}:\${htgroup} \${ocpath}/data/.htaccess
 fi
 
-semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/data(/.*)?'
-restorecon -R '/var/www/html/data'
-semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/config(/.*)?'
-restorecon -R '/var/www/html/config'
-semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/apps(/.*)?'
-restorecon -R '/var/www/html/apps'
+semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/data(/.*)?'
+restorecon -R '/var/www/html/owncloud/data'
+semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/config(/.*)?'
+restorecon -R '/var/www/html/owncloud/config'
+semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/apps(/.*)?'
+restorecon -R '/var/www/html/owncloud/apps'
 
 setsebool -P httpd_can_network_connect_db on
 
@@ -85,30 +85,29 @@ then
         exit 0;
 fi
 
-if ! [ -d /var/www/html/data ]
+if ! [ -d /var/www/html/owncloud/data ]
 then
-	echo "/var/www/html/data not found, abort!"
+	echo "/var/www/html/owncloud/data not found, abort!"
 	exit 0;
 fi
 
-if ! [ -d /var/www/html/config ]
+if ! [ -d /var/www/html/owncloud/config ]
 then
-	echo "/var/www/html/config not found, abort!"
+	echo "/var/www/html/owncloud/config not found, abort!"
 	exit 0;
 fi
 
-mv /var/www/html/data /var/www/
-mv /var/www/html/config /var/www/
-rm -rf /var/www/html
-mv owncloud.tar.bz2 /var/www/
-cd /var/www
+mv /var/www/html/owncloud/data /var/www/html/
+mv /var/www/html/owncloud/config /var/www/html/
+rm -rf /var/www/html/owncloud
+mv owncloud.tar.bz2 /var/www/html/
+cd /var/www/html/
 tar xfj owncloud.tar.bz2
-mv owncloud html
-rm -rf /var/www/html/data
-rm -rf /var/www/html/config
-mv /var/www/data /var/www/html/
-mv /var/www/config /var/www/html/
+rm -rf /var/www/html/owncloud/data
+rm -rf /var/www/html/owncloud/config
+mv /var/www/data /var/www/html/owncloud/
+mv /var/www/config /var/www/html/owncloud/
 /root/setpermissions.sh
-cd /var/www/html
+cd /var/www/html/owncloud
 sudo -u apache php occ maintenance:mode --off
 sudo -u apache ./occ upgrade --skip-migration-test
