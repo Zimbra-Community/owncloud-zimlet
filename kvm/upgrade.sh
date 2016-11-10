@@ -66,6 +66,8 @@ semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/config(/.
 restorecon -R '/var/www/html/owncloud/config'
 semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud/apps(/.*)?'
 restorecon -R '/var/www/html/owncloud/apps'
+semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/owncloud(/.*)?'
+restorecon -R '/var/www/html/owncloud/'
 
 setsebool -P httpd_can_network_connect_db on
 
