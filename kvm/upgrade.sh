@@ -7,7 +7,7 @@ then
         exit 0;
 fi
 
-echo "This script assumes you installed owncloud in /var/www/html and that there are no other applications served via apache.";
+echo "This script assumes you installed owncloud in /var/www/html/owncloud.";
 echo '(basically you used the kickstart installer for owncloud centos7-owncloud.cfg)'
 echo "Hit enter, if you want to continue running this script, or CTRL+C  to abort";
 read dum;
