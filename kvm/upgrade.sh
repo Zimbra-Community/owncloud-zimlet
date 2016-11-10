@@ -105,8 +105,8 @@ cd /var/www/html/
 tar xfj owncloud.tar.bz2
 rm -rf /var/www/html/owncloud/data
 rm -rf /var/www/html/owncloud/config
-mv /var/www/data /var/www/html/owncloud/
-mv /var/www/config /var/www/html/owncloud/
+mv /var/www/html/data /var/www/html/owncloud/
+mv /var/www/html/config /var/www/html/owncloud/
 /root/setpermissions.sh
 cd /var/www/html/owncloud
 sudo -u apache php occ maintenance:mode --off
