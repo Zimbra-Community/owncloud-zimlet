@@ -5,7 +5,7 @@ If you find Zimbra WebDAV Client useful and want to support its continued develo
 - PayPal: info@barrydegraaff.tk
 - Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A
 
-Need Zimbra Support or help installing ownCloud or Nextcloud integration in Zimbra, **get a support subscription** now, and we are there for you! 
+Need Zimbra Support or help installing ownCloud or Nextcloud integration in Zimbra? **Get a support subscription** now, and we are there for you! 
 https://www.powercraft.nl/zetalliance/
 
 Demo video: https://www.youtube.com/watch?v=8pVMoXkNt8c
