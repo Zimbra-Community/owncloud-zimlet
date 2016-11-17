@@ -32,7 +32,12 @@ fi
 
 echo ""
 echo "Do you want to enable experimental document preview (tested on CentOS 7 and Ubuntu 14.04)? Y/n:"
-read YN;
+read YNDOCPREV;
+
+echo ""
+echo "Do you want to automatically install Zimlet and force enable it in all COS'es?"
+echo "If you choose n you have to run zmzimletctl and do COS configuration manually. Y/n:"
+read YNZIMLETDEV;
 
 echo "Check if git and ant are installed."
 set +e
@@ -111,13 +116,17 @@ owncloud_zimlet_preview_delay=200
 ls -hal /opt/zimbra/lib/ext/ownCloud/
 
 echo "Installing Zimlet"
-mkdir -p /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
+then
+   echo "Skipped per user request"
+else
+   mkdir -p /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+   unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+   echo "Flushing Zimlet Cache"
+   su - zimbra -c "zmprov fc all"
+fi
 
-echo "Flushing Zimlet Cache"
-su - zimbra -c "zmprov fc all"
-
-if [ "$YN" == 'Y' ];   
+if [[ "$YNDOCPREV" == 'Y' || "$YNDOCPREV" == 'y' ]];
 then
    echo "Install LibreOffice"
    cp -v $TMPFOLDER/owncloud-zimlet/bin/* /usr/local/sbin/   
@@ -178,4 +187,15 @@ zmmailboxdctl restart
 
 "
 
-rm -Rf $TMPFOLDER
+if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
+then
+   echo "To install Zimlet run as user Zimbra:"
+   echo "zmzimletctl deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"
+   echo "zmprov fc all"
+   echo "As root: rm -Rf $TMPFOLDER"
+   echo "Then go to the Admin Web Interface and enable Zimlet in the COS'es you want."
+   
+else
+   rm -Rf $TMPFOLDER
+fi
+
