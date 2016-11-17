@@ -60,8 +60,12 @@ fi
 
 echo "Remove old versions of Zimlet."
 rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-su - zimbra -c "zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet"
-
+if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
+then
+   echo "Not touching COS per user request"
+else
+   su - zimbra -c "zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet"
+fi
 
 TMPFOLDER="$(mktemp -d /tmp/webdav-client-installer.XXXXXXXX)"
 echo "Saving existing configuration to $TMPFOLDER/upgrade"
