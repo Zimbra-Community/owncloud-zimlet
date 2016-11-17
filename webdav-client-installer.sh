@@ -198,6 +198,7 @@ then
    echo "To install Zimlet run as user Zimbra:"
    echo "zmzimletctl deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"
    echo "java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/tk_barrydegraaff_owncloud_zimlet/config_template.xml"
+   echo "zmzimletctl configure /opt/zimbra/zimlets-deployed/tk_barrydegraaff_owncloud_zimlet/config_template.xml"
    echo "zmprov fc all"
    echo "rm -Rf $TMPFOLDER"
    echo "Then go to the Admin Web Interface and enable Zimlet in the COS'es you want."   
