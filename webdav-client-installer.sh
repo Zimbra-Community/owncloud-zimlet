@@ -62,7 +62,7 @@ echo "Remove old versions of Zimlet."
 rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
-   echo "Not touching COS per user request"
+   echo "Not touching COS per user request."
 else
    su - zimbra -c "zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet"
 fi
@@ -82,7 +82,7 @@ cd $TMPFOLDER
 git clone --depth=1 https://github.com/barrydegraaff/owncloud-zimlet
 #cp -r /root/owncloud-zimlet $TMPFOLDER
 
-echo "Compiling WebDAV Client"
+echo "Compiling WebDAV Client."
 cd owncloud-zimlet
 cd extension && ant download-libs && cd ..
 make 
@@ -120,20 +120,20 @@ owncloud_zimlet_preview_delay=200
 
 ls -hal /opt/zimbra/lib/ext/ownCloud/
 
-echo "Installing Zimlet"
+echo "Installing Zimlet."
 if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
-   echo "Skipped per user request"
+   echo "Skipped per user request."
 else
    mkdir -p /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
    unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-   echo "Flushing Zimlet Cache"
+   echo "Flushing Zimlet Cache."
    su - zimbra -c "zmprov fc all"
 fi
 
 if [[ "$YNDOCPREV" == 'Y' || "$YNDOCPREV" == 'y' ]];
 then
-   echo "Install LibreOffice"
+   echo "Install LibreOffice."
    cp -v $TMPFOLDER/owncloud-zimlet/bin/* /usr/local/sbin/   
 
    if [[ ! -z $YUM_CMD ]]; then
@@ -174,7 +174,7 @@ else
 fi
 
 echo "--------------------------------------------------------------------------------------------------------------
-Zimbra WebDAV Client installed successful
+Zimbra WebDAV Client installed successful.
 
 To load the extension:
 
