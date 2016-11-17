@@ -36,7 +36,8 @@ read YNDOCPREV;
 
 echo ""
 echo "Do you want to automatically install Zimlet and force enable it in all COS'es?"
-echo "If you choose n you have to run zmzimletctl and do COS configuration manually. Y/n:"
+echo "If you choose n you have to run zmzimletctl, configuration COS and set config_template.xml manually."
+echo "If you have trouble or are unsure, choose Y Y/n:"
 read YNZIMLETDEV;
 
 echo "Check if git and ant are installed."
@@ -161,8 +162,12 @@ wget https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propm
 java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config.properties /opt/zimbra/lib/ext/ownCloud/config.properties
 echo "Generating config_template.xml"
 wget https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar
-java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
-
+if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
+then
+   echo "Skip config_template.xml generation by user request."
+else
+   java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
+fi
 
 echo "--------------------------------------------------------------------------------------------------------------
 Zimbra WebDAV Client installed successful
@@ -189,12 +194,13 @@ zmmailboxdctl restart
 
 if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
+   chown zimbra:zimbra $TMPFOLDER -R
    echo "To install Zimlet run as user Zimbra:"
    echo "zmzimletctl deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"
+   echo "java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/tk_barrydegraaff_owncloud_zimlet/config_template.xml"
    echo "zmprov fc all"
-   echo "As root: rm -Rf $TMPFOLDER"
-   echo "Then go to the Admin Web Interface and enable Zimlet in the COS'es you want."
-   
+   echo "rm -Rf $TMPFOLDER"
+   echo "Then go to the Admin Web Interface and enable Zimlet in the COS'es you want."   
 else
    rm -Rf $TMPFOLDER
 fi
