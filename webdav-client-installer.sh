@@ -37,7 +37,7 @@ read YNDOCPREV;
 echo ""
 echo "Do you want to automatically install Zimlet and force enable it in all COS'es?"
 echo "If you choose n you have to run zmzimletctl, configuration COS and set config_template.xml manually."
-echo "If you have trouble or are unsure, choose Y Y/n:"
+echo "If you have trouble or are unsure, choose Y. Y/n:"
 read YNZIMLETDEV;
 
 echo "Check if git and ant are installed."
