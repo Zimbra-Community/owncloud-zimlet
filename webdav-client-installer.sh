@@ -95,7 +95,7 @@ ZAL_VERSION="1.11"
 ZAL_VERSION_EXTENDED="1.11.2"
 ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | tr -d '\n' | sed -r 's/.* ([0-9\.]+[0-9]).*/\1/')
 echo "Downloading the correct ZAL Version (${ZAL_VERSION_EXTENDED} for zimbra ${ZIMBRA_VERSION})..."
-wget "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" -O "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
+wget --no-cache "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" -O "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
 mkdir -p /opt/zimbra/lib/ext/ownCloud
 rm -f /opt/zimbra/lib/ext/ownCloud/*.jar
 cp "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
@@ -162,10 +162,10 @@ fi
 
 echo "Restoring config.properties"
 cd $TMPFOLDER/upgrade/
-wget https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar
+wget --no-cache https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar
 java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config.properties /opt/zimbra/lib/ext/ownCloud/config.properties
 echo "Generating config_template.xml"
-wget https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar
+wget --no-cache https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar
 if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
    echo "Skip config_template.xml generation by user request."

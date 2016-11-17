@@ -37,7 +37,7 @@ Stay up-to-date: new releases are announced on the users mailing list: http://li
 ### Installing
 Use the automated installer:
 
-    wget https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/webdav-client-installer.sh -O /tmp/webdav-client-installer.sh
+    wget --no-cache https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/webdav-client-installer.sh -O /tmp/webdav-client-installer.sh
     chmod +rx /tmp/webdav-client-installer.sh
     /tmp/webdav-client-installer.sh 
 
