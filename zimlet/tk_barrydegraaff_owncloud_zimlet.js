@@ -175,7 +175,26 @@ ownCloudZimlet.prototype.init =
        else
        {
           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = this.getUserProperty("owncloud_zimlet_ask_folder_each_time");
-       }   
+       } 
+         
+       //Set default value in case no owncloud_zimlet_use_numbers is set
+       if(!this.getUserProperty("owncloud_zimlet_use_numbers"))
+       {
+          if(this._zimletContext.getConfig("owncloud_zimlet_use_numbers"))
+          {
+             //Did the admin specify one? Use that:
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = this._zimletContext.getConfig("owncloud_zimlet_use_numbers");
+          }
+          else
+          {     
+             //Seems like the admins wants to clear this field, do it:
+             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = "";
+          }   
+       }
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = this.getUserProperty("owncloud_zimlet_use_numbers");
+       }         
     /** End load default settings for new users **/
    
    //sort by name asc by default, do we want to store this in the ldap?
@@ -869,7 +888,7 @@ ownCloudZimlet.prototype.displayDialog =
         }     
   
 
-        html = "<div style='width:500px; height: 250px;'>" +
+        html = "<div style='width:600px; height: 350px;'>" +
           "<table>"+
           "<tr>" +
           "<td>"+ZmMsg.usernameLabel+"</td>" +
@@ -901,9 +920,11 @@ ownCloudZimlet.prototype.displayDialog =
           "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']+"'></td>" +
           "</tr>" +
           "<tr><td>"+ZmMsg.importErrorMissingFolder.replace(/\./,'')+":&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_ask_folder_each_time' value='true' " + (zimletInstance.getUserProperty("owncloud_zimlet_ask_folder_each_time")=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
+          "<tr><td>"+ZmMsg.usePrefix + " " + (ZmMsg.number).toLowerCase()+"&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_use_numbers' value='true' " + (zimletInstance.getUserProperty("owncloud_zimlet_use_numbers")=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
           "<tr><td colspan=2><br><br><small>"+ZmMsg.versionLabel+" "+ownCloudZimlet.version +"</small></td></tr>"
           "</table>" +
           "</div>";
+
         zimletInstance._dialog.setContent(html);
         zimletInstance._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, zimletInstance.prefSaveBtn));
         zimletInstance._dialog.setEnterListener(new AjxListener(zimletInstance, zimletInstance.prefSaveBtn));
@@ -1063,6 +1084,17 @@ ownCloudZimlet.prototype.prefSaveBtn = function()
    {
       this.setUserProperty("owncloud_zimlet_ask_folder_each_time", "false", false);
       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = "false";
+   }
+
+   if(document.getElementById("owncloud_zimlet_use_numbers").checked)
+   {
+      this.setUserProperty("owncloud_zimlet_use_numbers", "true", false);
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = "true";
+   }
+   else
+   {
+      this.setUserProperty("owncloud_zimlet_use_numbers", "false", false);
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = "false";
    }
 
    this.setUserProperty("owncloud_zimlet_server_name", serverName, false);

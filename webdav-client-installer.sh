@@ -116,6 +116,8 @@ owncloud_zimlet_extra_toolbar_button_url=/owncloud
 owncloud_zimlet_app_title=WebDAV
 owncloud_zimlet_max_upload_size=104857600
 owncloud_zimlet_preview_delay=200
+owncloud_zimlet_use_numbers=false
+file_number=1000000
 " > /opt/zimbra/lib/ext/ownCloud/config.properties
 
 ls -hal /opt/zimbra/lib/ext/ownCloud/
@@ -172,6 +174,8 @@ then
 else
    java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
 fi
+
+chown zimbra:zimbra /opt/zimbra/lib/ext/ownCloud/config.properties
 
 echo "--------------------------------------------------------------------------------------------------------------
 Zimbra WebDAV Client installed successful.

@@ -115,6 +115,7 @@
     soapDoc.set('owncloud_zimlet_server_port', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']);
     soapDoc.set('owncloud_zimlet_server_path', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']);
     soapDoc.set('owncloud_zimlet_oc_folder', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']);    
+    soapDoc.set('owncloud_zimlet_use_numbers', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers']);    
     var params = {
       soapDoc: soapDoc,
       asyncMode: true,
