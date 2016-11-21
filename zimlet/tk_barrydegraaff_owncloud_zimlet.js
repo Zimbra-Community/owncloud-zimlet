@@ -919,8 +919,8 @@ ownCloudZimlet.prototype.displayDialog =
           "<td>"+ZmMsg.def + " " + (ZmMsg.folder).toLowerCase() + ":</td>" +
           "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']+"'></td>" +
           "</tr>" +
-          "<tr><td>"+ZmMsg.importErrorMissingFolder.replace(/\./,'')+":&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_ask_folder_each_time' value='true' " + (zimletInstance.getUserProperty("owncloud_zimlet_ask_folder_each_time")=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
-          "<tr><td>"+ZmMsg.usePrefix + " " + (ZmMsg.number).toLowerCase()+"&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_use_numbers' value='true' " + (zimletInstance.getUserProperty("owncloud_zimlet_use_numbers")=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
+          "<tr><td>"+ZmMsg.importErrorMissingFolder.replace(/\./,'')+":&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_ask_folder_each_time' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
+          "<tr><td>"+ZmMsg.usePrefix + " " + (ZmMsg.number).toLowerCase()+"&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_use_numbers' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
           "<tr><td colspan=2><br><br><small>"+ZmMsg.versionLabel+" "+ownCloudZimlet.version +"</small></td></tr>"
           "</table>" +
           "</div>";
