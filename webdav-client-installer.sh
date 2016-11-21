@@ -176,6 +176,7 @@ else
 fi
 
 chown zimbra:zimbra /opt/zimbra/lib/ext/ownCloud/config.properties
+chmod u+rw /opt/zimbra/lib/ext/ownCloud/config.properties
 
 echo "--------------------------------------------------------------------------------------------------------------
 Zimbra WebDAV Client installed successful.
