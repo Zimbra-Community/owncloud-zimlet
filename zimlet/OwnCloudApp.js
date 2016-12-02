@@ -1,4 +1,4 @@
-function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector, davForZimbraConnector) {
+function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector) {
   this._zimletCtxt = zimletCtxt;
   this._app = app;
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
@@ -8,7 +8,6 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
   this._settings = settings;
   this._davConnector = davConnector;
   this._ownCloudConnector = ownCloudConnector;
-  this._davForZimbraConnector = davForZimbraConnector;
 
   this._currentPath = "/";
 
@@ -66,7 +65,7 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector,
     app._name,
     this,
     this._davConnector,
-    new OwnCloudCommons(davConnector, ownCloudConnector, davForZimbraConnector)
+    new OwnCloudCommons(davConnector, ownCloudConnector)
   );
 
   this._initTree(

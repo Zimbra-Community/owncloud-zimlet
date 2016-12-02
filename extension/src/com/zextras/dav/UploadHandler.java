@@ -30,6 +30,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Properties;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+
 public class UploadHandler implements HttpHandler
 {
   private final Provisioning mProvisioning;
@@ -160,10 +165,11 @@ public class UploadHandler implements HttpHandler
           if (item.getName() == null) { continue; }
 
 
+          String fileNameString = getFileName(item.getName().replaceAll("\\\\|\\/|\\:|\\*|\\?|\\\"|\\<|\\>|\\||\\%|\\&|\\@|\\!|\\'|\\[|\\]", ""), userProperties.get(ZimletProperty.USE_NUMBERS));
 
-          fileNames.add(item.getName().replaceAll("\\\\|\\/|\\:|\\*|\\?|\\\"|\\<|\\>|\\||\\%|\\&|\\@|\\!|\\'|\\[|\\]", ""));
+          fileNames.add(fileNameString);
           connector.put(
-            paramsMap.get("path") + item.getName().replaceAll("\\\\|\\/|\\:|\\*|\\?|\\\"|\\<|\\>|\\||\\%|\\&|\\@|\\!|\\'|\\[|\\]", ""),
+            paramsMap.get("path") + fileNameString,
             item.getInputStream()
           );
         }
@@ -192,6 +198,42 @@ public class UploadHandler implements HttpHandler
       {
         throw new RuntimeException(e);
       }
+    }
+  }
+
+  private String getFileName(String filename, String numberedFilenames) {
+    try {
+      FileInputStream input = new FileInputStream("/opt/zimbra/lib/ext/ownCloud/config.properties");
+      Properties prop = new Properties();
+      prop.load(input);
+      input.close();
+      String fileNumberStr = prop.getProperty("file_number");
+
+
+      if ("true".equals(numberedFilenames)) {
+        int fileNumber = Integer.parseInt(fileNumberStr);
+
+        fileNumber = fileNumber + 1;
+
+        FileOutputStream out = new FileOutputStream("/opt/zimbra/lib/ext/ownCloud/config.properties");
+        prop.setProperty("file_number", Integer.toString(fileNumber));
+        prop.store(out, "Updated file_number via getFileName.");
+        out.close();
+
+
+        if (filename.lastIndexOf(".") > -1) {
+          filename = fileNumberStr + filename.substring(filename.lastIndexOf("."));
+        } else {
+          filename = fileNumberStr;
+        }
+
+      }
+      return filename;
+
+    } catch (IOException ex) {
+      ex.printStackTrace();
+
+      return filename;
     }
   }
 

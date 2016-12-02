@@ -23,12 +23,11 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
-        version="0.6.6"
+        version="0.6.7"
         target="main compose-window view-window"
         label="WebDAV"
         description="Attach from and save to WebDAV">
     <include>DavConnector.js</include>
-    <include>DavForZimbraConnector.js</include>
     <include>OwnCloudApp.js</include>
     <include>OwnCloudCommons.js</include>
     <include>OwnCloudConnector.js</include>
@@ -58,6 +57,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
       <property type="string" label="" name="owncloud_zimlet_default_folder" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_oc_folder" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_ask_folder_each_time" rows="1"/>
+      <property type="string" label="" name="owncloud_zimlet_use_numbers" rows="1"/>
    </userProperties>
     <contentObject>
         <matchOn>

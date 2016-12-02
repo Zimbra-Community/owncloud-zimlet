@@ -1,7 +1,6 @@
-function OwnCloudCommons(davConnector, ownCloudConnector, davForZimbraConnector) {
+function OwnCloudCommons(davConnector, ownCloudConnector) {
   this._davConnector = davConnector;
   this._ownCloudConnector = ownCloudConnector;
-  this._davForZimbraConnector = davForZimbraConnector;
 
   this._waitingDialog = null;
 }

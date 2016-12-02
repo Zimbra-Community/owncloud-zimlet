@@ -1,6 +1,5 @@
 package com.zextras.dav;
 
-import com.zextras.dav4zimbra.Dav4ZimbraSOAPService;
 import com.zextras.owncloud.OwnCloudSOAPService;
 import org.openzal.zal.extension.ZalExtension;
 import org.openzal.zal.extension.ZalExtensionController;
@@ -22,7 +21,6 @@ public class DavExtension implements ZalExtension
   private final HttpServiceManager mHttpServiceManager;
   private final SoapServiceManager mSoapServiceManager;
   private final DavSOAPService mDavSoapService;
-  private final Dav4ZimbraSOAPService mDav4ZimbraSoapService;
   private final OwnCloudSOAPService mOwnCloudSoapService;
   private final Zimbra mZimbra;
   private final DownloadHandler mDownloadHandler;
@@ -38,7 +36,6 @@ public class DavExtension implements ZalExtension
     mHttpServiceManager = new HttpServiceManager();
     mSoapServiceManager = new SoapServiceManager();
     mDavSoapService = new DavSOAPService(mZimbra.getProvisioning(), mDownloadJobMap);
-    mDav4ZimbraSoapService = new Dav4ZimbraSOAPService(mZimbra.getMailboxManager(), mZimbra.getProvisioning());
     mOwnCloudSoapService = new OwnCloudSOAPService(mZimbra.getProvisioning());
     mDownloadHandler = new DownloadHandler(mDownloadJobMap);
     mUploadHandler = new UploadHandler(mZimbra.getProvisioning());
@@ -65,7 +62,6 @@ public class DavExtension implements ZalExtension
   public void startup(ZalExtensionController zalExtensionController, WeakReference<ClassLoader> weakReference)
   {
     mSoapServiceManager.register(mDavSoapService);
-    mSoapServiceManager.register(mDav4ZimbraSoapService);
     mSoapServiceManager.register(mOwnCloudSoapService);
     mHttpServiceManager.registerHandler(mDownloadHandler);
     mHttpServiceManager.registerHandler(mUploadHandler);
@@ -79,7 +75,6 @@ public class DavExtension implements ZalExtension
   public void shutdown()
   {
     mSoapServiceManager.unregister(mDavSoapService);
-    mSoapServiceManager.unregister(mDav4ZimbraSoapService);
     mSoapServiceManager.unregister(mOwnCloudSoapService);
     mHttpServiceManager.unregisterHandler(mDownloadHandler);
     mHttpServiceManager.unregisterHandler(mUploadHandler);

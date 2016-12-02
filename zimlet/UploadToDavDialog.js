@@ -52,13 +52,14 @@ UploadToDavDialog.prototype._createUploadHtml = function() {
 UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + folder;
+
   this._uploadFolder = folder;
   this._uploadCallback = callback;
   var aCtxt = ZmAppCtxt.handleWindowOpener();
 
   this._supportsHTML5 = AjxEnv.supportsHTML5File && (zimletInstance._zimletContext.getConfig("owncloud_zimlet_max_upload_size") != null);
 
-  this.setTitle(ZmMsg.uploadDocs);
+  this.setTitle(ZmMsg.uploadDocs + ' ('+folder.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],'')+')');
 
   // reset input fields
   var table = this._tableEl;
