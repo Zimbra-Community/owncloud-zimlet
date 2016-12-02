@@ -52,9 +52,8 @@ UploadToDavDialog.prototype._createUploadHtml = function() {
 
 UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-  this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + this._uploadFolder;
-
   this._uploadFolder = folder;
+  this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + this._uploadFolder;  
   this._uploadCallback = callback;
   var aCtxt = ZmAppCtxt.handleWindowOpener();
 

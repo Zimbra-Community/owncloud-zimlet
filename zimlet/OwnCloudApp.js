@@ -352,9 +352,14 @@ OwnCloudApp.prototype.extraBtnLsnr = function() {
 };
 
 OwnCloudApp.prototype._uploadBtnLsnr = function(ev) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   if(!zimletInstance._appView._currentPath)
+   {
+      zimletInstance._appView._currentPath = "/";
+   }
   var dialog = new UploadToDavDialog(appCtxt.getShell());
   dialog.popup(
-    this._currentPath,
+    zimletInstance._appView._currentPath,
     new AjxCallback(this, this.refreshViewPropfind)
   );
 };
@@ -373,8 +378,14 @@ OwnCloudApp.prototype.refreshViewPropfind = function() {
 };   
 
 OwnCloudApp.prototype._newFolderListener = function(ev) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   if(!zimletInstance._appView._currentPath)
+   {
+      zimletInstance._appView._currentPath = "/";
+   }
+   
   var newFolderDialog = new DwtDialog({parent: appCtxt.getShell()}),
-    folder = this._currentPath,
+    folder = zimletInstance._appView._currentPath,
     composite = new DwtComposite({ parent: newFolderDialog }),
     label,
     input;
