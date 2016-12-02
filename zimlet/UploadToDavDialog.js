@@ -100,7 +100,6 @@ UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
   }
 
   // show
-  console.log(this);
   DwtDialog.prototype.popup.call(this, loc);
 };
 
