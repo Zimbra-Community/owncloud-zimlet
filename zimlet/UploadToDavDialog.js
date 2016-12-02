@@ -4,6 +4,7 @@ function UploadToDavDialog(parent) {
   this._createUploadHtml();
 }
 
+var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
 UploadToDavDialog.prototype = new DwtDialog();
 UploadToDavDialog.prototype.constructor = UploadToDavDialog;
 
@@ -51,7 +52,7 @@ UploadToDavDialog.prototype._createUploadHtml = function() {
 
 UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-  this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + folder;
+  this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + this._uploadFolder;
 
   this._uploadFolder = folder;
   this._uploadCallback = callback;
@@ -59,7 +60,7 @@ UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
 
   this._supportsHTML5 = AjxEnv.supportsHTML5File && (zimletInstance._zimletContext.getConfig("owncloud_zimlet_max_upload_size") != null);
 
-  this.setTitle(ZmMsg.uploadDocs + ' ('+folder.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],'')+')');
+  this.setTitle(ZmMsg.uploadDocs + ' ('+this._uploadFolder.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],'')+')');
 
   // reset input fields
   var table = this._tableEl;
@@ -99,11 +100,13 @@ UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
   }
 
   // show
+  console.log(this);
   DwtDialog.prototype.popup.call(this, loc);
 };
 
 UploadToDavDialog.prototype.popdown = function() {
   this._msgInfo.innerHTML = "";
+  this.setContent('');
   DwtDialog.prototype.popdown.call(this);
 };
 
