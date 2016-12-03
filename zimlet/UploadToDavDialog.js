@@ -59,7 +59,7 @@ UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
 
   this._supportsHTML5 = AjxEnv.supportsHTML5File && (zimletInstance._zimletContext.getConfig("owncloud_zimlet_max_upload_size") != null);
 
-  this.setTitle(ZmMsg.uploadDocs + ' ('+this._uploadFolder.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],'')+')');
+  this.setTitle(ZmMsg.uploadDocs);
 
   // reset input fields
   var table = this._tableEl;
