@@ -67,6 +67,22 @@ OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback, s
       [resource, resources, links, callback, sharePassword]
     );
 
+  var DavForZimbraShareType = {
+    USER: 0,
+    GROUP: 1,
+    PUBLIC_LINK: 3,
+    FEDERATED_CLOUD_SHARE: 6
+  };
+
+  var DavForZimbraSharePermission = {
+    READ: 1,   // Default for public shares.
+    UPDATE: 2,
+    CREATE: 4,
+    DELETE: 8,
+    SHARE: 16,
+    ALL: 31    // Default.
+  };
+
   this._ownCloudConnector.createShare(
     resource.getHref(),
     DavForZimbraShareType.PUBLIC_LINK,
