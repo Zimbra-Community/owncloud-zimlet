@@ -627,38 +627,33 @@ ownCloudZimlet.prototype._onDropTransfer =
  * @param {DavResource[]} resources
  * @private
  */
-ownCloudZimlet.prototype._doDropPropfindCbk =
-  function(zmObjects, callback, errorCallback, resources) {
-    var id,
-      type = "MESSAGE",
-      iObj = 0,
-      tmpObj;
+ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, errorCallback, resources) 
+{
+   var id,
+     type = "MESSAGE",
+     iObj = 0,
+     tmpObj;
 
-    if (!zmObjects[0]) {
+   if (!zmObjects[0]) {
       zmObjects = [zmObjects];
-    }
-
-    for (iObj = 0; iObj < zmObjects.length; iObj += 1) {
+   }
+    
+   var items = [];
+   var index = 0;
+   var form = new FormData();
+   form.append("password", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+             
+   for (iObj = 0; iObj < zmObjects.length; iObj += 1) {
       tmpObj = zmObjects[iObj];
-
-      var nestedCallback = new AjxCallback(
-        this,
-        function(_zmItem, _callback, _returnValue) {
-          if (!!_callback) {
-            _callback.run(_zmItem, _returnValue);
-          }
-        },
-        [tmpObj, callback]
-      );
 
       var fileName = "";
       //if its a conversation i.e. 'ZmConv' object, get the first loaded message 'ZmMailMsg' object within that.
       if (tmpObj.TYPE === 'ZmConv') {
-        var msgObj = tmpObj.srcObj; // get access to source-object
-        msgObj = msgObj.getFirstHotMsg();
-        tmpObj.id = msgObj.id;
-        type = 'MESSAGE';
-        fileName = (tmpObj.subject ? tmpObj.subject + '.eml' : tmpObj.id + '.eml');
+         var msgObj = tmpObj.srcObj; // get access to source-object
+         msgObj = msgObj.getFirstHotMsg();
+         tmpObj.id = msgObj.id;
+         type = 'MESSAGE';
+         fileName = (tmpObj.subject ? tmpObj.subject + '.eml' : tmpObj.id + '.eml');
       }
       
       if(tmpObj.TYPE==='ZmMailMsg')
@@ -667,47 +662,68 @@ ownCloudZimlet.prototype._doDropPropfindCbk =
       }
 
       if (tmpObj.id < 0) {
-        id = tmpObj.id * -1;
+         id = tmpObj.id * -1;
       } else {
-        id = tmpObj.id;
+         id = tmpObj.id;
       }
 
       if (tmpObj.type === 'BRIEFCASE_ITEM') {
-        type = 'DOCUMENT';
-        fileName = tmpObj.name;
+         type = 'DOCUMENT';
+         fileName = tmpObj.name;
       } else if (tmpObj.TYPE === 'ZmContact') {
-        type = 'CONTACT';
-        fileName = (tmpObj.email ? tmpObj.email + '.vcf' : tmpObj.id + '.vcf');
+         type = 'CONTACT';
+         fileName = (tmpObj.email ? tmpObj.email + '.vcf' : tmpObj.id + '.vcf');
       } else if (tmpObj.TYPE === 'ZmAppt') {
-        type = 'APPOINTMENT';
-        fileName = tmpObj.subject + '.ics'
+         type = 'APPOINTMENT';
+         fileName = tmpObj.subject + '.ics'
       } else if (tmpObj.type === 'TASK') {
-        type = 'TASK';
-        fileName = tmpObj.name + '.ics'
+         type = 'TASK';
+         fileName = tmpObj.name + '.ics'
       }
+      
       this.status(ZmMsg.uploading, ZmStatusView.LEVEL_INFO);
+      var item = [];
+      item[0]=id;
+      item[1]=fileName;
+      items[index]=item;
+      index++;
+   }
+   ownCloudZimlet.prototype._doDropFetch(items, form);
+};
 
-      var xmlHttp = null;   
-      xmlHttp = new XMLHttpRequest();
-      xmlHttp.open( "GET", "/home/"+AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name)+"/message.txt?fmt=txt&id="+id, true );        
-      xmlHttp.responseType = "blob";
-      xmlHttp.send( null );
-     
-      xmlHttp.onload = function(e) 
+ownCloudZimlet.prototype._doDropFetch = function (items, form)
+{
+   var xmlHttp = null;   
+   xmlHttp = new XMLHttpRequest();
+   xmlHttp.open( "GET", "/home/"+AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name)+"/message.txt?fmt=txt&id="+items[0][0], true );        
+   xmlHttp.responseType = "blob";
+   xmlHttp.send( null );
+   
+   xmlHttp.onload = function(e) 
+   {
+      form.append("uploadFile"+items.length,xmlHttp.response, ownCloudZimlet.prototype.sanitizeFileName(items[0][1]));
+      items.shift();
+      if(items.length < 1)
       {
-         form = new FormData(),
-         request = new XMLHttpRequest();
-         form.append("uploadFile",xmlHttp.response, ownCloudZimlet.prototype.sanitizeFileName(fileName));
-         form.append("password", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-         request.open(
-         "POST",
-         "/service/extension/dav_upload/?path=/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
-         true
-         );
-         request.send(form);
+         ownCloudZimlet.prototype._doDropUpload(form);
       }
-    }
-  };
+      else
+      {
+         ownCloudZimlet.prototype._doDropFetch(items, form);
+      }   
+   }
+}
+
+ownCloudZimlet.prototype._doDropUpload = function (form)
+{      
+   request = new XMLHttpRequest();
+   request.open(
+   "POST",
+   "/service/extension/dav_upload/?path=/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
+   true
+   );
+   request.send(form);
+}
 
 ownCloudZimlet.prototype._getItemNameByType =
   function(zmItem) {
