@@ -4,13 +4,13 @@
    * @const
    * @type {string}
    */
-  var URN = 'urn:zimbraAccount';
+  var URN = 'urn:OCS';
   /**
    * Handler name registered as zimbra SOAP Extension
    * @const
    * @type {string}
    */
-  var HANDLER_NAME = 'ownCloud';
+  var HANDLER_NAME = 'OCS';
 
   /**
    * Supported OwnCloud Actions.
