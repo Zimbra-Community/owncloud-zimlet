@@ -10,8 +10,9 @@
  * @extends	DwtTabViewPage
  */
 function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, ocCommons) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   this.zimlet = zimletCtxt;
-
+  var owncloud_zimlet_disable_ocs_public_link_shares = zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_ocs_public_link_shares");
   this._zimletCtxt = zimletCtxt;
   this._davConnector = davConnector;
   this._ownCloudConnector = ownCloudConnector;
@@ -26,7 +27,7 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
   this.prevAccount = acct;
   this.parent.setScrollStyle(Dwt.CLIP);
 
-  this._checkboxf = new DwtRadioButton({ // feature available only in ownCloud installation.
+  this._checkboxf = new DwtRadioButton({ 
     parent: this,
     style: DwtCheckbox.TEXT_RIGHT,
     checked: true,
@@ -43,7 +44,10 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
   //Add scrollbar to avoid overflowing the attach dialog
   document.getElementById(this._tree.getHTMLElId()).style.overflowX = "hidden";
 
-  this._checkbox = new DwtRadioButton({ // feature available only in ownCloud installation.
+  if(owncloud_zimlet_disable_ocs_public_link_shares != 'true')
+  {
+
+  this._checkbox = new DwtRadioButton({ 
     parent: this,
     style: DwtCheckbox.TEXT_RIGHT,
     name: 'ownCloudZimletShareTypeSelector'
@@ -54,13 +58,13 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
     parent: this,
   });
 
-  this._sharePassword = new DwtInputField({ // feature available only in ownCloud installation.
+  this._sharePassword = new DwtInputField({ 
     parent: this,
   });
   this._sharePassword.setHtmlElementId('owncloudSharePassword');
   this._sharePassword._inputField.placeholder = (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase();
-
-  this._checkboxi = new DwtRadioButton({ // feature available only in ownCloud installation.
+  }
+  this._checkboxi = new DwtRadioButton({ 
     parent: this,
     style: DwtCheckbox.TEXT_RIGHT,
     name: 'ownCloudZimletShareTypeSelector'
@@ -216,8 +220,15 @@ OwnCloudTabView.prototype._attachFiles =
       /** @type {DavResource[]} */ selectedResources = this._getSelectedItems(this._tree.getChildren()),
       /** @type {DavResource[]} */ resourcesToLink = [],
       /** @type {DavResource[]} */ resourcesToAttach = [],
-      /** @type {number[]} */ ids = [],
-      /** @type {boolean} */ attachLinks = this._checkbox.getInputElement().checked;
+      /** @type {number[]} */ ids = [];
+      
+      try {
+         var attachLinks = this._checkbox.getInputElement().checked;
+      }
+      catch (err)
+      {
+         var attachLinks = false;
+      }
 
     for (var i = 0; i < selectedResources.length; i += 1) {
       if (attachLinks || selectedResources[i].isDirectory()) {
@@ -227,6 +238,15 @@ OwnCloudTabView.prototype._attachFiles =
       }
     }
 
+   if(this._sharePassword)
+   {
+      var sharepassword = this._sharePassword._inputField.value;
+   }
+   else
+   {
+      var sharepassword = "";
+   }   
+
     this._ocCommons.getAttachments(
       resourcesToLink,
       resourcesToAttach,
@@ -234,7 +254,7 @@ OwnCloudTabView.prototype._attachFiles =
         this,
         this._onAttachmentsRetrieved
       ),
-      this._sharePassword._inputField.value
+      sharepassword
     );
   };
 
