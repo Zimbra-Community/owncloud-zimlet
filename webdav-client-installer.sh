@@ -40,6 +40,12 @@ echo "If you choose n you have to run zmzimletctl, configuration COS and set con
 echo "If you have trouble or are unsure, choose Y. Y/n:"
 read YNZIMLETDEV;
 
+echo ""
+echo "Do you want to install public link sharing?"
+echo "If you use a WebDAV server that is not ownCloud or Nextcloud choose n."
+echo "If you have trouble or are unsure, choose Y. Y/n:"
+read YNOCS;
+
 echo "Check if git and ant are installed."
 set +e
 YUM_CMD=$(which yum)
@@ -139,6 +145,15 @@ owncloud_zimlet_use_numbers=false
 file_number=1000000
 " > /opt/zimbra/lib/ext/ownCloud/config.properties
 
+if [[ "$YNOCS" == 'N' || "$YNOCS" == 'n' ]];
+then
+echo "owncloud_zimlet_disable_ocs_public_link_shares=true
+" > /opt/zimbra/lib/ext/ownCloud/config.properties
+else
+echo "owncloud_zimlet_disable_ocs_public_link_shares=false
+" > /opt/zimbra/lib/ext/ownCloud/config.properties
+fi
+
 ls -hal /opt/zimbra/lib/ext/ownCloud/
 
 echo "Installing Zimlet."
@@ -181,10 +196,17 @@ then
 fi
 
 echo "Downloading OCS Share API implementation for WebDAV Client"
-mkdir -p /opt/zimbra/lib/ext/OCS
-rm -f /opt/zimbra/lib/ext/OCS/*.jar
-cd /opt/zimbra/lib/ext/OCS
-wget --no-cache "https://github.com/Zimbra-Community/OCS/raw/master/extension/out/artifacts/OCS_jar/OCS.jar"
+if [[ "$YNOCS" == 'N' || "$YNOCS" == 'n' ]];
+then
+   echo "Skip by user request."
+   mkdir -p /opt/zimbra/lib/ext/OCS
+   rm -Rf /opt/zimbra/lib/ext/OCS
+else
+   mkdir -p /opt/zimbra/lib/ext/OCS
+   rm -f /opt/zimbra/lib/ext/OCS/*.jar
+   cd /opt/zimbra/lib/ext/OCS
+   wget --no-cache "https://github.com/Zimbra-Community/OCS/raw/master/extension/out/artifacts/OCS_jar/OCS.jar"
+fi
 
 echo "Restoring config.properties"
 cd $TMPFOLDER/upgrade/
