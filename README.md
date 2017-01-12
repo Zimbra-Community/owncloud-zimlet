@@ -69,6 +69,7 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_preview_delay  | 200 | Delay in milliseconds between loading previews, if your previews stuck, set this to 400. |   |
 | owncloud_zimlet_use_numbers  | false | If set to true, a number will be used instead of filename when saving attachments. |   |
 | file_number  | 1000000 | The number to start counting from. See owncloud_zimlet_use_numbers. |   |
+| owncloud_zimlet_disable_ocs_public_link_shares  | false | Controls if users can share items with a public link. Set this to true if you use a DAV server that is not ownCloud/Nextcloud or if you want to disable  public link sharing. |   |
 
 After changing config.properties run the following: 
 
