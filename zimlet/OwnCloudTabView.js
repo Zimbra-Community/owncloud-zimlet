@@ -46,23 +46,22 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
 
   if(owncloud_zimlet_disable_ocs_public_link_shares != 'true')
   {
-
-  this._checkbox = new DwtRadioButton({ 
-    parent: this,
-    style: DwtCheckbox.TEXT_RIGHT,
-    name: 'ownCloudZimletShareTypeSelector'
-  });
-  this._checkbox.setText(ZmMsg.shareWithPublic + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
-
-  this._sharePasswordTxt =  new DwtText({ 
-    parent: this,
-  });
-
-  this._sharePassword = new DwtInputField({ 
-    parent: this,
-  });
-  this._sharePassword.setHtmlElementId('owncloudSharePassword');
-  this._sharePassword._inputField.placeholder = (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase();
+     this._checkbox = new DwtRadioButton({ 
+       parent: this,
+       style: DwtCheckbox.TEXT_RIGHT,
+       name: 'ownCloudZimletShareTypeSelector'
+     });
+     this._checkbox.setText(ZmMsg.shareWithPublic + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
+   
+     this._sharePasswordTxt =  new DwtText({ 
+       parent: this,
+     });
+   
+     this._sharePassword = new DwtInputField({ 
+       parent: this,
+     });
+     this._sharePassword.setHtmlElementId('owncloudSharePassword');
+     this._sharePassword._inputField.placeholder = (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase();
   }
   this._checkboxi = new DwtRadioButton({ 
     parent: this,
