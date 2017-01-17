@@ -143,6 +143,7 @@ owncloud_zimlet_max_upload_size=104857600
 owncloud_zimlet_preview_delay=200
 owncloud_zimlet_use_numbers=false
 file_number=1000000
+owncloud_zimlet_welcome_url=https://barrydegraaff.github.io/owncloud/
 " > /opt/zimbra/lib/ext/ownCloud/config.properties
 
 if [[ "$YNOCS" == 'N' || "$YNOCS" == 'n' ]];

@@ -548,7 +548,7 @@ ownCloudZimlet.prototype.menuItemSelected =
         zimletInstance.displayDialog(1, ZmMsg.preferences, null);
         break;
       case "help":
-        window.open(zimletInstance.getResource("help/index.html"));
+        window.open(zimletInstance..getConfig("owncloud_zimlet_welcome_url"));
         break;
     }
   };
