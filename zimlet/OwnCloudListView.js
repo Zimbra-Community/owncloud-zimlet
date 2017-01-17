@@ -460,16 +460,63 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
 
 OwnCloudListView.prototype.preview = function(davResource, token) {
   var contentType = ""
-  var regex = /\.djvu$/i;
-  if(davResource._href.match(regex))
-  {
-     contentType = 'image/vnd.djvu';
-  }
-  else
-  {
-     contentType = davResource.getContentType();
-  }
-  
+   //Not all dav servers implement content/type correctly, so use them accoring to extension
+   switch (davResource._href) {
+     case (davResource._href.match(/\.djvu$/i) || {}).input:
+          contentType = 'image/vnd.djvu';
+       break;
+     case (davResource._href.match(/\.jpeg$/i) || {}).input:
+          contentType = 'image/jpeg';
+       break;      
+     case (davResource._href.match(/\.jpg$/i) || {}).input:
+          contentType = 'image/jpeg';
+       break;      
+     case (davResource._href.match(/\.pdf$/i) || {}).input:
+          contentType = 'application/pdf';
+       break;       
+     case (davResource._href.match(/\.odt$/i) || {}).input:
+          contentType = 'application/vnd.oasis.opendocument.text';
+       break;
+     case (davResource._href.match(/\.ods$/i) || {}).input:
+          contentType = 'application/vnd.oasis.opendocument.spreadsheet';
+       break;
+     case (davResource._href.match(/\.odp$/i) || {}).input:
+          contentType = 'application/vnd.oasis.opendocument.presentation';
+       break;
+     case (davResource._href.match(/\.mp4$/i) || {}).input:
+          contentType = 'video/mp4';
+       break;
+     case (davResource._href.match(/\.webm$/i) || {}).input:
+          contentType = 'video/webm';
+       break;
+     case (davResource._href.match(/\.png$/i) || {}).input:
+          contentType = 'image/png';
+       break;
+     case (davResource._href.match(/\.txt$/i) || {}).input:
+          contentType = 'text/plain';
+       break;
+     case (davResource._href.match(/\.doc$/i) || {}).input:
+          contentType = 'application/vnd.ms-word';
+       break;
+     case (davResource._href.match(/\.docx$/i) || {}).input:
+          contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+       break;
+     case (davResource._href.match(/\.xls$/i) || {}).input:
+          contentType = 'application/vnd.ms-excel';
+       break;
+     case (davResource._href.match(/\.xlsx$/i) || {}).input:
+          contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+       break;
+     case (davResource._href.match(/\.ppt$/i) || {}).input:
+          contentType = 'application/vnd.ms-powerpoint';
+       break;
+     case (davResource._href.match(/\.pptx$/i) || {}).input:
+          contentType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+       break;
+     default:
+          contentType = davResource.getContentType();
+       break;
+   }  
   
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&inline=true";

@@ -104,6 +104,73 @@
    * @static
    */
   DavResource.fromRawResource = function(rawEntity) {
+
+     if(rawEntity.href.endsWith("/"))
+     {
+       rawEntity.contentType = 'httpd/unix-directory';
+     }
+
+      //Not all dav servers implement content/type correctly, so use them accoring to extension
+      switch (rawEntity.href) {
+        case (rawEntity.href.match(/\.djvu$/i) || {}).input:
+             rawEntity.contentType = 'image/vnd.djvu';
+          break;
+        case (rawEntity.href.match(/\.jpeg$/i) || {}).input:
+             rawEntity.contentType = 'image/jpeg';
+          break;      
+        case (rawEntity.href.match(/\.jpg$/i) || {}).input:
+             rawEntity.contentType = 'image/jpg';
+          break;      
+        case (rawEntity.href.match(/\.pdf$/i) || {}).input:
+             rawEntity.contentType = 'application/pdf';
+          break;       
+        case (rawEntity.href.match(/\.odt$/i) || {}).input:
+             rawEntity.contentType = 'application/vnd.oasis.opendocument.text';
+          break;
+        case (rawEntity.href.match(/\.ods$/i) || {}).input:
+             rawEntity.contentType = 'application/vnd.oasis.opendocument.spreadsheet';
+          break;
+        case (rawEntity.href.match(/\.odp$/i) || {}).input:
+             rawEntity.contentType = 'application/vnd.oasis.opendocument.presentation';
+          break;
+        case (rawEntity.href.match(/\.mp4$/i) || {}).input:
+             rawEntity.contentType = 'video/mp4';
+          break;
+        case (rawEntity.href.match(/\.webm$/i) || {}).input:
+             rawEntity.contentType = 'video/webm';
+          break;
+        case (rawEntity.href.match(/\.png$/i) || {}).input:
+             rawEntity.contentType = 'image/png';
+          break;
+        case (rawEntity.href.match(/\.txt$/i) || {}).input:
+             rawEntity.contentType = 'text/plain';
+          break;
+        case (rawEntity.href.match(/\.doc$/i) || {}).input:
+             rawEntity.contentType = 'application/vnd.ms-word';
+          break;
+        case (rawEntity.href.match(/\.docx$/i) || {}).input:
+             rawEntity.contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          break;
+        case (rawEntity.href.match(/\.xls$/i) || {}).input:
+             rawEntity.contentType = 'application/vnd.ms-excel';
+          break;
+        case (rawEntity.href.match(/\.xlsx$/i) || {}).input:
+             rawEntity.contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+          break;
+        case (rawEntity.href.match(/\.ppt$/i) || {}).input:
+             rawEntity.contentType = 'application/vnd.ms-powerpoint';
+          break;
+        case (rawEntity.href.match(/\.pptx$/i) || {}).input:
+             rawEntity.contentType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+          break;
+      }
+
+     
+     if(!rawEntity.modified)
+     {
+        rawEntity.modified = new Date().getTime();
+     }
+
     return new DavResource(
       rawEntity.href,
       (!!rawEntity.created) ? new Date(rawEntity.created) : null,
@@ -124,7 +191,14 @@
    * @return {boolean}
    */
   DavResource.prototype.isDirectory = function() {
-    return 'httpd/unix-directory' === this._contentType;
+     if( (this._href.endsWith("/")) || ('httpd/unix-directory' === this._contentType) )
+     {
+       return true;
+     }
+     else
+     {
+        return false;
+     }  
   };
 
   /**
