@@ -39,6 +39,7 @@ import java.io.InputStream;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -170,71 +171,78 @@ public class UploadHandler implements HttpHandler {
 
                     fileNames.add(fileNameString);
 
-                    /* This code does not work when the dav server is on a non-standard port
+                    /* connector.put does not work when the dav server is on a non-standard port
                     sardine org.apache.http.client.NonRepeatableRequestException
                     https://github.com/lookfirst/sardine/issues/132
                     maybe enablePreemptiveAuthentication fails on non standard port?
-
-                    connector.put(
-                      paramsMap.get("path") + fileNameString,
-                      item.getInputStream()
-                    );*/
-
-                    /*
-                    * Apache HttpPut.
-                    *
-                    * @author javaQuery
-                    * @date 26th January, 2016
-                    * @Github: https://github.com/javaquery/Examples
+                    Anyway, adding a work around for such use cases
                     */
-                    /* Create object of CloseableHttpClient */
-                    CloseableHttpClient httpClient = HttpClients.createDefault();
 
-                    /* Prepare put request */
-                    String username = userProperties.get(ZimletProperty.DAV_USER_USERNAME);
-                    String path = paramsMap.get("path");
-                    if ("/".equals(path)) {
-                        path = userProperties.get(ZimletProperty.DAV_SERVER_PATH);
-                    }
-                    String url = userProperties.get(ZimletProperty.DAV_SERVER_NAME) + ":" + Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)) + path + fileNameString;
-                    HttpPut httpPut = new HttpPut(url);
+                    if ("80".equals(userProperties.get(ZimletProperty.DAV_SERVER_PORT)) || "443".equals(userProperties.get(ZimletProperty.DAV_SERVER_PORT))) {
+                        connector.put(
+                                paramsMap.get("path") + fileNameString,
+                                item.getInputStream()
+                        );
+                    } else {
 
-                    /* Add headers to get request */
-                    byte[] credentials = Base64.encodeBase64((uriDecode(username) + ":" + uriDecode(password)).getBytes());
+                        /*
+                        * Apache HttpPut.
+                        *
+                        * @author javaQuery
+                        * @date 26th January, 2016
+                        * @Github: https://github.com/javaquery/Examples
+                        */
+                        /* Create object of CloseableHttpClient */
+                        CloseableHttpClient httpClient = HttpClients.createDefault();
 
-                    httpPut.addHeader("Authorization", "Basic " + new String(credentials));
-                    /* Prepare StringEntity from inputStream */
-                    InputStream inputStream=item.getInputStream();
-                    InputStreamEntity Entity=new InputStreamEntity(inputStream);
-                    /* Body of request */
-                    httpPut.setEntity(Entity);
-
-                    /* Response handler for after request execution */
-                    ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
-
-                        @Override
-                        public String handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
-                            /* Get status code */
-                            int httpResponseCode = httpResponse.getStatusLine().getStatusCode();
-                            System.out.println("Response code: " + httpResponseCode);
-                            if (httpResponseCode >= 200 && httpResponseCode < 300) {
-                                /* Convert response to String */
-                                HttpEntity entity = httpResponse.getEntity();
-                                return entity != null ? EntityUtils.toString(entity) : null;
-                            } else {
-                                return null;
-                                /* throw new ClientProtocolException("Unexpected response status: " + httpResponseCode); */
-                            }
+                        /* Prepare put request */
+                        String username = userProperties.get(ZimletProperty.DAV_USER_USERNAME);
+                        String path = paramsMap.get("path");
+                        if ("/".equals(path)) {
+                            path = userProperties.get(ZimletProperty.DAV_SERVER_PATH);
                         }
-                    };
+                        //to-do here it would be better to implement more encoding to the url to avoid URISyntaxException, however this is harder than it seems, as we must separate host/port and location parts
+                        //for now just deal with spaces only.
+                        String url = userProperties.get(ZimletProperty.DAV_SERVER_NAME) + ":" + Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)) + path + fileNameString.replace(" ", "%20");
+                        HttpPut httpPut = new HttpPut(url);
 
-                    try {
+                        /* Add headers to get request */
+                        byte[] credentials = Base64.encodeBase64((uriDecode(username) + ":" + uriDecode(password)).getBytes());
+
+                        httpPut.addHeader("Authorization", "Basic " + new String(credentials));
+                        /* Prepare StringEntity from inputStream */
+                        InputStream inputStream = item.getInputStream();
+                        InputStreamEntity Entity = new InputStreamEntity(inputStream);
+                        /* Body of request */
+                        httpPut.setEntity(Entity);
+
+                        /* Response handler for after request execution */
+                        ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
+
+                            @Override
+                            public String handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
+                            /* Get status code */
+                                int httpResponseCode = httpResponse.getStatusLine().getStatusCode();
+                                //System.out.println("Response code: " + httpResponseCode);
+                                if (httpResponseCode >= 200 && httpResponseCode < 300) {
+                                /* Convert response to String */
+                                    HttpEntity entity = httpResponse.getEntity();
+                                    return entity != null ? EntityUtils.toString(entity) : null;
+                                } else {
+                                    return null;
+                                /* throw new ClientProtocolException("Unexpected response status: " + httpResponseCode); */
+                                }
+                            }
+                        };
+
+                        try {
                         /* Execute URL and attach after execution response handler */
-                        String strResponse = httpClient.execute(httpPut, responseHandler);
+                            String strResponse = httpClient.execute(httpPut, responseHandler);
                         /* Print the response */
-                        //System.out.println("Response: " + strResponse);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                            //System.out.println("Response: " + strResponse);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 }
 
