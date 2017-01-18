@@ -448,6 +448,25 @@ public class SardineImpl implements Sardine
 		List<DavResource> resources = new ArrayList<DavResource>(responses.size());
 		for (Response response : responses)
 		{
+			String href = response.getHref().get(0);
+			int last = href.lastIndexOf("/") + 1;
+			String name = href.substring(last);
+
+			// Ignore crap files
+			if (".DS_Store".equals(name)) {
+				continue;
+			}
+
+			// Ignore crap files
+			try {
+				if ("._".equals(name.substring(0, 2))) {
+					continue;
+				}
+			}
+			catch (Exception e) {
+			   //ignore
+			}
+
 			try
 			{
 				resources.add(new DavResource(response));
