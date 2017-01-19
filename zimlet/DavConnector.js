@@ -163,13 +163,7 @@
         case (rawEntity.href.match(/\.pptx$/i) || {}).input:
              rawEntity.contentType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
           break;
-      }
-
-     
-     if(!rawEntity.modified)
-     {
-        rawEntity.modified = new Date().getTime();
-     }
+      }  
 
     return new DavResource(
       rawEntity.href,

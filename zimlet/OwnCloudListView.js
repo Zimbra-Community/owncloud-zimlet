@@ -133,15 +133,30 @@ OwnCloudListView.prototype._getCellContents = function (htmlArr, idx, item, fiel
     if (item.isDirectory()) {
       htmlArr[idx++] = "";
     } else {
-      htmlArr[idx++] = AjxUtil.formatSize(item.getContentLength());
+      if(item.getContentLength() > -1)
+      {
+         htmlArr[idx++] = AjxUtil.formatSize(item.getContentLength());
+      }
+      else
+      {
+         //do not display size if dav server does not support it
+         htmlArr[idx++] = "";
+      }   
     }
 
   } else if (field === ZmItem.F_DATE) {
 
     if (typeof item.getModified() !== "undefined") {
-      htmlArr[idx++] = AjxDateUtil.simpleComputeDateStr(item.getModified()) + " " + AjxDateUtil.computeTimeString(item.getModified());
+      try {
+         htmlArr[idx++] = AjxDateUtil.simpleComputeDateStr(item.getModified()) + " " + AjxDateUtil.computeTimeString(item.getModified());
+      }
+      catch(err){
+         //do not display modified if dav server does not support it
+         htmlArr[idx++] = "";
+      }   
     } else {
-      htmlArr[idx++] = ZmMsg.unknown;
+       //do not display modified if dav server does not support it
+      htmlArr[idx++] = "";
     }
 
   } else {
