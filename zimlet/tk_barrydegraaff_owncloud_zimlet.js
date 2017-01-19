@@ -952,11 +952,17 @@ ownCloudZimlet.prototype.displayDialog =
            passwHtml += "<tr><td style='color:#888888'>"+ZmMsg.save+" " +ZmMsg.password+":</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true'  disabled></td><td><small style='color:#888888'>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
         }     
   
+        var owncloud_zimlet_disable_ocs_public_link_shares = zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_ocs_public_link_shares");
+        var hideOCSstyle="";
+        if (owncloud_zimlet_disable_ocs_public_link_shares == 'true')
+        {
+           hideOCSstyle = " style=\"display:none !important;\" ";
+        }
 
         html = "<div style='width:600px; height: 350px;'>" +
           "<table>"+
           "<tr>" +
-          "<td>"+ZmMsg.usernameLabel+"</td>" +
+          "<td style='min-width:100px'>"+ZmMsg.usernameLabel+"</td>" +
           "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']+"'></td>" +
           "</tr>" +
           "<tr>" +
@@ -976,7 +982,7 @@ ownCloudZimlet.prototype.displayDialog =
           "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+"'></td>" +
           "</tr>" +
           "<tr>" +
-          "<tr>" +
+          "<tr " + hideOCSstyle + ">" +
           "<td>"+ZmMsg.location+"&nbsp;ownCloud/Nextcloud:&nbsp;</td>" +
           "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"'></td>" +
           "</tr>" +
