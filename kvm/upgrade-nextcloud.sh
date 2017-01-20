@@ -112,4 +112,4 @@ mv /var/www/html/config /var/www/html/nextcloud/
 /root/setpermissions.sh
 cd /var/www/html/nextcloud
 sudo -u apache php occ maintenance:mode --off
-sudo -u apache ./occ upgrade --skip-migration-test
+sudo -u apache ./occ upgrade
