@@ -425,7 +425,6 @@
    */
   DavConnector.prototype.propfind = function(path, depth, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    //path = encodeURIComponent(path).replace(/%2F/g,'/');
     soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
     soapDoc.set('depth', depth);
     DavConnector._sendRequest(DavAction.PROPFIND, soapDoc, callback, errorCallback);
