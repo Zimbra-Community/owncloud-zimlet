@@ -53,7 +53,7 @@ UploadToDavDialog.prototype._createUploadHtml = function() {
 UploadToDavDialog.prototype.popup = function(folder, callback, loc) {
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   this._uploadFolder = folder;
-  this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + this._uploadFolder;  
+  this._uploadForm.action = UploadToDavDialog.UPLOAD_URL + "?path=" + encodeURIComponent(this._uploadFolder).replace(/%2F/g,'/');  
   this._uploadCallback = callback;
   var aCtxt = ZmAppCtxt.handleWindowOpener();
 
@@ -155,7 +155,11 @@ UploadToDavDialog.prototype._handleFileSize = function(inputEl, sizeEl){
   }
 
   if(sizeEl) {
-    sizeEl.innerHTML = "  ("+AjxUtil.formatSize(totalSize, true)+")";
+    if(totalSize = "NaN")
+    {
+       totalSize = 0;
+    }
+    sizeEl.innerHTML = " ("+AjxUtil.formatSize(totalSize, true)+")";
     if(className)
       Dwt.addClass(sizeEl, "RedC");
     else

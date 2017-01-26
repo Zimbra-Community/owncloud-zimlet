@@ -338,7 +338,7 @@
    */
   DavConnector.prototype.copy = function(path, destPath, overwrite, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('path', path);
+    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
     soapDoc.set('destPath', destPath);
     soapDoc.set('overwrite', 'false');
     if (overwrite === true) soapDoc.set('overwrite', 'true');
@@ -354,7 +354,7 @@
    */
   DavConnector.prototype.rm = function(path, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('path', path);
+    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
     DavConnector._sendRequest(DavAction.DELETE, soapDoc, callback, errorCallback);
   };
 
@@ -367,7 +367,7 @@
    */
   DavConnector.prototype.get = function(path, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('path', path);
+    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
     DavConnector._sendRequest(DavAction.GET, soapDoc, callback, errorCallback);
   };
 
@@ -380,7 +380,7 @@
    */
   DavConnector.prototype.getDownloadLink = function(path, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('path', path);
+    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
     DavConnector._sendRequest(DavAction.GET_LINK, soapDoc, callback, errorCallback);
   };
 
@@ -392,9 +392,8 @@
    * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.mkcol = function(path, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN),
-      escapedPath = path.replace(' ', '%20');
-    soapDoc.set('path', escapedPath);
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
     DavConnector._sendRequest(DavAction.MKCOL, soapDoc, callback, errorCallback);
   };
 
@@ -409,8 +408,8 @@
    */
   DavConnector.prototype.move = function(path, destPath, overwrite, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('path', path);
-    soapDoc.set('destPath', destPath);
+    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
+    soapDoc.set('destPath', encodeURIComponent(destPath).replace(/%2F/g,'/'));
     soapDoc.set('overwrite', 'false');
     if (overwrite === true) soapDoc.set('overwrite', 'true');
     DavConnector._sendRequest(DavAction.MOVE, soapDoc, callback, errorCallback);
@@ -426,7 +425,8 @@
    */
   DavConnector.prototype.propfind = function(path, depth, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('path', path);
+    //path = encodeURIComponent(path).replace(/%2F/g,'/');
+    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
     soapDoc.set('depth', depth);
     DavConnector._sendRequest(DavAction.PROPFIND, soapDoc, callback, errorCallback);
   };
@@ -442,7 +442,7 @@
    */
   DavConnector.prototype.put = function(path, data, contentType, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('path', path);
+    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
     soapDoc.set('data', data);
     soapDoc.set('contentType', contentType);
     DavConnector._sendRequest(DavAction.PUT, soapDoc, callback, errorCallback);
