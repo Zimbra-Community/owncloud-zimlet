@@ -155,7 +155,6 @@ UploadToDavDialog.prototype._handleFileSize = function(inputEl, sizeEl){
   }
 
   if(sizeEl) {
-     console.log(totalSize);
     if(!totalSize)
     {
        totalSize = 0;
