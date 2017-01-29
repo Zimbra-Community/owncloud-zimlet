@@ -29,16 +29,16 @@ public class HttpMove extends HttpRequestBase
 {
 	public static final String METHOD_NAME = "MOVE";
 
-	public HttpMove(URI sourceUrl, URI destinationUrl, boolean overwrite)
+	public HttpMove(URI sourceUrl, String destinationUrl, boolean overwrite)
 	{
-		this.setHeader(HttpHeaders.DESTINATION, destinationUrl.toASCIIString());
+		this.setHeader(HttpHeaders.DESTINATION, destinationUrl);
 		this.setHeader(HttpHeaders.OVERWRITE, overwrite ? "T" : "F");
 		this.setURI(sourceUrl);
 	}
 
 	public HttpMove(String sourceUrl, String destinationUrl, boolean overwrite)
 	{
-		this(URI.create(sourceUrl), URI.create(destinationUrl), overwrite);
+		this(URI.create(sourceUrl), destinationUrl, overwrite);
 	}
 
 	@Override

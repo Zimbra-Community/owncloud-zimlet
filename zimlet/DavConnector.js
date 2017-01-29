@@ -409,7 +409,7 @@
   DavConnector.prototype.move = function(path, destPath, overwrite, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
     soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
-    soapDoc.set('destPath', encodeURIComponent(destPath).replace(/%2F/g,'/'));
+    soapDoc.set('destPath', destPath); //has already been sanitized but not encoded...
     soapDoc.set('overwrite', 'false');
     if (overwrite === true) soapDoc.set('overwrite', 'true');
     DavConnector._sendRequest(DavAction.MOVE, soapDoc, callback, errorCallback);

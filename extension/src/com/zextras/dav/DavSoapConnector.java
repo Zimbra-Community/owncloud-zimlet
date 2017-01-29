@@ -65,7 +65,7 @@ public class DavSoapConnector
     else
       url = mUrl + ":" + mPort + mBasePath + path;
 
-    return url.replace(" ", "%20");
+    return url;
   }
 
   /**

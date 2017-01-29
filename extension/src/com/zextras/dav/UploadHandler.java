@@ -166,8 +166,8 @@ public class UploadHandler implements HttpHandler {
                         continue;
                     }
 
-
-                    String fileNameString = getFileName(item.getName().replaceAll("\\\\|\\/|\\:|\\*|\\?|\\\"|\\<|\\>|\\||\\%|\\&|\\@|\\!|\\'|\\[|\\]", ""), userProperties.get(ZimletProperty.USE_NUMBERS));
+                    //to-do implement proper encoding and better sanitizing (allow more characters)
+                    String fileNameString = getFileName(item.getName().replaceAll("\\\\|\\/|\\:|\\*|\\?|\\\"|\\<|\\>|\\||\\%|\\&|\\@|\\!|\\'|\\[|\\]", "").replace(" ", "%20"), userProperties.get(ZimletProperty.USE_NUMBERS));
 
                     fileNames.add(fileNameString);
 
