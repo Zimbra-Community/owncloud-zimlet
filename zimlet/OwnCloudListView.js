@@ -609,7 +609,7 @@ OwnCloudListView.prototype._renameFileListener = function() {
 
   input = new DwtInputField({
     parent: composite,
-    hint: folder.getName()
+    initialValue: folder.getName()
   });
   renameFileDialog.setTitle(ZmMsg.rename + ": " + folder.getName());
   renameFileDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._renameFileCallback, [folder, input, renameFileDialog]));
@@ -661,7 +661,7 @@ OwnCloudListView.prototype._renameFolderListener = function(ev) {
 
   input = new DwtInputField({
     parent: composite,
-    hint: folder.getName()
+    initialValue: folder.getName()
   });
   renameFolderDialog.setTitle(ZmMsg.renameFolder + ": " + folder.getName());
   renameFolderDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._renameFolderCallback, [folder, input, renameFolderDialog]));
