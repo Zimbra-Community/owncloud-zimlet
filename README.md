@@ -18,7 +18,7 @@ Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCl
 
 Supported Zimbra versions 8.6 and 8.7.2.
 
-Zimbra Desktop is not supported and does not work.
+Zimbra Desktop is not supported and does not work. Ubuntu 12.04 is not supported (https://github.com/Zimbra-Community/owncloud-zimlet/issues/117)
 
 **Roadmap** : https://github.com/Zimbra-Community/owncloud-zimlet/wiki
 
