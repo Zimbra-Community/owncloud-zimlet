@@ -788,7 +788,6 @@ ownCloudZimlet.prototype._uploadFilesFromFormCbk = function (files , response) {
       var handler = function(status)
       {
          //Manage upload aborted
-         console.log("test" + status);
          if(status!="0") {
             uploadFileCount++;
          }
@@ -929,6 +928,19 @@ ownCloudZimlet.prototype._menuButtonListener = function (controller) {
  */
 ownCloudZimlet.prototype.doDrop =
   function(zmObjects) {
+   /* Single selects result in an object passed,
+   Multi selects results in an array of objects passed.
+   Always make it an array */    
+   if(!dropObjects[0])
+   {
+      dropObjects = [dropObjects];
+   }
+   var i = 0;
+   var zmObjects = [];
+   dropObjects.forEach(function(dropObject)
+   {
+      zmObjects[i++] = dropObject.srcObj;
+   });
   this.uploadItems(zmObjects);
 }
 
@@ -1011,10 +1023,6 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
      type = "MESSAGE",
      iObj = 0,
      tmpObj;
-
-   if (!zmObjects[0]) {
-      zmObjects = [zmObjects];
-   }
     
    var items = [];
    var index = 0;
@@ -1026,15 +1034,15 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
 
       var fileName = "";
       //if its a conversation i.e. 'ZmConv' object, get the first loaded message 'ZmMailMsg' object within that.
-      if (tmpObj.TYPE === 'ZmConv') {
-         var msgObj = tmpObj.srcObj; // get access to source-object
-         msgObj = msgObj.getFirstHotMsg();
+      if (tmpObj.type == "CONV") {
+         var msgObj = tmpObj;
+         msgObj  = msgObj.getFirstHotMsg();
          tmpObj.id = msgObj.id;
          type = 'MESSAGE';
          fileName = (tmpObj.subject ? tmpObj.subject + '.eml' : tmpObj.id + '.eml');
       }
       
-      if(tmpObj.TYPE==='ZmMailMsg')
+      if(tmpObj.type ==='MSG')
       {
          fileName = (tmpObj.subject ? tmpObj.subject + '.eml' : tmpObj.id + '.eml');
       }
@@ -1048,12 +1056,12 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
       if (tmpObj.type === 'BRIEFCASE_ITEM') {
          type = 'DOCUMENT';
          fileName = tmpObj.name;
-      } else if (tmpObj.TYPE === 'ZmContact') {
+      } else if (tmpObj.type === 'CONTACT') {
          type = 'CONTACT';
-         fileName = (tmpObj.email ? tmpObj.email + '.vcf' : tmpObj.id + '.vcf');
-      } else if (tmpObj.TYPE === 'ZmAppt') {
+         fileName = (tmpObj.attr.email ? tmpObj.attr.email + '.vcf' : tmpObj.id + '.vcf');
+      } else if (tmpObj.type === 'APPT') {
          type = 'APPOINTMENT';
-         fileName = tmpObj.subject + '.ics'
+         fileName = tmpObj.name + '.ics'
       } else if (tmpObj.type === 'TASK') {
          type = 'TASK';
          fileName = tmpObj.name + '.ics'
