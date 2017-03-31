@@ -162,12 +162,23 @@ OwnCloudCommons.prototype._createShareCbk = function(resource, resources, links,
  * @param {string} data
  * @private
  */
-OwnCloudCommons.prototype._getResourceCbk = function(resource, resources, ids, callback, data) {
+OwnCloudCommons.prototype._getResourceCbk = function(resource, resources, ids, callback, data, progressBarId) {
   var req = new XMLHttpRequest();
   if (!req.responseURL)
   {
     req.responseURL = '/service/upload?fmt=extended,raw';
   }
+  
+  function progressFunction(evt) {
+    var progressBar = document.getElementById(progressBarId);
+    if(progressBar) {
+      if (evt.lengthComputable) {  
+        progressBar.max = evt.total;
+        progressBar.value = evt.loaded;
+      }
+    }
+  }
+
   req.open('POST', '/service/upload?fmt=extended,raw', true);
   req.setRequestHeader('Cache-Control', 'no-cache');
   req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -192,6 +203,10 @@ OwnCloudCommons.prototype._getResourceCbk = function(resource, resources, ids, c
       }   
     };
   }(this, resources, ids, callback));
+  
+  if(progressBarId) {
+      req.upload.addEventListener("progress", progressFunction, false);
+  }
 
   var dataBin = OwnCloudCommons.prototype.base64DecToArr(data);
   var blob = new Blob([dataBin], { type: 'octet/stream' });
