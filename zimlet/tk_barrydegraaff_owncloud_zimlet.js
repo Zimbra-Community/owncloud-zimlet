@@ -945,7 +945,7 @@ ownCloudZimlet.prototype._menuButtonListener = function (controller) {
  * @param {ZmItem[]} zmObjects Objects dropped on the Zimlet Menu Item.
  */
 ownCloudZimlet.prototype.doDrop =
-  function(zmObjects) {
+  function(dropObjects) {
    /* Single selects result in an object passed,
    Multi selects results in an array of objects passed.
    Always make it an array */    
