@@ -27,6 +27,7 @@ tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype = new ZmZimletBase();
 tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype.constructor = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 var ownCloudZimletInstance;
+var ownCloudUploadFileCount = 0;
 //List of data to manage simultanuous upload;
 var ownCloudZimletUploadList = new Array();
 
@@ -607,14 +608,20 @@ ownCloudZimlet.prototype.makeDlg = function(title, size, content, standardButton
 
 // Ask user to use ownCloud for upload
 ownCloudZimlet.prototype.popUseOwncloudDlg = function(files) {
-   var label = this.getMessage('useOwncloudDlgLabel1');
+   var i = 0;
+   var tabLabel = [];
+   tabLabel[i++] = (this.getMessage('useOwncloudDlgLabel1').indexOf('???') == 0) ? '<span>Attachments larger than' : this.getMessage('useOwncloudDlgLabel1');
    //Max mail size in Mo
-   var label = label + " " + Math.floor(appCtxt.get(ZmSetting.MESSAGE_SIZE_LIMIT)/(1024*1024)) + " ";
-   var label = label + this.getMessage('useOwncloudDlgLabel2');
+   tabLabel[i++] = " " + Math.floor(appCtxt.get(ZmSetting.MESSAGE_SIZE_LIMIT)/(1024*1024)) + " ";
+   tabLabel[i++] = (this.getMessage('useOwncloudDlgLabel2').indexOf('???') == 0) ? 'MB will be <br>uploaded to' : this.getMessage('useOwncloudDlgLabel2');
+   tabLabel[i++] = " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+   tabLabel[i++] = (this.getMessage('useOwncloudDlgLabel3').indexOf('???') == 0) ? '. A download link<br>will be included in your email.</span>' : this.getMessage('useOwncloudDlgLabel3');
+   var label = tabLabel.join("");
 
    if(!ownCloudZimlet.settings['owncloud_zimlet_password'])
    {
-      var prompt = '<span id=\'passpromptOuter\'><br>' + ownCloudZimletInstance.getMessage("passwordPrompt") + ': <input type=\'password\' id=\'first_use_passprompt\'></span>';
+      var passwordPromptLabel = (ownCloudZimletInstance.getMessage('passwordPrompt').indexOf('???') == 0) ? 'Your password is required for sharing links' : ownCloudZimletInstance.getMessage('passwordPrompt');
+      var prompt = '<span id=\'passpromptOuter\'><br>' + passwordPromptLabel + ': <input type=\'password\' id=\'first_use_passprompt\'></span>';
    }
    else
    {
@@ -622,8 +629,9 @@ ownCloudZimlet.prototype.popUseOwncloudDlg = function(files) {
    }
    label = label + "<br>" + prompt;
 
+   var dialogLabel = (this.getMessage('useOwncloudDlgTitle').indexOf('???') == 0) ? 'Large files must be shared with ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('useOwncloudDlgTitle') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
    var dialog = this.makeDlg(
-      this.getMessage('useOwncloudDlgTitle'),
+      dialogLabel,
       {width: 300, height: 150},
       label,
       [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON]
@@ -645,7 +653,7 @@ ownCloudZimlet.prototype.popUseOwncloudDlg = function(files) {
          if(!ownCloudZimlet.settings['owncloud_zimlet_password'])
          {
             var dlg = appCtxt.getMsgDialog();
-            var msg = this.getMessage('passwordRequired');
+            var msg = (this.getMessage('passwordRequired').indexOf('???') == 0) ? 'Your password is required to go further.' : this.getMessage('passwordRequired');
             style = DwtMessageDialog.CRITICAL_STYLE;
             dlg.reset();
             dlg.setMessage(msg, style);
@@ -666,10 +674,15 @@ ownCloudZimlet.prototype.popUseOwncloudDlg = function(files) {
 
 // Ask user to use ownCloud for upload
 ownCloudZimlet.prototype.popUploadToOwncloudDlg = function(files) {
-   var label = this.getMessage('uploadToOwncloudDlgLabel1');
+   var i = 0;
+   var tabLabel = [];
+   tabLabel[i++] = (this.getMessage('uploadToOwncloudDlgLabel1').indexOf('???') == 0) ? '<span>The size of the files is over' : this.getMessage('uploadToOwncloudDlgLabel1');
    //Max mail size in Mo
-   var label = label + " " + Math.floor(appCtxt.get(ZmSetting.MESSAGE_SIZE_LIMIT)/(1024*1024)) + " ";
-   var label = label + this.getMessage('uploadToOwncloudDlgLabel2');
+   tabLabel[i++] =  " " + Math.floor(appCtxt.get(ZmSetting.MESSAGE_SIZE_LIMIT)/(1024*1024)) + " ";
+   tabLabel[i++] = (this.getMessage('uploadToOwncloudDlgLabel2').indexOf('???') == 0) ? 'MB. The files will be uploaded as' : this.getMessage('uploadToOwncloudDlgLabel2');
+   tabLabel[i++] =  " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " ";
+   tabLabel[i++] = (this.getMessage('uploadToOwncloudDlgLabel3').indexOf('???') == 0) ? 'links.</span>' : this.getMessage('uploadToOwncloudDlgLabel3');
+   var label = tabLabel.join("");
    
    //Create html for the upload bars
    var listProgressBar = {};
@@ -686,9 +699,10 @@ ownCloudZimlet.prototype.popUploadToOwncloudDlg = function(files) {
       label = label + "<td style='padding: 5px;'><div style='margin: 0px;' id='abort_"+progressId+"'></div></td></tr>";
    }
    label = label + "</table>";
-   
+
+   var dialogLabel = (this.getMessage('uploadToOwncloudDlgTitle').indexOf('???') == 0) ? 'Upload to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('uploadToOwncloudDlgTitle') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
    var dialog = this.makeDlg(
-      this.getMessage('uploadToOwncloudDlgTitle'),
+      dialogLabel,
       null,
       label,
       [DwtDialog.CANCEL_BUTTON]
@@ -726,6 +740,7 @@ ownCloudZimlet.prototype.abortUpload = function (progressId) {
       if(ownCloudZimletUploadList[i][0] == progressId) {
          var request = ownCloudZimletUploadList[i][3];
          ownCloudZimletUploadList.splice(i, 1);
+         ownCloudUploadFileCount = ownCloudUploadFileCount - 1;
          request.abort();
       }
    }
@@ -749,8 +764,8 @@ ownCloudZimlet.prototype.uploadFilesFromForm = function (files) {
 ownCloudZimlet.prototype._uploadFilesFromFormCbk = function (files , response) {
 
    var editor = appCtxt.getCurrentView().getHtmlEditor();
-   var uploadFileCount = 0;
-   this.status(this.getMessage("savingToOwncloud"), ZmStatusView.LEVEL_INFO);
+   var statusLabel = (this.getMessage('savingToOwncloud').indexOf('???') == 0) ? 'Saving to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('savingToOwncloud') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+   this.status(statusLabel, ZmStatusView.LEVEL_INFO);
    //Load the upload progress dialog box
    var dlgResult = ownCloudZimletInstance.popUploadToOwncloudDlg(files);
    var listProgressBar = dlgResult[0];
@@ -789,11 +804,11 @@ ownCloudZimlet.prototype._uploadFilesFromFormCbk = function (files , response) {
       {
          //Manage upload aborted
          if(status!="0") {
-            uploadFileCount++;
+            ownCloudUploadFileCount++;
          }
 
          //Execute only when all files are uploaded
-         if(uploadFileCount == ownCloudZimletUploadList.length) {
+         if(ownCloudUploadFileCount == ownCloudZimletUploadList.length) {
             dialog.popdown();
             dialog.dispose();
             //Create shares and insert share links
@@ -803,6 +818,7 @@ ownCloudZimlet.prototype._uploadFilesFromFormCbk = function (files , response) {
 
             //reset upload list
             ownCloudZimletUploadList = new Array();
+            ownCloudUploadFileCount = 0;
          }
       };
       
@@ -894,9 +910,11 @@ ownCloudZimlet.prototype.addMenuButton = function (controller , menu) {
    if(!menu.getMenuItem (ID)) {
       var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
       var moveOpIndex = menu.getItemIndex(moveOp);
+      var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? 'Save to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+      var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? 'Save to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
       var params = {
-         text : this.getMessage("menuLabel") ,
-         tooltip : this.getMessage("menuTooltip") ,
+         text : textLabel ,
+         tooltip : tooltipLabel ,
          image : "ownCloud-panelIcon" ,
          index : moveOpIndex + 1
       };
