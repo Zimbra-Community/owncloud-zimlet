@@ -582,32 +582,6 @@ ownCloudZimlet.prototype.doDrop =
     );
   };
 
-// Work around an 8.7 regression, allow drop of various types of objects to Zimlets
-// Fix: /symbols/src/WebRoot_js_zimbraMail_share_model_ZmZimletContext.js.html
-// See comment: XXX Assumes all dragged objects are of the same type
-// Bugzilla: https://bugzilla.zimbra.com/show_bug.cgi?id=106104
-ZmZimletContext._translateZMObject =
-function(obj) {
-   if(!(obj instanceof Array))
-   {
-      //This code is what Zimbra does by default, we do this to try and avoid regressions
-      var type = obj[0] ? obj[0].toString() : obj.toString();
-    	return (ZmZimletContext._zmObjectTransformers[type])
- 		? ZmZimletContext._zmObjectTransformers[type](obj) : obj;
-   }
-   else
-   {
-      //In case it is an array, we apply our patch
-      var transformedObjects = [];
-      for(x = 0; x < obj.length; x++)
-      {
-         var type = obj[x].toString();
-         transformedObjects[x] = (ZmZimletContext._zmObjectTransformers[type]) ? ZmZimletContext._zmObjectTransformers[type](obj[x]) : obj[x];
-      }
-      return transformedObjects;
-   }  
-};
-
 ownCloudZimlet.prototype._onDropTransfer =
   function(zmItem, status) {
     var name = this._getItemNameByType(zmItem);
