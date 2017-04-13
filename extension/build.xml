@@ -4,13 +4,13 @@
     </description>
 
     <property name="zal-version"          value="1.11"/>
-    <property name="zal-version-extended" value="1.11.9"/>
+    <property name="zal-version-extended" value="1.11.10"/>
     <!--
         In order to build the extension, is not necessary the target zimbra version,
         any version of the target jar is good for the build. Be sure to install the
         correct version at runtime.
     -->
-    <property name="zimbra-version"       value="8.7.6"/>
+    <property name="zimbra-version"       value="8.7.7"/>
 
     <property name="lib"   value="lib/"/>
     <property name="build" value="build/"/>
