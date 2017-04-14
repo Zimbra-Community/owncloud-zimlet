@@ -96,14 +96,16 @@ make
 
 echo "Installing server extension to /opt/zimbra/lib/ext/ownCloud"
 cd $TMPFOLDER/owncloud-zimlet/dist/owncloud-extension/
-ZAL_VERSION="1.11"
-ZAL_VERSION_EXTENDED="1.11.10"
-ZIMBRA_VERSION="8.7.7"
-echo "Downloading OpenZAL"
-wget --no-cache "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" -O "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
+#shopt -s extglob
+#ZAL_VERSION="1.11"
+#ZAL_VERSION_EXTENDED="1.11.10"
+#ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | tr -d '\n' | sed -r 's/.* ([0-9\.]+[0-9]).*/\1/')
+#echo "Downloading the correct ZAL Version (${ZAL_VERSION_EXTENDED} for zimbra ${ZIMBRA_VERSION})..."
+#wget --no-cache "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" -O "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
 mkdir -p /opt/zimbra/lib/ext/ownCloud
 rm -f /opt/zimbra/lib/ext/ownCloud/*.jar
-cp "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
+wget --no-cache "https://github.com/Zimbra-Community/OpenZAL/raw/master/dist/8.7.7/zal.jar.unsigned" -O "zal.jar"
+#cp "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
 
 cp ant-1.7.0.jar /opt/zimbra/lib/ext/ownCloud/
 cp commons-cli-1.2.jar /opt/zimbra/lib/ext/ownCloud/
