@@ -856,7 +856,7 @@ ownCloudZimlet.prototype.addShareLinks = function (editor) {
       );
 
       this._ownCloudConnector.createShare(
-         "/owncloud/remote.php/webdav/" + path,
+         tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] + path,
          3,
          void 0,
          false,
