@@ -101,6 +101,7 @@ cd $TMPFOLDER/owncloud-zimlet/dist/owncloud-extension/
 mkdir -p /opt/zimbra/lib/ext/ownCloud
 rm -f /opt/zimbra/lib/ext/ownCloud/*.jar
 cp *.jar /opt/zimbra/lib/ext/ownCloud/
+rm -f /opt/zimbra/lib/ext/ownCloud/zal-1.11.10-8.7.7.jar
 
 # Here we set the template for config.properties, if upgrading we alter it further down
 echo "allowdomains=*
