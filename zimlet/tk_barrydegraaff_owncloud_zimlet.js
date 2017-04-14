@@ -26,6 +26,10 @@ function tk_barrydegraaff_owncloud_zimlet_HandlerObject() {
 tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype = new ZmZimletBase();
 tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype.constructor = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
+var ownCloudZimletInstance;
+var ownCloudUploadFileCount = 0;
+//List of data to manage simultanuous upload;
+var ownCloudZimletUploadList = new Array();
 
 /**
  * Initialize the context of the OwnCloud zimlet.
@@ -34,6 +38,7 @@ var ownCloudZimlet = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
 ownCloudZimlet.prototype.init =
   function () {
     // Initialize the zimlet
+    ownCloudZimletInstance = this;
 
     /** Load default settings for new users **/
        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this._zimletContext.getConfig("disable_password_storing");
@@ -227,6 +232,32 @@ ownCloudZimlet.prototype.init =
     try {
       this.ownCloudTab = this.createApp(this._zimletContext.getConfig("owncloud_zimlet_app_title"), "", "WebDAV");
     } catch (err) { }
+    //Hide New button in zimlet app
+    var app = appCtxt.getApp(this.ownCloudTab);
+    var controller = app.getController();
+    controller.getView = function() {
+    if (!this._view) {
+        // create components
+        this._view = new ZmZimletAppView(this._container, this);
+        this._toolbar = new ZmToolBar({parent:DwtShell.getShell(window)});
+
+        // setup app elements
+        var elements = this.getViewElements(null, this._view, this._toolbar);
+
+        // create callbacks
+        var callbacks = {};
+
+        // create app view
+        this._app.createView({	viewId:	this.getDefaultViewType(),
+            elements:		elements,
+            controller:		this,
+            callbacks:		callbacks,
+            isAppView:		true,
+            isTransient:	true,
+            hide:				ZmAppViewMgr.C_NEW_BUTTON});
+        }
+        return this._view;
+    };
 
     if (appCtxt.get(ZmSetting.MAIL_ENABLED)) {
       AjxPackage.require({
@@ -553,11 +584,388 @@ ownCloudZimlet.prototype.menuItemSelected =
     }
   };
 
+ownCloudZimlet.prototype.setDialogButton = function(dialog, buttonId, text, listener) {
+   var button = dialog.getButton(buttonId);
+   button.setText(text);
+   if(listener) dialog.setButtonListener(buttonId, listener);
+}
+
+ownCloudZimlet.prototype.makeDlg = function(title, size, content, standardButtons) {
+   //Create the frame
+   var view = new DwtComposite(this.getShell());
+   if(size) {
+      view.setSize(size.width, size.height);
+   }
+   view.getHtmlElement().style.overflow = 'auto';
+   //Add html content in the frame
+   view.getHtmlElement().innerHTML = content;
+
+   //pass the title, view and buttons information and create dialog box
+   var dialog = this._createDialog({title:title, view:view, standardButtons: standardButtons});
+
+   return dialog;
+};
+
+// Ask user to use ownCloud for upload
+ownCloudZimlet.prototype.popUseOwncloudDlg = function(files) {
+   var i = 0;
+   var tabLabel = [];
+   tabLabel[i++] = (this.getMessage('useOwncloudDlgLabel1').indexOf('???') == 0) ? '<span>Attachments larger than' : this.getMessage('useOwncloudDlgLabel1');
+   //Max mail size in Mo
+   tabLabel[i++] = " " + Math.floor(appCtxt.get(ZmSetting.MESSAGE_SIZE_LIMIT)/(1024*1024)) + " ";
+   tabLabel[i++] = (this.getMessage('useOwncloudDlgLabel2').indexOf('???') == 0) ? 'MB will be <br>uploaded to' : this.getMessage('useOwncloudDlgLabel2');
+   tabLabel[i++] = " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+   tabLabel[i++] = (this.getMessage('useOwncloudDlgLabel3').indexOf('???') == 0) ? '. A download link<br>will be included in your email.</span>' : this.getMessage('useOwncloudDlgLabel3');
+   var label = tabLabel.join("");
+
+   if(!ownCloudZimlet.settings['owncloud_zimlet_password'])
+   {
+      var passwordPromptLabel = (ownCloudZimletInstance.getMessage('passwordPrompt').indexOf('???') == 0) ? 'Your password is required for sharing links' : ownCloudZimletInstance.getMessage('passwordPrompt');
+      var prompt = '<span id=\'passpromptOuter\'><br>' + passwordPromptLabel + ': <input type=\'password\' id=\'first_use_passprompt\'></span>';
+   }
+   else
+   {
+      var prompt = '<span style="display:none" id=\'passpromptOuter\'></span>';
+   }
+   label = label + "<br>" + prompt;
+
+   var dialogLabel = (this.getMessage('useOwncloudDlgTitle').indexOf('???') == 0) ? 'Large files must be shared with ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('useOwncloudDlgTitle') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+   var dialog = this.makeDlg(
+      dialogLabel,
+      {width: 300, height: 150},
+      label,
+      [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON]
+   );
+
+   this.setDialogButton(
+      dialog,
+      DwtDialog.OK_BUTTON,
+      AjxMsg.yes,
+      new AjxListener(this, function() {
+         if(!ownCloudZimlet.settings['owncloud_zimlet_password'])
+         {
+            if(document.getElementById('first_use_passprompt'))
+            {
+               ownCloudZimlet.settings['owncloud_zimlet_password'] = document.getElementById('first_use_passprompt').value;
+            }
+         }
+         
+         if(!ownCloudZimlet.settings['owncloud_zimlet_password'])
+         {
+            var dlg = appCtxt.getMsgDialog();
+            var msg = (this.getMessage('passwordRequired').indexOf('???') == 0) ? 'Your password is required to go further.' : this.getMessage('passwordRequired');
+            style = DwtMessageDialog.CRITICAL_STYLE;
+            dlg.reset();
+            dlg.setMessage(msg, style);
+            dlg.popup();
+         }
+         else {
+            dialog.popdown();
+            dialog.dispose();
+            
+            //Start upload
+            this.uploadFilesFromForm(files);
+         }
+      }, dialog)
+   );
+
+   dialog.popup();
+};
+
+// Ask user to use ownCloud for upload
+ownCloudZimlet.prototype.popUploadToOwncloudDlg = function(files) {
+   var i = 0;
+   var tabLabel = [];
+   tabLabel[i++] = (this.getMessage('uploadToOwncloudDlgLabel1').indexOf('???') == 0) ? '<span>The size of the files is over' : this.getMessage('uploadToOwncloudDlgLabel1');
+   //Max mail size in Mo
+   tabLabel[i++] =  " " + Math.floor(appCtxt.get(ZmSetting.MESSAGE_SIZE_LIMIT)/(1024*1024)) + " ";
+   tabLabel[i++] = (this.getMessage('uploadToOwncloudDlgLabel2').indexOf('???') == 0) ? 'MB. The files will be uploaded as' : this.getMessage('uploadToOwncloudDlgLabel2');
+   tabLabel[i++] =  " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " ";
+   tabLabel[i++] = (this.getMessage('uploadToOwncloudDlgLabel3').indexOf('???') == 0) ? 'links.</span>' : this.getMessage('uploadToOwncloudDlgLabel3');
+   var label = tabLabel.join("");
+   
+   //Create html for the upload bars
+   var listProgressBar = {};
+   label = label + "<br><table>";
+   for (var j = 0; j < files.length; j++) {
+      var file = files[j];
+      
+      fileName = ownCloudZimletInstance.sanitizeFileName(file.name);
+      var progressId = Dwt.getNextId();
+      listProgressBar[fileName] = progressId;
+      //label = label + "<br><div><span>"+ fileName +" </span><progress id='"+progressId+"' value='0' max='100'></progress> <div style='margin: 0px;' id='abort_"+progressId+"'></div></div>";
+      label = label + "<tr><td style='padding: 5px;'><span>"+ fileName +"</span></td>";
+      label = label + "<td style='padding: 5px;'><progress id='"+progressId+"' value='0' max='100'></progress></td>";
+      label = label + "<td style='padding: 5px;'><div style='margin: 0px;' id='abort_"+progressId+"'></div></td></tr>";
+   }
+   label = label + "</table>";
+
+   var dialogLabel = (this.getMessage('uploadToOwncloudDlgTitle').indexOf('???') == 0) ? 'Upload to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('uploadToOwncloudDlgTitle') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+   var dialog = this.makeDlg(
+      dialogLabel,
+      null,
+      label,
+      [DwtDialog.CANCEL_BUTTON]
+   );
+   
+   //Create the upload aborting widgets
+   for(filename in listProgressBar) {
+      btn = new DwtButton({parent:this.getShell()});
+      btn.setImage("Close");
+      btn.setToolTipContent(AjxMsg.cancel);
+      btn.setSize("26px", "20px");
+      btn.addSelectionListener(new AjxListener(this, this.abortUpload, listProgressBar[filename]));
+      document.getElementById("abort_" + listProgressBar[filename]).appendChild(btn.getHtmlElement());
+   }
+
+   this.setDialogButton(
+      dialog,
+      DwtDialog.CANCEL_BUTTON,
+      AjxMsg.cancel,
+      new AjxListener(this, function() {
+         for(filename in listProgressBar) {
+            this.abortUpload(listProgressBar[filename]);
+         }
+         dialog.popdown();
+         dialog.dispose();
+      }, dialog)
+   );
+
+   dialog.popup();
+   return [listProgressBar, dialog];
+};
+
+ownCloudZimlet.prototype.abortUpload = function (progressId) {
+   for(var i = 0; i < ownCloudZimletUploadList.length; i++) {
+      if(ownCloudZimletUploadList[i][0] == progressId) {
+         var request = ownCloudZimletUploadList[i][3];
+         ownCloudZimletUploadList.splice(i, 1);
+         ownCloudUploadFileCount = ownCloudUploadFileCount - 1;
+         request.abort();
+      }
+   }
+};
+
+ownCloudZimlet.prototype.uploadFilesFromForm = function (files) {
+   var propfindCbk = new AjxCallback(
+      this,
+      this._uploadFilesFromFormCbk,
+      [files]
+   );
+   
+   this._davConnector.propfind(
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
+      1,
+      propfindCbk,
+      this._defaultPropfindErrCbk
+   );
+};
+
+ownCloudZimlet.prototype._uploadFilesFromFormCbk = function (files , response) {
+
+   var editor = appCtxt.getCurrentView().getHtmlEditor();
+   var statusLabel = (this.getMessage('savingToOwncloud').indexOf('???') == 0) ? 'Saving to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('savingToOwncloud') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+   this.status(statusLabel, ZmStatusView.LEVEL_INFO);
+   //Load the upload progress dialog box
+   var dlgResult = ownCloudZimletInstance.popUploadToOwncloudDlg(files);
+   var listProgressBar = dlgResult[0];
+   var dialog = dlgResult[1];
+   for (var j = 0; j < files.length; j++) {
+      var file = files[j];
+
+      var fileName = ownCloudZimletInstance.sanitizeFileName(file.name);
+      var path = ownCloudZimlet.settings['owncloud_zimlet_default_folder'] + "/";
+      var progressId = listProgressBar[fileName];
+      var putUrl = UploadToDavDialog.UPLOAD_URL + "?path=" + path;
+
+      function progressFunction(id, evt) {
+         var progressBar = document.getElementById(id);
+         if(progressBar) {
+            if (evt.lengthComputable) {  
+               progressBar.max = evt.total;
+               progressBar.value = evt.loaded;
+            }
+         }
+      };
+
+      var formData = new FormData();
+      formData.append("csrfToken", window.csrfToken);
+      formData.append("password", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+      formData.append("filename", fileName);
+      formData.append("uploadFile", file);
+      formData.append("requestId", 0);
+      var request = new XMLHttpRequest();
+      //Store request for aborting fonctionnality
+      ownCloudZimletUploadList.push([progressId, path, fileName, request]);
+      request.open("POST", putUrl);
+      request.upload.addEventListener("progress", progressFunction.bind(null, progressId), false);
+
+      var handler = function(status)
+      {
+         //Manage upload aborted
+         if(status!="0") {
+            ownCloudUploadFileCount++;
+         }
+
+         //Execute only when all files are uploaded
+         if(ownCloudUploadFileCount == ownCloudZimletUploadList.length) {
+            dialog.popdown();
+            dialog.dispose();
+            //Create shares and insert share links
+            if(ownCloudZimletUploadList.length > 0) {
+               ownCloudZimletInstance.addShareLinks(editor);
+            }
+
+            //reset upload list
+            ownCloudZimletUploadList = new Array();
+            ownCloudUploadFileCount = 0;
+         }
+      };
+      
+      function HandlerWrapper() {
+         this.execute = function() {
+            if (this.readyState == 4) {
+               var status = this.status.toString();
+               var content = this.responseText;
+               handler.call(status, content);
+            }
+         };
+      };
+      
+      request.onreadystatechange = new HandlerWrapper().execute;
+      
+      //Send file
+      request.send(formData);
+   }
+};
+
+//Share each item uploaded and add the link in the mail body
+ownCloudZimlet.prototype.addShareLinks = function (editor) {
+   for(var i = 0; i < ownCloudZimletUploadList.length; i++) {
+      var path = ownCloudZimletUploadList[i][1];
+      var fileName = ownCloudZimletUploadList[i][2];
+      if(path == "/") {
+         path = "";
+      }
+      path = path + fileName;
+      
+      internalCallback = new AjxCallback(
+         this,
+         this._addShareLinkCbk,
+         [fileName, editor]
+      );
+
+      this._ownCloudConnector.createShare(
+         "/owncloud/remote.php/webdav/" + path,
+         3,
+         void 0,
+         false,
+         void 0,
+         1,
+         internalCallback
+      );
+   }
+};
+
+//Add share link in mail body
+ownCloudZimlet.prototype._addShareLinkCbk = function (fileName, editor, data) {
+   if(data.status == "ok") {
+      var composeMode = editor.getMode();
+      var content = editor.getContent();
+      var linkData = fileName + ": " + data.url;
+      var sep = "";
+      if(composeMode == 'text/plain') {
+         sep = "\r\n";
+      } else {
+         sep = "<br>";
+      }
+
+      if(content.indexOf('<hr id="') > 0) {
+         content = content.replace('<hr id="', linkData + sep + '<hr id="');
+      } else if(content.indexOf('<div id="') > 0) {
+         content = content.replace('<div id="', linkData + sep + '<div id="');
+      } else if(content.indexOf('</body') > 0) {
+         content = content.replace('</body', linkData + sep + '</body');
+      } else if(content.indexOf('----') > 0) {
+         content = content.replace('----', linkData + sep + '----');
+      } else {
+         content = content + sep + linkData + sep;
+      }
+      editor.setContent(content);
+   }
+}
+
+// Add "Send to WebDAV" option in items contextual menu for mail.
+ownCloudZimlet.prototype.onParticipantActionMenuInitialized = function (controller , menu) {
+   this.onActionMenuInitialized (controller , menu);
+};
+
+ownCloudZimlet.prototype.onActionMenuInitialized = function (controller , menu) {
+   this.addMenuButton(controller, menu);
+};
+
+ownCloudZimlet.prototype.addMenuButton = function (controller , menu) {
+   //WebDAV button is added after the move button
+   var ID = "ownCloudZimlet_MENU_ITEM";
+   if(!menu.getMenuItem (ID)) {
+      var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
+      var moveOpIndex = menu.getItemIndex(moveOp);
+      var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? 'Save to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+      var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? 'Save to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+      var params = {
+         text : textLabel ,
+         tooltip : tooltipLabel ,
+         image : "ownCloud-panelIcon" ,
+         index : moveOpIndex + 1
+      };
+      var mi = menu.createOp (ID , params);
+      mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , controller));
+   }
+};
+
+//Retrieve the right click item and start the upload to WebDAV
+ownCloudZimlet.prototype._menuButtonListener = function (controller) {
+   var listView = controller._listView[controller._currentView];
+   var items;
+   if(listView) {
+      items = listView.getSelection();
+      if (items == "") {
+         items = controller._actionEv.item;
+      }
+   }
+   else {
+      items = controller._actionEv.item;
+   }
+   items = AjxUtil.toArray(items);
+   this.uploadItems(items);
+};
+
 /**
  * Handle the action 'drop' on the Zimlet Menu Item.
  * @param {ZmItem[]} zmObjects Objects dropped on the Zimlet Menu Item.
  */
 ownCloudZimlet.prototype.doDrop =
+  function(dropObjects) {
+   /* Single selects result in an object passed,
+   Multi selects results in an array of objects passed.
+   Always make it an array */    
+   if(!dropObjects[0])
+   {
+      dropObjects = [dropObjects];
+   }
+   var i = 0;
+   var zmObjects = [];
+   dropObjects.forEach(function(dropObject)
+   {
+      zmObjects[i++] = dropObject.srcObj;
+   });
+  this.uploadItems(zmObjects);
+}
+
+/**
+ * Upload zimbra items in owncloud
+ * */
+ownCloudZimlet.prototype.uploadItems =
   function(zmObjects) {
 
     if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
@@ -607,10 +1015,6 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
      type = "MESSAGE",
      iObj = 0,
      tmpObj;
-
-   if (!zmObjects[0]) {
-      zmObjects = [zmObjects];
-   }
     
    var items = [];
    var index = 0;
@@ -622,15 +1026,15 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
 
       var fileName = "";
       //if its a conversation i.e. 'ZmConv' object, get the first loaded message 'ZmMailMsg' object within that.
-      if (tmpObj.TYPE === 'ZmConv') {
-         var msgObj = tmpObj.srcObj; // get access to source-object
-         msgObj = msgObj.getFirstHotMsg();
+      if (tmpObj.type == "CONV") {
+         var msgObj = tmpObj;
+         msgObj  = msgObj.getFirstHotMsg();
          tmpObj.id = msgObj.id;
          type = 'MESSAGE';
          fileName = (tmpObj.subject ? tmpObj.subject + '.eml' : tmpObj.id + '.eml');
       }
       
-      if(tmpObj.TYPE==='ZmMailMsg')
+      if(tmpObj.type ==='MSG')
       {
          fileName = (tmpObj.subject ? tmpObj.subject + '.eml' : tmpObj.id + '.eml');
       }
@@ -644,12 +1048,12 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
       if (tmpObj.type === 'BRIEFCASE_ITEM') {
          type = 'DOCUMENT';
          fileName = tmpObj.name;
-      } else if (tmpObj.TYPE === 'ZmContact') {
+      } else if (tmpObj.type === 'CONTACT') {
          type = 'CONTACT';
-         fileName = (tmpObj.email ? tmpObj.email + '.vcf' : tmpObj.id + '.vcf');
-      } else if (tmpObj.TYPE === 'ZmAppt') {
+         fileName = (tmpObj.attr.email ? tmpObj.attr.email + '.vcf' : tmpObj.id + '.vcf');
+      } else if (tmpObj.type === 'APPT') {
          type = 'APPOINTMENT';
-         fileName = tmpObj.subject + '.ics'
+         fileName = tmpObj.name + '.ics'
       } else if (tmpObj.type === 'TASK') {
          type = 'TASK';
          fileName = tmpObj.name + '.ics'
@@ -894,6 +1298,68 @@ ownCloudZimlet.prototype.onShowView =
        document.getElementById('zti__main_Tasks__'+zimletInstance._zimletContext._id+'_textCell').innerHTML = zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
        document.getElementById('zti__main_Briefcase__'+zimletInstance._zimletContext._id+'_textCell').innerHTML = zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
     } catch (err) {}
+    
+  // Add "Send to WebDAV" option in items contextual menu for contacts, appointements, tasks and files in the briefcase.
+  var controller = appCtxt.getCurrentController();
+  if(controller) {
+    if(!controller.owncloudMenuActionInit) {
+      var appName = controller.getApp().getName();
+      var appList = ["Contacts", "Calendar", "Tasks", "Briefcase"];
+      var isInAppList = false;
+      for(var i = 0; i < appList.length; i++) {
+          if (appList[i] == appName) {
+            isInAppList = true;
+          }
+      }
+      if(isInAppList) {
+        controller.origActionMenuFunction = controller._initializeActionMenu;
+        controller._initializeActionMenu = function(view) {
+          controller.origActionMenuFunction(view);
+          ownCloudZimletInstance.addMenuButton(controller, this._actionMenu);
+        };
+        controller.owncloudMenuActionInit = true;
+      }
+    }
+  }
+   // Nothing to do except for mail compose view
+   if(view.indexOf(ZmId.VIEW_COMPOSE) < 0) return;
+   //Upload to owncloud if the file exceed message size limit
+   var currentView = appCtxt.getCurrentView();
+   if(!currentView.isOwncloudModified) {
+      currentView._submitMyComputerAttachmentsOrig = currentView._submitMyComputerAttachments;
+      currentView._submitMyComputerAttachments = function(files, node, isInline) {
+         if (!files)
+            files = node.files;
+         var size = 0;
+         if (files) {
+            for (var j = 0; j < files.length; j++) {
+               var file = files[j];
+               //Check the total size of the files we upload this time
+               size += file.size || file.fileSize /*Safari*/ || 0;
+            }
+            // Check if max exceeded
+            var max_size = appCtxt.get(ZmSetting.MESSAGE_SIZE_LIMIT);
+            if((max_size != -1 /* means unlimited */) && (size > max_size)) {
+               var firstUse = ownCloudZimletInstance.getUserProperty("owncloud_zimlet_first_use");
+               if(!ownCloudZimlet.settings['owncloud_zimlet_password'] || firstUse != "false")
+               {
+                  ownCloudZimletInstance.popUseOwncloudDlg(files);
+                  if(firstUse != "false") {
+                     ownCloudZimletInstance.setUserProperty("owncloud_zimlet_first_use", "false", true)
+                  }
+               }
+               else {
+                  //Start upload
+                  ownCloudZimletInstance.uploadFilesFromForm(files);
+               }
+            }
+            else {
+               currentView._submitMyComputerAttachmentsOrig(files, node, isInline);
+            }
+         }
+      };
+      currentView.isOwncloudModified = true;
+  }
 };
 
 /* Work-around 8.7.7 regression
