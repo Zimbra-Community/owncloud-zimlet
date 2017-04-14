@@ -66,6 +66,8 @@ fi
 
 echo "Remove old versions of Zimlet."
 rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
+
 if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
    echo "Not touching COS per user request."
@@ -96,36 +98,9 @@ make
 
 echo "Installing server extension to /opt/zimbra/lib/ext/ownCloud"
 cd $TMPFOLDER/owncloud-zimlet/dist/owncloud-extension/
-#shopt -s extglob
-#ZAL_VERSION="1.11"
-#ZAL_VERSION_EXTENDED="1.11.10"
-#ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | tr -d '\n' | sed -r 's/.* ([0-9\.]+[0-9]).*/\1/')
-#echo "Downloading the correct ZAL Version (${ZAL_VERSION_EXTENDED} for zimbra ${ZIMBRA_VERSION})..."
-#wget --no-cache "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" -O "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
 mkdir -p /opt/zimbra/lib/ext/ownCloud
 rm -f /opt/zimbra/lib/ext/ownCloud/*.jar
-wget --no-cache "https://github.com/Zimbra-Community/OpenZAL/raw/master/dist/8.7.7/zal.jar.unsigned" -O "/opt/zimbra/lib/ext/ownCloud/zal.jar"
-#cp "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" /opt/zimbra/lib/ext/ownCloud/
-
-cp ant-1.7.0.jar /opt/zimbra/lib/ext/ownCloud/
-cp commons-cli-1.2.jar /opt/zimbra/lib/ext/ownCloud/
-cp commons-codec-1.9.jar /opt/zimbra/lib/ext/ownCloud/
-cp commons-fileupload-1.3.1.jar /opt/zimbra/lib/ext/ownCloud/
-cp commons-httpclient-3.1.jar /opt/zimbra/lib/ext/ownCloud/
-cp commons-logging-1.2.jar /opt/zimbra/lib/ext/ownCloud/
-cp dav-soap-connector-extension.jar /opt/zimbra/lib/ext/ownCloud/
-cp fluent-hc-4.5.1.jar /opt/zimbra/lib/ext/ownCloud/
-cp httpclient-4.5.1.jar /opt/zimbra/lib/ext/ownCloud/
-cp httpclient-cache-4.5.1.jar /opt/zimbra/lib/ext/ownCloud/
-cp httpcore-4.4.3.jar /opt/zimbra/lib/ext/ownCloud/
-cp httpcore-ab-4.4.3.jar /opt/zimbra/lib/ext/ownCloud/
-cp httpcore-nio-4.4.3.jar /opt/zimbra/lib/ext/ownCloud/
-cp httpmime-4.5.1.jar /opt/zimbra/lib/ext/ownCloud/
-cp jna-4.1.0.jar /opt/zimbra/lib/ext/ownCloud/
-cp jna-platform-4.1.0.jar /opt/zimbra/lib/ext/ownCloud/
-cp urlrewritefilter-4.0.3.jar /opt/zimbra/lib/ext/ownCloud/
-
-
+cp *.jar /opt/zimbra/lib/ext/ownCloud/
 
 # Here we set the template for config.properties, if upgrading we alter it further down
 echo "allowdomains=*
@@ -165,8 +140,6 @@ then
 else
    mkdir -p /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
    unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-   echo "Flushing Zimlet Cache."
-   su - zimbra -c "zmprov fc all"
 fi
 
 if [[ "$YNDOCPREV" == 'Y' || "$YNDOCPREV" == 'y' ]];
@@ -194,7 +167,21 @@ then
    usermod -a -G docconvert zimbra  
    
    echo "setting up fall back clean-up in /etc/cron.d/docconvert-clean"
-   echo "*/5 * * * * root /usr/bin/find /tmp -cmin +5 -type f -name 'docconvert*' -exec rm -f {} \;" > /etc/cron.d/docconvert-clean 
+   echo "*/5 * * * * root /usr/bin/find /tmp -cmin +5 -type f -name 'docconvert*' -exec rm -f {} \;" > /etc/cron.d/docconvert-clean
+   
+   echo "Installing PDF convert link extension"
+   mkdir -p /opt/zimbra/lib/ext/DocConvert
+   rm -f /opt/zimbra/lib/ext/DocConvert/*.jar
+   cp -v $TMPFOLDER/owncloud-zimlet/docconvert/extension/out/artifacts/DocConvert/DocConvert.jar /opt/zimbra/lib/ext/DocConvert/DocConvert.jar
+
+   echo "Installing DocConvert Zimlet."
+   if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
+   then
+      echo "Skipped per user request."
+   else
+      mkdir -p /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
+      cp -v $TMPFOLDER/owncloud-zimlet/docconvert/zimlet/tk_barrydegraaff_docconvert/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
+   fi    
 fi
 
 echo "Downloading OCS Share API implementation for WebDAV Client"
@@ -225,6 +212,9 @@ fi
 
 chown zimbra:zimbra /opt/zimbra/lib/ext/ownCloud/config.properties
 chmod u+rw /opt/zimbra/lib/ext/ownCloud/config.properties
+
+echo "Flushing Zimlet Cache."
+su - zimbra -c "zmprov fc all"
 
 echo "--------------------------------------------------------------------------------------------------------------
 Zimbra WebDAV Client installed successful.
