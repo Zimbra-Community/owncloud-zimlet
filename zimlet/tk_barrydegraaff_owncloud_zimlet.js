@@ -855,7 +855,7 @@ ownCloudZimlet.prototype.addShareLinks = function (editor) {
          [fileName, editor]
       );
 
-      this._ownCloudConnector.createShare(
+      this._ownCloudConnector.createShare(         
          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] + path,
          3,
          void 0,
@@ -910,8 +910,8 @@ ownCloudZimlet.prototype.addMenuButton = function (controller , menu) {
    if(!menu.getMenuItem (ID)) {
       var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
       var moveOpIndex = menu.getItemIndex(moveOp);
-      var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? 'Save to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
-      var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? 'Save to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+      var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+      var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
       var params = {
          text : textLabel ,
          tooltip : tooltipLabel ,
@@ -1363,7 +1363,7 @@ ownCloudZimlet.prototype.onShowView =
 };
 
 /* Work-around 8.7.7 regression
-*  Bug: https://bugzilla.zimbra.com/show_bug.cgi?id=107013
+ * Bug: https://bugzilla.zimbra.com/show_bug.cgi?id=107013
 *  Fix: https://github.com/Zimbra/zm-ajax/pull/5
 */ 
 DwtControl.prototype._position =
@@ -1599,6 +1599,7 @@ ownCloudZimlet.prototype.prefSaveBtn = function()
 {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    var serverName = document.getElementById('owncloud_zimlet_server_name').value;
+   if (document.getElementById('owncloud_zimlet_default_folder').value.substr(-1) != '/') document.getElementById('owncloud_zimlet_default_folder').value += '/';
    if (/\/$/.test(serverName)) {
      // Trim the unwanted ending of the server name like
      // https://oc.example.com/ turns into https://oc.example.com
