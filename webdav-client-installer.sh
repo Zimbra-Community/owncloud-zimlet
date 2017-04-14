@@ -100,8 +100,24 @@ echo "Installing server extension to /opt/zimbra/lib/ext/ownCloud"
 cd $TMPFOLDER/owncloud-zimlet/dist/owncloud-extension/
 mkdir -p /opt/zimbra/lib/ext/ownCloud
 rm -f /opt/zimbra/lib/ext/ownCloud/*.jar
-cp *.jar /opt/zimbra/lib/ext/ownCloud/
-rm -f /opt/zimbra/lib/ext/ownCloud/zal-1.11.10-8.7.7.jar
+cp ant-1.7.0.jar /opt/zimbra/lib/ext/ownCloud/
+cp commons-cli-1.2.jar /opt/zimbra/lib/ext/ownCloud/
+cp commons-codec-1.9.jar /opt/zimbra/lib/ext/ownCloud/
+cp commons-fileupload-1.3.1.jar /opt/zimbra/lib/ext/ownCloud/
+cp commons-httpclient-3.1.jar /opt/zimbra/lib/ext/ownCloud/
+cp commons-logging-1.2.jar /opt/zimbra/lib/ext/ownCloud/
+cp dav-soap-connector-extension.jar /opt/zimbra/lib/ext/ownCloud/
+cp fluent-hc-4.5.1.jar /opt/zimbra/lib/ext/ownCloud/
+cp httpclient-4.5.1.jar /opt/zimbra/lib/ext/ownCloud/
+cp httpclient-cache-4.5.1.jar /opt/zimbra/lib/ext/ownCloud/
+cp httpcore-4.4.3.jar /opt/zimbra/lib/ext/ownCloud/
+cp httpcore-ab-4.4.3.jar /opt/zimbra/lib/ext/ownCloud/
+cp httpcore-nio-4.4.3.jar /opt/zimbra/lib/ext/ownCloud/
+cp httpmime-4.5.1.jar /opt/zimbra/lib/ext/ownCloud/
+cp jna-4.1.0.jar /opt/zimbra/lib/ext/ownCloud/
+cp jna-platform-4.1.0.jar /opt/zimbra/lib/ext/ownCloud/
+cp urlrewritefilter-4.0.3.jar /opt/zimbra/lib/ext/ownCloud/
+cp zal.jar /opt/zimbra/lib/ext/ownCloud/
 
 # Here we set the template for config.properties, if upgrading we alter it further down
 echo "allowdomains=*
