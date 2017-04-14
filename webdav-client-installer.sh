@@ -96,11 +96,10 @@ make
 
 echo "Installing server extension to /opt/zimbra/lib/ext/ownCloud"
 cd $TMPFOLDER/owncloud-zimlet/dist/owncloud-extension/
-shopt -s extglob
 ZAL_VERSION="1.11"
 ZAL_VERSION_EXTENDED="1.11.10"
-ZIMBRA_VERSION=$(sudo su - zimbra -c "zmcontrol -v" | tr -d '\n' | sed -r 's/.* ([0-9\.]+[0-9]).*/\1/')
-echo "Downloading the correct ZAL Version (${ZAL_VERSION_EXTENDED} for zimbra ${ZIMBRA_VERSION})..."
+ZIMBRA_VERSION="8.7.7"
+echo "Downloading OpenZAL"
 wget --no-cache "https://openzal.org/${ZAL_VERSION}/zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar" -O "zal-${ZAL_VERSION_EXTENDED}-${ZIMBRA_VERSION}.jar"
 mkdir -p /opt/zimbra/lib/ext/ownCloud
 rm -f /opt/zimbra/lib/ext/ownCloud/*.jar
