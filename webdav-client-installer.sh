@@ -31,7 +31,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 echo ""
-echo "Do you want to enable experimental document preview (tested on CentOS 7 and Ubuntu 14.04)? Y/n:"
+echo "Do you want to enable experimental document preview (tested on CentOS 7 and Ubuntu 14.04)? y/N:"
 read YNDOCPREV;
 
 echo ""
