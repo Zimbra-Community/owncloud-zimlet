@@ -1,4 +1,4 @@
-Zimbra WebDAV Client (RC1)
+Zimbra WebDAV Client
 ==========
 
 If you find Zimbra WebDAV Client useful and want to support its continued development, you can make donations via:
