@@ -1,0 +1,2 @@
+Manifest-Version: 1.0
+Zimbra-Extension-Class: tk.barrydegraaff.docconvert.DocConvertExtension
