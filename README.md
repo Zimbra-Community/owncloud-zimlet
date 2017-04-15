@@ -81,17 +81,12 @@ After changing config.properties run the following:
 
 ### Restrict allowed DAV Servers
 
-As of version 0.5.6 your clients **can connect to all dav servers by default**,  you can restrict the allowed DAV servers to connect to in:
+Your clients **can connect to all dav servers by default**,  you can restrict the allowed DAV servers to connect to in:
 
     /opt/zimbra/lib/ext/ownCloud/config.properties
     allowdomains=allowme.example.com;allowmealso.example.com
 
 No service restart is needed after changing this file.
-
-If you installed WebDAV Client before, you should remove your DAV servers from zimbraProxyAllowedDomains.
-
-    zmprov gc default zimbraProxyAllowedDomains
-    zmprov mc default -zimbraProxyAllowedDomains allowme.example.com
 
 ### Un-installing
 
@@ -112,7 +107,7 @@ The Zimbra WebDAV Client uses built-in language strings from Zimbra, as such it 
 2. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
 3. Running a WebDAV server behind and NGINX reverse proxy (from CentOS or Debian) won't work, it will work when proper options are enabled (as for example with zimbra-proxy, also based on NGINX).
 4. Previews stay stuck on first viewed document, see owncloud_zimlet_preview_delay above.
-5. Delay of 30 seconds in response from Nextcloud, set in your Nextcloud the preference `'auth.bruteforce.protection.enabled' => false,`
+5. Delay of 30 seconds in response from Nextcloud, set in your Nextcloud the preference `'auth.bruteforce.protection.enabled' => false,` and issue `truncate table bruteforce_attempts;`
 
 See:
 https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting

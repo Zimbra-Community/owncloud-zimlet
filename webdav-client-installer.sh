@@ -241,18 +241,13 @@ To load the extension:
 su zimbra
 zmmailboxdctl restart
 
-  As of version 0.5.6 your clients CAN CONNECT TO ALL DAV SERVERS BY DEFAULT,
+  Your clients CAN CONNECT TO ALL DAV SERVERS BY DEFAULT,
   you can restrict the allowed DAV servers to connect to in:
 
   /opt/zimbra/lib/ext/ownCloud/config.properties
   allowdomains=allowme.example.com;allowmealso.example.com
 
   - No service restart is needed after changing this file.
-
-  If you installed WebDAV Client before, you should remove your DAV servers
-  from zimbraProxyAllowedDomains:
-  zmprov gc default zimbraProxyAllowedDomains
-  zmprov mc default -zimbraProxyAllowedDomains allowme.example.com
 
 "
 
