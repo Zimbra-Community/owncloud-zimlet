@@ -96,10 +96,10 @@ If you installed WebDAV Client before, you should remove your DAV servers from z
 ### Un-installing
 
 	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-   rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
+	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
 	rm -Rf /opt/zimbra/lib/ext/ownCloud/
-   rm -Rf /opt/zimbra/lib/ext/OCS
-   rm -Rf /opt/zimbra/lib/ext/DocConvert/
+	rm -Rf /opt/zimbra/lib/ext/OCS
+	rm -Rf /opt/zimbra/lib/ext/DocConvert/
 	[zimbra@server zimbra]$ zmmailboxdctl restart   
 	
 ### Translations
