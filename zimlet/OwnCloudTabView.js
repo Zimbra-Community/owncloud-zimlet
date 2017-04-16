@@ -322,24 +322,32 @@ OwnCloudTabView.prototype._appendSharedLink =
       composeMode = composeView.getHtmlEditor().getMode(),
       content = composeView.getHtmlEditor().getContent(),
       sep,
-      linkData = url.name + " "+passwordText+" : " + url.link;
+      linkData;
+      
+      if(url.link.match(/http:\/\/|https:\/\//i))
+      {
+         linkData = url.name + " "+passwordText+" : " + url.link;
+         if(composeMode == 'text/plain') {
+           sep = "\r\n";
+         } else {
+           sep = "<br>";
+         }
 
-    if(composeMode == 'text/plain') {
-      sep = "\r\n";
-    } else {
-      sep = "<br>";
-    }
-
-    if(content.indexOf('<hr id="') > 0) {
-      content = content.replace('<hr id="', linkData + sep + '<hr id="');
-    } else if(content.indexOf('<div id="') > 0) {
-      content = content.replace('<div id="', linkData + sep + '<div id="');
-    } else if(content.indexOf('</body') > 0) {
-      content = content.replace('</body', linkData + sep + '</body');
-    } else if(content.indexOf('----') > 0) {
-      content = content.replace('----', linkData + sep + '----');
-    } else {
-      content = content + sep + linkData + sep;
-    }
-    composeView.getHtmlEditor().setContent(content);
+         if(content.indexOf('<hr id="') > 0) {
+           content = content.replace('<hr id="', linkData + sep + '<hr id="');
+         } else if(content.indexOf('<div id="') > 0) {
+           content = content.replace('<div id="', linkData + sep + '<div id="');
+         } else if(content.indexOf('</body') > 0) {
+           content = content.replace('</body', linkData + sep + '</body');
+         } else if(content.indexOf('----') > 0) {
+           content = content.replace('----', linkData + sep + '----');
+         } else {
+           content = content + sep + linkData + sep;
+         }
+         composeView.getHtmlEditor().setContent(content);
+      }
+      else
+      {
+         ownCloudZimlet.prototype.status(url.link,ZmStatusView.LEVEL_CRITICAL);  
+      }   
   };
