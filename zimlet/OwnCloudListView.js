@@ -415,17 +415,26 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
     extraBodyText = [];
 
   for (var i = 0; i < urls.length; i+= 1) {
-    extraBodyText.push(urls[i].name + " "+passwordText+" : " + urls[i].link);
+    if(urls[i].link.match(/http:\/\/|https:\/\//i))
+    {
+       extraBodyText.push(urls[i].name + " "+passwordText+" : " + urls[i].link);
+    }
+    else
+    {
+       ownCloudZimlet.prototype.status(urls[i].link,ZmStatusView.LEVEL_CRITICAL);  
+    }   
   }
-
-  cc._setView({
-    action: ZmOperation.NEW_MESSAGE,
-    inNewWindow: false,
-    msg: new ZmMailMsg(),
-    subjOverride: new AjxListFormat().format(resNames),
-    extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
-  });
-  cc.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, [].concat(idsToAttach).join(","));
+  if(extraBodyText.length > 0)
+  {
+    cc._setView({
+      action: ZmOperation.NEW_MESSAGE,
+      inNewWindow: false,
+      msg: new ZmMailMsg(),
+      subjOverride: new AjxListFormat().format(resNames),
+      extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
+    });
+    cc.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, [].concat(idsToAttach).join(","));
+  }  
 };
 
 OwnCloudListView.prototype._onItemSelected = function(ev) {
