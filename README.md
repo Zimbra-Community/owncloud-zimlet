@@ -55,13 +55,13 @@ Please note that a preference set by the user has priority over a preference set
 | disable_password_storing  | false  |  When true, users can not store their passwords in plain text in LDAP  | |
 | owncloud_zimlet_server_name  |   | URL to your WebDAV/ownCloud server. Example: https://myowncloud.com  |location.protocol + '//' + location.hostname  | 
 | owncloud_zimlet_server_port  |   | Port number for your WebDAV/ownCloud server. Example: 443 | ((location.protocol === 'https:') ? 443 : 80)  |
-| owncloud_zimlet_server_path  | /owncloud/remote.php/webdav/   | Part of the URL where server handles WebDAV protocol without protocol and hostname. |   |
-| owncloud_zimlet_oc_folder  | /owncloud  | Location where ownCloud/nextCloud is installed without protocol and hostname.  |    |
+| owncloud_zimlet_server_path  | /nextcloud/remote.php/webdav/   | Part of the URL where server handles WebDAV protocol without protocol and hostname. |   |
+| owncloud_zimlet_oc_folder  | /nextcloud  | Location where ownCloud/nextCloud is installed without protocol and hostname.  |    |
 | owncloud_zimlet_default_folder  |   | Default location where to upload files from Zimbra to WebDAV.  |   |
 | owncloud_zimlet_ask_folder_each_time  | false  | When true, ask the user each time to choose destination folder when uploading an attachment to WebDAV. The destination folder can be the default folder and folders in top level of the default folder. |   |
 | owncloud_zimlet_disable_rename_delete_new_folder  | false  | When true, rename folder, new folder and delete folder operations are hidden from the UI. To avoid bugs in ownCloud 8 with external storage.  |   |
 | owncloud_zimlet_extra_toolbar_button_title  | Open ownCloud tab  | If a value is set, show an additional button in the WebDAV tab to open in a new browser window the url set in owncloud_zimlet_extra_toolbar_button_url.  |   |
-| owncloud_zimlet_extra_toolbar_button_url  | /owncloud  | See: owncloud_zimlet_extra_toolbar_button_title |   |
+| owncloud_zimlet_extra_toolbar_button_url  | /nextcloud  | See: owncloud_zimlet_extra_toolbar_button_title |   |
 | owncloud_zimlet_app_title  | WebDAV  | Change this if you want to rebrand WebDAV Client for your users. For example: ownCloud. |   |
 | owncloud_zimlet_max_upload_size  | 104857600  (100MB) | Maximum upload size for upload dialog MB * 1024 * 1024. The back-end has a hardcoded maximum of 1048576000 (1GB). |   |
 | owncloud_zimlet_preview_delay  | 200 | Delay in milliseconds between loading previews, if your previews stuck, set this to 400. |   |
