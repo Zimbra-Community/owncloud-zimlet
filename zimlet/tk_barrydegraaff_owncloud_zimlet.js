@@ -48,8 +48,15 @@ ownCloudZimlet.prototype.init =
        //Set default value
        if(!this.getUserProperty("owncloud_zimlet_username"))
        {
-          var username = appCtxt.getActiveAccount().name.match(/.*@/);
-          username = username[0].replace('@','');
+          if(this._zimletContext.getConfig("owncloud_zimlet_accountname_with_domain")=="false")
+          {
+             var username = appCtxt.getActiveAccount().name.match(/.*@/);
+             username = username[0].replace('@','');
+          }
+          else
+          {
+             var username = appCtxt.getActiveAccount().name;             
+          }   
           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = username;   
        }
        else
@@ -1410,9 +1417,6 @@ ownCloudZimlet.prototype.displayDialog =
           disposeOnPopDown: true
         });
         var html = '';
-        var username = appCtxt.getActiveAccount().name.match(/.*@/);
-        username = username[0].replace('@','');
-
         var passwHtml = "";
         if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
         {

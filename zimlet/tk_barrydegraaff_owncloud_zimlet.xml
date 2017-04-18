@@ -23,7 +23,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
-        version="0.8.0"
+        version="0.8.1"
         target="main compose-window view-window"
         label="WebDAV"
         description="Attach from and save to WebDAV">
