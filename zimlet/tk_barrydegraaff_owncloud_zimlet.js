@@ -238,33 +238,37 @@ ownCloudZimlet.prototype.init =
 
     try {
       this.ownCloudTab = this.createApp(this._zimletContext.getConfig("owncloud_zimlet_app_title"), "", "WebDAV");
-    } catch (err) { }
-    //Hide New button in zimlet app
-    var app = appCtxt.getApp(this.ownCloudTab);
-    var controller = app.getController();
-    controller.getView = function() {
-    if (!this._view) {
-        // create components
-        this._view = new ZmZimletAppView(this._container, this);
-        this._toolbar = new ZmToolBar({parent:DwtShell.getShell(window)});
 
-        // setup app elements
-        var elements = this.getViewElements(null, this._view, this._toolbar);
-
-        // create callbacks
-        var callbacks = {};
-
-        // create app view
-        this._app.createView({	viewId:	this.getDefaultViewType(),
-            elements:		elements,
-            controller:		this,
-            callbacks:		callbacks,
-            isAppView:		true,
-            isTransient:	true,
-            hide:				ZmAppViewMgr.C_NEW_BUTTON});
-        }
-        return this._view;
-    };
+      //Hide New button in zimlet app
+      var app = appCtxt.getApp(this.ownCloudTab);
+      var controller = app.getController();
+    } catch (err) { console.log(err) }
+    if(controller)
+    {
+       controller.getView = function() {
+       if (!this._view) {
+           // create components
+           this._view = new ZmZimletAppView(this._container, this);
+           this._toolbar = new ZmToolBar({parent:DwtShell.getShell(window)});
+   
+           // setup app elements
+           var elements = this.getViewElements(null, this._view, this._toolbar);
+   
+           // create callbacks
+           var callbacks = {};
+   
+           // create app view
+           this._app.createView({	viewId:	this.getDefaultViewType(),
+               elements:		elements,
+               controller:		this,
+               callbacks:		callbacks,
+               isAppView:		true,
+               isTransient:	true,
+               hide:				ZmAppViewMgr.C_NEW_BUTTON});
+           }
+           return this._view;
+       };
+    }
 
     if (appCtxt.get(ZmSetting.MAIL_ENABLED)) {
       AjxPackage.require({
