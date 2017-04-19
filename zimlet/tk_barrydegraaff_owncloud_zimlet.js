@@ -242,7 +242,7 @@ ownCloudZimlet.prototype.init =
       //Hide New button in zimlet app
       var app = appCtxt.getApp(this.ownCloudTab);
       var controller = app.getController();
-    } catch (err) { console.log(err) }
+    } catch (err) { }
     if(controller)
     {
        controller.getView = function() {
