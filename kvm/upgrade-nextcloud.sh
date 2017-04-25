@@ -7,10 +7,13 @@ then
         exit 0;
 fi
 
+if ! [[ $2 == "yes" ]]
+then
 echo "This script assumes you installed nextcloud in /var/www/html/nextcloud.";
 echo '(basically you used the kickstart installer for nextcloud centos7-nextcloud.cfg)'
 echo "Hit enter, if you want to continue running this script, or CTRL+C  to abort";
 read dum;
+fi
 
 cat > /root/setpermissions.sh << EOF
 #!/bin/bash
