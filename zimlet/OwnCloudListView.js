@@ -424,7 +424,7 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
        ownCloudZimlet.prototype.status(urls[i].link,ZmStatusView.LEVEL_CRITICAL);  
     }   
   }
-  console.log(idsToAttach);
+    
   if((extraBodyText.length > 0) || (idsToAttach.length > 0))
   {
     cc._setView({
