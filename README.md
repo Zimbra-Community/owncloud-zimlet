@@ -70,6 +70,7 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_disable_ocs_public_link_shares  | false | Controls if users can share items with a public link. Set this to true if you use a DAV server that is not ownCloud/Nextcloud or if you want to disable  public link sharing. |   |
 | owncloud_zimlet_welcome_url | https://barrydegraaff.github.io/owncloud/ | Page to load in the preview window when then the tab is clicked. |   |
 | owncloud_zimlet_accountname_with_domain | false | When false the username field in settings dialog is set to `username`, when true it is set to `username@domain.com` |   |
+| owncloud_zimlet_disable_auto_upload_on_exceed | false | When true, the user will not be asked to use WebDAV if attachment size exceeds Zimbra limit. This feature is for compatibility with other Zimlets (RMail) | | 
 
 After changing config.properties run the following: 
 

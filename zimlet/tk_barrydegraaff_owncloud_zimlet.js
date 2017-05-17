@@ -1334,6 +1334,10 @@ ownCloudZimlet.prototype.onShowView =
   }
    // Nothing to do except for mail compose view
    if(view.indexOf(ZmId.VIEW_COMPOSE) < 0) return;
+   if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_auto_upload_on_exceed")=="true")
+   {
+      return;
+   }
    //Upload to owncloud if the file exceed message size limit
    var currentView = appCtxt.getCurrentView();
    if(!currentView.isOwncloudModified) {
