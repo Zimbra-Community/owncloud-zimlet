@@ -252,6 +252,8 @@ OwnCloudApp.prototype._shareLinkClickedHandler = function() {
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
   if(zimletInstance.shareLinkClicked)
   {
+     //issue: https://github.com/Zimbra-Community/owncloud-zimlet/issues/141
+     zimletInstance.shareLinkClicked = decodeURIComponent(zimletInstance.shareLinkClicked);
      this._davConnector.propfind(
          zimletInstance.shareLinkClicked,
          1,
