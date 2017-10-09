@@ -16,11 +16,9 @@ Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCl
 - Windows: Internet Explorer 11, Microsoft Edge, Google Chrome, Firefox
 - Linux: Google Chrome, Firefox
 
-Supported Zimbra versions 8.6 and 8.7.11.
+Supported Zimbra versions 8.6, 8.7.11 and 8.8.4.
 
 Zimbra Desktop is not supported and does not work. Ubuntu 12.04 is not supported (https://github.com/Zimbra-Community/owncloud-zimlet/issues/117)
-
-**Roadmap** : https://github.com/Zimbra-Community/owncloud-zimlet/wiki
 
 Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
@@ -38,6 +36,9 @@ Use the automated installer:
     wget --no-cache https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/webdav-client-installer.sh -O /tmp/webdav-client-installer.sh
     chmod +rx /tmp/webdav-client-installer.sh
     /tmp/webdav-client-installer.sh 
+    
+### Document preview
+Previews are supported for the following file types: pdf,jpg,jpeg,png,txt,md (markdown rendering). Video playback *results may be poor* supported types: mp4 and webm. If you enabled the optional LibreOffice conversion in the installer, these file types are previewed as well: docx,doc,xlsx,xls,pptx,ppt,odt,ods,odp. On CentOS 7 only (see extras folder): djvu.
 
 ### Configuring preferences
 
