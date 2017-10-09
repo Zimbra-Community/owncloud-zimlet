@@ -452,11 +452,11 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   {     
      if(xhr.responseText == 'true')
      {
-        var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i;
+        var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.md$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i;
      }
      else
      {
-        var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$/i;
+        var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.md$/i;
      }
      if(!item.isDirectory() && davResource._href.match(regex))
      {
@@ -520,6 +520,9 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
      case (davResource._href.match(/\.txt$/i) || {}).input:
           contentType = 'text/plain';
        break;
+     case (davResource._href.match(/\.md$/i) || {}).input:
+          contentType = 'text/plain';
+       break;       
      case (davResource._href.match(/\.doc$/i) || {}).input:
           contentType = 'application/vnd.ms-word';
        break;
@@ -548,6 +551,10 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
   if(davResource._href.match(/\.txt$/i))
   {
      document.getElementById('WebDAVPreview').src=href;
+  }
+  else if(davResource._href.match(/\.md$/i))
+  {
+     document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/markdown')+'/?url='+window.btoa(href);
   }
   else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i))
   {

@@ -145,6 +145,9 @@
         case (rawEntity.href.match(/\.txt$/i) || {}).input:
              rawEntity.contentType = 'text/plain';
           break;
+        case (rawEntity.href.match(/\.md$/i) || {}).input:
+             rawEntity.contentType = 'text/plain';
+          break;
         case (rawEntity.href.match(/\.doc$/i) || {}).input:
              rawEntity.contentType = 'application/vnd.ms-word';
           break;
