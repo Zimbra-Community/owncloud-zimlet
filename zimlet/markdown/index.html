@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Markdown document</title>
+<script type="text/javascript" src="purify.js"></script>
+</head>
+<body>
+<textarea theme="united" style="d isplay:none;" id="mddocument">
+</textarea>
+
+<script type="text/javascript">
+	
+function getQueryParams(qs) {
+    qs = qs.split('+').join(' ');
+
+    var params = {},
+        tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}
+
+var query = getQueryParams(document.location.search);
+if(query.url)
+{
+	var xhr = new XMLHttpRequest();
+	xhr.open( "GET", window.atob(query.url), false );
+	xhr.send( );
+	document.getElementById('mddocument').innerHTML = DOMPurify.sanitize(xhr.response);
+}    
+</script>
+<script src="strapdown.js"></script>
+
+</body>
+</html>
