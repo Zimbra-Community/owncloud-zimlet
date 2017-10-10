@@ -35,6 +35,7 @@ function OwnCloudListView(
   this._listeners[ZmOperation.RENAME_FOLDER]    = (function(_this) { return function() {_this._renameFolderListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.NEW_FOLDER]    = (function(_this) { return function() {_this._newFolderListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.SAVE_FILE]        = (function(_this) { return function() {_this._saveFileListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.EDIT_FILE]        = (function(_this) { return function() {_this._editFileListener.apply(_this, arguments); }; })(this);
 
   this.addActionListener(new AjxListener(this, this._listActionListener));
   this.addSelectionListener(new AjxListener(this, this._onItemSelected));
@@ -219,6 +220,16 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
       parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(true);
       parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(true);
     }
+    if(resource._contentType == 'text/plain')
+    {
+       parent.getMenuItem(ZmOperation.EDIT_FILE).setEnabled(true);
+       parent.getMenuItem(ZmOperation.EDIT_FILE).setVisible(true);
+    }
+    else
+    {
+       parent.getMenuItem(ZmOperation.EDIT_FILE).setEnabled(false);
+       parent.getMenuItem(ZmOperation.EDIT_FILE).setVisible(false);
+    }
   }
   else
   {
@@ -282,6 +293,7 @@ OwnCloudListView.prototype._addMenuListeners = function (menu) {
 
 OwnCloudListView.prototype._getActionMenuOps = function() {
   return [
+    ZmOperation.EDIT_FILE,
     ZmOperation.SAVE_FILE,
     ZmOperation.RENAME_FILE,
     ZmOperation.RENAME_FOLDER,
@@ -570,6 +582,60 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
   }
 };
 
+/**
+ * 
+ * Implement file edit for text/plain (markdown documents)
+ * to-do: collision detection
+ * 
+ * */
+OwnCloudListView.prototype._editFileListener = function(ev) {
+  var davResource = this.getSelection()[0];
+  this._davConnector.getDownloadLink(
+    davResource.getHref(),
+    new AjxCallback(this, this._editFileCbk, [davResource])
+  );
+};
+
+OwnCloudListView.prototype._editFileCbk = function(davResource, token) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
+
+   zimletInstance._editdialog = new ZmDialog( { title:ZmMsg.edit, parent:zimletInstance.getShell(), standardButtons:[DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON], disposeOnPopDown:true } );
+   zimletInstance._editdialog.setContent('<div style=\'width:600px; height: 350px;\'><textarea rows="23" id="OwnCloudListViewEdit"></textarea></div>');
+   zimletInstance._editdialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.okbtnEdit,[davResource]));
+   zimletInstance._editdialog._setAllowSelection();
+   document.getElementById(zimletInstance._editdialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';
+   document.getElementById(zimletInstance._editdialog.__internalId+'_title').style.textAlign = 'center';
+
+	var xhr = new XMLHttpRequest();
+	xhr.open( "GET", href, false );
+	xhr.send( );
+	document.getElementById('OwnCloudListViewEdit').innerHTML = DOMPurify.sanitize(xhr.response);
+
+   zimletInstance._editdialog.popup();      
+};
+
+OwnCloudListView.prototype.okbtnEdit = function(davResource) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;   
+   var path = davResource._href.substr(0, davResource._href.lastIndexOf("/")) + "/";
+   var filename = davResource._href.substr(davResource._href.lastIndexOf("/")+1);
+
+   form = new FormData(),
+   request = new XMLHttpRequest();
+   form.append("uploadFile",new Blob([ document.getElementById('OwnCloudListViewEdit').value ]), filename);
+   form.append("password", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+   request.open(
+   "POST",
+   "/service/extension/dav_upload/?path="+path,
+   false
+   );
+   request.send(form);
+   document.getElementById('WebDAVPreview').src=zimletInstance.getResource('pixel.png');
+   zimletInstance._editdialog.popdown();
+};
+/**
+ * End edit text/plain 
+ * */
 
 OwnCloudListView.prototype._saveFileListener = function(ev) {
   var davResource = this.getSelection()[0];

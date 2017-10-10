@@ -38,3 +38,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
  height: 18px;
  overflow: hidden;
 }
+
+.DwtDialog textarea{
+   width:98%;
+   font-family: monospace !important;
+}

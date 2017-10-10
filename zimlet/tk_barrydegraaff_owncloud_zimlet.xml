@@ -23,10 +23,11 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
-        version="0.8.7"
+        version="0.8.6"
         target="main compose-window view-window"
         label="WebDAV"
         description="Attach from and save to WebDAV">
+    <include>markdown/purify.js</include>
     <include>DavConnector.js</include>
     <include>OwnCloudApp.js</include>
     <include>OwnCloudCommons.js</include>
