@@ -98,7 +98,7 @@ body{margin:0;font-family:'Ubuntu',Tahoma,sans-serif;font-size:14px;line-height:
 .container:after{clear:both;}
 .container-fluid{padding-right:20px;padding-left:20px;*zoom:1;}.container-fluid:before,.container-fluid:after{display:table;content:"";line-height:0;}
 .container-fluid:after{clear:both;}
-p{margin:0 0 10px;}
+p{margin:0 0 15px;}
 .lead{margin-bottom:20px;font-size:21px;font-weight:200;line-height:30px;}
 small{font-size:85%;}
 strong{font-weight:bold;}

@@ -630,7 +630,12 @@ OwnCloudListView.prototype.okbtnEdit = function(davResource) {
    false
    );
    request.send(form);
-   document.getElementById('WebDAVPreview').src=zimletInstance.getResource('pixel.png');
+   
+   zimletInstance._davConnector.getDownloadLink(
+      davResource.getHref(),
+      new AjxCallback(this, this.preview, [davResource])
+   );   
+   
    zimletInstance._editdialog.popdown();
 };
 /**

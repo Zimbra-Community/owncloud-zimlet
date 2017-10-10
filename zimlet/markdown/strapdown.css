@@ -7,7 +7,7 @@ This chunk is to fix Bootstrap so that the Markdown output looks good
 
 body {
   font-size: 15px;
-  line-height: 150%;
+  line-height: 100%;
   padding-left:5px;
 }
 
