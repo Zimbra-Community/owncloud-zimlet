@@ -252,6 +252,9 @@ OwnCloudApp.prototype._shareLinkClickedHandler = function() {
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
   if(zimletInstance.shareLinkClicked)
   {
+     //needed for upload and new folder button, otherwise uploads and new folders end in / (root) after clicking internal user shared link zimbradav://
+     zimletInstance._appView._currentPath = decodeURIComponent(zimletInstance.shareLinkClicked.substr(0, zimletInstance.shareLinkClicked.lastIndexOf("/"))) + "/";
+     
      //issue: https://github.com/Zimbra-Community/owncloud-zimlet/issues/141
      zimletInstance.shareLinkClicked = decodeURIComponent(zimletInstance.shareLinkClicked);
      this._davConnector.propfind(
