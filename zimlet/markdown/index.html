@@ -3,8 +3,18 @@
 <head>
 <title>Markdown document</title>
 <script type="text/javascript" src="purify.js"></script>
+<style type="text/css">
+@media print
+{    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}
+</style>
 </head>
 <body>
+<button class="no-print" onclick="window.print();">Print</button>
 <textarea theme="united" style="d isplay:none;" id="mddocument">
 </textarea>
 
