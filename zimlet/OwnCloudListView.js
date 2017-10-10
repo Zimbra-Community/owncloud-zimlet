@@ -601,7 +601,7 @@ OwnCloudListView.prototype._editFileCbk = function(davResource, token) {
    var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
 
    zimletInstance._editdialog = new ZmDialog( { title:ZmMsg.edit, parent:zimletInstance.getShell(), standardButtons:[DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON], disposeOnPopDown:true } );
-   zimletInstance._editdialog.setContent('<div style=\'width:600px; height: 350px;\'><textarea rows="23" id="OwnCloudListViewEdit"></textarea></div>');
+   zimletInstance._editdialog.setContent('<div style=\'width:800px; height: 450px;\'><textarea rows="30" id="OwnCloudListViewEdit"></textarea></div>');
    zimletInstance._editdialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.okbtnEdit,[davResource]));
    zimletInstance._editdialog._setAllowSelection();
    document.getElementById(zimletInstance._editdialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';
