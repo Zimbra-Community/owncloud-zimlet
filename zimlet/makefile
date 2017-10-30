@@ -5,6 +5,7 @@ zimlet: clean
 	zip -u -r tk_barrydegraaff_owncloud_zimlet.zip \
 		help/*.* \
 		ViewerJS/* \
+		markdown/* \
 
 clean:
 	rm -f tk_barrydegraaff_owncloud_zimlet.zip
