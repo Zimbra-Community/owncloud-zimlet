@@ -40,6 +40,9 @@ Use the automated installer:
 ### Document preview
 Previews are supported for the following file types: pdf,jpg,jpeg,png,txt,md (markdown rendering). Video playback *results may be poor* supported types: mp4 and webm. If you enabled the optional LibreOffice conversion in the installer, these file types are previewed as well: docx,doc,xlsx,xls,pptx,ppt,odt,ods,odp. On CentOS 7 only (see extras folder): djvu.
 
+### OnlyOffice integration
+An optional right-click menu action can be enabled to edit in Nextcloud/ownCloud OnlyOffice app. See owncloud_zimlet_enable_onlyoffice below.
+
 ### Configuring preferences
 
 Each user can configure the WebDAV Client for themselves by clicking Preferences in the Zimlet menu.
