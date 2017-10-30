@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 import java.net.URL;
 
@@ -192,15 +193,24 @@ public class DavSoapConnector
    * @param depth control recursion default 0 (only returning the properties for the resource itself).
    * @return The resource structure returned by the request.
    * @throws IOException
+   *
+   * Implement Custom DAV Property oc:fileid, needed for OnlyOffice and other integrations
+   * {http://owncloud.org/ns}fileid The unique id for the file within the instance
+   * https://docs.nextcloud.com/server/12/developer_manual/client_apis/WebDAV/index.html
    */
   public JSONArray propfind(String path, int depth)
     throws IOException
   {
     final JSONArray arrayResponse = new JSONArray();
+    //to-do: check if this breaks WebDAV Servers that do not implement this, aka Alfresco,
+    //if it breaks, make it configurable
+    Set<QName> CustomProps = new HashSet<QName>();
+    CustomProps.add(new QName("http://owncloud.org/ns", "fileid", "oc"));
+
     List<DavResource> propfind = mSardine.propfind(
       buildUrl(path),
       depth,
-      new HashSet<QName>()
+      CustomProps
     );
 
     for (DavResource resource : propfind)
