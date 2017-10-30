@@ -169,6 +169,7 @@ OwnCloudListView.prototype._getCellContents = function (htmlArr, idx, item, fiel
 };
 
 OwnCloudListView.prototype._resetOperations = function (parent, resource, resources) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
   var directoriesInvolved = false,
     operations = this._getActionMenuOps(),
     operationsEnabled = [],
@@ -221,6 +222,15 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
       parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(true);
     }
     if(resource._contentType == 'text/plain')
+    {
+       parent.getMenuItem(ZmOperation.EDIT_FILE).setEnabled(true);
+       parent.getMenuItem(ZmOperation.EDIT_FILE).setVisible(true);
+    }
+    else if(
+    (zimletInstance._zimletContext.getConfig("owncloud_zimlet_enable_onlyoffice") == 'true') &&
+    ((resource._contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
+    (resource._contentType =='application/vnd.openxmlformats-officedocument.presentationml.presentation') ||
+    (resource._contentType =='application/vnd.openxmlformats-officedocument.wordprocessingml.document')))
     {
        parent.getMenuItem(ZmOperation.EDIT_FILE).setEnabled(true);
        parent.getMenuItem(ZmOperation.EDIT_FILE).setVisible(true);
@@ -589,11 +599,25 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
  * 
  * */
 OwnCloudListView.prototype._editFileListener = function(ev) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   var davResource = this.getSelection()[0];
-  this._davConnector.getDownloadLink(
-    davResource.getHref(),
-    new AjxCallback(this, this._editFileCbk, [davResource])
-  );
+  
+  if((davResource._contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
+  (davResource._contentType =='application/vnd.openxmlformats-officedocument.presentationml.presentation') ||
+  (davResource._contentType =='application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
+  {
+      if (zimletInstance._zimletContext.getConfig("owncloud_zimlet_enable_onlyoffice") == 'true')
+      {
+         window.open(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"/index.php/apps/onlyoffice/"+davResource._customProps.fileid);
+      }
+  }
+  else if (davResource._contentType == 'text/plain')
+  {
+     this._davConnector.getDownloadLink(
+       davResource.getHref(),
+       new AjxCallback(this, this._editFileCbk, [davResource])
+     );
+  }
 };
 
 OwnCloudListView.prototype._editFileCbk = function(davResource, token) {
