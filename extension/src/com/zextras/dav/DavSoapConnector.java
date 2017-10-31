@@ -206,6 +206,8 @@ public class DavSoapConnector
     //if it breaks, make it configurable
     Set<QName> CustomProps = new HashSet<QName>();
     CustomProps.add(new QName("http://owncloud.org/ns", "fileid", "oc"));
+    CustomProps.add(new QName("DAV:", "getcontentlength", "d"));
+    CustomProps.add(new QName("DAV:", "getlastmodified", "d"));
 
     List<DavResource> propfind = mSardine.propfind(
       buildUrl(path),
