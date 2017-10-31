@@ -208,7 +208,8 @@ public class DavSoapConnector
     CustomProps.add(new QName("http://owncloud.org/ns", "fileid", "oc"));
     CustomProps.add(new QName("DAV:", "getcontentlength", "d"));
     CustomProps.add(new QName("DAV:", "getlastmodified", "d"));
-
+    CustomProps.add(new QName("DAV:", "getcontenttype", "d"));
+    CustomProps.add(new QName("DAV:", "resourcetype", "d"));
     List<DavResource> propfind = mSardine.propfind(
       buildUrl(path),
       depth,
