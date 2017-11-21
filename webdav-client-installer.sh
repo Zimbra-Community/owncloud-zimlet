@@ -17,6 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 
+# We only support java versions bundled with Zimbra
+if [[ -x "/opt/zimbra/common/bin/java" ]]
+then
+   #8.7
+    [[ ":$PATH:" != *":/opt/zimbra/common/bin:"* ]] && PATH="/opt/zimbra/common/bin:${PATH}"
+    export PATH
+elif  [[ -x "/opt/zimbra/java/bin/java" ]]
+then
+    #8.6
+    [[ ":$PATH:" != *":/opt/zimbra/java/bin:"* ]] && PATH="/opt/zimbra/java/bin:${PATH}"
+    export PATH
+else
+    echo "Java is not found in /opt/zimbra"
+    exit 1
+fi
+
 set -e
 # if you want to trace your script uncomment the following line
 #set -x
@@ -59,7 +75,7 @@ if [[ -z $GIT_CMD ]] || [[ -z $ANT_CMD ]] || [[ -z $ZIP_CMD ]]; then
    if [[ ! -z $YUM_CMD ]]; then
       yum install -y git ant make zip
    else
-      apt-get install -y git ant make default-jdk zip
+      apt-get install -y git ant make zip
    fi
 fi
 
