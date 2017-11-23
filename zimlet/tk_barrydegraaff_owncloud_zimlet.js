@@ -873,6 +873,7 @@ ownCloudZimlet.prototype.addShareLinks = function (editor) {
          false,
          void 0,
          1,
+         void 0,
          internalCallback
       );
    }

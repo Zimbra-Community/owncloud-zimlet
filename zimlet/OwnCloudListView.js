@@ -319,12 +319,22 @@ OwnCloudListView.prototype._sendFileListener = function(ev) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    var owncloud_zimlet_disable_ocs_public_link_shares = zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_ocs_public_link_shares");   
    this.sharePassView = new DwtComposite(appCtxt.getShell()); 
-   this.sharePassView.setSize("450", "100"); 
-   var html = "<div style='width:450px; height: 100px; overflow-x: hidden; overflow-y: hidden;'><form id=\"ownCloudZimletShareTypeSelectorFrm\"><table style='width:100%'>";
+   this.sharePassView.setSize("450", "125"); 
+   var html = "<div style='width:450px; height: 125px; overflow-x: hidden; overflow-y: hidden;'><form id=\"ownCloudZimletShareTypeSelectorFrm\"><table style='width:100%'>";
    if(owncloud_zimlet_disable_ocs_public_link_shares != 'true')
    {
-      html += '<tr><td><input type="radio" checked name="ownCloudZimletShareTypeSelector" value="public"></td><td>'+ZmMsg.shareWithPublic+'</td></tr>';
+      html += '<tr><td><input type="radio" checked name="ownCloudZimletShareTypeSelector" id="ownCloudZimletShareTypeSelectorPublic" value="public"></td><td>'+ZmMsg.shareWithPublic+'</td></tr>';
       html += '<tr><td></td><td><input placeholder="'+ (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase()+'" id="tk_barrydegraaff_owncloud_zimlet-sharedLinkPass" type="sharePassword"></td></tr>';
+      if(zimletInstance.getMessage('expiryDate').indexOf('???') == 0)
+      {
+         var expiryDateLabel = 'expiration date';
+      }
+      else
+      {
+         var expiryDateLabel = zimletInstance.getMessage('expiryDate');         
+      }
+      expiryDateLabel += " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")";
+      html += '<tr><td></td><td><input placeholder="YYYY-MM-DD" title="'+expiryDateLabel+'" id="tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate" type="date"></td></tr>';
       html += "<tr><td colspan='2'><hr><br></td></tr>";
       html += '<tr><td><input type="radio" name="ownCloudZimletShareTypeSelector" value="internal"></td><td>'+ZmMsg.shareWithUserOrGroup+'</td></tr></table></form>';
    }
@@ -345,7 +355,7 @@ OwnCloudListView.prototype._sendFileListener = function(ev) {
 
 OwnCloudListView.prototype._okSharePassListen = function(ev) {
  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
- var ownCloudZimletShareType = document.getElementById("ownCloudZimletShareTypeSelectorFrm").elements["ownCloudZimletShareTypeSelector"].value;
+ var ownCloudZimletShareType = document.getElementById("ownCloudZimletShareTypeSelectorPublic").checked;
  if(document.getElementById('tk_barrydegraaff_owncloud_zimlet-sharedLinkPass'))
  {
     this.sharedLinkPass = document.getElementById('tk_barrydegraaff_owncloud_zimlet-sharedLinkPass').value;
@@ -353,19 +363,27 @@ OwnCloudListView.prototype._okSharePassListen = function(ev) {
  else
  {
     this.sharedLinkPass = "";
- }   
- var
-    /** @type {DavResource[]} */ resourcesToLink = this.getSelection(),
-    /** @type {DavResource[]} */ resourcesToAttach = [],
-    /** @type {string[]} */  resNames = [];   
+ } 
+
+ if(document.getElementById('tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate'))
+ {
+    this.sharedLinkExpiryDate = document.getElementById('tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate').value;
+ }
+ else
+ {
+    this.sharedLinkExpiryDate = "";
+ } 
+
+  var resourcesToLink = this.getSelection();
+  var resourcesToAttach = [];
+  var resNames = [];
     
   this.sharePassDialog.popdown();  
-    
- if(ownCloudZimletShareType == 'public')
- {  
+  if(ownCloudZimletShareType)
+  {  
      for (var i = 0; i < resourcesToLink.length; i+= 1) {
        resNames.push(resourcesToLink[i].getName());
-     }    
+     }
      this._ocCommons.getAttachments(
        resourcesToLink,
        resourcesToAttach,
@@ -373,7 +391,8 @@ OwnCloudListView.prototype._okSharePassListen = function(ev) {
          this,
          this._sendFilesListCbk,
          [resNames]
-       ), this.sharedLinkPass
+       ), this.sharedLinkPass,
+       this.sharedLinkExpiryDate
      ); 
   }
   else{
@@ -432,9 +451,9 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
      var passwordText = "";
   }
        
-  var cc = AjxDispatcher.run("GetComposeController"),
-    htmlCompose = appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML,
-    extraBodyText = [];
+  var cc = AjxDispatcher.run("GetComposeController");
+  var htmlCompose = appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML;
+  var extraBodyText = [];
 
   for (var i = 0; i < urls.length; i+= 1) {
     if(urls[i].link.match(/http:\/\/|https:\/\//i))
@@ -445,19 +464,25 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
     {
        ownCloudZimlet.prototype.status(urls[i].link,ZmStatusView.LEVEL_CRITICAL);  
     }   
-  }
-    
+  }  
   if((extraBodyText.length > 0) || (idsToAttach.length > 0))
   {
-    cc._setView({
-      action: ZmOperation.NEW_MESSAGE,
-      inNewWindow: false,
-      msg: new ZmMailMsg(),
-      subjOverride: new AjxListFormat().format(resNames),
-      extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
-    });
-    cc.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, [].concat(idsToAttach).join(","));
-  }  
+    try {  
+      cc._setView({
+        action: ZmOperation.NEW_MESSAGE,
+        inNewWindow: false,
+        msg: new ZmMailMsg(),
+        subjOverride: new AjxListFormat().format(resNames),
+        extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
+      });
+      cc.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, [].concat(idsToAttach).join(","));
+    } 
+    catch (err) 
+    {
+      //ie11 bug
+      console.log('error: ' +err);
+    }
+  }
 };
 
 OwnCloudListView.prototype._onItemSelected = function(ev) {

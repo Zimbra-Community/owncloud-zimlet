@@ -91,6 +91,7 @@
     publicUpload,
     password,
     permissions,
+    expiryDate,
     callback,
     errorCallback
   ) {
@@ -104,6 +105,7 @@
     soapDoc.set('publicUpload', publicUpload);
     soapDoc.set('password', password);
     soapDoc.set('permissions', permissions);
+    soapDoc.set('expiryDate', expiryDate);
     OwnCloudConnector._sendRequest(OwnCloudAction.CREATE_SHARE, soapDoc, callback, errorCallback);
   };
 

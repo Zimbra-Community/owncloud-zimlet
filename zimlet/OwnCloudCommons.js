@@ -21,7 +21,7 @@ OwnCloudCommons.prototype.getAttachmentLinks = function(davResources, callback) 
   this.getAttachments(davResources, [], callback);
 };
 
-OwnCloudCommons.prototype.getAttachments = function(resourcesToLink, resourcesToAttach, callback, sharePassword) {
+OwnCloudCommons.prototype.getAttachments = function(resourcesToLink, resourcesToAttach, callback, sharePassword, shareExpiryDate) {
   this._getWaitingDialog().popup();
 
   var /** @type {string[]} */ links = [],
@@ -35,7 +35,8 @@ OwnCloudCommons.prototype.getAttachments = function(resourcesToLink, resourcesTo
       this._onUploadOrAttachFinished,
       [resourcesToLink, resourcesToLink.length, links, resourcesToAttach, resourcesToAttach.length, ids, callback]
     ),
-    sharePassword
+    sharePassword,
+    shareExpiryDate
   );
 };
 
@@ -46,7 +47,7 @@ OwnCloudCommons.prototype.getAttachments = function(resourcesToLink, resourcesTo
  * @param {AjxCallback} callback
  * @private
  */
-OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback, sharePassword) {
+OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback, sharePassword, shareExpiryDate) {
   if (resources.length < 1) {
     if (!!callback) {
       callback.run();
@@ -64,7 +65,7 @@ OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback, s
     internalCallback = new AjxCallback(
       this,
       this._createShareCbk,
-      [resource, resources, links, callback, sharePassword]
+      [resource, resources, links, callback, sharePassword, shareExpiryDate]
     );
 
   var DavForZimbraShareType = {
@@ -90,6 +91,7 @@ OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback, s
     false,
     sharePassword ? sharePassword : void 0,
     DavForZimbraSharePermission.READ,
+    shareExpiryDate ? shareExpiryDate : void 0,
     internalCallback
   );
 };
@@ -137,7 +139,7 @@ OwnCloudCommons.prototype._getFirstResource = function(resources, ids, callback)
  * @param {{}} data
  * @private
  */
-OwnCloudCommons.prototype._createShareCbk = function(resource, resources, links, callback, sharePassword, data) {
+OwnCloudCommons.prototype._createShareCbk = function(resource, resources, links, callback, sharePassword,  shareExpiryDate, data) {
   links.push({
     name: resource.getName(),
     link: data.url

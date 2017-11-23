@@ -39,7 +39,7 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
     parent: this,
     style: DwtTree.CHECKEDITEM_STYLE
   });
-  this._tree.setSize("500px", "190px");
+  this._tree.setSize("500px", "165px");
   this._tree.setScrollStyle(Dwt.SCROLL);
   //Add scrollbar to avoid overflowing the attach dialog
   document.getElementById(this._tree.getHTMLElId()).style.overflowX = "hidden";
@@ -62,6 +62,26 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
      });
      this._sharePassword.setHtmlElementId('owncloudSharePassword');
      this._sharePassword._inputField.placeholder = (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase();
+
+     if(zimletInstance.getMessage('expiryDate').indexOf('???') == 0)
+     {
+        var expiryDateLabel = 'expiration date';
+     }
+     else
+     {
+        var expiryDateLabel = zimletInstance.getMessage('expiryDate');         
+     }
+     expiryDateLabel += " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")";
+
+     this._shareExpiryDate = new DwtInputField({ 
+       parent: this,
+     });
+     this._shareExpiryDate.setHtmlElementId('owncloudShareExpiryDate');
+     this._shareExpiryDate._inputField.title = expiryDateLabel;
+     //Internet Explorer 11 does not like `.type = 'date'`, if
+     //we drop support for IE11, we can enable a date picker here
+     //this._shareExpiryDate._inputField.type = 'date';
+     this._shareExpiryDate._inputField.placeholder="YYYY-MM-DD";
   }
   this._checkboxi = new DwtRadioButton({ 
     parent: this,
@@ -261,6 +281,15 @@ OwnCloudTabView.prototype._attachFiles =
       var sharepassword = "";
    }   
 
+   if(this._shareExpiryDate)
+   {
+      var shareExpiryDate = this._shareExpiryDate._inputField.value;
+   }
+   else
+   {
+      var shareExpiryDate = "";
+   } 
+
     this._ocCommons.getAttachments(
       resourcesToLink,
       resourcesToAttach,
@@ -268,7 +297,8 @@ OwnCloudTabView.prototype._attachFiles =
         this,
         this._onAttachmentsRetrieved
       ),
-      sharepassword
+      sharepassword,
+      shareExpiryDate
     );
   };
 
