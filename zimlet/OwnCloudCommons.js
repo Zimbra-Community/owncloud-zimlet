@@ -26,7 +26,6 @@ OwnCloudCommons.prototype.getAttachments = function(resourcesToLink, resourcesTo
 
   var /** @type {string[]} */ links = [],
     /** @type {number[]} */ ids = [];
-
   this._getFirstLink(
     resourcesToLink,
     links,
@@ -83,7 +82,6 @@ OwnCloudCommons.prototype._getFirstLink = function(resources, links, callback, s
     SHARE: 16,
     ALL: 31    // Default.
   };
-
   this._ownCloudConnector.createShare(
     resource.getHref(),
     DavForZimbraShareType.PUBLIC_LINK,
@@ -144,7 +142,7 @@ OwnCloudCommons.prototype._createShareCbk = function(resource, resources, links,
     name: resource.getName(),
     link: data.url
   });
-  this._getFirstLink(resources, links, callback, sharePassword);
+  this._getFirstLink(resources, links, callback, sharePassword, shareExpiryDate);
 };
 
 /**
