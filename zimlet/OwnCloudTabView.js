@@ -355,14 +355,34 @@ OwnCloudTabView.prototype._attachItemsAndSaveDraft =
  */
 OwnCloudTabView.prototype._appendSharedLink =
   function(url) {
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     if(this._sharePassword._inputField.value)
     {
-       var passwordText = "("+this._sharePassword._inputField.value+")";
+       var passwordText = "("+ZmMsg.password.toLowerCase()+": "+this._sharePassword._inputField.value+")";
     }
     else
     {
        var passwordText = "";
     }
+
+   if(zimletInstance.getMessage('expiryDate').indexOf('???') == 0)
+   {
+      var expiryDateLabel = 'expiration date';
+   }
+   else
+   {
+      var expiryDateLabel = zimletInstance.getMessage('expiryDate');         
+   }
+  
+  if(this._shareExpiryDate._inputField.value)
+  {
+     var expiryText = "("+expiryDateLabel.toLowerCase()+": "+this._shareExpiryDate._inputField.value+")";
+  }
+  else
+  {
+     var expiryText = "";
+  }
+    
     var composeView = appCtxt.getCurrentView(),
       composeMode = composeView.getHtmlEditor().getMode(),
       content = composeView.getHtmlEditor().getContent(),
@@ -371,7 +391,7 @@ OwnCloudTabView.prototype._appendSharedLink =
       
       if(url.link.match(/http:\/\/|https:\/\//i))
       {
-         linkData = url.name + " "+passwordText+" : " + url.link;
+         linkData = url.name + " "+passwordText+expiryText+" : " + url.link;
          
          if(composeMode == 'text/plain') {
            sep = "\r\n";

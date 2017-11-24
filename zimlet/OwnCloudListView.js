@@ -442,13 +442,32 @@ OwnCloudListView.prototype._sendFileAsAttachmentListener = function(ev) {
 };
 
 OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAttach) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   if(this.sharedLinkPass)
   {
-     var passwordText = "("+this.sharedLinkPass+")";
+     var passwordText = "("+ZmMsg.password.toLowerCase()+": "+this.sharedLinkPass+")";
   }
   else
   {
      var passwordText = "";
+  }
+
+   if(zimletInstance.getMessage('expiryDate').indexOf('???') == 0)
+   {
+      var expiryDateLabel = 'expiration date';
+   }
+   else
+   {
+      var expiryDateLabel = zimletInstance.getMessage('expiryDate');         
+   }
+  
+  if(this.sharedLinkExpiryDate)
+  {
+     var expiryText = "("+expiryDateLabel.toLowerCase()+": "+this.sharedLinkExpiryDate+")";
+  }
+  else
+  {
+     var expiryText = "";
   }
        
   var cc = AjxDispatcher.run("GetComposeController");
@@ -458,7 +477,7 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
   for (var i = 0; i < urls.length; i+= 1) {
     if(urls[i].link.match(/http:\/\/|https:\/\//i))
     {
-       extraBodyText.push(urls[i].name + " "+passwordText+" : " + urls[i].link);
+       extraBodyText.push(urls[i].name + " "+passwordText+expiryText+" : " + urls[i].link);
     }
     else
     {
