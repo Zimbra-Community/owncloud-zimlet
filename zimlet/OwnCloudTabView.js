@@ -392,6 +392,7 @@ OwnCloudTabView.prototype._appendSharedLink =
       if(url.link.match(/http:\/\/|https:\/\//i))
       {
          linkData = url.name + " "+passwordText+expiryText+" : " + url.link;
+         linkData = linkData.replace(/ {1,}/g," ");
          
          if(composeMode == 'text/plain') {
            sep = "\r\n";

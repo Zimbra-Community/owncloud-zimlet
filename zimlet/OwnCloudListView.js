@@ -477,7 +477,7 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
   for (var i = 0; i < urls.length; i+= 1) {
     if(urls[i].link.match(/http:\/\/|https:\/\//i))
     {
-       extraBodyText.push(urls[i].name + " "+passwordText+expiryText+" : " + urls[i].link);
+       extraBodyText.push((urls[i].name + " "+passwordText+expiryText+" : " + urls[i].link).replace(/ {1,}/g," "));
     }
     else
     {
