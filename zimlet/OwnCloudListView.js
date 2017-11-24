@@ -477,7 +477,14 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
   for (var i = 0; i < urls.length; i+= 1) {
     if(urls[i].link.match(/http:\/\/|https:\/\//i))
     {
-       extraBodyText.push((urls[i].name + " "+passwordText+expiryText+" : " + urls[i].link).replace(/ {1,}/g," "));
+       if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'].length > 0)
+       {
+          extraBodyText.push((urls[i].name + " : " + urls[i].link));
+       }
+       else
+       {
+          extraBodyText.push((urls[i].name + " "+passwordText+expiryText+" : " + urls[i].link).replace(/ {1,}/g," "));
+       }   
     }
     else
     {
@@ -486,13 +493,50 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
   }  
   if((extraBodyText.length > 0) || (idsToAttach.length > 0))
   {
+    if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'].length > 0)
+    {
+       var body = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'];
+       body = body.replace('{links}',extraBodyText.join("\r\n"));
+       if (appCtxt.get(ZmSetting.DISPLAY_NAME))
+       {
+          var displayname = appCtxt.get(ZmSetting.DISPLAY_NAME);
+       }
+       else
+       {
+          var displayname = appCtxt.getActiveAccount().name;
+       }
+       body = body.replace(/{displayname}/g,displayname);  
+       body = body.replace(/{password}/g,this.sharedLinkPass);  
+       body = body.replace(/{expiration}/g,this.sharedLinkExpiryDate);
+       if(this.sharedLinkPass == "")
+       {
+          body = body.replace(/\[password\][\s\S]*?\[\/password\]/, '');
+       }   
+       if(this.sharedLinkExpiryDate == "")
+       {
+          body = body.replace(/\[expiration\][\s\S]*?\[\/expiration\]/, '');
+       }
+       body = body.replace('[password]','');
+       body = body.replace('[/password]','');
+       body = body.replace('[expiration]','');
+       body = body.replace('[/expiration]','');
+       
+       if(appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML)
+       {
+          body = body.replace(/\n/g,'<br>');
+       }
+    }
+    else
+    {
+       var body = extraBodyText.join(htmlCompose ? "<br>" : "\n");
+    } 
     try {  
       cc._setView({
         action: ZmOperation.NEW_MESSAGE,
         inNewWindow: false,
         msg: new ZmMailMsg(),
         subjOverride: new AjxListFormat().format(resNames),
-        extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
+        extraBodyText: body
       });
       cc.saveDraft(ZmComposeController.DRAFT_TYPE_MANUAL, [].concat(idsToAttach).join(","));
     } 

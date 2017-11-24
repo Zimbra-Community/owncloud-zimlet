@@ -40,6 +40,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 }
 
 .DwtDialog textarea{
-   width:98%;
+   width:98% !important;
    font-family: monospace !important;
 }

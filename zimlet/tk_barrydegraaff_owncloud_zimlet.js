@@ -207,6 +207,17 @@ ownCloudZimlet.prototype.init =
        {
           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = this.getUserProperty("owncloud_zimlet_use_numbers");
        }         
+
+       //Set default value
+       if(!this.getUserProperty("owncloud_zimlet_template"))
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] = '';   
+       }
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] = this.getUserProperty("owncloud_zimlet_template");   
+       }
+
     /** End load default settings for new users **/
    
    //sort by name asc by default, do we want to store this in the ldap?
@@ -1443,7 +1454,7 @@ ownCloudZimlet.prototype.displayDialog =
            hideOCSstyle = " style=\"display:none !important;\" ";
         }
 
-        html = "<div style='width:600px; height: 350px;'>" +
+        html = "<div style='width:600px; height: 400px;'>" +
           "<table>"+
           "<tr>" +
           "<td style='min-width:100px'>"+ZmMsg.usernameLabel+"</td>" +
@@ -1475,7 +1486,8 @@ ownCloudZimlet.prototype.displayDialog =
           "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']+"'></td>" +
           "</tr>" +
           "<tr><td>"+ZmMsg.importErrorMissingFolder.replace(/\./,'')+":&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_ask_folder_each_time' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
-          "<tr><td>"+ZmMsg.usePrefix + " " + (ZmMsg.number).toLowerCase()+"&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_use_numbers' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
+          "<tr><td>"+ZmMsg.usePrefix + " " + (ZmMsg.number).toLowerCase()+":&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_use_numbers' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
+          "<tr><td>"+ZmMsg.template+":&nbsp;</td><td><textarea placeholder='"+ZmMsg.clickToAdd+"' onclick='ownCloudZimlet.prototype.setTemplate()' rows='6' id='owncloud_zimlet_template'>" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] +"</textarea></td></tr>" +
           "<tr><td colspan=2><br><br><small>"+ZmMsg.versionLabel+" "+ownCloudZimlet.version +"</small></td></tr>"
           "</table>" +
           "</div>";
@@ -1575,8 +1587,18 @@ ownCloudZimlet.prototype.verifyPassword = function ()
    {
       document.getElementById('WebDAVPasswordHint').innerHTML = "<small><b style='color:#cccccc'>Passwords with special characters may not work, if you have troubles try using a simple account and password (A-Za-z0-9-_)</b></small>";
    }   
-   
-}
+};
+
+/* Method to set the default template, it is always English, but the sysadmin can pre-set them with zmprov.
+ */
+ownCloudZimlet.prototype.setTemplate = function ()
+{
+   if(!document.getElementById('owncloud_zimlet_template').value)
+   {
+      document.getElementById('owncloud_zimlet_template').value = 'Hello,\r\n\r\n{displayname} shared the following link(s) with you:\r\n\r\n{links}\r\n\r\n[password]You need the following password to access the link(s): {password}\r\n[/password][expiration]The link(s) expire on {expiration}.\r\n[/expiration]\r\n\r\nBest regards,\r\n\r\n\{displayname}';
+   }
+};
+
 
 /** Function to handle a show/hide button for password type input fields
  */
@@ -1670,6 +1692,9 @@ ownCloudZimlet.prototype.prefSaveBtn = function()
 
    this.setUserProperty("owncloud_zimlet_oc_folder", document.getElementById('owncloud_zimlet_oc_folder').value, true);
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = document.getElementById('owncloud_zimlet_oc_folder').value;
+
+   this.setUserProperty("owncloud_zimlet_template", document.getElementById('owncloud_zimlet_template').value, true);
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] = document.getElementById('owncloud_zimlet_template').value;
 
    this._saveUserProperties({
    },
