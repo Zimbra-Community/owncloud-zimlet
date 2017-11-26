@@ -1578,8 +1578,8 @@ ownCloudZimlet.prototype.displayDialog =
     zimletInstance._dialog.popup();
   };
 
+//Fixed in 0.6.2
 /* Method to verify password does not include @ signs and so on
- */
 ownCloudZimlet.prototype.verifyPassword = function ()
 {
    var owncloud_zimlet_password = document.getElementById('owncloud_zimlet_password').value;
@@ -1588,6 +1588,7 @@ ownCloudZimlet.prototype.verifyPassword = function ()
       document.getElementById('WebDAVPasswordHint').innerHTML = "<small><b style='color:#cccccc'>Passwords with special characters may not work, if you have troubles try using a simple account and password (A-Za-z0-9-_)</b></small>";
    }   
 };
+*/
 
 /* Method to set the default template, it is always English, but the sysadmin can pre-set them with zmprov.
  */
