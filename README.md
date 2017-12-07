@@ -35,10 +35,11 @@ Use the automated installer:
     /tmp/webdav-client-installer.sh 
     
 ### Document preview
+Zimbra WebDAV Client uses OnlyOffice, LibreOffice and jsPDF to display previews of your documents. To enable LibreOffice preview, re-run the installer and choose Y when asked to install LibreOffice Document Preview.
 Previews are supported for the following file types: pdf,jpg,jpeg,png,txt,md (markdown rendering). Video playback *results may be poor* supported types: mp4 and webm. If you enabled the optional LibreOffice conversion in the installer, these file types are previewed as well: docx,doc,xlsx,xls,pptx,ppt,odt,ods,odp. On CentOS 7 only (see extras folder): djvu.
 
 ### OnlyOffice integration
-An optional right-click menu action can be enabled to edit in Nextcloud/ownCloud OnlyOffice app. See owncloud_zimlet_enable_onlyoffice below.
+You can preview docx,xlsx and pptx in OnlyOffice by configuring your OnlyOffice Document Server API url in owncloud_zimlet_onlyoffice_api_url and you can optionally enable a right-click menu action to edit directly in Nextcloud/ownCloud OnlyOffice app. See owncloud_zimlet_enable_onlyoffice below.
 
 ### Configuring preferences
 
