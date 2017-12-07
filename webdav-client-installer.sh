@@ -47,7 +47,11 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 echo ""
-echo "Do you want to enable experimental document preview (tested on CentOS 7 and Ubuntu 14.04)? y/N:"
+echo "Do you want to enable experimental LibreOffice document preview (tested on CentOS 7 and Ubuntu 14.04)? y/N:"
+echo "You can later enable OnlyOffice document preview by configuring:"
+echo "owncloud_zimlet_enable_onlyoffice and owncloud_zimlet_onlyoffice_api_url"
+echo "It is OK to use both OnlyOffice and LibreOffice at the same time for document preview."
+
 read YNDOCPREV;
 
 echo ""
@@ -149,13 +153,13 @@ owncloud_zimlet_extra_toolbar_button_title=Open ownCloud tab
 owncloud_zimlet_extra_toolbar_button_url=/nextcloud
 owncloud_zimlet_app_title=WebDAV
 owncloud_zimlet_max_upload_size=104857600
-owncloud_zimlet_preview_delay=200
 owncloud_zimlet_use_numbers=false
 file_number=1000000
 owncloud_zimlet_welcome_url=https\://barrydegraaff.github.io/owncloud/
 owncloud_zimlet_accountname_with_domain=false
 owncloud_zimlet_disable_auto_upload_on_exceed=false
 owncloud_zimlet_enable_onlyoffice=false
+owncloud_zimlet_onlyoffice_api_url=
 " > /opt/zimbra/lib/ext/ownCloud/config.properties
 
 if [[ "$YNOCS" == 'N' || "$YNOCS" == 'n' ]];

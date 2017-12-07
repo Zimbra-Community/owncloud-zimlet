@@ -566,7 +566,14 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
      }
      else
      {
-        var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.md$/i;
+        if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_onlyoffice_api_url"))
+        {
+           var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.md$|\.docx$|\.xlsx$|\.pptx$/i;
+        }
+        else
+        {
+           var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.md$/i;
+        }
      }
      if(!item.isDirectory() && davResource._href.match(regex))
      {
@@ -581,8 +588,11 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   var appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110);
   var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-document.getElementById('zov__main_'+zimletInstance.ownCloudTab).style.width.replace('px','')-15);
   this.setSize(appWidth/2+"px",appHeight+"px");
-  document.getElementById('WebDAVPreview').style.width=appWidth/2+'px';
-  document.getElementById('WebDAVPreview').style.height=appHeight+'px';
+  //the WebDAVPreview may be destroyed by OnlyOffice   
+  try {
+     document.getElementById('WebDAVPreview').style.width=appWidth/2+'px';
+     document.getElementById('WebDAVPreview').style.height=appHeight+'px';
+  } catch (err) {} 
   if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
     if (item.isDirectory()) {
       zimletInstance._appView._currentPath = ev.item._href;
@@ -658,25 +668,100 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
   
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&inline=true";
-  if(davResource._href.match(/\.txt$/i))
+
+  /* OnlyOffice Integration
+   * 
+   * */
+  var onlyOfficeRendered = false; 
+  if((zimletInstance._zimletContext.getConfig("owncloud_zimlet_onlyoffice_api_url")) &&
+  (davResource._href.match(/\.docx$|\.xlsx$|\.pptx$/i))
+  )
+  { 
+     var url = [];
+     var i = 0;
+     var proto = location.protocol;
+     var port = Number(location.port);
+     url[i++] = proto;
+     url[i++] = "//";
+     url[i++] = location.hostname;
+     if (port && ((proto == ZmSetting.PROTO_HTTP && port != ZmSetting.HTTP_DEFAULT_PORT) 
+        || (proto == ZmSetting.PROTO_HTTPS && port != ZmSetting.HTTPS_DEFAULT_PORT))) {
+        url[i++] = ":";
+        url[i++] = port;
+     }
+     url = url.join("");
+   
+     var appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110);
+     var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-document.getElementById('zov__main_'+zimletInstance.ownCloudTab).style.width.replace('px','')-15);
+   
+     try{
+        zimletInstance.docEditor.destroyEditor();
+     } catch (err) {};
+    
+      var fileType;
+      var documentType;
+      if (contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+         fileType = "xlsx";
+         documentType = "spreadsheet";
+      } else if (contentType == 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+         fileType = "pptx";
+         documentType = "presentation";
+      } else if(contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+         fileType = "docx";
+         documentType = "text";
+      }
+     
+     onlyOfficeRendered = true;
+     zimletInstance.docEditor = new DocsAPI.DocEditor('WebDAVPreview',
+     {
+         "document": {
+            "fileType": fileType,
+            "title": davResource.getName(),
+            "url": url + token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType,
+         "permissions": {
+            "comment": false,
+            "download": true,
+            "edit": false,
+            "print": true,
+            "review": false
+        },
+         },
+         "documentType": documentType,
+         "height": appHeight + "px",
+         "width": appWidth/2 + "px",
+     });
+  }   
+
+  if(!onlyOfficeRendered)
   {
-     document.getElementById('WebDAVPreview').src=href;
-  }
-  else if(davResource._href.match(/\.md$/i))
-  {
-     document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/markdown')+'/?url='+window.btoa(href);
-  }
-  else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i))
-  {
-     document.getElementById('WebDAVPreview').src=zimletInstance.getResource('pixel.png');
-     setTimeout(function(){ document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href; }, zimletInstance._zimletContext.getConfig("owncloud_zimlet_preview_delay"));
-  }
-  else
-  {
-     //This condition occurs only when clicking internal user shares
-     var regexp = /.*name=(.*?)&contentType.*$/g;
-     var match = regexp.exec(href);
-     document.getElementById('WebDAVPreview').contentDocument.write('<button onclick="+window.location.assign(\''+href+'\');this.parentNode.removeChild(this);">'+ZmMsg.download + " " + decodeURIComponent(match[1])+'</button>');
+     try{
+        zimletInstance.docEditor.destroyEditor();
+     } catch (err) {};
+     
+     var appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110 );
+     var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-document.getElementById('zov__main_'+zimletInstance.ownCloudTab).style.width.replace('px','')-15 );
+     //see also function OwnCloudApp
+     document.getElementById('WebDAVPreviewContainer').innerHTML='<iframe id="WebDAVPreview" src="" style="width:'+appWidth/2+'px; height:'+  appHeight +'px; border:0px">';
+
+     if(davResource._href.match(/\.txt$/i))
+     {
+        document.getElementById('WebDAVPreview').src=href;
+     }
+     else if(davResource._href.match(/\.md$/i))
+     {
+        document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/markdown')+'/?url='+window.btoa(href);
+     }
+     else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i))
+     {
+        document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href;
+     }
+     else
+     {
+        //This condition occurs only when clicking internal user shares
+        var regexp = /.*name=(.*?)&contentType.*$/g;
+        var match = regexp.exec(href);
+        document.getElementById('WebDAVPreview').contentDocument.write('<button onclick="+window.location.assign(\''+href+'\');this.parentNode.removeChild(this);">'+ZmMsg.download + " " + decodeURIComponent(match[1])+'</button>');
+     }
   }
 };
 
@@ -941,6 +1026,7 @@ OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, 
 
 OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
    var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
+
    if(!document.getElementById('OwnCloudListViewhiddenDownloader'))
    {
       var iframe = document.createElement('iframe');

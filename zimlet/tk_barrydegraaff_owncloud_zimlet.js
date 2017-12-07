@@ -40,6 +40,17 @@ ownCloudZimlet.prototype.init =
     // Initialize the zimlet
     ownCloudZimletInstance = this;
 
+    if(this._zimletContext.getConfig("owncloud_zimlet_onlyoffice_api_url"))
+    {
+       try {
+          //to-do make inclusion optional based on setting //bf-bar
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = this._zimletContext.getConfig("owncloud_zimlet_onlyoffice_api_url");
+          document.head.appendChild(script);
+       } catch (err)  {   }
+    }
+
     /** Load default settings for new users **/
        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing'] = this._zimletContext.getConfig("disable_password_storing");
    

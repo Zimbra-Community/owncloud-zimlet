@@ -65,7 +65,6 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_extra_toolbar_button_url  | /nextcloud  | See: owncloud_zimlet_extra_toolbar_button_title |   |
 | owncloud_zimlet_app_title  | WebDAV  | Change this if you want to rebrand WebDAV Client for your users. For example: ownCloud. |   |
 | owncloud_zimlet_max_upload_size  | 104857600  (100MB) | Maximum upload size for upload dialog MB * 1024 * 1024. The back-end has a hardcoded maximum of 1048576000 (1GB). |   |
-| owncloud_zimlet_preview_delay  | 200 | Delay in milliseconds between loading previews, if your previews stuck, set this to 400. |   |
 | owncloud_zimlet_use_numbers  | false | If set to true, a number will be used instead of filename when saving attachments. |   |
 | file_number  | 1000000 | The number to start counting from. See owncloud_zimlet_use_numbers. |   |
 | owncloud_zimlet_disable_ocs_public_link_shares  | false | Controls if users can share items with a public link. Set this to true if you use a DAV server that is not ownCloud/Nextcloud or if you want to disable  public link sharing. |   |
@@ -73,6 +72,7 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_accountname_with_domain | false | When false the username field in settings dialog is set to `username`, when true it is set to `username@domain.com` |   |
 | owncloud_zimlet_disable_auto_upload_on_exceed | false | When true, the user will not be asked to use WebDAV if attachment size exceeds Zimbra limit. This feature is for compatibility with other Zimlets (RMail) | | 
 | owncloud_zimlet_enable_onlyoffice | false | When true, enable right-click menu action and edit in Nextcloud/ownCloud OnlyOffice app. | | 
+| owncloud_zimlet_onlyoffice_api_url |  | Set to Document Server API URL to enable OnlyOffice preview of docx,xlsx,pptx: https://server.example.com:443/web-apps/apps/api/documents/api.js | | 
 
 After changing config.properties run the following: 
 
