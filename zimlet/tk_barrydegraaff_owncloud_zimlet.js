@@ -428,14 +428,13 @@ ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
   
    xmlHttp.onload = function(e) 
    {
-
       form = new FormData(),
       request = new XMLHttpRequest();
       form.append("uploadFile",xmlHttp.response, ownCloudZimlet.prototype.sanitizeFileName(fileName));
       form.append("password", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
       request.open(
       "POST",
-      "/service/extension/dav_upload/?path=/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
+      "/service/extension/dav_upload/?path="+ tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
       true
       );
       request.send(form);
@@ -476,7 +475,7 @@ ownCloudZimlet.prototype._okBtnFolderSelect =
       form.append("password", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
       request.open(
       "POST",
-      "/service/extension/dav_upload/?path=/"+selectedTargetFolder,
+      "/service/extension/dav_upload/?path="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+selectedTargetFolder,
       true
       );
       request.send(form);
@@ -1131,7 +1130,7 @@ ownCloudZimlet.prototype._doDropUpload = function (form)
    request = new XMLHttpRequest();
    request.open(
    "POST",
-   "/service/extension/dav_upload/?path=/"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
+   "/service/extension/dav_upload/?path="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
    true
    );
    request.send(form);
