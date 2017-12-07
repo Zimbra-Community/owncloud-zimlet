@@ -138,6 +138,7 @@ cp jna-4.1.0.jar /opt/zimbra/lib/ext/ownCloud/
 cp jna-platform-4.1.0.jar /opt/zimbra/lib/ext/ownCloud/
 cp urlrewritefilter-4.0.3.jar /opt/zimbra/lib/ext/ownCloud/
 cp zal.jar /opt/zimbra/lib/ext/ownCloud/
+cp commons-io-2.6.jar /opt/zimbra/lib/ext/ownCloud/
 
 # Here we set the template for config.properties, if upgrading we alter it further down
 echo "allowdomains=*
