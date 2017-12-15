@@ -585,13 +585,13 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   }
 
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-  var appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110);
-  var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-document.getElementById('zov__main_'+zimletInstance.ownCloudTab).style.width.replace('px','')-15);
-  this.setSize(appWidth/2+"px",appHeight+"px");
+  OwnCloudApp.prototype.setDimensions();
+  this.setSize((zimletInstance.appWidth/2-zimletInstance.appWidthCorrection)+"px",zimletInstance.appHeight+"px");
+  
   //the WebDAVPreview may be destroyed by OnlyOffice   
   try {
-     document.getElementById('WebDAVPreview').style.width=appWidth/2+'px';
-     document.getElementById('WebDAVPreview').style.height=appHeight+'px';
+     document.getElementById('WebDAVPreview').style.width=(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px';
+     document.getElementById('WebDAVPreview').style.height=zimletInstance.appHeight+'px';
   } catch (err) {} 
   if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
     if (item.isDirectory()) {
@@ -690,10 +690,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
         url[i++] = port;
      }
      url = url.join("");
-   
-     var appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110);
-     var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-document.getElementById('zov__main_'+zimletInstance.ownCloudTab).style.width.replace('px','')-15);
-   
+     
      try{
         zimletInstance.docEditor.destroyEditor();
      } catch (err) {};
@@ -727,8 +724,8 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
         },
          },
          "documentType": documentType,
-         "height": appHeight + "px",
-         "width": appWidth/2 + "px",
+         "height": zimletInstance.appHeight + "px",
+         "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
      });
   }   
 
@@ -738,10 +735,8 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
         zimletInstance.docEditor.destroyEditor();
      } catch (err) {};
      
-     var appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110 );
-     var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-document.getElementById('zov__main_'+zimletInstance.ownCloudTab).style.width.replace('px','')-15 );
      //see also function OwnCloudApp
-     document.getElementById('WebDAVPreviewContainer').innerHTML='<iframe id="WebDAVPreview" src="" style="width:'+appWidth/2+'px; height:'+  appHeight +'px; border:0px">';
+     document.getElementById('WebDAVPreviewContainer').innerHTML='<iframe id="WebDAVPreview" src="" style="width:'+(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px; height:'+  zimletInstance.appHeight +'px; border:0px">';
 
      if(davResource._href.match(/\.txt$/i))
      {

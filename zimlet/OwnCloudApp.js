@@ -2,10 +2,9 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
   this._zimletCtxt = zimletCtxt;
   this._app = app;
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-  var appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110 );
-  var appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-document.getElementById('zov__main_'+zimletInstance.ownCloudTab).style.width.replace('px','')-15 );
+  OwnCloudApp.prototype.setDimensions();
   //see also OwnCloudListView.prototype.preview 
-  app.setContent('<table><tr><td id="WebDAVListView"></td><td id="WebDAVPreviewContainer"><iframe id="WebDAVPreview" src="'+zimletInstance.getConfig("owncloud_zimlet_welcome_url")+'" style="width:'+appWidth/2+'px; height:'+  appHeight +'px; border:0px"></td></tr></table>');
+  app.setContent('<table><tr><td id="WebDAVListView"></td><td id="WebDAVPreviewContainer"><iframe id="WebDAVPreview" src="'+zimletInstance.getConfig("owncloud_zimlet_welcome_url")+'" style="width:'+(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px; height:'+  zimletInstance.appHeight +'px; border:0px"></td></tr></table>');
   this._settings = settings;
   this._davConnector = davConnector;
   this._ownCloudConnector = ownCloudConnector;
@@ -78,12 +77,19 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
     )
   );
 
-  this._listView.setSize(appWidth/2+"px",appHeight+"px");
+  this._listView.setSize((zimletInstance.appWidth/2-zimletInstance.appWidthCorrection)+"px",zimletInstance.appHeight+"px");
   this._listView.reparentHtmlElement("WebDAVListView");
   this._listView.setScrollStyle(Dwt.SCROLL);
 }
 
 OwnCloudApp.TREE_ID = "OC_TREE_VIEW";
+
+OwnCloudApp.prototype.setDimensions = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   zimletInstance.appWidthCorrection = 200;
+   zimletInstance.appHeight = (Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )-110 );
+   zimletInstance.appWidth = (Math.max( document.body.scrollWidth, document.body.offsetWidth, document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth )-document.getElementById('zov__main_'+zimletInstance.ownCloudTab).style.width.replace('px','')-15 );
+};
 
 OwnCloudApp.prototype.appActive = function(active) {
    if(active)
