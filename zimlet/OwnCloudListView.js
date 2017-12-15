@@ -722,11 +722,17 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
             "print": true,
             "review": false
         },
-         },
-         "documentType": documentType,
-         "height": zimletInstance.appHeight + "px",
-         "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
-     });
+        },
+        "documentType": documentType,
+        "height": zimletInstance.appHeight + "px",
+        "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
+        "editorConfig": {
+                "customization": {
+                    "chat": false,
+                    "zoom": 100
+                },
+            },
+        });
   }   
 
   if(!onlyOfficeRendered)
