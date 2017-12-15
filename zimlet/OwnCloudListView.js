@@ -748,7 +748,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
      }
      else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i))
      {
-        document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/#'+href;
+        document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/?zoom=page-width#'+href;
      }
      else
      {
