@@ -65,26 +65,34 @@ public class UserPropertyExtractor {
       ex.printStackTrace();
       return false;
     }
-    /*
-    Set<String> domains = account.getMultiAttrSet(A_zimbraProxyAllowedDomains);
-    Cos cos = account.getCOS();
-    if (cos != null)
-    {
-      domains.addAll(cos.getMultiAttrSet(A_zimbraProxyAllowedDomains));
-    }
-    String host = target.getHost().toLowerCase();
-    for (String domain : domains) {
-      if (domain.equals("*")) {
-        return true;
-      }
-      if (domain.charAt(0) == '*') {
-        domain = domain.substring(1);
-      }
-      if (host.endsWith(domain)) {
-        return true;
-      }
-    }
-    return false;
-   }*/
   }
+
+  /**
+   * There has to be a better way to get the contents of zimbraMailTrustedIP but
+   * haven't found it yet. So for now we put it in trustedIPs.properties and have the
+   * installer update it.
+   */
+  public static boolean checkZimbraMailTrustedIP(String ip) {
+
+    Properties prop = new Properties();
+    try {
+      FileInputStream input = new FileInputStream("/opt/zimbra/lib/ext/ownCloud/trustedIPs.properties");
+      prop.load(input);
+
+      String[] temp = prop.getProperty("zimbramailtrustedips").split(";");
+      Set<String> zimbramailtrustedips = new HashSet<String>(Arrays.asList(temp));
+
+      input.close();
+
+      for (String zimbramailtrustedip : zimbramailtrustedips) {
+        if(ip.equals(zimbramailtrustedip)) {
+           return true;
+        }
+      }
+      return false;
+    } catch (Exception ex) {
+      return false;
+    }
+  }
+
 }

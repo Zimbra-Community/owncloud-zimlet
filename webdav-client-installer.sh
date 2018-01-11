@@ -163,6 +163,14 @@ owncloud_zimlet_enable_onlyoffice=false
 owncloud_zimlet_onlyoffice_api_url=
 " > /opt/zimbra/lib/ext/ownCloud/config.properties
 
+#There has to be a better way to get the contents of zimbraMailTrustedIP but
+#haven't found it yet. So for now we put it in trustedIPs.properties and have the
+#installer update it.
+#See also: UserPropertyExtractor.checkZimbraMailTrustedIP
+echo "#Do not make manual changes to this file, see WebDAV Client README.md " > /opt/zimbra/lib/ext/ownCloud/trustedIPs.properties
+echo -n "zimbramailtrustedips=" >> /opt/zimbra/lib/ext/ownCloud/trustedIPs.properties
+echo $(su zimbra -c "/opt/zimbra/bin/zmprov gcf zimbraMailTrustedIP | cut -c22- | tr '\n' ';'") >> /opt/zimbra/lib/ext/ownCloud/trustedIPs.properties
+
 if [[ "$YNOCS" == 'N' || "$YNOCS" == 'n' ]];
 then
 echo "owncloud_zimlet_disable_ocs_public_link_shares=true

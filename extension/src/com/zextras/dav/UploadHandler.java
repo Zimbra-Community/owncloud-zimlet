@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import java.net.HttpURLConnection;
+
 import org.apache.commons.io.IOUtils;
 
 public class UploadHandler implements HttpHandler {
@@ -63,6 +64,18 @@ public class UploadHandler implements HttpHandler {
     )
             throws ServletException, IOException {
         final Map<String, String> paramsMap = new HashMap<String, String>();
+
+        String originatingIP;
+        if (UserPropertyExtractor.checkZimbraMailTrustedIP(httpServletRequest.getRemoteAddr())) {
+            //This is a trusted IP try and read x-forwarded-for, fall back to getRemoteAddr
+            originatingIP = httpServletRequest.getHeader("X-FORWARDED-FOR");
+            if (originatingIP == null) {
+                originatingIP = httpServletRequest.getRemoteAddr();
+            }
+        } else {
+            //it is not trusted so we do not read the header
+            originatingIP = httpServletRequest.getRemoteAddr();
+        }
 
         if (httpServletRequest.getQueryString() != null) {
             String[] params = httpServletRequest.getQueryString().split("&");
@@ -163,15 +176,15 @@ public class UploadHandler implements HttpHandler {
 
                     fileNames.add(fileNameString);
 
-                     /* Prepare put request */
-                     String username = userProperties.get(ZimletProperty.DAV_USER_USERNAME);
-                     String path = paramsMap.get("path");
-                     if ("/".equals(path)) {
-                         path = userProperties.get(ZimletProperty.DAV_SERVER_PATH);
-                     }
+                    /* Prepare put request */
+                    String username = userProperties.get(ZimletProperty.DAV_USER_USERNAME);
+                    String path = paramsMap.get("path");
+                    if ("/".equals(path)) {
+                        path = userProperties.get(ZimletProperty.DAV_SERVER_PATH);
+                    }
 
-                     /* Add headers to get request */
-                     byte[] credentials = Base64.encodeBase64((uriDecode(username) + ":" + uriDecode(password)).getBytes());
+                    /* Add headers to get request */
+                    byte[] credentials = Base64.encodeBase64((uriDecode(username) + ":" + uriDecode(password)).getBytes());
 
                     InputStream inputStream = null;
                     OutputStream out = null;
@@ -179,6 +192,7 @@ public class UploadHandler implements HttpHandler {
                         URL url = new URL(userProperties.get(ZimletProperty.DAV_SERVER_NAME) + ":" + Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)) + path + fileNameString.replace(" ", "%20"));
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setDoOutput(true);
+                        conn.setRequestProperty("X-Forwarded-For", originatingIP);
                         conn.setRequestProperty("Authorization", "Basic " + new String(credentials));
                         conn.setRequestMethod("PUT");
 
@@ -206,11 +220,11 @@ public class UploadHandler implements HttpHandler {
                         }
                     }
 
-                     try {
-                     } catch (Exception ex) {
-                         ex.printStackTrace();
-                     }
-                    
+                    try {
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
                 }
 
                 StringBuilder sb = new StringBuilder();
