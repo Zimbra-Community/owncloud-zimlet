@@ -150,15 +150,6 @@ public class UploadHandler implements HttpHandler {
                     }
                 }
 
-                final DavSoapConnector connector = new DavSoapConnector(
-                        userProperties.get(ZimletProperty.DAV_SERVER_NAME),
-                        Integer.parseInt(userProperties.get(ZimletProperty.DAV_SERVER_PORT)),
-                        userProperties.get(ZimletProperty.DAV_SERVER_PATH),
-                        userProperties.get(ZimletProperty.DAV_USER_USERNAME),
-                        password
-                );
-
-
                 for (FileItem item : items) {
                     if (item.isFormField()) {
                         if (item.getFieldName().equals("requestId")) {

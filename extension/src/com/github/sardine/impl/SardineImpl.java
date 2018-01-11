@@ -167,7 +167,7 @@ public class SardineImpl implements Sardine
 	 */
 	public SardineImpl()
 	{
-		this.builder = this.configure(null, null);
+		this.builder = this.configure(null, null, null);
 		this.client = this.builder.build();
 	}
 
@@ -177,7 +177,7 @@ public class SardineImpl implements Sardine
 	public SardineImpl(String bearerAuth)
 	{
 		Header bearerHeader = new BasicHeader("Authorization", "Bearer " + bearerAuth);
-		this.builder = this.configure(null, null).setDefaultHeaders(Collections.singletonList(bearerHeader));
+		this.builder = this.configure(null, null, null).setDefaultHeaders(Collections.singletonList(bearerHeader));
 		this.client = this.builder.build();
 	}
 
@@ -187,9 +187,9 @@ public class SardineImpl implements Sardine
 	 * @param username Use in authentication header credentials
 	 * @param password Use in authentication header credentials
 	 */
-	public SardineImpl(String username, String password)
+	public SardineImpl(String username, String password, String originatingIP)
 	{
-		this.builder = this.configure(null, this.getCredentialsProvider(username, password, null, null));
+		this.builder = this.configure(null, this.getCredentialsProvider(username, password, null, null), originatingIP);
 		this.client = this.builder.build();
 	}
 
@@ -198,9 +198,9 @@ public class SardineImpl implements Sardine
 	 * @param password Use in authentication header credentials
 	 * @param selector Proxy configuration
 	 */
-	public SardineImpl(String username, String password, ProxySelector selector)
+	public SardineImpl(String username, String password, ProxySelector selector, String originatingIP)
 	{
-		this.builder = this.configure(selector, this.getCredentialsProvider(username, password, null, null));
+		this.builder = this.configure(selector, this.getCredentialsProvider(username, password, null, null), originatingIP);
 		this.client = this.builder.build();
 	}
 
@@ -1083,7 +1083,7 @@ public class SardineImpl implements Sardine
 	 * @param selector    Proxy configuration or null
 	 * @param credentials Authentication credentials or null
 	 */
-	protected HttpClientBuilder configure(ProxySelector selector, CredentialsProvider credentials)
+	protected HttpClientBuilder configure(ProxySelector selector, CredentialsProvider credentials, String originatingIP)
 	{
 		Registry<ConnectionSocketFactory> schemeRegistry = this.createDefaultSchemeRegistry();
 		HttpClientConnectionManager cm = this.createDefaultConnectionManager(schemeRegistry);
@@ -1092,6 +1092,11 @@ public class SardineImpl implements Sardine
 		{
 			version = VersionInfo.UNAVAILABLE;
 		}
+
+		Header header = new BasicHeader("X-Forwarded-For", originatingIP);
+		List<Header> headers = new ArrayList<>();
+		headers.add(header);
+
 		return HttpClients.custom()
 				.setUserAgent("Sardine/" + version)
 				.setDefaultCredentialsProvider(credentials)
@@ -1100,7 +1105,8 @@ public class SardineImpl implements Sardine
 						// Only selectively enable this for PUT but not all entity enclosing methods
 						.setExpectContinueEnabled(false).build())
 				.setConnectionManager(cm)
-				.setRoutePlanner(this.createDefaultRoutePlanner(this.createDefaultSchemePortResolver(), selector));
+				.setRoutePlanner(this.createDefaultRoutePlanner(this.createDefaultSchemePortResolver(), selector))
+				.setDefaultHeaders(headers);
 	}
 
 	protected DefaultSchemePortResolver createDefaultSchemePortResolver()

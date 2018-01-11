@@ -36,14 +36,15 @@ public class DavSoapConnector
     int port,
     String basePath,
     String username,
-    String password
+    String password,
+    String originatingIP
   )
   {
     mUrl = url;
     mPort = port;
     mBasePath = basePath;
 
-    mSardine = SardineFactory.begin(username, password);
+    mSardine = SardineFactory.begin(username, password, originatingIP);
     mSardine.enableCompression();
     try {                                                                                                                                                                   
         mSardine.enablePreemptiveAuthentication(new URL(url));

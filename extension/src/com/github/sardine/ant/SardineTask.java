@@ -33,6 +33,8 @@ public class SardineTask extends Task
 	/** Attribute password. */
 	private String password = null;
 
+	private String originatingIP = null;
+
 	/** Attribute domain for NTLM authentication. */
 	private String domain = null;
 
@@ -96,7 +98,7 @@ public class SardineTask extends Task
 	public void execute() throws BuildException {
 		try {
 			if (domain == null && workstation == null) {
-				sardine = SardineFactory.begin(username, password);
+				sardine = SardineFactory.begin(username, password, originatingIP);
 			} else {
 				sardine = SardineFactory.begin();
 				sardine.setCredentials(username, password, domain, workstation);

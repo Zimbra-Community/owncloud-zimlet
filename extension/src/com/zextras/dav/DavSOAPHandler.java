@@ -74,7 +74,8 @@ public class DavSOAPHandler implements SoapHandler
       Integer.parseInt(zimbraContext.getParameter("owncloud_zimlet_server_port", "")),
       zimbraContext.getParameter("owncloud_zimlet_server_path", ""),
       zimbraContext.getParameter("owncloud_zimlet_username", ""),
-      zimbraContext.getParameter("owncloud_zimlet_password", "")
+      zimbraContext.getParameter("owncloud_zimlet_password", ""),
+      zimbraContext.getRequesterIp()
     );
 
     final String actionStr = zimbraContext.getParameter("action", "");
