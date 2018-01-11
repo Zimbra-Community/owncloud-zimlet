@@ -33,6 +33,7 @@ Use the automated installer:
     wget --no-cache https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/webdav-client-installer.sh -O /tmp/webdav-client-installer.sh
     chmod +rx /tmp/webdav-client-installer.sh
     /tmp/webdav-client-installer.sh 
+    [zimbra@server zimbra]$ zmmailboxdctl restart
     
 ### Document preview
 Zimbra WebDAV Client uses OnlyOffice, LibreOffice and jsPDF to display previews of your documents. To enable LibreOffice preview, re-run the installer and choose Y when asked to install LibreOffice Document Preview.
@@ -40,6 +41,30 @@ Previews are supported for the following file types: pdf,jpg,jpeg,png,txt,md (ma
 
 ### Only Office integration
 You can preview docx,xlsx and pptx in OnlyOffice by configuring your OnlyOffice Document Server API url in owncloud_zimlet_onlyoffice_api_url and you can optionally enable a right-click menu action to edit directly in Nextcloud/ownCloud OnlyOffice app. See owncloud_zimlet_enable_onlyoffice below.
+
+### Configure bruteforce protection
+Zimbra WebDAV Client sends all requests to Nextcloud with an X-Forwarded-For HTTP header. You must configure Zimbra and Nextcloud properly to avoid problems with Nextcloud's bruteforce protection mechanism.
+
+On Zimbra:
+
+    #Check current config
+    zmlocalconfig zimbra_http_originating_ip_header
+    zimbra_http_originating_ip_header = X-Forwarded-For
+    zmprov gcf zimbraMailTrustedIP #default empty
+    
+    #Add Zimbra Proxies and Zimbra Server
+    zmprov mcf +zimbraMailTrustedIP <zimbra server proxy ip here>
+
+    #This needs to be told to Zimbra WebDAV Client as well (workaround for an issue in upload handler)
+    echo -n "zimbramailtrustedips=" >> /opt/zimbra/lib/ext/ownCloud/trustedIPs.properties
+    echo $(su zimbra -c "/opt/zimbra/bin/zmprov gcf zimbraMailTrustedIP | cut -c22- | tr '\n' ';'") >> /opt/zimbra/lib/ext/ownCloud/trustedIPs.properties
+
+Then in Nextcloud config.php:
+
+    'trusted_proxies' => array('<zimbra server proxy ip here>'),
+    'forwarded_for_headers' => array('HTTP_X_FORWARDED_FOR'),
+    
+You do not need to restart anything after changing these IP. 
 
 ### Configuring preferences
 
@@ -83,10 +108,6 @@ After changing config.properties run the following:
     /tmp/set-java-path.sh
     java -jar /tmp/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
 
-### Restart your mailbox to let the extension to be loaded:
-
-	[zimbra@server zimbra]$ zmmailboxdctl restart
-
 ### Restrict allowed DAV Servers
 
 Your clients **can connect to all dav servers by default**,  you can restrict the allowed DAV servers to connect to in:
@@ -115,7 +136,7 @@ The Zimbra WebDAV Client uses built-in language strings from Zimbra, as such it 
 2. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
 3. Running a WebDAV server behind and NGINX reverse proxy (from CentOS or Debian) won't work, it will work when proper options are enabled (as for example with zimbra-proxy, also based on NGINX).
 4. Previews stay stuck on first viewed document, see owncloud_zimlet_preview_delay above.
-5. Delay of 30 seconds in response from Nextcloud, set in your Nextcloud the preference `'auth.bruteforce.protection.enabled' => false,` and issue `truncate table bruteforce_attempts;`
+5. Delay of 30 seconds in response from Nextcloud, the brute force login protection has kicked in. Configure X-Forwarded-For see above! Or and this is not recommended: set in your Nextcloud the preference `'auth.bruteforce.protection.enabled' => false,` and issue `truncate table bruteforce_attempts;`
 
 See:
 https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting
