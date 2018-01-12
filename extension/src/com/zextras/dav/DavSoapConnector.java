@@ -307,4 +307,64 @@ public class DavSoapConnector
     }
     return DavStatus.Created;
   }
+
+  /**
+   * Perform a SEARCH request.
+   * Search for files by property, currently only displayname implemented, supports % wildcard
+   * @param {string} search, string to look for
+   * @param {string} url, full url to WebDAV interface
+   * @param {string} path, folder to search in)
+   * @return The resource structure returned by the request.
+   * @throws IOException
+   */
+  public JSONArray search(String search, String path)
+          throws IOException
+  {
+    final JSONArray arrayResponse = new JSONArray();
+    List<DavResource> searchResult = mSardine.search(
+            search,
+            buildUrl("/"),
+            path
+    );
+
+    for (DavResource resource : searchResult)
+    {
+      JSONObject res = new JSONObject();
+      res.put("href", resource.getPath());
+      if (resource.getCreation() != null)
+      {
+        res.put("creation", resource.getCreation().getTime());
+      }
+      if (resource.getModified() != null)
+      {
+        res.put("modified", resource.getModified().getTime());
+      }
+      res.put("contentType", resource.getContentType());
+      res.put("contentLength", resource.getContentLength());
+      res.put("etag", resource.getEtag());
+      res.put("displayName", resource.getDisplayName());
+
+      JSONArray resourceTypes = new JSONArray();
+      for (QName name : resource.getResourceTypes())
+      {
+        resourceTypes.put("{" + name.getNamespaceURI() + "}" + name.getLocalPart());
+      }
+      res.put("resourceTypes", resourceTypes);
+      res.put("contentLanguage", resource.getContentLanguage());
+      JSONArray supportedReports = new JSONArray();
+      for (QName name : resource.getSupportedReports())
+      {
+        supportedReports.put("{" + name.getNamespaceURI() + "}" + name.getLocalPart());
+      }
+      res.put("supportedReports", supportedReports);
+      JSONObject customProps = new JSONObject();
+      for (String key : resource.getCustomProps().keySet())
+      {
+        customProps.put(key, resource.getCustomProps().get(key));
+      }
+      res.put("customProps", customProps);
+      arrayResponse.put(res);
+    }
+    return arrayResponse;
+  }
 }

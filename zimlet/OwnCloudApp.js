@@ -39,6 +39,11 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
    {     
       // Create toolbar buttons
       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+
+      //dummy button to catch the enter event and do nothing, dunno what the correct way is of not having an enter-key listener on zmtoolbar.
+      //want it in the search text input.
+      toolbar.createButton(ZmOperation.ADD_SIGNATURE, {});
+
       if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title"))
       {
          toolbar.createButton(ZmOperation.OP_OPEN_IN_TAB, {text: zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title")});
@@ -52,7 +57,26 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
       {
          toolbar.createButton(ZmOperation.NEW_FOLDER, {text: ZmMsg.newFolder});
          toolbar.addSelectionListener(ZmOperation.NEW_FOLDER, new AjxListener(this, this._newFolderListener));
-      }   
+      }
+      
+      var searchField = new DwtInputField({
+         parent: toolbar,
+         hint: ZmMsg.search.toLowerCase() + '...',
+         id: 'owncloud_zimlet_searchDWT',
+         inputId: 'owncloud_zimlet_search'
+      });  
+      toolbar.addChild(searchField);   
+      
+      toolbar._buttons.ADD_SIGNATURE.setVisibility(false);   
+      toolbar._buttons.ADD_SIGNATURE.setSize(0,0);
+      searchField.focus();
+      
+      document.getElementById("owncloud_zimlet_search").addEventListener("keyup", function(event) 
+      {
+         if (event.keyCode === 13) {
+            OwnCloudApp.prototype._searchFieldListener();
+         }
+      });     
    }   
   this._parentTreeItem = new DwtHeaderTreeItem({
     parent: treeView,
@@ -231,6 +255,11 @@ OwnCloudApp.prototype._onItemSelected = function(/** @type {DwtSelectionEvent} *
    }     
 };
 
+OwnCloudApp.prototype._renderSearchResult = function(/** @type {DavResource[]} */ davResources) {
+   this._listView.removeAll(true);
+   this._listView.addItems(davResources); 
+};
+
 OwnCloudApp.prototype._showFolderData = function(/** @type {DavResource[]} */ davResources) {
   var resource = davResources[0],
     children = resource.getChildren(),
@@ -388,6 +417,24 @@ OwnCloudApp.prototype.refreshViewPropfind = function() {
    zimletInstance._appView._zimletCtxt._defaultPropfindErrCbk
    );
 };   
+
+OwnCloudApp.prototype._searchFieldListener = function(ev) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   if(document.getElementById('owncloud_zimlet_search').value.length < 3)
+   {
+      zimletInstance.status(ZmMsg.invalidSearch, ZmStatusView.LEVEL_CRITICAL);
+      return;
+   }   
+   zimletInstance._appView._davConnector.search(
+   document.getElementById('owncloud_zimlet_search').value,
+   zimletInstance._appView._currentPath,
+   new AjxCallback(
+    zimletInstance._appView,
+    zimletInstance._appView._renderSearchResult
+   ),
+   zimletInstance._appView._zimletCtxt._defaultPropfindErrCbk
+   );
+};
 
 OwnCloudApp.prototype._newFolderListener = function(ev) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 

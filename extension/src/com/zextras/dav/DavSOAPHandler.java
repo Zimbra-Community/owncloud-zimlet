@@ -200,6 +200,30 @@ public class DavSOAPHandler implements SoapHandler
             soapResponse.setValue(command.name(), true);
           }
           break;
+        case SEARCH:
+        {
+          if (path == null)
+          {
+            throw new RuntimeException("Source path not provided for SEARCH DAV action.");
+          }
+          String search = zimbraContext.getParameter("search", null);
+          if (search == null)
+          {
+            throw new RuntimeException("No search string provided for SEARCH DAV action.");
+          }
+
+          connector.search(search, path);
+
+          soapResponse.setValue(
+                  command.name(),
+                  connector.search(
+                          search,
+                          path
+                  ).toString()
+          );
+
+        }
+        break;
         default:
           throw new RuntimeException("DAV command '" + command.name() + "' not handled.");
       }

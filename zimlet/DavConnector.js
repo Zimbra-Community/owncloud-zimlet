@@ -24,7 +24,8 @@
     MKCOL: 'MKCOL',
     MOVE: 'MOVE',
     PROPFIND: 'PROPFIND',
-    PUT: 'PUT'
+    PUT: 'PUT',
+    SEARCH: 'SEARCH'
   };
 
   var ZimbraItemType = {
@@ -465,6 +466,35 @@
   };
 
   /**
+   * Perform a SEARCH request
+   * Search for files by property, currently only displayname implemented, supports % wildcard
+   * @param {string} search, string to look for
+   * @param {string} url, full url to WebDAV interface
+   * @param {string} path, folder to search in
+   * @param {AjxCallback=} callback
+   * @param {AjxCallback=} errorCallback
+   */
+  DavConnector.prototype.search = function(search, path, callback, errorCallback) {
+    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+    soapDoc.set('search', '%'+search.replace(' ', '%')+'%');    
+    
+    if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'].indexOf('remote.php/webdav') > -1)
+    {
+       if (path == '/')
+       {
+          path = '/files/'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']+'/';
+       }
+       else
+       {
+          path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],'/files/'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']+'/');  
+       }
+    }
+    
+    soapDoc.set('path', path);          
+    DavConnector._sendRequest(DavAction.SEARCH, soapDoc, callback, errorCallback);
+  };
+
+  /**
    * Send the request to the server soap extension.
    * @param {string} action, one defined into {@see DavAction}
    * @param {AjxSoapDoc} soapDoc
@@ -474,11 +504,19 @@
    * @static
    */
   DavConnector._sendRequest = function(action, soapDoc, callback, errorCallback) {
+    if(action == 'SEARCH')
+    {
+       //nextcloud wtf
+       soapDoc.set('owncloud_zimlet_server_path', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'].replace('remote.php/webdav','remote.php/dav').replace(/\/$/, ""));
+    }
+    else
+    {
+       soapDoc.set('owncloud_zimlet_server_path', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']);
+    }
     soapDoc.set('owncloud_zimlet_password', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
     soapDoc.set('owncloud_zimlet_username', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']);
     soapDoc.set('owncloud_zimlet_server_name', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']);
-    soapDoc.set('owncloud_zimlet_server_port', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']);
-    soapDoc.set('owncloud_zimlet_server_path', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']);
+    soapDoc.set('owncloud_zimlet_server_port', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']);    
     soapDoc.set('owncloud_zimlet_oc_folder', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']); 
     // Injecting fake callbacks, the debug will be much faster.
     if (!callback) {
@@ -561,11 +599,43 @@
     {
       callback.run(response[action]);
     }
+    else if(action === DavAction.SEARCH)
+    {
+      callback.run(
+        DavConnector._parseSearch(response[action])
+      );
+    }    
     else
     {
       errorCallback.run(-2, new Error('DAV Action "' + action + '" not handled.'));
     }
   };
+
+  /**
+   * Parse the response of the SEARCH request.
+   * @param {string} rawResponse
+   * @return {DavResource[]}
+   * @private
+   * @static
+   */
+  DavConnector._parseSearch = function (rawResponse) {
+     var rawEntityArray = JSON.parse(rawResponse);
+     var entityArray = [];
+     for (i = 0; i < rawEntityArray.length; i += 1) {
+        var rawEntity = rawEntityArray[i];
+        resource = DavResource.fromRawResource(rawEntity);
+        
+        //fix nextcloud, why is dav !== webdav?
+        if(resource._href.indexOf('remote.php/dav')> -1)
+        {
+           resource._href = resource._href.replace('remote.php/dav', 'remote.php/webdav');
+           resource._href = resource._href.replace('/files/'+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'],'');
+        }
+        entityArray.push(resource);
+     }
+     return entityArray;
+  };
+
 
   /**
    * Parse the response of the propfind request.
