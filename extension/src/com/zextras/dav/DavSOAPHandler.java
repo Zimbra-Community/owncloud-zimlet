@@ -212,8 +212,6 @@ public class DavSOAPHandler implements SoapHandler
             throw new RuntimeException("No search string provided for SEARCH DAV action.");
           }
 
-          connector.search(search, path);
-
           soapResponse.setValue(
                   command.name(),
                   connector.search(
