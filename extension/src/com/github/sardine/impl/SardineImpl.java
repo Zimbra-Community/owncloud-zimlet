@@ -491,7 +491,7 @@ public class SardineImpl implements Sardine
 	public List<DavResource> search(String search, String url, String path) throws IOException
 	{
 		HttpEntityEnclosingRequestBase searchReq = new HttpSearch(url);
-		String body = "<d:searchrequest xmlns:d=\"DAV:\" xmlns:oc=\"http://owncloud.org/ns\"><d:basicsearch><d:select><d:prop>oc:fileid/<d:getcontenttype/><d:getetag/>oc:size/oc:favorite/</d:prop></d:select><d:from><d:scope><d:href>"+path+"</d:href><d:depth>infinity</d:depth></d:scope></d:from><d:where><d:like><d:prop><d:displayname/></d:prop><d:literal>"+search+"</d:literal></d:like></d:where><d:orderby/></d:basicsearch></d:searchrequest>";
+		String body = "<d:searchrequest xmlns:d=\"DAV:\" xmlns:oc=\"http://owncloud.org/ns\"><d:basicsearch><d:select><d:prop>oc:fileid/<d:getcontentlength/><d:getlastmodified/><d:getcontenttype/><d:getetag/>oc:size/oc:favorite/</d:prop></d:select><d:from><d:scope><d:href>"+path+"</d:href><d:depth>infinity</d:depth></d:scope></d:from><d:where><d:like><d:prop><d:displayname/></d:prop><d:literal>"+search+"</d:literal></d:like></d:where><d:orderby/></d:basicsearch></d:searchrequest>";
 		searchReq.setEntity(new StringEntity(body, UTF_8));
 		Multistatus multistatus = this.execute(searchReq, new MultiStatusResponseHandler());
 		List<Response> responses = multistatus.getResponse();
