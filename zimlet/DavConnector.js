@@ -476,7 +476,7 @@
    */
   DavConnector.prototype.search = function(search, path, callback, errorCallback) {
     var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('search', '%'+search.replace(' ', '%')+'%');    
+    soapDoc.set('search', '%'+search.replace(/ /g, '%')+'%');    
     
     if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'].indexOf('remote.php/webdav') > -1)
     {
