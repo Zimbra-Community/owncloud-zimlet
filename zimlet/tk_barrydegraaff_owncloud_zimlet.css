@@ -43,3 +43,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
    width:98% !important;
    font-family: monospace !important;
 }
+
+#owncloud_zimlet_search{
+border-radius:3px;
+}
