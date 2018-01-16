@@ -491,7 +491,27 @@ public class SardineImpl implements Sardine
 	public List<DavResource> search(String search, String url, String path) throws IOException
 	{
 		HttpEntityEnclosingRequestBase searchReq = new HttpSearch(url);
-		String body = "<d:searchrequest xmlns:d=\"DAV:\" xmlns:oc=\"http://owncloud.org/ns\"><d:basicsearch><d:select><d:prop>oc:fileid/<d:getcontentlength/><d:getlastmodified/><d:getcontenttype/><d:getetag/>oc:size/oc:favorite/</d:prop></d:select><d:from><d:scope><d:href>"+path+"</d:href><d:depth>infinity</d:depth></d:scope></d:from><d:where><d:like><d:prop><d:displayname/></d:prop><d:literal>"+search+"</d:literal></d:like></d:where><d:orderby/></d:basicsearch></d:searchrequest>";
+
+		String searchBody = "";
+		String[] searchWords = search.split("%");
+		Integer searchWordCount = 0;
+		for (String searchWord : searchWords) {
+			if (!"".equals(searchWord)) {
+				searchBody = searchBody + "<d:like><d:prop><d:displayname/></d:prop><d:literal>%"+searchWord+"%</d:literal></d:like>";
+				searchWordCount ++;
+			}
+		}
+
+		String operator = "<d:and>";
+		String operatorEnd = "</d:and>";
+
+		if(searchWordCount < 2) {
+			operator="";
+			operatorEnd="";
+		}
+
+		String body = "<d:searchrequest xmlns:d=\"DAV:\" xmlns:oc=\"http://owncloud.org/ns\"><d:basicsearch><d:select><d:prop>oc:fileid/<d:getcontentlength/><d:getlastmodified/><d:getcontenttype/><d:resourcetype/><d:getetag/>oc:size/oc:favorite/</d:prop></d:select><d:from><d:scope><d:href>"+path+"</d:href><d:depth>infinity</d:depth></d:scope></d:from><d:where>"+operator+searchBody+operatorEnd+"</d:where><d:orderby><d:order><d:prop><d:displayname/></d:prop><d:ascending/></d:order><d:order><d:prop><d:getlastmodified/></d:prop><d:ascending/></d:order></d:orderby></d:basicsearch></d:searchrequest>";
+		
 		searchReq.setEntity(new StringEntity(body, UTF_8));
 		Multistatus multistatus = this.execute(searchReq, new MultiStatusResponseHandler());
 		List<Response> responses = multistatus.getResponse();
