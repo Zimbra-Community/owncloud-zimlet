@@ -257,7 +257,55 @@ OwnCloudApp.prototype._onItemSelected = function(/** @type {DwtSelectionEvent} *
 
 OwnCloudApp.prototype._renderSearchResult = function(/** @type {DavResource[]} */ davResources) {
    this._listView.removeAll(true);
-   this._listView.addItems(davResources); 
+   this._listView._isWebDAVClientSearchResult = true;
+   this._listView._webDAVClientSearchResult = davResources;
+   this._listView.addItems(OwnCloudApp.prototype._sortSearchResult()); 
+};
+
+OwnCloudApp.prototype._sortSearchResult = function () {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   var sortedSearchResult = [];
+   var sortedSearchResultKeys = [];
+   for (var i = 0; i < zimletInstance._appView._listView._webDAVClientSearchResult.length; i++) {      
+      var sortable = "";  
+      switch(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_item']) {
+         case 'na':
+            sortable = zimletInstance._appView._listView._webDAVClientSearchResult[i].getName().toLowerCase();            
+         break;
+         case 'sz':
+            sortable = zimletInstance._appView._listView._webDAVClientSearchResult[i]._contentLength;
+            sortable = sortable.toString();
+            while (sortable.length < 40) 
+            {
+               sortable = "0" + sortable;
+            }   
+         break;
+         case 'ft':
+            sortable = zimletInstance._appView._listView._webDAVClientSearchResult[i].getContentType();            
+         break;
+         case 'dt':            
+            var sortable = zimletInstance._appView._listView._webDAVClientSearchResult[i]._modified.valueOf();            
+         break; 
+      }      
+      sortedSearchResult[
+         sortable+zimletInstance._appView._listView._webDAVClientSearchResult[i].getHref()] =
+         zimletInstance._appView._listView._webDAVClientSearchResult[i];
+      
+      sortedSearchResultKeys.push(sortable+zimletInstance._appView._listView._webDAVClientSearchResult[i].getHref());   
+   } 
+   sortedSearchResultKeys.sort();
+
+   if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_asc']==false)
+   {
+      sortedSearchResultKeys.reverse();
+   }
+   
+   var result = [];
+   for (var i = 0; i < sortedSearchResultKeys.length; i++) {
+      result[i] = sortedSearchResult[sortedSearchResultKeys[i]];
+   }
+   
+   return result;   
 };
 
 OwnCloudApp.prototype._showFolderData = function(/** @type {DavResource[]} */ davResources) {

@@ -94,7 +94,16 @@ function(columnItem, bSortAsc) {
    {   
       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_asc'] = true;  
    }
-   zimletInstance._appView.refreshViewPropfind();
+
+   if(zimletInstance._appView._listView._isWebDAVClientSearchResult)
+   {
+      zimletInstance._appView._listView.removeAll(true);
+      zimletInstance._appView._listView.addItems(OwnCloudApp.prototype._sortSearchResult());
+   }
+   else
+   {
+      zimletInstance._appView.refreshViewPropfind();
+   }   
 }
 
 OwnCloudListView.prototype._getCellContents = function (htmlArr, idx, item, field, colIdx, params) {
