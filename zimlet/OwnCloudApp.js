@@ -181,6 +181,9 @@ OwnCloudApp.prototype._restoreExpansion = function(treeItem, wasExpanded, callba
 };
 
 OwnCloudApp.prototype._renderTreePropFind = function(href, parent, callback, resources) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   zimletInstance._appView._listView._isWebDAVClientSearchResult = false;
+   zimletInstance._appView._listView._webDAVClientSearchResult = null;
   var i,
     rootFolder = resources[0],
     children = rootFolder.getChildren();
