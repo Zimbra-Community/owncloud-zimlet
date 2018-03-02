@@ -389,20 +389,25 @@ ownCloudZimlet.saveAttachment =
  */
 ownCloudZimlet.prototype.saveAttachment =
   function(url, label) {
+    this.createFolder(
+      new AjxCallback(this,this.saveAttachmentDoIt,[url,label]), this._defaultPropfindErrCbk);
+  };
+
+ownCloudZimlet.prototype.saveAttachmentDoIt =
+  function(url, label) {
     var propfindCbk = new AjxCallback(
       this,
       this._saveAttachmentPropfindCbk,
       [url, label]
     );
-
+    
     this._davConnector.propfind(
       tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
       1,
       propfindCbk,
       this._defaultPropfindErrCbk
-    );
+    );   
   };
-
 /**
  * Save an attachment to OwnCloud.
  * @param {string} mid The message id
@@ -1000,15 +1005,20 @@ ownCloudZimlet.prototype.doDrop =
  * */
 ownCloudZimlet.prototype.uploadItems =
   function(zmObjects) {
-
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-    {
-       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+    {       
        zimletInstance.status(ZmMsg.requiredLabel + ' ' + ZmMsg.password, ZmStatusView.LEVEL_INFO);
        zimletInstance.displayDialog(1, ZmMsg.preferences, null);
        return;
     }
 
+   this.createFolder(
+      new AjxCallback(this,this.uploadItemsDoIt,[zmObjects]), this._defaultPropfindErrCbk);
+  };
+
+ownCloudZimlet.prototype.uploadItemsDoIt =
+  function(zmObjects) {
     var propfindCbk = new AjxCallback(
       this,
       this._doDropPropfindCbk,
@@ -1020,7 +1030,7 @@ ownCloudZimlet.prototype.uploadItems =
       1,
       propfindCbk,
       this._defaultPropfindErrCbk
-    );
+    );  
   };
 
 ownCloudZimlet.prototype._onDropTransfer =
