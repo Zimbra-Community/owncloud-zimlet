@@ -75,6 +75,12 @@ echo "If you have trouble or are unsure, choose Y. Y/n:"
 read YNZIMLETDEV;
 
 echo ""
+echo "Are these zimlets installed in production mode?"
+echo "You are only supposed to choose n if you are a developer"
+echo "If you have trouble or are unsure, choose Y. Y/n:"
+read YNZIMLETISPRODUCTION;
+
+echo ""
 echo "Do you want to install public link sharing?"
 echo "If you use a WebDAV server that is not ownCloud or Nextcloud choose n."
 echo "If you have trouble or are unsure, choose Y. Y/n:"
@@ -97,10 +103,22 @@ if [[ -z $GIT_CMD ]] || [[ -z $ANT_CMD ]] || [[ -z $ZIP_CMD ]]; then
    fi
 fi
 
+if [[ "$YNZIMLETISPRODUCTION" == 'N' || "$YNZIMLETISPRODUCTION" == 'n' ]];
+then
+   echo "Using Development path per user request"
+   OWNCLOUD_ZIMLET_PATH="${OWNCLOUD_ZIMLET_DEV_PATH}"
+   DOCCONVERT_ZIMLET_PATH="${DOCCONVERT_ZIMLET_DEV_PATH}"
+else
+   echo "Using Production path per user request"
+   OWNCLOUD_ZIMLET_PATH="${OWNCLOUD_ZIMLET_PRODUCTION_PATH}"
+   DOCCONVERT_ZIMLET_PATH="${DOCCONVERT_ZIMLET_PRODUCTION_PATH}"
+fi
 
 echo "Remove old versions of Zimlet."
 rm -Rf ${OWNCLOUD_ZIMLET_DEV_PATH}/
 rm -Rf ${DOCCONVERT_ZIMLET_DEV_PATH}/
+rm -Rf ${OWNCLOUD_ZIMLET_PRODUCTION_PATH}/
+rm -Rf ${DOCCONVERT_ZIMLET_PRODUCTION_PATH}/
 
 if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
@@ -201,8 +219,8 @@ if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
    echo "Skipped per user request."
 else
-   mkdir -p ${OWNCLOUD_ZIMLET_DEV_PATH}/
-   unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d ${OWNCLOUD_ZIMLET_DEV_PATH}/
+   mkdir -p ${OWNCLOUD_ZIMLET_PATH}/
+   unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d ${OWNCLOUD_ZIMLET_PATH}/
 fi
 
 if [[ "$YNDOCPREV" == 'Y' || "$YNDOCPREV" == 'y' ]];
@@ -242,8 +260,8 @@ then
    then
       echo "Skipped per user request."
    else
-      mkdir -p ${DOCCONVERT_ZIMLET_DEV_PATH}/
-      cp -v $TMPFOLDER/owncloud-zimlet/docconvert/zimlet/tk_barrydegraaff_docconvert/* ${DOCCONVERT_ZIMLET_DEV_PATH}/
+      mkdir -p ${DOCCONVERT_ZIMLET_PATH}/
+      cp -v $TMPFOLDER/owncloud-zimlet/docconvert/zimlet/tk_barrydegraaff_docconvert/* ${DOCCONVERT_ZIMLET_PATH}/
    fi    
 fi
 
@@ -270,7 +288,7 @@ if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
    echo "Skip config_template.xml generation by user request."
 else
-   java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet ${OWNCLOUD_EXTENSION_PATH}/config.properties ${OWNCLOUD_ZIMLET_DEV_PATH}/config_template.xml
+   java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet ${OWNCLOUD_EXTENSION_PATH}/config.properties ${OWNCLOUD_ZIMLET_PATH}/config_template.xml
 fi
 
 chown zimbra:zimbra ${OWNCLOUD_EXTENSION_PATH}/config.properties
