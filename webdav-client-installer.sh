@@ -115,7 +115,7 @@ fi
 
 echo "Download WebDAV Client to $TMPFOLDER"
 cd $TMPFOLDER
-git clone --depth=1 https://github.com/Zimbra-Community/owncloud-zimlet
+git clone --depth=1 -b soapServiceBarry https://github.com/Zimbra-Community/owncloud-zimlet
 #cp -r /root/owncloud-zimlet $TMPFOLDER
 
 echo "Compiling WebDAV Client."
