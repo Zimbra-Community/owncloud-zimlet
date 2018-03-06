@@ -23,6 +23,8 @@ DOCCONVERT_ZIMLET_PRODUCTION_PATH="/opt/zimbra/zimlets-deployed/tk_barrydegraaff
 DOCCONVERT_ZIMLET_DEV_PATH="/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert"
 OWNCLOUD_EXTENSION_PATH="/opt/zimbra/lib/ext/ownCloud"
 DOCCONVERT_EXTENSION_PATH="/opt/zimbra/lib/ext/DocConvert"
+OWNCLOUD_ZIMLET_CLONE_URL="https://github.com/Zimbra-Community/owncloud-zimlet"
+OWNCLOUD_ZIMLET_CLONE_BRANCH="soapServiceBarry"
 
 
 # We only support java versions bundled with Zimbra
@@ -115,7 +117,7 @@ fi
 
 echo "Download WebDAV Client to $TMPFOLDER"
 cd $TMPFOLDER
-git clone --depth=1 -b soapServiceBarry https://github.com/Zimbra-Community/owncloud-zimlet
+git clone --depth=1 -b ${OWNCLOUD_ZIMLET_CLONE_BRANCH} ${OWNCLOUD_ZIMLET_CLONE_URL}
 #cp -r /root/owncloud-zimlet $TMPFOLDER
 
 echo "Compiling WebDAV Client."
