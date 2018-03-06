@@ -28,6 +28,7 @@ OWNCLOUD_ZIMLET_CLONE_BRANCH="soapServiceBarry"
 OCS_JAR_URL="https://github.com/Zimbra-Community/OCS/raw/master/extension/out/artifacts/OCS_jar/OCS.jar"
 PROPMIGR_JAR_URL="https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar"
 PROP2XML_JAR_URL="https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar"
+OCS_EXTENSION_PATH="/opt/zimbra/lib/ext/OCS"
 
 
 # We only support java versions bundled with Zimbra
@@ -255,12 +256,12 @@ echo "Downloading OCS Share API implementation for WebDAV Client"
 if [[ "$YNOCS" == 'N' || "$YNOCS" == 'n' ]];
 then
    echo "Skip by user request."
-   mkdir -p /opt/zimbra/lib/ext/OCS
-   rm -Rf /opt/zimbra/lib/ext/OCS
+   mkdir -p ${OCS_EXTENSION_PATH}
+   rm -Rf ${OCS_EXTENSION_PATH}
 else
-   mkdir -p /opt/zimbra/lib/ext/OCS
-   rm -f /opt/zimbra/lib/ext/OCS/*.jar
-   cd /opt/zimbra/lib/ext/OCS
+   mkdir -p ${OCS_EXTENSION_PATH}
+   rm -f ${OCS_EXTENSION_PATH}/*.jar
+   cd ${OCS_EXTENSION_PATH}
    wget --no-cache "${OCS_JAR_URL}"
 fi
 
