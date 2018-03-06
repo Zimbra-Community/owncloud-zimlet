@@ -29,6 +29,31 @@ OCS_JAR_URL="https://github.com/Zimbra-Community/OCS/raw/master/extension/out/ar
 PROPMIGR_JAR_URL="https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar"
 PROP2XML_JAR_URL="https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar"
 OCS_EXTENSION_PATH="/opt/zimbra/lib/ext/OCS"
+OWNCLOUD_EXTENSION_JAR_FILES="\
+ant-1.7.0.jar \
+commons-cli-1.2.jar \
+commons-codec-1.9.jar \
+commons-fileupload-1.3.1.jar \
+commons-httpclient-3.1.jar \
+commons-logging-1.2.jar \
+dav-soap-connector-extension.jar \
+fluent-hc-4.5.1.jar \
+httpclient-4.5.1.jar \
+httpclient-cache-4.5.1.jar \
+httpcore-4.4.3.jar \
+httpcore-ab-4.4.3.jar \
+httpcore-nio-4.4.3.jar \
+httpmime-4.5.1.jar \
+jna-4.1.0.jar \
+jna-platform-4.1.0.jar \
+urlrewritefilter-4.0.3.jar \
+zal.jar \
+commons-io-2.6.jar \
+jackson-annotations-2.9.4.jar \
+jackson-core-2.9.4.jar \
+jackson-databind-2.9.4.jar \
+java-jwt-3.3.0.jar \
+"
 
 
 # We only support java versions bundled with Zimbra
@@ -152,29 +177,9 @@ echo "Installing server extension to ${OWNCLOUD_EXTENSION_PATH}"
 cd $TMPFOLDER/owncloud-zimlet/dist/owncloud-extension/
 mkdir -p ${OWNCLOUD_EXTENSION_PATH}
 rm -f ${OWNCLOUD_EXTENSION_PATH}/*.jar
-cp ant-1.7.0.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp commons-cli-1.2.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp commons-codec-1.9.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp commons-fileupload-1.3.1.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp commons-httpclient-3.1.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp commons-logging-1.2.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp dav-soap-connector-extension.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp fluent-hc-4.5.1.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp httpclient-4.5.1.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp httpclient-cache-4.5.1.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp httpcore-4.4.3.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp httpcore-ab-4.4.3.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp httpcore-nio-4.4.3.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp httpmime-4.5.1.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp jna-4.1.0.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp jna-platform-4.1.0.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp urlrewritefilter-4.0.3.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp zal.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp commons-io-2.6.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp jackson-annotations-2.9.4.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp jackson-core-2.9.4.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp jackson-databind-2.9.4.jar ${OWNCLOUD_EXTENSION_PATH}/
-cp java-jwt-3.3.0.jar ${OWNCLOUD_EXTENSION_PATH}/
+for njarfile in ${OWNCLOUD_EXTENSION_JAR_FILES} ; do
+   cp ${njarfile} ${OWNCLOUD_EXTENSION_PATH}/
+done
 
 # Here we set the template for config.properties, if upgrading we alter it further down
 echo "allowdomains=*
