@@ -25,6 +25,9 @@ OWNCLOUD_EXTENSION_PATH="/opt/zimbra/lib/ext/ownCloud"
 DOCCONVERT_EXTENSION_PATH="/opt/zimbra/lib/ext/DocConvert"
 OWNCLOUD_ZIMLET_CLONE_URL="https://github.com/Zimbra-Community/owncloud-zimlet"
 OWNCLOUD_ZIMLET_CLONE_BRANCH="soapServiceBarry"
+OCS_JAR_URL="https://github.com/Zimbra-Community/OCS/raw/master/extension/out/artifacts/OCS_jar/OCS.jar"
+PROPMIGR_JAR_URL="https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar"
+PROP2XML_JAR_URL="https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar"
 
 
 # We only support java versions bundled with Zimbra
@@ -253,15 +256,15 @@ else
    mkdir -p /opt/zimbra/lib/ext/OCS
    rm -f /opt/zimbra/lib/ext/OCS/*.jar
    cd /opt/zimbra/lib/ext/OCS
-   wget --no-cache "https://github.com/Zimbra-Community/OCS/raw/master/extension/out/artifacts/OCS_jar/OCS.jar"
+   wget --no-cache "${OCS_JAR_URL}"
 fi
 
 echo "Restoring config.properties"
 cd $TMPFOLDER/upgrade/
-wget --no-cache https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar
+wget --no-cache "${PROPMIGR_JAR_URL}"
 java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config.properties ${OWNCLOUD_EXTENSION_PATH}/config.properties
 echo "Generating config_template.xml"
-wget --no-cache https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar
+wget --no-cache "${PROP2XML_JAR_URL}"
 if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
    echo "Skip config_template.xml generation by user request."
