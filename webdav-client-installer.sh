@@ -17,6 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 
+OWNCLOUD_ZIMLET_PRODUCTION_PATH="/opt/zimbra/zimlets-deployed/tk_barrydegraaff_owncloud_zimlet"
+OWNCLOUD_ZIMLET_DEV_PATH="/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet"
+DOCCONVERT_ZIMLET_PRODUCTION_PATH="/opt/zimbra/zimlets-deployed/tk_barrydegraaff_docconvert"
+DOCCONVERT_ZIMLET_DEV_PATH="/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert"
+
+
 # We only support java versions bundled with Zimbra
 if [[ -x "/opt/zimbra/common/bin/java" ]]
 then
@@ -85,8 +91,8 @@ fi
 
 
 echo "Remove old versions of Zimlet."
-rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
+rm -Rf ${OWNCLOUD_ZIMLET_DEV_PATH}/
+rm -Rf ${DOCCONVERT_ZIMLET_DEV_PATH}/
 
 if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
@@ -192,8 +198,8 @@ if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
    echo "Skipped per user request."
 else
-   mkdir -p /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-   unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+   mkdir -p ${OWNCLOUD_ZIMLET_DEV_PATH}/
+   unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d ${OWNCLOUD_ZIMLET_DEV_PATH}/
 fi
 
 if [[ "$YNDOCPREV" == 'Y' || "$YNDOCPREV" == 'y' ]];
@@ -233,8 +239,8 @@ then
    then
       echo "Skipped per user request."
    else
-      mkdir -p /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
-      cp -v $TMPFOLDER/owncloud-zimlet/docconvert/zimlet/tk_barrydegraaff_docconvert/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
+      mkdir -p ${DOCCONVERT_ZIMLET_DEV_PATH}/
+      cp -v $TMPFOLDER/owncloud-zimlet/docconvert/zimlet/tk_barrydegraaff_docconvert/* ${DOCCONVERT_ZIMLET_DEV_PATH}/
    fi    
 fi
 
@@ -261,7 +267,7 @@ if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
    echo "Skip config_template.xml generation by user request."
 else
-   java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
+   java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties ${OWNCLOUD_ZIMLET_DEV_PATH}/config_template.xml
 fi
 
 chown zimbra:zimbra /opt/zimbra/lib/ext/ownCloud/config.properties
