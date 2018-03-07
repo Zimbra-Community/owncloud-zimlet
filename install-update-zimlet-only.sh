@@ -24,6 +24,13 @@ DOCCONVERT_ZIMLET_PRODUCTION_PATH="/opt/zimbra/zimlets-deployed/tk_barrydegraaff
 DOCCONVERT_ZIMLET_DEV_PATH="/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert"
 PROP2XML_JAR_URL="https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar"
 
+IS_AUTO="NO"
+
+if [[ "$1" == '--auto' ]]
+then
+    IS_AUTO="YES"
+fi
+
 # We only support java versions bundled with Zimbra
 if [[ -x "/opt/zimbra/common/bin/java" ]]
 then
@@ -44,7 +51,13 @@ echo ""
 echo "Are these zimlets updated in production mode?"
 echo "You are only supposed to choose n if you are a developer"
 echo "If you have trouble or are unsure, choose Y. Y/n:"
-read YNZIMLETISPRODUCTION;
+
+if [[ "${IS_AUTO}" == 'YES' ]]
+then
+    YNZIMLETISPRODUCTION="Y"
+else
+    read YNZIMLETISPRODUCTION;
+fi
 
 if [[ "$YNZIMLETISPRODUCTION" == 'N' || "$YNZIMLETISPRODUCTION" == 'n' ]];
 then
