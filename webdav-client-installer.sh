@@ -264,7 +264,6 @@ else
       chown zimbra:zimbra $TMPFOLDER -R
       su - zimbra -c "zmzimletctl deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"
       su - zimbra -c "zmzimletctl configure ${OWNCLOUD_ZIMLET_PATH}/config_template.xml"
-      su - zimbra -c "zmprov fc all"
    fi
 fi
 
