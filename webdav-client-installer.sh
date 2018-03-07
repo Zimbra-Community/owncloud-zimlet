@@ -97,7 +97,7 @@ if [[ "${IS_AUTO}" == 'YES' ]]
 then
     YNDOCPREV="Y"
 else
-read YNDOCPREV;
+    read YNDOCPREV;
 fi
 
 echo ""
@@ -109,7 +109,7 @@ if [[ "${IS_AUTO}" == 'YES' ]]
 then
     YNZIMLETDEV="Y"
 else
-read YNZIMLETDEV;
+    read YNZIMLETDEV;
 fi
 
 
@@ -122,7 +122,7 @@ if [[ "${IS_AUTO}" == 'YES' ]]
 then
     YNZIMLETISPRODUCTION="Y"
 else
-read YNZIMLETISPRODUCTION;
+    read YNZIMLETISPRODUCTION;
 fi
 
 echo ""
@@ -134,7 +134,7 @@ if [[ "${IS_AUTO}" == 'YES' ]]
 then
     YNOCS="Y"
 else
-read YNOCS;
+    read YNOCS;
 fi
 
 echo "Check if git and ant are installed."
