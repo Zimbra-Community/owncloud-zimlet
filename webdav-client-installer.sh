@@ -97,6 +97,8 @@ echo "You can later enable OnlyOffice document preview by configuring:"
 echo "owncloud_zimlet_enable_onlyoffice and owncloud_zimlet_onlyoffice_api_url"
 echo "It is OK to use both OnlyOffice and LibreOffice at the same time for document preview."
 
+IS_AUTO="NO"
+
 if [[ "${IS_AUTO}" == 'YES' ]]
 then
     YNDOCPREV="Y"
