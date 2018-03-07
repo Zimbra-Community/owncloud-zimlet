@@ -56,6 +56,11 @@ java-jwt-3.3.0.jar \
 "
 OWNCLOUD_DOC_URL="https\://barrydegraaff.github.io/owncloud/"
 
+if [[ "$1" == '--auto' ]]
+then
+    IS_AUTO="YES"
+fi
+
 
 # We only support java versions bundled with Zimbra
 if [[ -x "/opt/zimbra/common/bin/java" ]]
@@ -92,25 +97,49 @@ echo "You can later enable OnlyOffice document preview by configuring:"
 echo "owncloud_zimlet_enable_onlyoffice and owncloud_zimlet_onlyoffice_api_url"
 echo "It is OK to use both OnlyOffice and LibreOffice at the same time for document preview."
 
+if [[ "${IS_AUTO}" == 'YES' ]]
+then
+    YNDOCPREV="Y"
+else
 read YNDOCPREV;
+fi
 
 echo ""
 echo "Do you want to automatically install Zimlet and force enable it in all COS'es?"
 echo "If you choose n you have to run zmzimletctl, configuration COS and set config_template.xml manually."
 echo "If you have trouble or are unsure, choose Y. Y/n:"
+
+if [[ "${IS_AUTO}" == 'YES' ]]
+then
+    YNZIMLETDEV="Y"
+else
 read YNZIMLETDEV;
+fi
+
 
 echo ""
 echo "Are these zimlets installed in production mode?"
 echo "You are only supposed to choose n if you are a developer"
 echo "If you have trouble or are unsure, choose Y. Y/n:"
+
+if [[ "${IS_AUTO}" == 'YES' ]]
+then
+    YNZIMLETISPRODUCTION="Y"
+else
 read YNZIMLETISPRODUCTION;
+fi
 
 echo ""
 echo "Do you want to install public link sharing?"
 echo "If you use a WebDAV server that is not ownCloud or Nextcloud choose n."
 echo "If you have trouble or are unsure, choose Y. Y/n:"
+
+if [[ "${IS_AUTO}" == 'YES' ]]
+then
+    YNOCS="Y"
+else
 read YNOCS;
+fi
 
 echo "Check if git and ant are installed."
 set +e
