@@ -263,7 +263,6 @@ else
    else
       chown zimbra:zimbra $TMPFOLDER -R
       su - zimbra -c "zmzimletctl deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"
-      su - zimbra -c "zmzimletctl configure ${OWNCLOUD_ZIMLET_PATH}/config_template.xml"
    fi
 fi
 
@@ -337,6 +336,20 @@ fi
 
 chown zimbra:zimbra ${OWNCLOUD_EXTENSION_PATH}/config.properties
 chmod u+rw ${OWNCLOUD_EXTENSION_PATH}/config.properties
+
+echo "Configuring Zimlet."
+if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
+then
+   echo "Skipped per user request."
+else
+   if [[ "$YNZIMLETISPRODUCTION" == 'N' || "$YNZIMLETISPRODUCTION" == 'n' ]];
+   then
+      :
+   else
+      chown zimbra:zimbra $TMPFOLDER -R
+      su - zimbra -c "zmzimletctl configure ${OWNCLOUD_ZIMLET_PATH}/config_template.xml"
+   fi
+fi
 
 echo "Flushing Zimlet Cache."
 su - zimbra -c "zmprov fc all"
