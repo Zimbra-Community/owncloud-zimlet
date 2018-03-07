@@ -18,6 +18,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 
+OWNCLOUD_ZIMLET_PRODUCTION_PATH="/opt/zimbra/zimlets-deployed/tk_barrydegraaff_owncloud_zimlet"
+OWNCLOUD_ZIMLET_DEV_PATH="/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet"
+DOCCONVERT_ZIMLET_PRODUCTION_PATH="/opt/zimbra/zimlets-deployed/tk_barrydegraaff_docconvert"
+DOCCONVERT_ZIMLET_DEV_PATH="/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert"
+PROP2XML_JAR_URL="https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar"
+
 # We only support java versions bundled with Zimbra
 if [[ -x "/opt/zimbra/common/bin/java" ]]
 then
@@ -34,16 +40,31 @@ else
     exit 1
 fi
 
-# This script installs the zimlet to the _dev folder of Zimbra
+echo ""
+echo "Are these zimlets updated in production mode?"
+echo "You are only supposed to choose n if you are a developer"
+echo "If you have trouble or are unsure, choose Y. Y/n:"
+read YNZIMLETISPRODUCTION;
 
-rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-mkdir /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
+if [[ "$YNZIMLETISPRODUCTION" == 'N' || "$YNZIMLETISPRODUCTION" == 'n' ]];
+then
+   echo "Using Development path per user request"
+   OWNCLOUD_ZIMLET_PATH="${OWNCLOUD_ZIMLET_DEV_PATH}"
+   DOCCONVERT_ZIMLET_PATH="${DOCCONVERT_ZIMLET_DEV_PATH}"
+else
+   echo "Using Production path per user request"
+   OWNCLOUD_ZIMLET_PATH="${OWNCLOUD_ZIMLET_PRODUCTION_PATH}"
+   DOCCONVERT_ZIMLET_PATH="${DOCCONVERT_ZIMLET_PRODUCTION_PATH}"
+fi
 
-cp -rv zimlet/* /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-rm -f /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/tk_barrydegraaff_owncloud_zimlet.zip
-rm -f /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/makefile
+rm -Rf "${OWNCLOUD_ZIMLET_PATH}"/
+mkdir "${OWNCLOUD_ZIMLET_PATH}"/
 
-wget https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar -O /tmp/prop2xml.jar
-java -jar /tmp/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
+cp -rv zimlet/* "${OWNCLOUD_ZIMLET_PATH}"/
+rm -f "${OWNCLOUD_ZIMLET_PATH}"/tk_barrydegraaff_owncloud_zimlet.zip
+rm -f "${OWNCLOUD_ZIMLET_PATH}"/makefile
+
+wget "${PROP2XML_JAR_URL}" -O /tmp/prop2xml.jar
+java -jar /tmp/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties "${OWNCLOUD_ZIMLET_PATH}"/config_template.xml
 
 su zimbra -c "/opt/zimbra/bin/zmprov fc all"
