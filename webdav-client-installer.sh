@@ -56,6 +56,8 @@ java-jwt-3.3.0.jar \
 "
 OWNCLOUD_DOC_URL="https\://barrydegraaff.github.io/owncloud/"
 
+IS_AUTO="NO"
+
 if [[ "$1" == '--auto' ]]
 then
     IS_AUTO="YES"
@@ -96,8 +98,6 @@ echo "Do you want to enable experimental LibreOffice document preview (tested on
 echo "You can later enable OnlyOffice document preview by configuring:"
 echo "owncloud_zimlet_enable_onlyoffice and owncloud_zimlet_onlyoffice_api_url"
 echo "It is OK to use both OnlyOffice and LibreOffice at the same time for document preview."
-
-IS_AUTO="NO"
 
 if [[ "${IS_AUTO}" == 'YES' ]]
 then
