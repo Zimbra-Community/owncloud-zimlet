@@ -736,7 +736,6 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
               },
            },
         "documentType": documentType,
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhdXRoMCJ9.LwFobNNCa9fM1O9v0DK_n8t_e-3RW9-BpaAAKnjJMK4",
         "height": zimletInstance.appHeight + "px",
         "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
         "token": zimletInstance.onlyOfficeToken,
