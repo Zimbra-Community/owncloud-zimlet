@@ -139,6 +139,10 @@ cp jna-platform-4.1.0.jar /opt/zimbra/lib/ext/ownCloud/
 cp urlrewritefilter-4.0.3.jar /opt/zimbra/lib/ext/ownCloud/
 cp zal.jar /opt/zimbra/lib/ext/ownCloud/
 cp commons-io-2.6.jar /opt/zimbra/lib/ext/ownCloud/
+cp jackson-annotations-2.9.4.jar /opt/zimbra/lib/ext/ownCloud/
+cp jackson-core-2.9.4.jar /opt/zimbra/lib/ext/ownCloud/
+cp jackson-databind-2.9.4.jar /opt/zimbra/lib/ext/ownCloud/
+cp java-jwt-3.3.0.jar /opt/zimbra/lib/ext/ownCloud/
 
 # Here we set the template for config.properties, if upgrading we alter it further down
 echo "allowdomains=*
@@ -161,6 +165,7 @@ owncloud_zimlet_accountname_with_domain=false
 owncloud_zimlet_disable_auto_upload_on_exceed=false
 owncloud_zimlet_enable_onlyoffice=false
 owncloud_zimlet_onlyoffice_api_url=
+owncloud_zimlet_onlyoffice_secret=
 " > /opt/zimbra/lib/ext/ownCloud/config.properties
 
 #There has to be a better way to get the contents of zimbraMailTrustedIP but

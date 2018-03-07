@@ -558,6 +558,7 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
 };
 
 OwnCloudListView.prototype._onItemSelected = function(ev) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   var item = ev.item;
 
   var davResource = this.getSelection()[0];
@@ -569,7 +570,9 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   var _this = this;
   xhr.onload = function(e) 
   {     
-     if(xhr.responseText == 'true')
+     var dav_download_options = xhr.responseText.split(";");
+     zimletInstance.onlyOfficeToken = dav_download_options[1];
+     if(dav_download_options[0] == 'true')
      {
         var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.md$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i;
      }
@@ -593,7 +596,6 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
      }
   }
 
-  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   OwnCloudApp.prototype.setDimensions();
   this.setSize((zimletInstance.appWidth/2-zimletInstance.appWidthCorrection)+"px",zimletInstance.appHeight+"px");
   
@@ -718,7 +720,8 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
       }
      
      onlyOfficeRendered = true;
-     zimletInstance.docEditor = new DocsAPI.DocEditor('WebDAVPreview',
+          
+     var onlyOfficeParams = 
      {
          "document": {
             "fileType": fileType,
@@ -730,18 +733,21 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
             "edit": false,
             "print": true,
             "review": false
-        },
-        },
+              },
+           },
         "documentType": documentType,
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhdXRoMCJ9.LwFobNNCa9fM1O9v0DK_n8t_e-3RW9-BpaAAKnjJMK4",
         "height": zimletInstance.appHeight + "px",
         "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
+        "token": zimletInstance.onlyOfficeToken,
         "editorConfig": {
-                "customization": {
-                    "chat": false,
-                    "zoom": 100
-                },
-            },
-        });
+             "customization": {
+                 "chat": false,
+                 "zoom": 100
+             },
+         },
+     };
+     zimletInstance.docEditor = new DocsAPI.DocEditor('WebDAVPreview',onlyOfficeParams);
   }   
 
   if(!onlyOfficeRendered)
