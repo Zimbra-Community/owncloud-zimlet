@@ -28,7 +28,7 @@ Report security issues to info@barrydegraaff.tk (PGP fingerprint: 97f4694a1d9aed
   - A running WebDAV server (for example ownCloud/Nextcloud)
 
 ### Installing
-#### Use the automated installer (interactive mode):
+#### Use the automated installer (Interactive mode):
 
     wget --no-cache https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/webdav-client-installer.sh -O /tmp/webdav-client-installer.sh
     chmod +rx /tmp/webdav-client-installer.sh
