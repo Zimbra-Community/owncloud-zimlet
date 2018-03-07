@@ -54,6 +54,7 @@ jackson-core-2.9.4.jar \
 jackson-databind-2.9.4.jar \
 java-jwt-3.3.0.jar \
 "
+OWNCLOUD_DOC_URL="https\://barrydegraaff.github.io/owncloud/"
 
 
 # We only support java versions bundled with Zimbra
@@ -197,7 +198,7 @@ owncloud_zimlet_app_title=WebDAV
 owncloud_zimlet_max_upload_size=104857600
 owncloud_zimlet_use_numbers=false
 file_number=1000000
-owncloud_zimlet_welcome_url=https\://barrydegraaff.github.io/owncloud/
+owncloud_zimlet_welcome_url=${OWNCLOUD_DOC_URL}
 owncloud_zimlet_accountname_with_domain=false
 owncloud_zimlet_disable_auto_upload_on_exceed=false
 owncloud_zimlet_enable_onlyoffice=false
