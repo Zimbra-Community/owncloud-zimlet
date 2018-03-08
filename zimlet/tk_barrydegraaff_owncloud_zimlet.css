@@ -47,3 +47,44 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 #owncloud_zimlet_search{
 border-radius:3px;
 }
+
+.owncloud_zimlet_userprefs{
+display: none;
+}
+
+/* Style the tab */
+.tab_owncloud_zimlet {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab_owncloud_zimlet button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 7px 8px;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+/* Change background color of buttons on hover */
+.tab_owncloud_zimlet button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab_owncloud_zimlet button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tab_owncloud_zimletcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
