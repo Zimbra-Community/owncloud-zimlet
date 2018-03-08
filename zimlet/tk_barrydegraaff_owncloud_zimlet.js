@@ -1577,7 +1577,10 @@ ownCloudZimlet.prototype.displayDialog =
     zimletInstance._dialog._setAllowSelection();
     if(id == 1)
     {
-       document.getElementById(zimletInstance._dialog.__internalId+'_handle').innerHTML = "<div class='tab_owncloud_zimlet'><button class='tab_owncloud_zimletlinks active' id='tab_owncloud_connset' onclick='ownCloudZimlet.prototype.uiTabs(\"tab_owncloud_connset\")'>Connection settings</button><button class='tab_owncloud_zimletlinks'  id='tab_owncloud_userpref' onclick='ownCloudZimlet.prototype.uiTabs(\"tab_owncloud_userpref\")'>User preferences</button>  <button class='tab_owncloud_zimletlinks' id='tab_owncloud_help' onclick='ownCloudZimlet.prototype.uiTabs(\"tab_owncloud_help\")'>Help</button></div>";
+       var connectionSettingsString = (zimletInstance.getMessage('connectionSettings').indexOf('???') == 0) ? 'Connection settings' : zimletInstance.getMessage('connectionSettings');
+       var userPreferencesString = (zimletInstance.getMessage('userPreferences').indexOf('???') == 0) ? 'User preferences' : zimletInstance.getMessage('userPreferences');
+       
+       document.getElementById(zimletInstance._dialog.__internalId+'_handle').innerHTML = "<div class='tab_owncloud_zimlet'><button class='tab_owncloud_zimletlinks active' id='tab_owncloud_connset' onclick='ownCloudZimlet.prototype.uiTabs(\"tab_owncloud_connset\")'>"+connectionSettingsString+"</button><button class='tab_owncloud_zimletlinks'  id='tab_owncloud_userpref' onclick='ownCloudZimlet.prototype.uiTabs(\"tab_owncloud_userpref\")'>"+userPreferencesString+"</button>  <button class='tab_owncloud_zimletlinks' id='tab_owncloud_help' onclick='ownCloudZimlet.prototype.uiTabs(\"tab_owncloud_help\")'>"+ZmMsg.help+"</button></div>";
     }
     else
     {
