@@ -1506,7 +1506,9 @@ ownCloudZimlet.prototype.displayDialog =
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_path'),5);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_oc_folder'),6);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_default_folder'),7);
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById('max_message_size'),8);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_ask_folder_each_time'),8);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_use_numbers'),9);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_template'),10);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[1].__internalId));
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[2].__internalId));
         zimletInstance._dialog._baseTabGroupSize = 10;        

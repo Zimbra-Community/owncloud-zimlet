@@ -825,13 +825,13 @@ OwnCloudListView.prototype._itemPropertiesListener = function(ev) {
 
    var content = "<table>";
    var location = "/"+(davResource.getHref()).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], "");
-   content += "<tr><td style='width:100px'>"+ ZmMsg.path + ": </td><td style='width:550px;'><input id='props_owncloud_zimlet_server_path' readonly style='width:98%;color:black;' value='"+location+"'></td></tr>";
-   content += "<tr><td style='width:100px'>"+ ZmMsg.type + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;' value='"+davResource.getContentType()+"'></td></tr>";
+   content += "<tr><td style='width:100px'>"+ ZmMsg.path + ": </td><td style='width:550px;'><input id='props_owncloud_zimlet_server_path' readonly style='width:98%;color:black;border:0;' value='"+location+"'></td></tr>";
+   content += "<tr><td style='width:100px'>"+ ZmMsg.type + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+davResource.getContentType()+"'></td></tr>";
    if(!davResource.isDirectory())
    {
-      content += "<tr><td style='width:100px'>"+ ZmMsg.size + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;' value='"+AjxUtil.formatSize(davResource.getContentLength())+"'></td></tr>";   
+      content += "<tr><td style='width:100px'>"+ ZmMsg.size + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+AjxUtil.formatSize(davResource.getContentLength())+"'></td></tr>";   
    }
-   content += "<tr><td style='width:100px'>"+ ZmMsg.modified + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;' value='"+davResource.getModified()+"'></td></tr>";
+   content += "<tr><td style='width:100px'>"+ ZmMsg.modified + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+davResource.getModified()+"'></td></tr>";
    content += "</table><br>";
    
    
