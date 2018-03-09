@@ -211,7 +211,7 @@ public class DownloadHandler implements HttpHandler {
             String owncloud_zimlet_onlyoffice_secret = prop.getProperty("owncloud_zimlet_onlyoffice_secret");
             input.close();
 
-            if (owncloud_zimlet_onlyoffice_secret != null) {
+            if (owncloud_zimlet_onlyoffice_secret != null && !owncloud_zimlet_onlyoffice_secret.isEmpty()) {
                 try {
                     Algorithm algorithm = Algorithm.HMAC256(owncloud_zimlet_onlyoffice_secret);
                     String token = JWT.create()
