@@ -23,7 +23,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
-        version="0.9.9"
+        version="1.0.3"
         target="main compose-window view-window"
         label="WebDAV"
         description="Attach from and save to WebDAV">
@@ -43,10 +43,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
     <zimletPanelItem label="WebDAV" icon="ownCloud-panelIcon">
       <dragSource type="ZmConv" />
 		<dragSource type="ZmMailMsg" />
-      <contextMenu>
-         <menuItem icon="ownCloud-panelIcon" label="Preferences" id="preferences" />
-         <menuItem icon="ownCloud-help" label="Help" id="help" />
-      </contextMenu>
    </zimletPanelItem>
    <handlerObject>tk_barrydegraaff_owncloud_zimlet_HandlerObject</handlerObject>
    <userProperties>

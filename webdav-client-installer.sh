@@ -49,6 +49,10 @@ jna-platform-4.1.0.jar \
 urlrewritefilter-4.0.3.jar \
 zal.jar \
 commons-io-2.6.jar \
+jackson-annotations-2.9.4.jar \
+jackson-core-2.9.4.jar \
+jackson-databind-2.9.4.jar \
+java-jwt-3.3.0.jar \
 "
 OWNCLOUD_DOC_URL="https\://barrydegraaff.github.io/owncloud/"
 
@@ -230,6 +234,7 @@ owncloud_zimlet_accountname_with_domain=false
 owncloud_zimlet_disable_auto_upload_on_exceed=false
 owncloud_zimlet_enable_onlyoffice=false
 owncloud_zimlet_onlyoffice_api_url=
+owncloud_zimlet_onlyoffice_secret=
 " > ${OWNCLOUD_EXTENSION_PATH}/config.properties
 
 #There has to be a better way to get the contents of zimbraMailTrustedIP but

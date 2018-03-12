@@ -236,8 +236,6 @@ ownCloudZimlet.prototype.init =
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['sort_asc'] = true; 
 
    try {
-      this._zimletContext._panelActionMenu.args[0][0].label = ZmMsg.preferences;
-      this._zimletContext._panelActionMenu.args[0][1].label = ZmMsg.help;
       document.getElementById('zti__main_Mail__'+this._zimletContext._id+'_textCell').innerHTML = this._zimletContext.getConfig("owncloud_zimlet_app_title");
       document.getElementById('zti__main_Contacts__'+this._zimletContext._id+'_textCell').innerHTML = this._zimletContext.getConfig("owncloud_zimlet_app_title");
       document.getElementById('zti__main_Calendar__'+this._zimletContext._id+'_textCell').innerHTML = this._zimletContext.getConfig("owncloud_zimlet_app_title");
@@ -603,22 +601,6 @@ ownCloudZimlet.prototype.doubleClicked =
 ownCloudZimlet.prototype.singleClicked =
   function() {
      this.displayDialog(1, ZmMsg.preferences, null);
-  };
-
-/**
- * Context menu handler
- */
-ownCloudZimlet.prototype.menuItemSelected =
-  function(itemId) {
-   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-    switch (itemId) {
-      case "preferences":
-        zimletInstance.displayDialog(1, ZmMsg.preferences, null);
-        break;
-      case "help":
-        window.open(zimletInstance.getConfig("owncloud_zimlet_welcome_url"));
-        break;
-    }
   };
 
 ownCloudZimlet.prototype.setDialogButton = function(dialog, buttonId, text, listener) {
@@ -1460,11 +1442,11 @@ ownCloudZimlet.prototype.displayDialog =
         var passwHtml = "";
         if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
         {
-           passwHtml += "<tr><td>"+ZmMsg.save+" " +(ZmMsg.password).toLowerCase()+":</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (zimletInstance.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
+           passwHtml += "<tr class='owncloud_zimlet_connectionprefs'><td style='min-width:200px'>"+ZmMsg.save+" " +(ZmMsg.password).toLowerCase()+":</td><td><table><tr class='owncloud_zimlet_connectionprefs'><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (zimletInstance.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
         }
         else
         {
-           passwHtml += "<tr><td style='color:#888888'>"+ZmMsg.save+" " +ZmMsg.password+":</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true'  disabled></td><td><small style='color:#888888'>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
+           passwHtml += "<tr class='owncloud_zimlet_connectionprefs'><td style='min-width:200px; color:#888888'>"+ZmMsg.save+" " +ZmMsg.password+":</td><td><table><tr class='owncloud_zimlet_connectionprefs'><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true'  disabled></td><td><small style='color:#888888'>If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.</small></td></tr></table></td></tr>";
         }     
   
         var owncloud_zimlet_disable_ocs_public_link_shares = zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_ocs_public_link_shares");
@@ -1474,40 +1456,40 @@ ownCloudZimlet.prototype.displayDialog =
            hideOCSstyle = " style=\"display:none !important;\" ";
         }
 
-        html = "<div style='width:600px; height: 400px;'>" +
+        html = "<div style='width:600px; height: 250px;'>" +
           "<table>"+
-          "<tr>" +
-          "<td style='min-width:100px'>"+ZmMsg.usernameLabel+"</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']+"'></td>" +
+          "<tr class='owncloud_zimlet_connectionprefs'>" +
+          "<td style='min-width:200px'>"+ZmMsg.usernameLabel+"</td>" +
+          "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_username' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']+"'></td>" +
           "</tr>" +
-          "<tr>" +
-          "<td>"+ZmMsg.passwordLabel+"</td>" +
+          "<tr class='owncloud_zimlet_connectionprefs'>" +
+          "<td style='min-width:200px'>"+ZmMsg.passwordLabel+"</td>" +
           "<td><input style='width:50%' type='password' onkeyup='ownCloudZimlet.prototype.verifyPassword()' id='owncloud_zimlet_password' value='"+(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] ? tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] : '')+"'>&nbsp;<button id=\"showhide\" type=\"button\" onkeyup=\"ownCloudZimlet.prototype.toggle_password('owncloud_zimlet_password')\" onclick=\"ownCloudZimlet.prototype.toggle_password('owncloud_zimlet_password')\">"+(ZmMsg.show).toLowerCase() + '/' + (ZmMsg.hide).toLowerCase()+"</button><br><div id='WebDAVPasswordHint'></td>" +
           "</tr>" +
-          "<tr>" + passwHtml + 
-          "<td>"+ZmMsg.sharedCalCalDAVServerLabel.replace("CalDAV", "DAV")+"</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_name' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']+"'></td>" +
+          passwHtml + "<tr class='owncloud_zimlet_connectionprefs'>" + 
+          "<td style='min-width:200px'>"+ZmMsg.sharedCalCalDAVServerLabel.replace("CalDAV", "DAV")+"</td>" +
+          "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_server_name' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']+"'></td>" +
           "</tr>" +
-          "<tr>" +
-          "<td>"+ZmMsg.portLabel+"</td>" +
-          "<td style='width:98%'><input style='width:50px' type='number' min='1' max='65535' id='owncloud_zimlet_server_port' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']+"'></td>" +
+          "<tr class='owncloud_zimlet_connectionprefs'>" +
+          "<td style='min-width:200px'>"+ZmMsg.portLabel+"</td>" +
+          "<td style='min-width:400px'><input style='width:50px' type='number' min='1' max='65535' id='owncloud_zimlet_server_port' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']+"'></td>" +
           "</tr>" +
-          "<tr>" +
-          "<td>DAV "+(ZmMsg.path).toLowerCase()+":</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+"'></td>" +
+          "<tr class='owncloud_zimlet_connectionprefs'>" +
+          "<td style='min-width:200px'>DAV "+(ZmMsg.path).toLowerCase()+":</td>" +
+          "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+"'></td>" +
           "</tr>" +
-          "<tr>" +
-          "<tr " + hideOCSstyle + ">" +
-          "<td>"+ZmMsg.location+"&nbsp;ownCloud/Nextcloud:&nbsp;</td>" +
-          "<td style='width:98%'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"'></td>" +
+          "<tr class='owncloud_zimlet_connectionprefs'>" +
+          "<tr class='owncloud_zimlet_connectionprefs' " + hideOCSstyle + ">" +
+          "<td style='min-width:200px'>"+ZmMsg.location+"&nbsp;ownCloud/Nextcloud:&nbsp;</td>" +
+          "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"'></td>" +
           "</tr>" +
-          "<tr>" +          
-          "<td>"+ZmMsg.def + " " + (ZmMsg.folder).toLowerCase() + ":</td>" +
-          "<td><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']+"'></td>" +
+          "<tr class='owncloud_zimlet_userprefs'>" +          
+          "<td style='min-width:200px'>"+ZmMsg.def + " " + (ZmMsg.folder).toLowerCase() + ":</td>" +
+          "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']+"'></td>" +
           "</tr>" +
-          "<tr><td>"+ZmMsg.importErrorMissingFolder.replace(/\./,'')+":&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_ask_folder_each_time' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
-          "<tr><td>"+ZmMsg.usePrefix + " " + (ZmMsg.number).toLowerCase()+":&nbsp;</td><td><table><tr><td><input type='checkbox' id='owncloud_zimlet_use_numbers' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
-          "<tr><td>"+ZmMsg.template+":&nbsp;</td><td><textarea placeholder='"+ZmMsg.clickToAdd+"' onclick='ownCloudZimlet.prototype.setTemplate()' rows='6' id='owncloud_zimlet_template'>" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] +"</textarea></td></tr>" +
+          "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.importErrorMissingFolder.replace(/\./,'')+":&nbsp;</td><td><table><tr class='oc_userprefs'><td><input type='checkbox' id='owncloud_zimlet_ask_folder_each_time' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
+          "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.usePrefix + " " + (ZmMsg.number).toLowerCase()+":&nbsp;</td><td><table><tr class='oc_userprefs'><td><input type='checkbox' id='owncloud_zimlet_use_numbers' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
+          "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.template+":&nbsp;</td><td style='min-width:400px'><textarea placeholder='"+ZmMsg.clickToAdd+"' onclick='ownCloudZimlet.prototype.setTemplate()' rows='6' id='owncloud_zimlet_template'>" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] +"</textarea></td></tr>" +
           "<tr><td colspan=2><br><br><small>"+ZmMsg.versionLabel+" "+ownCloudZimlet.version +"</small></td></tr>"
           "</table>" +
           "</div>";
@@ -1524,7 +1506,9 @@ ownCloudZimlet.prototype.displayDialog =
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_path'),5);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_oc_folder'),6);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_default_folder'),7);
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById('max_message_size'),8);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_ask_folder_each_time'),8);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_use_numbers'),9);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_template'),10);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[1].__internalId));
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[2].__internalId));
         zimletInstance._dialog._baseTabGroupSize = 10;        
@@ -1593,10 +1577,63 @@ ownCloudZimlet.prototype.displayDialog =
         break;      
     }
     zimletInstance._dialog._setAllowSelection();
-    document.getElementById(zimletInstance._dialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';
-    document.getElementById(zimletInstance._dialog.__internalId+'_title').style.textAlign = 'center';
+    if(id == 1)
+    {
+       var connectionSettingsString = (zimletInstance.getMessage('connectionSettings').indexOf('???') == 0) ? 'Connection settings' : zimletInstance.getMessage('connectionSettings');
+       var userPreferencesString = (zimletInstance.getMessage('userPreferences').indexOf('???') == 0) ? 'User preferences' : zimletInstance.getMessage('userPreferences');
+       
+       document.getElementById(zimletInstance._dialog.__internalId+'_handle').innerHTML = "<div class='tab_owncloud_zimlet'><button class='tab_owncloud_zimletlinks active' id='tab_owncloud_connset' onclick='ownCloudZimlet.prototype.uiTabs(\"tab_owncloud_connset\")'>"+connectionSettingsString+"</button><button class='tab_owncloud_zimletlinks'  id='tab_owncloud_userpref' onclick='ownCloudZimlet.prototype.uiTabs(\"tab_owncloud_userpref\")'>"+userPreferencesString+"</button>  <button class='tab_owncloud_zimletlinks' id='tab_owncloud_help' onclick='ownCloudZimlet.prototype.uiTabs(\"tab_owncloud_help\")'>"+ZmMsg.help+"</button></div>";
+    }
+    else
+    {
+       document.getElementById(zimletInstance._dialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';
+       document.getElementById(zimletInstance._dialog.__internalId+'_title').style.textAlign = 'center';
+    }   
     zimletInstance._dialog.popup();
   };
+
+ownCloudZimlet.prototype.uiTabs = function (clickedId)
+{
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   if(clickedId == 'tab_owncloud_help')
+   {
+      window.open(zimletInstance.getConfig("owncloud_zimlet_welcome_url"));
+      return;
+   }
+
+   tablinks = document.getElementsByClassName("tab_owncloud_zimletlinks");
+   for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+   }
+   document.getElementById(clickedId).className += " active";
+
+   if(clickedId == 'tab_owncloud_connset')
+   {
+      tablinks = document.getElementsByClassName("owncloud_zimlet_userprefs");
+      for (i = 0; i < tablinks.length; i++) {
+         tablinks[i].style = "display:none";
+      }
+   
+      tablinks = document.getElementsByClassName("owncloud_zimlet_connectionprefs");
+      for (i = 0; i < tablinks.length; i++) {
+         tablinks[i].style = "display:block";
+      }      
+   }
+
+   if(clickedId == 'tab_owncloud_userpref')
+   {
+      tablinks = document.getElementsByClassName("owncloud_zimlet_userprefs");
+      for (i = 0; i < tablinks.length; i++) {
+         tablinks[i].style = "display:block";
+      }
+   
+      tablinks = document.getElementsByClassName("owncloud_zimlet_connectionprefs");
+      for (i = 0; i < tablinks.length; i++) {
+         tablinks[i].style = "display:none";
+      }      
+   }   
+   
+};
 
 /* Method to verify password does not include @ signs and so on
  */

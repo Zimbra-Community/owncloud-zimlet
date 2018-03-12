@@ -108,13 +108,14 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_disable_auto_upload_on_exceed | false | When true, the user will not be asked to use WebDAV if attachment size exceeds Zimbra limit. This feature is for compatibility with other Zimlets (RMail) | | 
 | owncloud_zimlet_enable_onlyoffice | false | When true, enable right-click menu action and edit in Nextcloud/ownCloud OnlyOffice app. | | 
 | owncloud_zimlet_onlyoffice_api_url |  | Set to Document Server API URL to enable OnlyOffice preview of docx,xlsx,pptx: https://server.example.com:443/web-apps/apps/api/documents/api.js | | 
+| owncloud_zimlet_onlyoffice_secret |  |  If configured, a token is send to Only Office Document server allowing you to restrict access to DS to only trusted users. https://api.onlyoffice.com/editors/security https://github.com/Zimbra-Community/owncloud-zimlet/issues/151 (WebDAV Client currently does not sign parameters) | |
 
 After changing config.properties run the following: 
 
     wget https://raw.githubusercontent.com/Zimbra-Community/prop2xml/master/set-java-path.sh -O /tmp/set-java-path.sh
     wget https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar -O /tmp/prop2xml.jar
     chmod +rx /tmp/set-java-path.sh
-    /tmp/set-java-path.sh
+    source /tmp/set-java-path.sh
     java -jar /tmp/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
 
 ### Restrict allowed DAV Servers

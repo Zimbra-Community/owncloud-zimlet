@@ -9,6 +9,10 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.*;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 
 
 public class DownloadHandler implements HttpHandler {
@@ -196,6 +200,35 @@ public class DownloadHandler implements HttpHandler {
         } else {
             httpServletResponse.getOutputStream().print("false");
         }
+
+        httpServletResponse.getOutputStream().print(";");
+
+        //This is used to generate Only Office security token, if configured, see onlyOfficeParams in OwnCloudListView.js
+        Properties prop = new Properties();
+        try {
+            FileInputStream input = new FileInputStream("/opt/zimbra/lib/ext/ownCloud/config.properties");
+            prop.load(input);
+            String owncloud_zimlet_onlyoffice_secret = prop.getProperty("owncloud_zimlet_onlyoffice_secret");
+            input.close();
+
+            if (owncloud_zimlet_onlyoffice_secret != null && !owncloud_zimlet_onlyoffice_secret.isEmpty()) {
+                try {
+                    Algorithm algorithm = Algorithm.HMAC256(owncloud_zimlet_onlyoffice_secret);
+                    String token = JWT.create()
+                            .withIssuer("auth0")
+                            .sign(algorithm);
+                    httpServletResponse.getOutputStream().print(token);
+                } catch (UnsupportedEncodingException exception) {
+                    //UTF-8 encoding not supported
+                } catch (JWTCreationException exception) {
+                    //Invalid Signing configuration / Couldn't convert Claims.
+                }
+            }
+
+        } catch (IOException ex) {
+        }
+
+
     }
 
     @Override

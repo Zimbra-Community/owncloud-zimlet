@@ -36,6 +36,7 @@ function OwnCloudListView(
   this._listeners[ZmOperation.NEW_FOLDER]    = (function(_this) { return function() {_this._newFolderListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.SAVE_FILE]        = (function(_this) { return function() {_this._saveFileListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.EDIT_FILE]        = (function(_this) { return function() {_this._editFileListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.EDIT_PROPS]        = (function(_this) { return function() {_this._itemPropertiesListener.apply(_this, arguments); }; })(this);
 
   this.addActionListener(new AjxListener(this, this._listActionListener));
   this.addSelectionListener(new AjxListener(this, this._onItemSelected));
@@ -191,6 +192,9 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(false);
   parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(false);
 
+  parent.getMenuItem(ZmOperation.EDIT_PROPS).setText(ZmMsg.properties);
+  parent.getMenuItem(ZmOperation.EDIT_PROPS).setEnabled(true);
+
   for (i = 0; i <  resources.length; i += 1) {
     if (resources[i].isDirectory()) {
       directoriesInvolved = true;
@@ -249,10 +253,12 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
        parent.getMenuItem(ZmOperation.EDIT_FILE).setEnabled(false);
        parent.getMenuItem(ZmOperation.EDIT_FILE).setVisible(false);
     }
+     parent.getMenuItem(ZmOperation.EDIT_PROPS).setVisible(true);
   }
   else
   {
      parent.getMenuItem(ZmOperation.DELETE).setVisible(false);
+     parent.getMenuItem(ZmOperation.EDIT_PROPS).setVisible(false);
   }
 
   parent.enable(operationsEnabled, true);
@@ -310,7 +316,7 @@ OwnCloudListView.prototype._addMenuListeners = function (menu) {
   menu.addPopdownListener(this._menuPopdownListener);
 };
 
-OwnCloudListView.prototype._getActionMenuOps = function() {
+OwnCloudListView.prototype._getActionMenuOps = function() {  
   return [
     ZmOperation.EDIT_FILE,
     ZmOperation.SAVE_FILE,
@@ -321,6 +327,8 @@ OwnCloudListView.prototype._getActionMenuOps = function() {
     ZmOperation.SEP,
     ZmOperation.SEND_FILE,
     ZmOperation.SEND_FILE_AS_ATT,
+    ZmOperation.SEP,
+    ZmOperation.EDIT_PROPS,    
   ];
 };
 
@@ -558,6 +566,7 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
 };
 
 OwnCloudListView.prototype._onItemSelected = function(ev) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   var item = ev.item;
 
   var davResource = this.getSelection()[0];
@@ -569,7 +578,9 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
   var _this = this;
   xhr.onload = function(e) 
   {     
-     if(xhr.responseText == 'true')
+     var dav_download_options = xhr.responseText.split(";");
+     zimletInstance.onlyOfficeToken = dav_download_options[1];
+     if(dav_download_options[0] == 'true')
      {
         var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.md$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i;
      }
@@ -593,7 +604,6 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
      }
   }
 
-  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
   OwnCloudApp.prototype.setDimensions();
   this.setSize((zimletInstance.appWidth/2-zimletInstance.appWidthCorrection)+"px",zimletInstance.appHeight+"px");
   
@@ -718,7 +728,8 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
       }
      
      onlyOfficeRendered = true;
-     zimletInstance.docEditor = new DocsAPI.DocEditor('WebDAVPreview',
+          
+     var onlyOfficeParams = 
      {
          "document": {
             "fileType": fileType,
@@ -730,18 +741,20 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
             "edit": false,
             "print": true,
             "review": false
-        },
-        },
+              },
+           },
         "documentType": documentType,
         "height": zimletInstance.appHeight + "px",
         "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
+        "token": zimletInstance.onlyOfficeToken,
         "editorConfig": {
-                "customization": {
-                    "chat": false,
-                    "zoom": 100
-                },
-            },
-        });
+             "customization": {
+                 "chat": false,
+                 "zoom": 100
+             },
+         },
+     };
+     zimletInstance.docEditor = new DocsAPI.DocEditor('WebDAVPreview',onlyOfficeParams);
   }   
 
   if(!onlyOfficeRendered)
@@ -801,6 +814,57 @@ OwnCloudListView.prototype._editFileListener = function(ev) {
        new AjxCallback(this, this._editFileCbk, [davResource])
      );
   }
+};
+
+/**
+ * Shows file/folder properties and allows to set default folder
+ * */
+OwnCloudListView.prototype._itemPropertiesListener = function(ev) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+  var davResource = this.getSelection()[0];
+
+   var content = "<table>";
+   var location = "/"+(davResource.getHref()).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], "");
+   content += "<tr><td style='width:100px'>"+ ZmMsg.path + ": </td><td style='width:550px;'><input id='props_owncloud_zimlet_server_path' readonly style='width:98%;color:black;border:0;' value='"+location+"'></td></tr>";
+   content += "<tr><td style='width:100px'>"+ ZmMsg.type + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+davResource.getContentType()+"'></td></tr>";
+   if(!davResource.isDirectory())
+   {
+      content += "<tr><td style='width:100px'>"+ ZmMsg.size + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+AjxUtil.formatSize(davResource.getContentLength())+"'></td></tr>";   
+   }
+   content += "<tr><td style='width:100px'>"+ ZmMsg.modified + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+davResource.getModified()+"'></td></tr>";
+   content += "</table><br>";
+   
+   
+   if(davResource.isDirectory())
+   {
+      content += "<button id='owncloud_zimlet_props_action_default'>"+ZmMsg.def + " " + (ZmMsg.folder).toLowerCase()+"</button>";
+   }
+   
+   zimletInstance._propertiesdialog = new ZmDialog( { title:ZmMsg.properties, parent:zimletInstance.getShell(), standardButtons:[DwtDialog.OK_BUTTON], disposeOnPopDown:true } );
+   zimletInstance._propertiesdialog.setContent('<div style=\'width:600px; height: 100px;\'>'+content+'</div>');
+   zimletInstance._propertiesdialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.okbtnProperties,[davResource]));
+   zimletInstance._propertiesdialog._setAllowSelection();
+   document.getElementById(zimletInstance._propertiesdialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';
+   document.getElementById(zimletInstance._propertiesdialog.__internalId+'_title').style.textAlign = 'center';
+   var btnPropsActionDefault = document.getElementById("owncloud_zimlet_props_action_default");
+   if(btnPropsActionDefault)
+   {
+      btnPropsActionDefault.onclick = AjxCallback.simpleClosure(OwnCloudListView.prototype.propsActionDefault);
+   }   
+   zimletInstance._propertiesdialog.popup();         
+};
+
+OwnCloudListView.prototype.okbtnProperties = function(davResource) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   zimletInstance._propertiesdialog.popdown();
+};
+
+OwnCloudListView.prototype.propsActionDefault = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   var folder = document.getElementById('props_owncloud_zimlet_server_path').value;
+   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = folder;
+   zimletInstance.setUserProperty("owncloud_zimlet_default_folder", folder, true);
+   zimletInstance.status(ZmMsg.ok, ZmStatusView.LEVEL_INFO);
 };
 
 OwnCloudListView.prototype._editFileCbk = function(davResource, token) {
