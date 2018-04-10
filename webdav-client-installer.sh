@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2016-2017  Barry de Graaff
+# Copyright (C) 2016-2018  Barry de Graaff
 # 
 # Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 # 
@@ -107,7 +107,7 @@ fi
 
 echo "Download WebDAV Client to $TMPFOLDER"
 cd $TMPFOLDER
-git clone --depth=1 https://github.com/Zimbra-Community/owncloud-zimlet
+git clone --depth=1 git://github.com/Zimbra-Community/owncloud-zimlet
 #cp -r /root/owncloud-zimlet $TMPFOLDER
 
 echo "Compiling WebDAV Client."
