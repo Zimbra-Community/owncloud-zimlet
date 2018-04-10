@@ -4,7 +4,7 @@ Zimbra WebDAV Client
 
    https://github.com/barrydegraaff/owncloud-zimlet
 
-Copyright (C) 2015-2017  Barry de Graaff, Michele Olivo
+Copyright (C) 2015-2018  Barry de Graaff, Michele Olivo
 
 Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 
@@ -23,7 +23,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
-        version="1.0.3"
+        version="1.0.4"
         target="main compose-window view-window"
         label="WebDAV"
         description="Attach from and save to WebDAV">

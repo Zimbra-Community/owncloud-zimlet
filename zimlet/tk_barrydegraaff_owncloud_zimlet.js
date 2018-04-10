@@ -793,7 +793,7 @@ ownCloudZimlet.prototype._uploadFilesFromFormCbk = function (files , response) {
       var file = files[j];
 
       var fileName = ownCloudZimletInstance.sanitizeFileName(file.name);
-      var path = ownCloudZimlet.settings['owncloud_zimlet_default_folder'] + "/";
+      var path = ownCloudZimlet.settings['owncloud_zimlet_default_folder'];
       var progressId = listProgressBar[fileName];
       var putUrl = UploadToDavDialog.UPLOAD_URL + "?path=" + path;
 
