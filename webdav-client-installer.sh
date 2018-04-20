@@ -101,7 +101,7 @@ echo "It is OK to use both OnlyOffice and LibreOffice at the same time for docum
 
 if [[ "${IS_AUTO}" == 'YES' ]]
 then
-    YNDOCPREV="Y"
+    YNDOCPREV="N"
 else
     read YNDOCPREV;
 fi

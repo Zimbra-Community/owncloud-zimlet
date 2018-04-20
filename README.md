@@ -47,7 +47,7 @@ Report security issues to info@barrydegraaff.tk (PGP fingerprint: 97f4694a1d9aed
     /tmp/webdav-client-installer.sh --auto
     [zimbra@server zimbra]$ zmmailboxdctl restart
 
-Non interactive mode enables experimental Libreoffice document preview, automatically installs the Zimlet (in production mode) and force enables it in all COS'es. It also installs public link sharing.
+Non interactive mode does not enable experimental Libreoffice document preview, automatically installs the Zimlet (in production mode) and force enables it in all COS'es. It also installs public link sharing.
 
 ### Document preview
 Zimbra WebDAV Client uses OnlyOffice, LibreOffice and jsPDF to display previews of your documents. To enable LibreOffice preview, re-run the installer and choose Y when asked to install LibreOffice Document Preview.
