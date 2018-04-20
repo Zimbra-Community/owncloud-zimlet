@@ -134,7 +134,6 @@ No service restart is needed after changing this file.
 
 ### Un-installing (For both production and development mode)
 
-#### Production mode
 	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
 	rm -Rf /opt/zimbra/lib/ext/ownCloud/
