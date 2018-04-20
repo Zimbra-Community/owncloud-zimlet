@@ -120,15 +120,15 @@ fi
 
 
 echo ""
-echo "Are these zimlets installed in production mode?"
-echo "You are only supposed to choose n if you are a developer"
+echo "Do you want to install the zimlet in easy mode?"
+echo "This way you don't need to setup and configure the zimlet on your own?"
 echo "If you have trouble or are unsure, choose Y. Y/n:"
 
 if [[ "${IS_AUTO}" == 'YES' ]]
 then
-    YNZIMLETISPRODUCTION="Y"
+    YNZIMLETISNOTPRODUCTION="N"
 else
-    read YNZIMLETISPRODUCTION;
+    read YNZIMLETISNOTPRODUCTION;
 fi
 
 echo ""
@@ -160,15 +160,16 @@ if [[ -z $GIT_CMD ]] || [[ -z $ANT_CMD ]] || [[ -z $ZIP_CMD ]]; then
    fi
 fi
 
-if [[ "$YNZIMLETISPRODUCTION" == 'N' || "$YNZIMLETISPRODUCTION" == 'n' ]];
+if [[ "$YNZIMLETISNOTPRODUCTION" == 'N' || "$YNZIMLETISNOTPRODUCTION" == 'n' ]];
 then
-   echo "Using Development path per user request"
-   OWNCLOUD_ZIMLET_PATH="${OWNCLOUD_ZIMLET_DEV_PATH}"
-   DOCCONVERT_ZIMLET_PATH="${DOCCONVERT_ZIMLET_DEV_PATH}"
-else
    echo "Using Production path per user request"
    OWNCLOUD_ZIMLET_PATH="${OWNCLOUD_ZIMLET_PRODUCTION_PATH}"
    DOCCONVERT_ZIMLET_PATH="${DOCCONVERT_ZIMLET_PRODUCTION_PATH}"
+else
+   echo "Using Development path per user request"
+   OWNCLOUD_ZIMLET_PATH="${OWNCLOUD_ZIMLET_DEV_PATH}"
+   DOCCONVERT_ZIMLET_PATH="${DOCCONVERT_ZIMLET_DEV_PATH}"
+
 fi
 
 echo "Remove old versions of Zimlet."
@@ -261,13 +262,13 @@ if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
    echo "Skipped per user request."
 else
-   if [[ "$YNZIMLETISPRODUCTION" == 'N' || "$YNZIMLETISPRODUCTION" == 'n' ]];
+   if [[ "$YNZIMLETISNOTPRODUCTION" == 'N' || "$YNZIMLETISNOTPRODUCTION" == 'n' ]];
    then
-      mkdir -p ${OWNCLOUD_ZIMLET_PATH}/
-      unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d ${OWNCLOUD_ZIMLET_PATH}/
-   else
       chown zimbra:zimbra $TMPFOLDER -R
       su - zimbra -c "zmzimletctl deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"
+   else
+      mkdir -p ${OWNCLOUD_ZIMLET_PATH}/
+      unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d ${OWNCLOUD_ZIMLET_PATH}/
    fi
 fi
 
@@ -347,12 +348,12 @@ if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
    echo "Skipped per user request."
 else
-   if [[ "$YNZIMLETISPRODUCTION" == 'N' || "$YNZIMLETISPRODUCTION" == 'n' ]];
+   if [[ "$YNZIMLETISNOTPRODUCTION" == 'N' || "$YNZIMLETISNOTPRODUCTION" == 'n' ]];
    then
-      :
-   else
       chown zimbra:zimbra $TMPFOLDER -R
       su - zimbra -c "zmzimletctl configure ${OWNCLOUD_ZIMLET_PATH}/config_template.xml"
+   else
+      :
    fi
 fi
 
