@@ -338,6 +338,8 @@ then
    echo "Skip config_template.xml generation by user request."
 else
    java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet ${OWNCLOUD_EXTENSION_PATH}/config.properties ${OWNCLOUD_ZIMLET_PATH}/config_template.xml
+   chown zimbra:zimbra ${OWNCLOUD_ZIMLET_PATH}/config_template.xml
+   chmod u+rw ${OWNCLOUD_ZIMLET_PATH}/config_template.xml
 fi
 
 chown zimbra:zimbra ${OWNCLOUD_EXTENSION_PATH}/config.properties
