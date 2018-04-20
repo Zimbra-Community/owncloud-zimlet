@@ -131,15 +131,7 @@ Your clients **can connect to all dav servers by default**,  you can restrict th
 
 No service restart is needed after changing this file.
 
-### Un-installing
-
-#### Development mode
-	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
-	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
-	rm -Rf /opt/zimbra/lib/ext/ownCloud/
-	rm -Rf /opt/zimbra/lib/ext/OCS
-	rm -Rf /opt/zimbra/lib/ext/DocConvert/
-	[zimbra@server zimbra]$ zmmailboxdctl restart   
+### Un-installing (For both production and development mode)
 
 #### Production mode
 	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
@@ -148,6 +140,7 @@ No service restart is needed after changing this file.
 	rm -Rf /opt/zimbra/lib/ext/OCS
 	rm -Rf /opt/zimbra/lib/ext/DocConvert/
 	zmzimlet uninstall tk_barrydegraaff_owncloud_zimlet
+	# It's ok if zmzimlet uninstall fails in development mode
 	[zimbra@server zimbra]$ zmmailboxdctl restart
 ### Translations
 
