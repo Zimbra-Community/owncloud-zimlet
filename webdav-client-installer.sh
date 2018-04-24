@@ -183,7 +183,7 @@ if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
 then
    echo "Not touching COS per user request."
 else
-   su - zimbra -c "zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet"
+   su - zimbra -c "zmzimletctl -l undeploy tk_barrydegraaff_owncloud_zimlet"
 fi
 
 TMPFOLDER="$(mktemp -d /tmp/webdav-client-installer.XXXXXXXX)"
