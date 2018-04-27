@@ -17,6 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 
+# Keep `set -e` as the first line of the script, so the execution halts on unexpected errors.
+set -e
+# if you want to trace your script uncomment the following line
+#set -x
+
 OWNCLOUD_ZIMLET_PRODUCTION_PATH="/opt/zimbra/zimlets-deployed/tk_barrydegraaff_owncloud_zimlet"
 OWNCLOUD_ZIMLET_DEV_PATH="/opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet"
 DOCCONVERT_ZIMLET_PRODUCTION_PATH="/opt/zimbra/zimlets-deployed/tk_barrydegraaff_docconvert"
@@ -80,11 +85,7 @@ else
     exit 1
 fi
 
-set -e
-# if you want to trace your script uncomment the following line
-#set -x
-
-echo "Automated Zimbra WebDAV Client installer for single-server Zimbra 8.7 on CentOS 6 or 7 (Ubuntu untested)
+echo "Automated Zimbra WebDAV Client installer for single-server Zimbra 8.6+ on CentOS 6 or 7 (Ubuntu untested)
 - Installs ant and git, the WebDAV Client server extension and Zimlet."
 
 # Make sure only root can run our script

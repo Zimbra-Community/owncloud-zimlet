@@ -1178,17 +1178,29 @@ ownCloudZimlet.prototype._handlePropfindError =
  */
 ownCloudZimlet.prototype.createFolder =
   function(callback, errorCallback) {
-    if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'])
+    /*Create default folder if the user has one set, it should always be set.
+    In case it is set to / (default) do not create it, as it throws an error 400 Bad request,
+    as the root should always be there.*/
+    if((tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']) && 
+    (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']!=="/"))
     {
        this._davConnector.mkcol(
-         '/' + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
+         tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
          new AjxCallback(
            this,
            this._createFolderCallback,
            [callback, errorCallback]
          )
        );
-   }
+    }
+    else
+    {
+       //Go on without folder creation
+       if(callback)
+       {
+          callback.run(200);
+       }   
+    }
 };
 
 /**
