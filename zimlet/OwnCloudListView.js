@@ -734,7 +734,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
          "document": {
             "fileType": fileType,
             "title": davResource.getName(),
-            "url": url + token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType,
+            "url": url + token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&account=" + appCtxt.getActiveAccount().name,
          "permissions": {
             "comment": false,
             "download": true,
