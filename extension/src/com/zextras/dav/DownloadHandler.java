@@ -1,10 +1,18 @@
 package com.zextras.dav;
 
 import org.openzal.zal.http.HttpHandler;
+import org.openzal.zal.Provisioning;
+import org.openzal.zal.Account;
+import org.openzal.zal.Server;
+import org.openzal.zal.extension.Zimbra;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.HttpResponse;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,9 +25,13 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 
 public class DownloadHandler implements HttpHandler {
     private final Map<String, DownloadJob> mDownloadJobMap;
+    private final Zimbra mZimbra;
+    private Provisioning mProvisioning;
 
     public DownloadHandler(Map<String, DownloadJob> downloadJobMap) {
         mDownloadJobMap = downloadJobMap;
+        mZimbra = new Zimbra();
+        mProvisioning = mZimbra.getProvisioning();
     }
 
     @Override
@@ -31,12 +43,27 @@ public class DownloadHandler implements HttpHandler {
         Map<String, String> paramsMap = new HashMap<String, String>();
 
         String[] params = httpServletRequest.getQueryString().split("&");
+        String query = httpServletRequest.getQueryString();
         for (String param : params) {
             String[] subParam = param.split("=");
             paramsMap.put(subParam[0], subParam[1]);
         }
         String token = paramsMap.get("token");
         String inline = paramsMap.get("inline");
+        String accountStr = "";
+        boolean isLocalAccount = false;
+        accountStr = paramsMap.get("account");
+        Account account = null;
+        if ((accountStr == "") || (accountStr == null)) {
+            isLocalAccount = true;
+        } else {
+            account = mProvisioning.assertAccountByName(accountStr);
+            isLocalAccount = account.isLocalAccount();
+        }
+
+        if (!(isLocalAccount)) {
+            redirectGETRequestToRemoteServer(account,query,httpServletResponse);
+        } else {
 
 
         if (mDownloadJobMap.containsKey(token)) {
@@ -166,6 +193,7 @@ public class DownloadHandler implements HttpHandler {
                 }
             }
         }
+        }
     }
 
     private String runCommand(String cmd) {
@@ -240,5 +268,27 @@ public class DownloadHandler implements HttpHandler {
     public String getPath() {
         return "dav_download";
     }
+
+    private void redirectGETRequestToRemoteServer(
+        Account account,
+        String query,
+        HttpServletResponse httpServletResponse)
+        throws IOException
+    {
+
+        Server remoteServer = mProvisioning.getServerByName(account.getMailHost());
+        String davDownloadUrl = remoteServer.getServiceURL("/service/extension/" + getPath() + "/?" + query);
+
+        HttpGet get = new HttpGet(davDownloadUrl);
+
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpResponse response = client.execute(get);
+        try (OutputStream responseOutputStream = httpServletResponse.getOutputStream())
+        {
+            response.getEntity().writeTo(responseOutputStream);
+        }
+
+    }
+
 
 }
