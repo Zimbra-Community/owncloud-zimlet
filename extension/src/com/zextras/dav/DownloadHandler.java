@@ -64,135 +64,133 @@ public class DownloadHandler implements HttpHandler {
         if (!(isLocalAccount)) {
             redirectGETRequestToRemoteServer(account,query,httpServletResponse);
         } else {
+            if (mDownloadJobMap.containsKey(token)) {
+                DownloadJob job = mDownloadJobMap.get(token);
+                if (!job.expired()) {
 
+                    DavSoapConnector connector = job.getConnector();
+                    InputStream fileStream = connector.getAsStream(job.getPath());
+                    OutputStream outputStream = httpServletResponse.getOutputStream();
 
-        if (mDownloadJobMap.containsKey(token)) {
-            DownloadJob job = mDownloadJobMap.get(token);
-            if (!job.expired()) {
+                    String extension;
+                    extension = "false";
+                    switch (paramsMap.get("contentType")) {
+                        case "application/msword":
+                            extension = "doc";
+                            break;
+                        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                            extension = "docx";
+                            break;
+                        case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                            extension = "xlsx";
+                            break;
+                        case "application/vnd.ms-excel":
+                            extension = "xls";
+                            break;
+                        case "application/vnd.ms-powerpoint":
+                            extension = "ppt";
+                            break;
+                        case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                            extension = "pptx";
+                            break;
+                        case "application/vnd.oasis.opendocument.spreadsheet":
+                            extension = "ods";
+                            break;
+                        case "application/vnd.oasis.opendocument.presentation":
+                            extension = "odp";
+                            break;
+                        case "application/vnd.oasis.opendocument.text":
+                            extension = "odt";
+                            break;
+                        case "image/vnd.djvu":
+                            extension = "djvu";
+                            break;
+                    }
 
-                DavSoapConnector connector = job.getConnector();
-                InputStream fileStream = connector.getAsStream(job.getPath());
-                OutputStream outputStream = httpServletResponse.getOutputStream();
+                    if (("true".equals(inline)) && (!"false".equals(extension))) {
+                        //Check if conversion is available
+                        File f = new File("/usr/local/sbin/docconvert");
+                        if (f.exists()) {
 
-                String extension;
-                extension = "false";
-                switch (paramsMap.get("contentType")) {
-                    case "application/msword":
-                        extension = "doc";
-                        break;
-                    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-                        extension = "docx";
-                        break;
-                    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-                        extension = "xlsx";
-                        break;
-                    case "application/vnd.ms-excel":
-                        extension = "xls";
-                        break;
-                    case "application/vnd.ms-powerpoint":
-                        extension = "ppt";
-                        break;
-                    case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-                        extension = "pptx";
-                        break;
-                    case "application/vnd.oasis.opendocument.spreadsheet":
-                        extension = "ods";
-                        break;
-                    case "application/vnd.oasis.opendocument.presentation":
-                        extension = "odp";
-                        break;
-                    case "application/vnd.oasis.opendocument.text":
-                        extension = "odt";
-                        break;
-                    case "image/vnd.djvu":
-                        extension = "djvu";
-                        break;
-                }
+                            //Convert to PDF
+                            //Create a temporary filename
+                            String tmpFileName = "/tmp/docconvert" + UUID.randomUUID().toString();
 
-                if (("true".equals(inline)) && (!"false".equals(extension))) {
-                    //Check if conversion is available
-                    File f = new File("/usr/local/sbin/docconvert");
-                    if (f.exists()) {
+                            byte[] buffer = new byte[8 * 1024];
 
-                        //Convert to PDF
-                        //Create a temporary filename
-                        String tmpFileName = "/tmp/docconvert" + UUID.randomUUID().toString();
-
-                        byte[] buffer = new byte[8 * 1024];
-
-                        try {
-                            OutputStream output = new FileOutputStream(tmpFileName + "." + extension);
                             try {
-                                int bytesRead;
-                                while ((bytesRead = fileStream.read(buffer)) != -1) {
-                                    output.write(buffer, 0, bytesRead);
+                                OutputStream output = new FileOutputStream(tmpFileName + "." + extension);
+                                try {
+                                    int bytesRead;
+                                    while ((bytesRead = fileStream.read(buffer)) != -1) {
+                                        output.write(buffer, 0, bytesRead);
+                                    }
+                                } finally {
+                                    output.close();
                                 }
                             } finally {
-                                output.close();
+                                fileStream.close();
+                            }
+
+                            try {
+                                if ("djvu".equals(extension)) {
+                                    this.runCommand("/usr/local/sbin/zimbra-djvu2pdf " + tmpFileName + "." + extension);
+                                } else {
+                                    this.runCommand("/usr/local/sbin/docconvert " + tmpFileName + "." + extension);
+                                }
+                                httpServletResponse.addHeader("Content-Type", "application/pdf");
+                                httpServletResponse.addHeader("Content-Disposition", "attachment; filename=\"" + paramsMap.get("name") + ".pdf\"");
+                                httpServletResponse.addHeader("Accept-Ranges", "none");
+
+                                FileInputStream in = new FileInputStream(tmpFileName + ".pdf");
+
+                                // Copy the contents of the file to the output stream
+                                byte[] buf = new byte[1024];
+                                int count = 0;
+                                while ((count = in.read(buf)) >= 0) {
+                                    outputStream.write(buf, 0, count);
+                                }
+                                outputStream.close();
+                                in.close();
+                            } finally {
+                                outputStream.close();
+                            }
+                            try {
+                                File fileorig = new File(tmpFileName + "." + extension);
+                                fileorig.delete();
+                                this.runCommand("/usr/local/sbin/docconvertclean " + tmpFileName + ".*");
+                            } catch (Exception x) {
+
+                            }
+                        }
+                    } else {
+                        if (paramsMap.containsKey("contentType")) {
+                            httpServletResponse.addHeader("Content-Type", paramsMap.get("contentType"));
+                        }
+
+                        if (!"true".equals(inline)) {
+                            httpServletResponse.addHeader("Content-Disposition", "attachment; filename=\"" + paramsMap.get("name") + "\"");
+                        } else {
+                            httpServletResponse.addHeader("Content-Disposition", "inline; filename=\"" + paramsMap.get("name") + "\"");
+                            httpServletResponse.addHeader("Accept-Ranges", "none");
+                        }
+
+                        byte[] buffer = new byte[64 * 1024];
+                        int quantity;
+                        try {
+                            while (true) {
+                                quantity = fileStream.read(buffer);
+                                if (quantity <= 0) break;
+                                outputStream.write(buffer, 0, quantity);
                             }
                         } finally {
+                            mDownloadJobMap.remove(job.getToken());
+                            outputStream.flush();
                             fileStream.close();
                         }
-
-                        try {
-                            if ("djvu".equals(extension)) {
-                                this.runCommand("/usr/local/sbin/zimbra-djvu2pdf " + tmpFileName + "." + extension);
-                            } else {
-                                this.runCommand("/usr/local/sbin/docconvert " + tmpFileName + "." + extension);
-                            }
-                            httpServletResponse.addHeader("Content-Type", "application/pdf");
-                            httpServletResponse.addHeader("Content-Disposition", "attachment; filename=\"" + paramsMap.get("name") + ".pdf\"");
-                            httpServletResponse.addHeader("Accept-Ranges", "none");
-
-                            FileInputStream in = new FileInputStream(tmpFileName + ".pdf");
-
-                            // Copy the contents of the file to the output stream
-                            byte[] buf = new byte[1024];
-                            int count = 0;
-                            while ((count = in.read(buf)) >= 0) {
-                                outputStream.write(buf, 0, count);
-                            }
-                            outputStream.close();
-                            in.close();
-                        } finally {
-                            outputStream.close();
-                        }
-                        try {
-                            File fileorig = new File(tmpFileName + "." + extension);
-                            fileorig.delete();
-                            this.runCommand("/usr/local/sbin/docconvertclean " + tmpFileName + ".*");
-                        } catch (Exception x) {
-
-                        }
-                    }
-                } else {
-                    if (paramsMap.containsKey("contentType")) {
-                        httpServletResponse.addHeader("Content-Type", paramsMap.get("contentType"));
-                    }
-
-                    if (!"true".equals(inline)) {
-                        httpServletResponse.addHeader("Content-Disposition", "attachment; filename=\"" + paramsMap.get("name") + "\"");
-                    } else {
-                        httpServletResponse.addHeader("Content-Disposition", "inline; filename=\"" + paramsMap.get("name") + "\"");
-                        httpServletResponse.addHeader("Accept-Ranges", "none");
-                    }
-
-                    byte[] buffer = new byte[64 * 1024];
-                    int quantity;
-                    try {
-                        while (true) {
-                            quantity = fileStream.read(buffer);
-                            if (quantity <= 0) break;
-                            outputStream.write(buffer, 0, quantity);
-                        }
-                    } finally {
-                        mDownloadJobMap.remove(job.getToken());
-                        outputStream.flush();
-                        fileStream.close();
                     }
                 }
             }
-        }
         }
     }
 
