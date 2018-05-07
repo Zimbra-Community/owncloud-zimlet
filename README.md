@@ -36,6 +36,13 @@ Report security issues to info@barrydegraaff.tk (PGP fingerprint: 97f4694a1d9aed
     wget --no-cache https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/webdav-client-installer.sh -O /tmp/webdav-client-installer.sh
     chmod +rx /tmp/webdav-client-installer.sh
 
+### Multi server support
+
+These zimlet and extensions support multi server ZCS cluster setups where proxies and mailboxes are in different machines.
+These zimlet and extensions support should only be installed in the mailboxes servers.
+These zimlet and extensions support must be installed in all of your mailboxes servers.
+In order to install these zimlet and extensions in a mailbox refer to the *Installing* section.
+
 ### Installing
 #### Use the automated installer (Interactive mode):
 
@@ -55,6 +62,22 @@ Previews are supported for the following file types: pdf,jpg,jpeg,png,txt,md (ma
 
 ### Only Office integration
 You can preview docx,xlsx and pptx in OnlyOffice by configuring your OnlyOffice Document Server API url in owncloud_zimlet_onlyoffice_api_url and you can optionally enable a right-click menu action to edit directly in Nextcloud/ownCloud OnlyOffice app. See owncloud_zimlet_enable_onlyoffice below.
+
+In order to make sure OnlyOffice integration works, specially in muti server ZCS clusters, make sure that all of your domains have defined:
+
+* zimbraPublicServiceHostname
+* zimbraPublicServiceProtocol
+* zimbraPublicServicePort
+
+values which can be found at:
+
+* Configure
+* Domains
+* example.com
+* General Information
+  * Public service hostname: mail.example.com
+  * Public service protocol: https
+  * Public service port: 443
 
 ### Configure bruteforce protection
 Zimbra WebDAV Client sends all requests to Nextcloud with an X-Forwarded-For HTTP header. You must configure Zimbra and Nextcloud properly to avoid problems with Nextcloud's bruteforce protection mechanism.
