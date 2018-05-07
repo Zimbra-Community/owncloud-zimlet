@@ -38,10 +38,9 @@ Report security issues to info@barrydegraaff.tk (PGP fingerprint: 97f4694a1d9aed
 
 ### Multi server support
 
-These zimlet and extensions support multi server ZCS cluster setups where proxies and mailboxes are in different machines.
-These zimlet and extensions support should only be installed in the mailboxes servers.
-These zimlet and extensions support must be installed in all of your mailboxes servers.
-In order to install these zimlet and extensions in a mailbox refer to the *Installing* section.
+The zimlet and extensions support multi server ZCS cluster setups where proxies and mailboxes are in different machines.
+The zimlet and extensions should only be installed on the mailbox servers.
+The zimlet and extensions must be installed on all of your mailbox servers (refer to the *Installing* section).
 
 ### Installing
 #### Use the automated installer (Interactive mode):
