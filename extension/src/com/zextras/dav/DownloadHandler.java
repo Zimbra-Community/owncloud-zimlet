@@ -267,6 +267,15 @@ public class DownloadHandler implements HttpHandler {
         return "dav_download";
     }
 
+    /** This function was inspired from redirectRequestToRemoteServer function
+    * which can be found at:
+    * zimbra-extension/src/com/zextras/zimbradrive/NcUserZimbraBackendHttpHandler.java
+    * file from ZimbraDrive extension.
+    *
+    * It was rewritten to forward a GET request instead of a POST request to a remote server.
+    * It makes sure to use the proper server public serviceurl so that the GET request reaches
+    * the remote mailbox server.
+    **/
     private void redirectGETRequestToRemoteServer(
         Account account,
         String query,
