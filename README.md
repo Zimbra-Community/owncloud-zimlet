@@ -31,20 +31,52 @@ Report security issues to info@barrydegraaff.tk (PGP fingerprint: 97f4694a1d9aed
   - A running Zimbra server
   - A running WebDAV server (for example ownCloud/Nextcloud)
 
-### Installing
-Use the automated installer:
+### Downloading the automated installer
 
     wget --no-cache https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/webdav-client-installer.sh -O /tmp/webdav-client-installer.sh
     chmod +rx /tmp/webdav-client-installer.sh
+
+### Multi server support
+
+The zimlet and extensions support multi server ZCS cluster setups where proxies and mailboxes are in different machines.
+The zimlet and extensions should only be installed on the mailbox servers.
+The zimlet and extensions must be installed on all of your mailbox servers (refer to the *Installing* section).
+
+### Installing
+#### Use the automated installer (Interactive mode):
+
     /tmp/webdav-client-installer.sh 
     [zimbra@server zimbra]$ zmmailboxdctl restart
-    
+
+#### Use the automated installer (Non interactive mode):
+
+    /tmp/webdav-client-installer.sh --auto
+    [zimbra@server zimbra]$ zmmailboxdctl restart
+
+Non interactive mode does not enable experimental Libreoffice document preview, automatically installs the Zimlet (in production mode) and force enables it in all COS'es. It also installs public link sharing.
+
 ### Document preview
 Zimbra WebDAV Client uses OnlyOffice, LibreOffice and jsPDF to display previews of your documents. To enable LibreOffice preview, re-run the installer and choose Y when asked to install LibreOffice Document Preview.
 Previews are supported for the following file types: pdf,jpg,jpeg,png,txt,md (markdown rendering). Video playback *results may be poor* supported types: mp4 and webm. If you enabled the optional LibreOffice conversion in the installer, these file types are previewed as well: docx,doc,xlsx,xls,pptx,ppt,odt,ods,odp. On CentOS 7 only (see extras folder): djvu.
 
 ### Only Office integration
 You can preview docx,xlsx and pptx in OnlyOffice by configuring your OnlyOffice Document Server API url in owncloud_zimlet_onlyoffice_api_url and you can optionally enable a right-click menu action to edit directly in Nextcloud/ownCloud OnlyOffice app. See owncloud_zimlet_enable_onlyoffice below.
+
+In order to make sure OnlyOffice integration works, specially in muti server ZCS clusters, make sure that all of your domains have defined:
+
+* zimbraPublicServiceHostname
+* zimbraPublicServiceProtocol
+* zimbraPublicServicePort
+
+values which can be found at:
+
+* Configure
+* Domains
+* example.com
+* General Information
+  * Public service hostname: mail.example.com
+  * Public service protocol: https
+  * Public service port: 443
 
 ### Configure bruteforce protection
 Zimbra WebDAV Client sends all requests to Nextcloud with an X-Forwarded-For HTTP header. You must configure Zimbra and Nextcloud properly to avoid problems with Nextcloud's bruteforce protection mechanism.
@@ -91,8 +123,8 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_default_folder  |   | Default location where to upload files from Zimbra to WebDAV.  |   |
 | owncloud_zimlet_ask_folder_each_time  | false  | When true, ask the user each time to choose destination folder when uploading an attachment to WebDAV. The destination folder can be the default folder and folders in top level of the default folder. |   |
 | owncloud_zimlet_disable_rename_delete_new_folder  | false  | When true, rename folder, new folder and delete folder operations are hidden from the UI. To avoid bugs in ownCloud 8 with external storage.  |   |
-| owncloud_zimlet_extra_toolbar_button_title  | Open ownCloud tab  | If a value is set, show an additional button in the WebDAV tab to open in a new browser window the url set in owncloud_zimlet_extra_toolbar_button_url.  |   |
-| owncloud_zimlet_extra_toolbar_button_url  | /nextcloud  | See: owncloud_zimlet_extra_toolbar_button_title |   |
+| owncloud_zimlet_extra_toolbar_button_title  | Go to Nextcloud  | If a value is set, show an additional button in the WebDAV tab to open in a new browser window the url set in owncloud_zimlet_extra_toolbar_button_url.  |   |
+| owncloud_zimlet_extra_toolbar_button_url  | owncloud_zimlet_oc_folder  | URL to open when `Go to Nextcloud` is clicked. Instead of a URL you can set it to `owncloud_zimlet_server_name` it opens the URL set in owncloud_zimlet_server_name (may be set by user). When set to `owncloud_zimlet_oc_folder` it opens the URL set in owncloud_zimlet_server_name combined with owncloud_zimlet_oc_folder (maybe set by user).  See: owncloud_zimlet_extra_toolbar_button_title |   |
 | owncloud_zimlet_app_title  | WebDAV  | Change this if you want to rebrand WebDAV Client for your users. For example: ownCloud. |   |
 | owncloud_zimlet_max_upload_size  | 104857600  (100MB) | Maximum upload size for upload dialog MB * 1024 * 1024. The back-end has a hardcoded maximum of 1048576000 (1GB). |   |
 | owncloud_zimlet_use_numbers  | false | If set to true, a number will be used instead of filename when saving attachments. |   |
@@ -122,15 +154,16 @@ Your clients **can connect to all dav servers by default**,  you can restrict th
 
 No service restart is needed after changing this file.
 
-### Un-installing
+### Un-installing (For both production and development mode)
 
 	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
 	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_docconvert/
 	rm -Rf /opt/zimbra/lib/ext/ownCloud/
 	rm -Rf /opt/zimbra/lib/ext/OCS
 	rm -Rf /opt/zimbra/lib/ext/DocConvert/
-	[zimbra@server zimbra]$ zmmailboxdctl restart   
-	
+	zmzimlet uninstall tk_barrydegraaff_owncloud_zimlet
+	# It's ok if zmzimlet uninstall fails in development mode
+	[zimbra@server zimbra]$ zmmailboxdctl restart
 ### Translations
 
 The Zimbra WebDAV Client uses built-in language strings from Zimbra, as such it is translated for all languages that are supported by Zimbra. 

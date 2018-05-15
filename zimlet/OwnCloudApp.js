@@ -440,7 +440,20 @@ OwnCloudApp.prototype._expandMe = function(treeItem) {
 
 OwnCloudApp.prototype.extraBtnLsnr = function() {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
-   window.open(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_url"))
+   if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_url")=='owncloud_zimlet_server_name')
+   {
+      window.open(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']);
+   }
+   else if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_url")=='owncloud_zimlet_oc_folder')
+   {
+      //this is the default since version 1.0.5
+      window.open(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']);
+   }
+   else
+   {
+      //this was the default in versions < 1.0.5
+      window.open(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_url"))
+   }   
 };
 
 OwnCloudApp.prototype._uploadBtnLsnr = function(ev) {
