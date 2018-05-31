@@ -4,7 +4,6 @@ function UploadToDavDialog(parent) {
   this._createUploadHtml();
 }
 
-var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
 UploadToDavDialog.prototype = new DwtDialog();
 UploadToDavDialog.prototype.constructor = UploadToDavDialog;
 
