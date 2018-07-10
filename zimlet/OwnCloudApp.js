@@ -42,7 +42,7 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
 
       //dummy button to catch the enter event and do nothing, dunno what the correct way is of not having an enter-key listener on zmtoolbar.
       //want it in the search text input.
-      toolbar.createButton(ZmOperation.ADD_SIGNATURE, {});
+      toolbar.createButton('OC_DUMMY', {});
 
       if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title"))
       {
@@ -66,9 +66,9 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
          inputId: 'owncloud_zimlet_search'
       });  
       toolbar.addChild(searchField);   
-      
-      toolbar._buttons.ADD_SIGNATURE.setVisibility(false);   
-      toolbar._buttons.ADD_SIGNATURE.setSize(0,0);
+
+      toolbar._buttons.OC_DUMMY.setVisibility(false);   
+      toolbar._buttons.OC_DUMMY.setSize(0,0);
       searchField.focus();
       
       document.getElementById("owncloud_zimlet_search").addEventListener("keyup", function(event) 
