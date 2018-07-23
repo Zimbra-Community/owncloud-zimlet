@@ -161,7 +161,7 @@ No service restart is needed after changing this file.
 	rm -Rf /opt/zimbra/lib/ext/ownCloud/
 	rm -Rf /opt/zimbra/lib/ext/OCS
 	rm -Rf /opt/zimbra/lib/ext/DocConvert/
-	zmzimlet uninstall tk_barrydegraaff_owncloud_zimlet
+	zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet
 	# It's ok if zmzimlet uninstall fails in development mode
 	[zimbra@server zimbra]$ zmmailboxdctl restart
 ### Translations
