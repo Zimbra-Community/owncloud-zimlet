@@ -13,7 +13,7 @@ Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCl
 - Windows: Internet Explorer 11, Microsoft Edge, Google Chrome, Firefox
 - Linux: Google Chrome, Firefox
 
-Supported Zimbra versions 8.6, 8.7.11 and 8.8.8.
+Supported Zimbra versions 8.7.11 and 8.8.8.
 
 Zimbra Desktop is not supported and does not work. Ubuntu 12.04 is not supported (https://github.com/Zimbra-Community/owncloud-zimlet/issues/117)
 
