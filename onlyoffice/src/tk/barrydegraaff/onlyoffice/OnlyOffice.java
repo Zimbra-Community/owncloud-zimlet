@@ -33,10 +33,13 @@ import com.zimbra.cs.extension.ExtensionHttpHandler;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
 
 import java.io.*;
 
@@ -58,6 +61,10 @@ public class OnlyOffice extends ExtensionHttpHandler {
     public String getPath() {
         return "/onlyoffice";
     }
+
+    private String DbConnectionString;
+    private String EncryptionPassword;
+    private String EncryptionSalt;
 
     /**
      * Processes HTTP GET requests.
@@ -84,6 +91,11 @@ public class OnlyOffice extends ExtensionHttpHandler {
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 
         try {
+            if (!this.setProperties())
+            {
+                //failed to read props file
+                return;
+            }
             final Map<String, String> paramsMap = new HashMap<String, String>();
 
             if (req.getParameter("filekey") != null) {
@@ -121,15 +133,16 @@ public class OnlyOffice extends ExtensionHttpHandler {
                 }
 
                 try {
-                    String db_connect_string = this.getDbConnectionString();
+                    String db_connect_string = this.DbConnectionString;
                     Connection connection = DriverManager.getConnection(db_connect_string);
+                    String cryptedPassword = Encrypt(req.getParameter("owncloud_zimlet_password")+this.EncryptionSalt, this.EncryptionPassword);
 
                     if (!connection.isClosed()) {
                         PreparedStatement stmt = connection.prepareStatement("INSERT INTO files VALUES (?,?,?,?,?,?,?,?,NOW())");
                         stmt.setString(1, req.getParameter("filekey"));
                         stmt.setString(2, req.getParameter("path"));
                         stmt.setString(3, req.getParameter("owncloud_zimlet_server_path"));
-                        stmt.setString(4, req.getParameter("owncloud_zimlet_password"));
+                        stmt.setString(4, cryptedPassword);
                         stmt.setString(5, req.getParameter("owncloud_zimlet_username"));
                         stmt.setString(6, req.getParameter("owncloud_zimlet_server_name"));
                         stmt.setString(7, req.getParameter("owncloud_zimlet_server_port"));
@@ -151,7 +164,7 @@ public class OnlyOffice extends ExtensionHttpHandler {
                 //make sure we have a working db connection, if it fails, the extension will not report {error:0} causing OnlyOffice
                 //to warn the user that saving is not available.
 
-                String db_connect_string = this.getDbConnectionString();
+                String db_connect_string = this.DbConnectionString;
                 Connection dbconnection = DriverManager.getConnection(db_connect_string);
 
                 if (!dbconnection.isClosed()) {
@@ -220,17 +233,56 @@ public class OnlyOffice extends ExtensionHttpHandler {
         }
     }
 
-    private String getDbConnectionString() {
+    private boolean setProperties() {
         Properties prop = new Properties();
         try {
             FileInputStream input = new FileInputStream("/opt/zimbra/lib/ext/ownCloud/config.properties");
             prop.load(input);
             input.close();
-            return prop.getProperty("db_connect_string");
+            this.DbConnectionString = prop.getProperty("db_connect_string");
+            this.EncryptionPassword = prop.getProperty("encryption_password_secret");
+            this.EncryptionSalt = prop.getProperty("encryption_salt_secret");
+            return true;
         } catch (IOException ex) {
             ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public String Encrypt(String Input, String key) {
+
+        try {
+
+            SecretKeySpec aesKey = new SecretKeySpec(key.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+
+            cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+            byte[] encrypted = cipher.doFinal(Input.getBytes());
+            return DatatypeConverter.printBase64Binary(encrypted);
+
+        } catch (Exception e) {
+            e.printStackTrace();
             return "";
         }
     }
+
+    public String Decrypt(String Input, String key) {
+
+        try {
+
+
+            SecretKeySpec aesKey = new SecretKeySpec(key.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+
+            cipher.init(Cipher.DECRYPT_MODE, aesKey);
+            return new String(cipher.doFinal(DatatypeConverter.parseBase64Binary(Input)));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+
 
 }

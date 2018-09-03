@@ -227,6 +227,9 @@ for njarfile in ${OWNCLOUD_EXTENSION_JAR_FILES} ; do
    cp ${njarfile} ${OWNCLOUD_EXTENSION_PATH}/
 done
 
+ENC_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-24};echo;)
+ENC_SALT=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-24};echo;)
+
 # Here we set the template for config.properties, if upgrading we alter it further down
 echo "allowdomains=*
 disable_password_storing=false
@@ -248,6 +251,8 @@ owncloud_zimlet_accountname_with_domain=false
 owncloud_zimlet_disable_auto_upload_on_exceed=false
 owncloud_zimlet_onlyoffice_api_url=
 owncloud_zimlet_onlyoffice_secret=
+encryption_password_secret=${ENC_PWD}
+encryption_salt_secret=${ENC_SALT}
 " > ${OWNCLOUD_EXTENSION_PATH}/config.properties
 
 #There has to be a better way to get the contents of zimbraMailTrustedIP but
