@@ -356,17 +356,30 @@ then
 else
    mkdir -p ${ONLYOFFICE_EXTENSION_PATH}
    rm -f ${ONLYOFFICE_EXTENSION_PATH}/*.jar
-   cp $TMPFOLDER/owncloud-zimlet/onlyoffice/out/artifacts/onlyoffice_jar/onlyoffice.jar "$ONLYOFFICE_EXTENSION_PATH_JAR_URL}/"
-   cp $TMPFOLDER/owncloud-zimlet/onlyoffice/lib/zcs-lib-json-simple.jar "$ONLYOFFICE_EXTENSION_PATH_JAR_URL}"
+   cp $TMPFOLDER/owncloud-zimlet/onlyoffice/out/artifacts/onlyoffice_jar/onlyoffice.jar "${ONLYOFFICE_EXTENSION_PATH}"
+   cp $TMPFOLDER/owncloud-zimlet/onlyoffice/lib/zcs-lib-json-simple.jar "${ONLYOFFICE_EXTENSION_PATH}"
    
    ONLYOFFICE_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-10};echo;)
    
    #here one could optionally support mysql by using jdbc:mysql://, ssl is disabled as this is a local connection
    echo "db_connect_string=jdbc:mariadb://127.0.0.1:7306/onlyoffice_db?user=ad-onlyoffice_db&password=$ONLYOFFICE_PWD" >> ${OWNCLOUD_EXTENSION_PATH}/config.properties
+
+# creating a user, just to make sure we have one (for mysql on CentOS 6, so we can execute the next mysql queries w/o errors)
+ONLYOFFICE_DBCREATE="$(mktemp /tmp/onlyoffice-dbcreate.XXXXXXXX.sql)"
+cat <<EOF > "${ONLYOFFICE_DBCREATE}"
+CREATE DATABASE onlyoffice_db CHARACTER SET 'UTF8'; 
+CREATE USER 'ad-onlyoffice_db'@'127.0.0.1' IDENTIFIED BY '${ONLYOFFICE_PWD}'; 
+GRANT ALL PRIVILEGES ON onlyoffice_db . * TO 'ad-onlyoffice_db'@'127.0.0.1' WITH GRANT OPTION; 
+FLUSH PRIVILEGES ; 
+EOF
+
+   /opt/zimbra/bin/mysql --force < "${ONLYOFFICE_DBCREATE}" > /dev/null 2>&1
    
    # creating a user, just to make sure we have one (for mysql on CentOS 6, so we can execute the next mysql queries w/o errors)
    ONLYOFFICE_DBCREATE="$(mktemp /tmp/onlyoffice-dbcreate.XXXXXXXX.sql)"
    cat <<EOF > "${ONLYOFFICE_DBCREATE}"
+DROP USER 'ad-onlyoffice_db'@'127.0.0.1';
+DROP DATABASE onlyoffice_db;   
 CREATE DATABASE onlyoffice_db CHARACTER SET 'UTF8'; 
 CREATE USER 'ad-onlyoffice_db'@'127.0.0.1' IDENTIFIED BY '${ONLYOFFICE_PWD}'; 
 GRANT ALL PRIVILEGES ON onlyoffice_db . * TO 'ad-onlyoffice_db'@'127.0.0.1' WITH GRANT OPTION; 
@@ -404,7 +417,8 @@ fi
 echo "Restoring config.properties"
 cd $TMPFOLDER/upgrade/
 wget --no-cache "${PROPMIGR_JAR_URL}"
-java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config.properties ${OWNCLOUD_EXTENSION_PATH}/config.properties
+cat $TMPFOLDER/upgrade/config.properties | grep -v db_connect_string > $TMPFOLDER/upgrade/config1.properties
+java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config1.properties ${OWNCLOUD_EXTENSION_PATH}/config.properties
 echo "Generating config_template.xml"
 wget --no-cache "${PROP2XML_JAR_URL}"
 if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
@@ -436,6 +450,8 @@ fi
 echo "Flushing Zimlet Cache."
 su - zimbra -c "zmprov fc all"
 
+echo ""
+echo ""
 echo "--------------------------------------------------------------------------------------------------------------
 Zimbra WebDAV Client installed successful.
 
@@ -475,4 +491,5 @@ echo "WARNING: OnlyOffice integration database is dropped on Zimbra upgrades!"
 echo "You may want to re-run the installer after each Zimbra upgrade or move to"
 echo "a MariaDB running outside the Zimbra server."
 echo "See: /etc/cron.daily/onlyoffice-backup"
+echo ""
 fi
