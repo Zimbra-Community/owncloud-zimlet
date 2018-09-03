@@ -729,12 +729,27 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
      
      onlyOfficeRendered = true;
           
+      var zurl = [];
+      var i = 0;
+      var proto = location.protocol;
+      var port = Number(location.port);
+      zurl[i++] = proto;
+      zurl[i++] = "//";
+      zurl[i++] = location.hostname;
+      if (port && ((proto == ZmSetting.PROTO_HTTP && port != ZmSetting.HTTP_DEFAULT_PORT) 
+         || (proto == ZmSetting.PROTO_HTTPS && port != ZmSetting.HTTPS_DEFAULT_PORT))) {
+         zurl[i++] = ":";
+         zurl[i++] = port;
+      }
+      zurl[i++] = "/service/extension/onlyoffice";
+      var zimbraUrl = zurl.join("");
+
      var onlyOfficeParams = 
      {
          "document": {
             "fileType": fileType,
             "title": davResource.getName(),
-            "key": davResource._customProps.fileid,
+            "key": appCtxt.getActiveAccount().id + "_" + davResource._customProps.fileid,
             "url": url + token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&account=" + appCtxt.getActiveAccount().name,
          "permissions": {
             "comment": true,
@@ -749,7 +764,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
         "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
         "token": zimletInstance.onlyOfficeToken,
         "editorConfig": {
-           "callbackUrl": "https://mail.zetalliance.org/service/extension/onlyoffice",
+           "callbackUrl": zimbraUrl,
              "customization": {
                  "chat": false,
                  "zoom": 100
