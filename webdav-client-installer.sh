@@ -34,6 +34,7 @@ OCS_JAR_URL="https://github.com/Zimbra-Community/OCS/raw/master/extension/out/ar
 PROPMIGR_JAR_URL="https://github.com/Zimbra-Community/propmigr/raw/master/out/artifacts/propmigr_jar/propmigr.jar"
 PROP2XML_JAR_URL="https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar"
 OCS_EXTENSION_PATH="/opt/zimbra/lib/ext/OCS"
+ONLYOFFICE_EXTENSION_PATH="/opt/zimbra/lib/ext/onlyoffice"
 OWNCLOUD_EXTENSION_JAR_FILES="\
 ant-1.7.0.jar \
 commons-cli-1.2.jar \
@@ -95,10 +96,21 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 echo ""
-echo "Do you want to enable experimental LibreOffice document preview (tested on CentOS 7 and Ubuntu 14.04)? y/N:"
-echo "You can later enable OnlyOffice document preview by configuring:"
-echo "owncloud_zimlet_enable_onlyoffice and owncloud_zimlet_onlyoffice_api_url"
-echo "It is OK to use both OnlyOffice and LibreOffice at the same time for document preview."
+echo "Do you want to enable OnlyOffice document editing?"
+echo "You must configure owncloud_zimlet_onlyoffice_api_url after the installer completes"
+
+if [[ "${IS_AUTO}" == 'YES' ]]
+then
+    YNONLYOFFICE="N"
+else
+    read YNONLYOFFICE;
+fi
+
+#disabled, since is still in development
+YNONLYOFFICE="N"
+
+echo ""
+echo "Do you want to enable experimental LibreOffice document preview (odt,ods,odp) (tested on CentOS 7 and Ubuntu 14.04)? y/N:"
 
 if [[ "${IS_AUTO}" == 'YES' ]]
 then
@@ -234,7 +246,6 @@ file_number=1000000
 owncloud_zimlet_welcome_url=${OWNCLOUD_DOC_URL}
 owncloud_zimlet_accountname_with_domain=false
 owncloud_zimlet_disable_auto_upload_on_exceed=false
-owncloud_zimlet_enable_onlyoffice=false
 owncloud_zimlet_onlyoffice_api_url=
 owncloud_zimlet_onlyoffice_secret=
 " > ${OWNCLOUD_EXTENSION_PATH}/config.properties
@@ -247,6 +258,15 @@ echo "#Do not make manual changes to this file, see WebDAV Client README.md " > 
 echo -n "zimbramailtrustedips=" >> ${OWNCLOUD_EXTENSION_PATH}/trustedIPs.properties
 echo $(su zimbra -c "/opt/zimbra/bin/zmprov gcf zimbraMailTrustedIP | cut -c22- | tr '\n' ';'") >> ${OWNCLOUD_EXTENSION_PATH}/trustedIPs.properties
 
+if [[ "$YNONLYOFFICE" == 'N' || "$YNONLYOFFICE" == 'n' ]];
+then
+echo "owncloud_zimlet_enable_onlyoffice=false
+" >> ${OWNCLOUD_EXTENSION_PATH}/config.properties
+else
+echo "owncloud_zimlet_enable_onlyoffice=true
+" >> ${OWNCLOUD_EXTENSION_PATH}/config.properties
+fi
+
 if [[ "$YNOCS" == 'N' || "$YNOCS" == 'n' ]];
 then
 echo "owncloud_zimlet_disable_ocs_public_link_shares=true
@@ -255,7 +275,6 @@ else
 echo "owncloud_zimlet_disable_ocs_public_link_shares=false
 " >> ${OWNCLOUD_EXTENSION_PATH}/config.properties
 fi
-
 ls -hal ${OWNCLOUD_EXTENSION_PATH}/
 
 echo "Installing Zimlet."
@@ -328,6 +347,60 @@ else
    wget --no-cache "${OCS_JAR_URL}"
 fi
 
+echo "Setting up OnlyOffice"
+if [[ "$YNONLYOFFICE" == 'N' || "$YNONLYOFFICE" == 'n' ]];
+then
+   echo "Skip by user request."
+   mkdir -p ${ONLYOFFICE_EXTENSION_PATH}
+   rm -Rf ${ONLYOFFICE_EXTENSION_PATH}
+else
+   mkdir -p ${ONLYOFFICE_EXTENSION_PATH}
+   rm -f ${ONLYOFFICE_EXTENSION_PATH}/*.jar
+   cp $TMPFOLDER/owncloud-zimlet/onlyoffice/out/artifacts/onlyoffice_jar/onlyoffice.jar "$ONLYOFFICE_EXTENSION_PATH_JAR_URL}/"
+   cp $TMPFOLDER/owncloud-zimlet/onlyoffice/lib/zcs-lib-json-simple.jar "$ONLYOFFICE_EXTENSION_PATH_JAR_URL}"
+   
+   ONLYOFFICE_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-10};echo;)
+   
+   #here one could optionally support mysql by using jdbc:mysql://, ssl is disabled as this is a local connection
+   echo "db_connect_string=jdbc:mariadb://127.0.0.1:7306/onlyoffice_db?user=ad-onlyoffice_db&password=$ONLYOFFICE_PWD" >> ${OWNCLOUD_EXTENSION_PATH}/config.properties
+   
+   # creating a user, just to make sure we have one (for mysql on CentOS 6, so we can execute the next mysql queries w/o errors)
+   ONLYOFFICE_DBCREATE="$(mktemp /tmp/onlyoffice-dbcreate.XXXXXXXX.sql)"
+   cat <<EOF > "${ONLYOFFICE_DBCREATE}"
+CREATE DATABASE onlyoffice_db CHARACTER SET 'UTF8'; 
+CREATE USER 'ad-onlyoffice_db'@'127.0.0.1' IDENTIFIED BY '${ONLYOFFICE_PWD}'; 
+GRANT ALL PRIVILEGES ON onlyoffice_db . * TO 'ad-onlyoffice_db'@'127.0.0.1' WITH GRANT OPTION; 
+FLUSH PRIVILEGES ; 
+EOF
+
+/opt/zimbra/bin/mysql --force < "${ONLYOFFICE_DBCREATE}" > /dev/null 2>&1
+
+cat <<EOF > "${ONLYOFFICE_DBCREATE}"
+DROP USER 'ad-onlyoffice_db'@'127.0.0.1';
+DROP DATABASE onlyoffice_db;
+CREATE DATABASE onlyoffice_db CHARACTER SET 'UTF8'; 
+CREATE USER 'ad-onlyoffice_db'@'127.0.0.1' IDENTIFIED BY '${ONLYOFFICE_PWD}'; 
+GRANT ALL PRIVILEGES ON onlyoffice_db . * TO 'ad-onlyoffice_db'@'127.0.0.1' WITH GRANT OPTION; 
+FLUSH PRIVILEGES ; 
+EOF
+
+   echo "Creating database and user"
+   /opt/zimbra/bin/mysql < "${ONLYOFFICE_DBCREATE}"
+   
+   echo "Populating onlyoffice_db please wait..."
+   /opt/zimbra/bin/mysql onlyoffice_db < $TMPFOLDER/owncloud-zimlet/onlyoffice/ddl.sql   
+
+echo "Install daily backup via /etc/cron.daily in /onlyoffice-backup"
+cat <<EOF > /etc/cron.daily/onlyoffice-backup
+#!/bin/bash
+mkdir -p /onlyoffice-backup
+rm /onlyoffice-backup/onlyoffice-`date +%w`.sql
+/opt/zimbra/common/bin/mysqldump -h 127.0.0.1 -P7306 -u'ad-onlyoffice_db' -p'${ONLYOFFICE_PWD}' --add-drop-table onlyoffice_db > /onlyoffice-backup/onlyoffice-`date +%w`.sql
+EOF
+chmod +rx /etc/cron.daily/onlyoffice-backup
+   
+fi
+
 echo "Restoring config.properties"
 cd $TMPFOLDER/upgrade/
 wget --no-cache "${PROPMIGR_JAR_URL}"
@@ -395,3 +468,11 @@ else
    rm -Rf $TMPFOLDER
 fi
 
+if [[ "$YNONLYOFFICE" == 'Y' || "$YNONLYOFFICE" == 'y' ]];
+then
+echo ""
+echo "WARNING: OnlyOffice integration database is dropped on Zimbra upgrades!"
+echo "You may want to re-run the installer after each Zimbra upgrade or move to"
+echo "a MariaDB running outside the Zimbra server."
+echo "See: /etc/cron.daily/onlyoffice-backup"
+fi

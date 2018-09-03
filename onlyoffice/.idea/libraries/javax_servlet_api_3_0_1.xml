@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="javax.servlet-api-3.0.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/javax.servlet-api-3.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/zimbracommon.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/zimbrastore.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/zcs-lib-json-simple.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

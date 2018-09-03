@@ -734,13 +734,14 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
          "document": {
             "fileType": fileType,
             "title": davResource.getName(),
+            "key": davResource._customProps.fileid,
             "url": url + token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&account=" + appCtxt.getActiveAccount().name,
          "permissions": {
-            "comment": false,
+            "comment": true,
             "download": true,
-            "edit": false,
+            "edit": true,
             "print": true,
-            "review": false
+            "review": true
               },
            },
         "documentType": documentType,
@@ -748,6 +749,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
         "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
         "token": zimletInstance.onlyOfficeToken,
         "editorConfig": {
+           "callbackUrl": "https://mail.zetalliance.org/service/extension/onlyoffice",
              "customization": {
                  "chat": false,
                  "zoom": 100
