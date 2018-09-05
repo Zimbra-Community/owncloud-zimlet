@@ -744,33 +744,96 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
       zurl[i++] = "/service/extension/onlyoffice";
       var zimbraUrl = zurl.join("");
 
-     var onlyOfficeParams = 
-     {
-         "document": {
-            "fileType": fileType,
-            "title": davResource.getName(),
-            "key": appCtxt.getActiveAccount().id + "_" + davResource._customProps.fileid,
-            "url": url + token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&account=" + appCtxt.getActiveAccount().name,
-         "permissions": {
-            "comment": true,
-            "download": true,
-            "edit": true,
-            "print": true,
-            "review": true
+      if(zimletInstance.editenable == true)
+      {
+         //Make Zimbra aware of our editing session, if it fails, render a read-only version of the document
+         //to-do: check write permission on target file
+        
+         var xhr = new XMLHttpRequest();
+         var data = "filekey=" + encodeURIComponent(appCtxt.getActiveAccount().id + "_" + davResource._customProps.fileid) +
+         "&path=" + encodeURIComponent(davResource.getHref()) +
+         "&owncloud_zimlet_server_path=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']) +         
+         "&owncloud_zimlet_password=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) +
+         "&owncloud_zimlet_username=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']) +
+         "&owncloud_zimlet_server_name=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']) +
+         "&owncloud_zimlet_server_port=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']) +
+         "&owncloud_zimlet_oc_folder=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']);
+         xhr.open("POST", '/service/extension/onlyoffice/', false);
+         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+         
+         xhr.onerror = function () {
+            var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+            zimletInstance.editenable = false;
+         };
+         
+         xhr.send(data);
+         
+         if(xhr.status !== 200)
+         {
+            zimletInstance.editenable = false;
+         }
+      }
+
+
+      if(zimletInstance.editenable == true)
+      {
+         zimletInstance.editenable = false;
+         var onlyOfficeParams = 
+         {
+            "document": {
+               "fileType": fileType,
+               "title": davResource.getName(),
+               "key": appCtxt.getActiveAccount().id + "_" + davResource._customProps.fileid,
+               "url": url + token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&account=" + appCtxt.getActiveAccount().name,
+            "permissions": {
+               "comment": true,
+               "download": true,
+               "edit": true,
+               "print": true,
+               "review": true
+                 },
               },
-           },
-        "documentType": documentType,
-        "height": zimletInstance.appHeight + "px",
-        "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
-        "token": zimletInstance.onlyOfficeToken,
-        "editorConfig": {
-           "callbackUrl": zimbraUrl,
-             "customization": {
-                 "chat": false,
-                 "zoom": 100
-             },
-         },
-     };
+           "documentType": documentType,
+           "height": zimletInstance.appHeight + "px",
+           "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
+           "token": zimletInstance.onlyOfficeToken,
+           "editorConfig": {
+              "callbackUrl": zimbraUrl,
+                "customization": {
+                    "chat": false,
+                    "zoom": 100
+                },
+            },
+         };
+     }
+     else
+     {
+         var onlyOfficeParams = 
+         {
+            "document": {
+               "fileType": fileType,
+               "title": davResource.getName(),
+               "url": url + token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&account=" + appCtxt.getActiveAccount().name,
+            "permissions": {
+               "comment": false,
+               "download": true,
+               "edit": false,
+               "print": true,
+               "review": false
+                 },
+              },
+           "documentType": documentType,
+           "height": zimletInstance.appHeight + "px",
+           "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
+           "token": zimletInstance.onlyOfficeToken,
+           "editorConfig": {
+                "customization": {
+                    "chat": false,
+                    "zoom": 100
+                },
+            },
+         };        
+     }
      zimletInstance.docEditor = new DocsAPI.DocEditor('WebDAVPreview',onlyOfficeParams);
   }   
 
@@ -821,7 +884,12 @@ OwnCloudListView.prototype._editFileListener = function(ev) {
   {
       if (zimletInstance._zimletContext.getConfig("owncloud_zimlet_enable_onlyoffice") == 'true')
       {
-         window.open(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"/index.php/apps/onlyoffice/"+davResource._customProps.fileid);
+         zimletInstance.editenable = true;
+         zimletInstance._davConnector.getDownloadLink(
+            davResource.getHref(),
+            new AjxCallback(this, this.preview, [davResource])
+         );  
+         
       }
   }
   else if (davResource._contentType == 'text/plain')

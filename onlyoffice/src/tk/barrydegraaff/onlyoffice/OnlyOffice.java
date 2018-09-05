@@ -138,7 +138,7 @@ public class OnlyOffice extends ExtensionHttpHandler {
                     String cryptedPassword = Encrypt(req.getParameter("owncloud_zimlet_password")+this.EncryptionSalt, this.EncryptionPassword);
 
                     if (!connection.isClosed()) {
-                        PreparedStatement stmt = connection.prepareStatement("INSERT INTO files VALUES (?,?,?,?,?,?,?,?,NOW())");
+                        PreparedStatement stmt = connection.prepareStatement("REPLACE INTO files VALUES (?,?,?,?,?,?,?,?,NOW())");
                         stmt.setString(1, req.getParameter("filekey"));
                         stmt.setString(2, req.getParameter("path"));
                         stmt.setString(3, req.getParameter("owncloud_zimlet_server_path"));
