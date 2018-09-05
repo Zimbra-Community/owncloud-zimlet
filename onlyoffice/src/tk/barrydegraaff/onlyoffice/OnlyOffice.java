@@ -43,12 +43,13 @@ import javax.xml.bind.DatatypeConverter;
 
 import java.io.*;
 
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.sql.*;
 import java.util.*;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.codec.binary.Base64;
 
 public class OnlyOffice extends ExtensionHttpHandler {
 
@@ -91,8 +92,7 @@ public class OnlyOffice extends ExtensionHttpHandler {
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 
         try {
-            if (!this.setProperties())
-            {
+            if (!this.setProperties()) {
                 //failed to read props file
                 return;
             }
@@ -135,10 +135,11 @@ public class OnlyOffice extends ExtensionHttpHandler {
                 try {
                     String db_connect_string = this.DbConnectionString;
                     Connection connection = DriverManager.getConnection(db_connect_string);
-                    String cryptedPassword = Encrypt(req.getParameter("owncloud_zimlet_password")+this.EncryptionSalt, this.EncryptionPassword);
+                    String cryptedPassword = Encrypt(req.getParameter("owncloud_zimlet_password") + this.EncryptionSalt, this.EncryptionPassword);
 
                     if (!connection.isClosed()) {
                         PreparedStatement stmt = connection.prepareStatement("REPLACE INTO files VALUES (?,?,?,?,?,?,?,?,NOW())");
+                        //Perhaps we should wrap uriDecode() around the parameters to decode them? Seems Java already did at this point
                         stmt.setString(1, req.getParameter("filekey"));
                         stmt.setString(2, req.getParameter("path"));
                         stmt.setString(3, req.getParameter("owncloud_zimlet_server_path"));
@@ -182,6 +183,8 @@ public class OnlyOffice extends ExtensionHttpHandler {
                         java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
                         InputStream stream = connection.getInputStream();
 
+                        //This would store the edited file locally for debug
+                        /*
                         File savedFile = new File("/tmp/test.docx");
                         try (FileOutputStream out = new FileOutputStream(savedFile)) {
                             int read;
@@ -189,9 +192,77 @@ public class OnlyOffice extends ExtensionHttpHandler {
                             while ((read = stream.read(bytes)) != -1) {
                                 out.write(bytes, 0, read);
                             }
-
                             out.flush();
                         }
+                        */
+
+                        //X-FORWARDED-FOR is being passed on to the DAV server, or the originating IP based on the configuration to fight DDOS
+                        String originatingIP;
+                        if (checkZimbraMailTrustedIP(req.getRemoteAddr())) {
+                            //This is a trusted IP try and read x-forwarded-for, fall back to getRemoteAddr
+                            originatingIP = req.getHeader("X-FORWARDED-FOR");
+                            if (originatingIP == null) {
+                                originatingIP = req.getRemoteAddr();
+                            }
+                        } else {
+                            //it is not trusted so we do not read the header
+                            originatingIP = req.getRemoteAddr();
+                        }
+
+
+                        String key = (String) jsonObj.get("key");
+
+                        PreparedStatement stmt = dbconnection.prepareStatement("SELECT * FROM files WHERE filekey = ?");
+                        stmt.setString(1, key);
+                        ResultSet editingSession = stmt.executeQuery();
+
+                        while (editingSession.next()) {
+
+                            String decryptedPassword = Decrypt(editingSession.getString("owncloud_zimlet_password"), this.EncryptionPassword);
+                            decryptedPassword = decryptedPassword.replace(this.EncryptionSalt, "");
+                            byte[] credentials = Base64.encodeBase64((editingSession.getString("owncloud_zimlet_username") + ":" + decryptedPassword).getBytes());
+                            OutputStream out = null;
+                            try {
+                                //to-do: verify if we need to encode path more than %20
+                                URL davurl = new URL(editingSession.getString("owncloud_zimlet_server_name") + ":" + Integer.parseInt(editingSession.getString("owncloud_zimlet_server_port")) + editingSession.getString("path").replace(" ", "%20"));
+                                HttpURLConnection conn = (HttpURLConnection) davurl.openConnection();
+                                conn.setDoOutput(true);
+                                conn.setRequestProperty("X-Forwarded-For", originatingIP);
+                                conn.setRequestProperty("Authorization", "Basic " + new String(credentials));
+                                conn.setRequestMethod("PUT");
+
+
+                                byte fileContent[] = IOUtils.toByteArray(stream);
+                                stream.read(fileContent);
+                                out = conn.getOutputStream();
+                                out.write(fileContent);
+                                out.close();
+                                conn.getInputStream();
+                            } catch (
+                                    Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                // close the streams using close method
+                                try {
+                                    if (stream != null) {
+                                        stream.close();
+                                    }
+                                    if (out != null) {
+                                        out.close();
+                                    }
+                                } catch (IOException ioe) {
+                                    System.out.println("Error while closing stream: " + ioe);
+                                }
+                            }
+
+                            try {
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+
+                        }
+                        editingSession.close();
+
 
                         connection.disconnect();
                     }
@@ -206,6 +277,42 @@ public class OnlyOffice extends ExtensionHttpHandler {
         }
     }
 
+    private String uriDecode(String dirty) {
+        try {
+            String clean = java.net.URLDecoder.decode(dirty, "UTF-8");
+            return clean;
+        } catch (Exception ex) {
+            return ex.toString();
+        }
+    }
+
+    /**
+     * There has to be a better way to get the contents of zimbraMailTrustedIP but
+     * haven't found it yet. So for now we put it in trustedIPs.properties and have the
+     * installer update it.
+     */
+    public static boolean checkZimbraMailTrustedIP(String ip) {
+
+        Properties prop = new Properties();
+        try {
+            FileInputStream input = new FileInputStream("/opt/zimbra/lib/ext/ownCloud/trustedIPs.properties");
+            prop.load(input);
+
+            String[] temp = prop.getProperty("zimbramailtrustedips").split(";");
+            Set<String> zimbramailtrustedips = new HashSet<String>(Arrays.asList(temp));
+
+            input.close();
+
+            for (String zimbramailtrustedip : zimbramailtrustedips) {
+                if (ip.equals(zimbramailtrustedip)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
 
     private void responseWriter(String action, HttpServletResponse resp, String message) {
         try {
@@ -282,7 +389,6 @@ public class OnlyOffice extends ExtensionHttpHandler {
             return "";
         }
     }
-
 
 
 }
