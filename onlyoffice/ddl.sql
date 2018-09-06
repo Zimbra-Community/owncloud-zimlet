@@ -1,5 +1,5 @@
 CREATE TABLE `files` (
-  `filekey` varchar(50) COLLATE utf8mb4_bin NOT NULL,
+  `filekey` varchar(20) COLLATE utf8mb4_bin NOT NULL,
   `path` varchar(2100) COLLATE utf8mb4_bin NOT NULL,
   `owncloud_zimlet_server_path` varchar(300) COLLATE utf8mb4_bin NOT NULL,
   `owncloud_zimlet_password` varchar(100) COLLATE utf8mb4_bin NOT NULL,

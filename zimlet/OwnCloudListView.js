@@ -743,6 +743,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
       }
       zurl[i++] = "/service/extension/onlyoffice";
       var zimbraUrl = zurl.join("");
+      var key = OwnCloudListView.prototype.keygen();
 
       if(zimletInstance.editenable == true)
       {
@@ -750,7 +751,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
          //to-do: check write permission on target file
         
          var xhr = new XMLHttpRequest();
-         var data = "filekey=" + encodeURIComponent(appCtxt.getActiveAccount().id + "_" + davResource._customProps.fileid) +
+         var data = "filekey=" + key +
          "&path=" + encodeURIComponent(davResource.getHref()) +
          "&owncloud_zimlet_server_path=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']) +         
          "&owncloud_zimlet_password=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) +
@@ -784,7 +785,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
             "document": {
                "fileType": fileType,
                "title": davResource.getName(),
-               "key": appCtxt.getActiveAccount().id + "_" + davResource._customProps.fileid,
+               "key": key,
                "url": url + token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&account=" + appCtxt.getActiveAccount().name,
             "permissions": {
                "comment": true,
@@ -867,6 +868,20 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
         document.getElementById('WebDAVPreview').contentDocument.write('<button onclick="+window.location.assign(\''+href+'\');this.parentNode.removeChild(this);">'+ZmMsg.download + " " + decodeURIComponent(match[1])+'</button>');
      }
   }
+};
+
+OwnCloudListView.prototype.keygen =
+function ()
+{
+   chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+   pass = "";
+
+   for(x=0;x<20;x++)
+   {
+      i = Math.floor(Math.random() * 62);
+      pass += chars.charAt(i);
+   }
+   return pass;
 };
 
 /**

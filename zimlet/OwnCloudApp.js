@@ -80,7 +80,7 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
       
       if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_onlyoffice_api_url"))
       {
-         toolbar.createButton("SaveDocument", {text: ZmMsg.save});
+         toolbar.createButton("SaveDocument", {text: ZmMsg.close});
          toolbar.addSelectionListener("SaveDocument", new AjxListener(this, this._OnlyOfficeSaveDocument));         
          zimletInstance.OnlyOfficeSaveID = toolbar._buttons.SaveDocument.__internalId;
          document.getElementById(zimletInstance.OnlyOfficeSaveID).style.position = 'absolute';
