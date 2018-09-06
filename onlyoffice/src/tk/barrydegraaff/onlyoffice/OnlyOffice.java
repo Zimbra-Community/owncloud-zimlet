@@ -19,6 +19,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 The callbacl url for OnlyOffice should be define to:
 https://zimbradev/service/extension/onlyoffice
 See also:https://api.onlyoffice.com/editors/save
+* https://api.onlyoffice.com/editors/callback
 
 */
 
