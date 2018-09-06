@@ -777,6 +777,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
 
       if(zimletInstance.editenable == true)
       {
+         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'block';
          zimletInstance.editenable = false;
          var onlyOfficeParams = 
          {
@@ -801,7 +802,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
               "callbackUrl": zimbraUrl,
                 "customization": {
                     "chat": false,
-                    "zoom": 100
+                    "zoom": 100,
                 },
             },
          };
@@ -834,7 +835,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
             },
          };        
      }
-     zimletInstance.docEditor = new DocsAPI.DocEditor('WebDAVPreview',onlyOfficeParams);
+     zimletInstance.docEditor = new DocsAPI.DocEditor('WebDAVPreview',onlyOfficeParams);     
   }   
 
   if(!onlyOfficeRendered)

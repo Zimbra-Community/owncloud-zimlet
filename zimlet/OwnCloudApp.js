@@ -77,6 +77,19 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
             OwnCloudApp.prototype._searchFieldListener();
          }
       });     
+      
+      if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_onlyoffice_api_url"))
+      {
+         toolbar.createButton("SaveDocument", {text: ZmMsg.save});
+         toolbar.addSelectionListener("SaveDocument", new AjxListener(this, this._OnlyOfficeSaveDocument));         
+         zimletInstance.OnlyOfficeSaveID = toolbar._buttons.SaveDocument.__internalId;
+         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.position = 'absolute';
+         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.right = '3px';
+         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.width = '48px';
+         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.top = '0px';
+         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'none';         
+      }
+
    }   
   this._parentTreeItem = new DwtHeaderTreeItem({
     parent: treeView,
@@ -104,9 +117,26 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
   this._listView.setSize((zimletInstance.appWidth/2-zimletInstance.appWidthCorrection)+"px",zimletInstance.appHeight+"px");
   this._listView.reparentHtmlElement("WebDAVListView");
   this._listView.setScrollStyle(Dwt.SCROLL);
-}
+};
 
 OwnCloudApp.TREE_ID = "OC_TREE_VIEW";
+
+OwnCloudApp.prototype._OnlyOfficeSaveDocument = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'none';
+   zimletInstance.docEditor.destroyEditor();
+   document.getElementById('WebDAVPreviewContainer').innerHTML = '<iframe id="WebDAVPreview" src="'+zimletInstance.getConfig("owncloud_zimlet_welcome_url")+'" style="width:'+(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px; height:'+  zimletInstance.appHeight +'px; border:0px">';
+
+   if(zimletInstance.getMessage('onlyofficeSave').indexOf('???') == 0)
+   {
+      var savingMessage = 'Saving... it can take up to 10 seconds.';
+   }
+   else
+   {
+      var savingMessage = zimletInstance.getMessage('onlyofficeSave');         
+   }
+   zimletInstance.status(savingMessage, ZmStatusView.LEVEL_INFO);
+};
 
 OwnCloudApp.prototype.setDimensions = function() {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
