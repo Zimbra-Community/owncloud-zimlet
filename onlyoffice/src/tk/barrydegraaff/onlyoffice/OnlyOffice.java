@@ -238,6 +238,12 @@ public class OnlyOffice extends ExtensionHttpHandler {
                                 out.write(fileContent);
                                 out.close();
                                 conn.getInputStream();
+
+                                //clean out this record
+                                stmt = dbconnection.prepareStatement("DELETE from files WHERE filekey = ? OR TIME_TO_SEC(created) > 86400");
+                                stmt.setString(1, key);
+                                stmt.executeUpdate();
+
                             } catch (
                                     Exception e) {
                                 e.printStackTrace();
