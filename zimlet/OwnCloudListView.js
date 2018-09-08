@@ -604,14 +604,6 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
      }
   }
 
-  OwnCloudApp.prototype.setDimensions();
-  this.setSize((zimletInstance.appWidth/2-zimletInstance.appWidthCorrection)+"px",zimletInstance.appHeight+"px");
-  
-  //the WebDAVPreview may be destroyed by OnlyOffice   
-  try {
-     document.getElementById('WebDAVPreview').style.width=(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px';
-     document.getElementById('WebDAVPreview').style.height=zimletInstance.appHeight+'px';
-  } catch (err) {} 
   if (ev.detail === DwtListView.ITEM_DBL_CLICKED) {
     if (item.isDirectory()) {
       zimletInstance._appView._currentPath = ev.item._href;
