@@ -144,11 +144,10 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
 
 OwnCloudApp.prototype._newFileListener = function(fileType, title) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
-   if(!zimletInstance._appView._currentPath)
+   if(!zimletInstance._appView._currentPath || zimletInstance._appView._currentPath=='/')
    {
-      zimletInstance._appView._currentPath = "/";
-   }
-   
+      zimletInstance._appView._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+'/';
+   }   
   var newFileDialog = new DwtDialog({parent: appCtxt.getShell()}),
     folder = zimletInstance._appView._currentPath,
     composite = new DwtComposite({ parent: newFileDialog }),
@@ -190,12 +189,13 @@ OwnCloudApp.prototype._createNew =
    if (!input.getValue()) { return; }
    
    var filename = input.getValue().replace(/\.docx$|\.xlsx$|\.pptx$|\.txt$/i)
+     
    filename = filename + '.' + fileType;
 
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
-   if(!zimletInstance._appView._currentPath)
+   if(!zimletInstance._appView._currentPath || zimletInstance._appView._currentPath=='/')
    {
-      zimletInstance._appView._currentPath = "/";
+      zimletInstance._appView._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+'/';
    }
        
    var url = zimletInstance.getResource("newDocTemplate/new."+fileType);  
@@ -205,6 +205,11 @@ OwnCloudApp.prototype._createNew =
    xmlHttp.open( "GET", url, true );        
    xmlHttp.responseType = "blob";
    xmlHttp.send( null );
+
+   if(filename.match(/\.md\.txt$/i))
+   {
+      filename = filename.replace(/.txt$/i,'');
+   }
   
    xmlHttp.onload = function(e) 
    {
@@ -612,9 +617,9 @@ OwnCloudApp.prototype.extraBtnLsnr = function() {
 
 OwnCloudApp.prototype._uploadBtnLsnr = function(ev) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
-   if(!zimletInstance._appView._currentPath)
+   if(!zimletInstance._appView._currentPath || zimletInstance._appView._currentPath=='/')
    {
-      zimletInstance._appView._currentPath = "/";
+      zimletInstance._appView._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+'/';
    }
   var dialog = new UploadToDavDialog(appCtxt.getShell());
   dialog.popup(
@@ -656,9 +661,9 @@ OwnCloudApp.prototype._searchFieldListener = function(ev) {
 
 OwnCloudApp.prototype._newFolderListener = function(ev) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
-   if(!zimletInstance._appView._currentPath)
+   if(!zimletInstance._appView._currentPath || zimletInstance._appView._currentPath=='/')
    {
-      zimletInstance._appView._currentPath = "/";
+      zimletInstance._appView._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+'/';
    }
    
   var newFolderDialog = new DwtDialog({parent: appCtxt.getShell()}),
