@@ -125,6 +125,12 @@
        rawEntity.contentType = 'httpd/unix-directory';
      }
 
+     //Fix for Nuxeo, add / at the end of the URL
+     if(rawEntity.contentType == 'httpd/unix-directory' && !rawEntity.href.endsWith("/"))
+     {
+        rawEntity.href = rawEntity.href + '/';
+     }
+
       //Not all dav servers implement content/type correctly, so use them accoring to extension
       switch (rawEntity.href) {
         case (rawEntity.href.match(/\.djvu$/i) || {}).input:
