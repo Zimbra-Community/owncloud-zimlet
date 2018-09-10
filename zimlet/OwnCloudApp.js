@@ -223,9 +223,10 @@ OwnCloudApp.prototype._createNew =
       true
       );
       request.send(form);
-      
+
+      //nextcloud may be a bit slow
+      setTimeout(function(){ OwnCloudApp.prototype.refreshViewPropfind(); }, 1000);
       dialog.popdown();
-      OwnCloudApp.prototype.refreshViewPropfind();
    }
 };
 
