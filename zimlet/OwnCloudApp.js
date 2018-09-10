@@ -55,8 +55,26 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
      
       if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_rename_delete_new_folder")=='false')
       {
-         toolbar.createButton(ZmOperation.NEW_FOLDER, {text: ZmMsg.newFolder});
-         toolbar.addSelectionListener(ZmOperation.NEW_FOLDER, new AjxListener(this, this._newFolderListener));
+         var button = toolbar.createButton(ZmOperation.NEW_FOLDER, {text: ZmMsg._new});
+         var menu = new ZmPopupMenu(button); //create menu
+         button.setMenu(menu);//add menu to button
+         button.noMenuBar = true;
+         button.removeAllListeners();
+         button.removeDropDownSelectionListener();
+         var mi = menu.createMenuItem(Dwt.getNextId(), {image:'Folder',text:ZmMsg.newFolder});
+         mi.addSelectionListener(new AjxListener(this, this._newFolderListener));
+         
+         if((zimletInstance._zimletContext.getConfig("owncloud_zimlet_enable_onlyoffice") == 'true'))
+         {         
+            var mi = menu.createMenuItem(Dwt.getNextId(), {image:'MSWordDoc',text:ZmMsg.briefcaseCreateNewDocument});
+            mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['docx',ZmMsg.briefcaseCreateNewDocument]));
+            var mi = menu.createMenuItem(Dwt.getNextId(), {image:'MSExcelDoc',text:ZmMsg.briefcaseCreateNewSpreadsheet});
+            mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['xlsx',ZmMsg.briefcaseCreateNewSpreadsheet]));
+            var mi = menu.createMenuItem(Dwt.getNextId(), {image:'MSPowerpointDoc',text:ZmMsg.briefcaseCreateNewPresentation});
+            mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['pptx',ZmMsg.briefcaseCreateNewPresentation]));         
+         }
+         var mi = menu.createMenuItem(Dwt.getNextId(), {image:'GenericDoc',text:ZmMsg._new + ' ' + ZmMsg.plainText});
+         mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['txt',ZmMsg._new + ' ' + ZmMsg.plainText]));  
       }
       
       var searchField = new DwtInputField({
@@ -121,6 +139,89 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
   //Implements dynamic sizing of the app, cause window.onresize is cluttered with built-in Zimbra stuff
   var act = this._resizeAction = new AjxTimedAction(this, OwnCloudApp.prototype._resize, [this]);
   AjxTimedAction.scheduleAction(act, 200);  
+};
+
+
+OwnCloudApp.prototype._newFileListener = function(fileType, title) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   if(!zimletInstance._appView._currentPath)
+   {
+      zimletInstance._appView._currentPath = "/";
+   }
+   
+  var newFileDialog = new DwtDialog({parent: appCtxt.getShell()}),
+    folder = zimletInstance._appView._currentPath,
+    composite = new DwtComposite({ parent: newFileDialog }),
+    label,
+    input;
+
+  newFileDialog.setView(composite);
+
+  label = new DwtLabel({
+    parent: composite
+  });
+  label.setText(ZmMsg.filename);
+
+  input = new DwtInputField({
+    parent: composite
+  });
+  newFileDialog.setTitle(title);
+  newFileDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._createNew, [input,fileType,newFileDialog]));
+  newFileDialog.addEnterListener(new AjxListener(this, this._createNew, [input,fileType,newFileDialog]));
+
+  //add tab group and focus on the input field
+  newFileDialog._tabGroup.addMemberBefore(input,	newFileDialog._tabGroup.getFirstMember());
+  newFileDialog._tabGroup.setFocusMember(input);
+  newFileDialog.popup();
+};
+
+/**
+ * Save an attachment to OwnCloud.
+ * @param {string} mid The message id
+ * @param {string} part The part of the message.
+ * @param {string} fileName The file name
+ * @private
+ * 
+ * this is a modified version of ownCloudZimlet.prototype._saveAttachmentPropfindCbk
+ */
+OwnCloudApp.prototype._createNew =
+  function(input, fileType, dialog) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   if (!input.getValue()) { return; }
+   
+   var filename = input.getValue().replace(/\.docx$|\.xlsx$|\.pptx$|\.txt$/i)
+   filename = filename + '.' + fileType;
+
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   if(!zimletInstance._appView._currentPath)
+   {
+      zimletInstance._appView._currentPath = "/";
+   }
+       
+   var url = zimletInstance.getResource("newDocTemplate/new."+fileType);  
+    
+   var xmlHttp = null;   
+   xmlHttp = new XMLHttpRequest();
+   xmlHttp.open( "GET", url, true );        
+   xmlHttp.responseType = "blob";
+   xmlHttp.send( null );
+  
+   xmlHttp.onload = function(e) 
+   {
+      form = new FormData(),
+      request = new XMLHttpRequest();
+      form.append("uploadFile",xmlHttp.response, ownCloudZimlet.prototype.sanitizeFileName(filename));
+      form.append("password", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
+      request.open(
+      "POST",
+      "/service/extension/dav_upload/?path="+ zimletInstance._appView._currentPath,
+      true
+      );
+      request.send(form);
+      
+      dialog.popdown();
+      OwnCloudApp.prototype.refreshViewPropfind();
+   }
 };
 
 //Implements dynamic sizing of the app, cause window.onresize is cluttered with built-in Zimbra stuff
