@@ -11,7 +11,5 @@ public class ZimletProperty
   public static String DAV_SERVER_PATH = "owncloud_zimlet_server_path";
   public static String USE_NUMBERS = "owncloud_zimlet_use_numbers";
 
-  public static String DAV_MAIL_FOLDER = "owncloud_zimlet_default_folder";
-
   public static String OC_PATH = "owncloud_zimlet_oc_folder";
 }
