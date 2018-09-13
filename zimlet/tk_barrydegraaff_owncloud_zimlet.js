@@ -348,23 +348,23 @@ ownCloudZimlet.prototype.status =
  */
 ownCloudZimlet.saveAttachment =
   function(url, label) {
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-    {
-       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+    {       
        zimletInstance.status(ZmMsg.requiredLabel + ' ' + ZmMsg.password, ZmStatusView.LEVEL_INFO);
        zimletInstance.displayDialog(1, ZmMsg.preferences, null);
        return;
     }
  
     var zimletCtxt = appCtxt.getZimletMgr().getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-    zimletCtxt.targetFolderPicker(url, label);
+    zimletCtxt.targetFolderPicker(zimletInstance._saveAttachment,[url,label]);
   };
 
 /**
  * Ask the user where to store the file
  */
 ownCloudZimlet.prototype.targetFolderPicker =
-  function(url, label) {
+  function(method, args) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    zimletInstance._folderPickerDialog = new ZmDialog({
       title: ZmMsg.chooseFolder,
@@ -375,8 +375,7 @@ ownCloudZimlet.prototype.targetFolderPicker =
    var html = "<div style='width:500px; height: 450px;'><div id='ownCloudZimletFolderPicker'><small></div>";
    
    zimletInstance._folderPickerDialog.setContent(html);
-   zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance,zimletInstance._saveAttachment,[url,label]));
-   zimletInstance._folderPickerDialog.setEnterListener();
+   zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, method, args));
    zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelFolderPicker));
    zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[1].__internalId));
    zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[2].__internalId));
