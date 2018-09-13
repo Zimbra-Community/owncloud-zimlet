@@ -72,7 +72,6 @@ function OwnCloudFolderPicker(parent, zimletCtxt, davConnector, ownCloudConnecto
 
   //Add a function to do a propfind on the onclick event in the tree
   this._treeclick = function() {
-     console.log(arguments);
   if(arguments[1].dwtObj)
   {
     zimletInstance.OwnCloudFolderPicker.selectedDavResource = arguments[1].dwtObj._data.DavResource;

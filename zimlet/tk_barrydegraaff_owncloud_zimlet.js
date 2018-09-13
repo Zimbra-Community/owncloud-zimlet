@@ -180,25 +180,6 @@ ownCloudZimlet.prototype.init =
        {
           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");
        }   
-
-       //Set default value in case no owncloud_zimlet_ask_folder_each_time is set
-       if(!this.getUserProperty("owncloud_zimlet_ask_folder_each_time"))
-       {
-          if(this._zimletContext.getConfig("owncloud_zimlet_ask_folder_each_time"))
-          {
-             //Did the admin specify one? Use that:
-             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = this._zimletContext.getConfig("owncloud_zimlet_ask_folder_each_time");
-          }
-          else
-          {     
-             //Seems like the admins wants to clear this field, do it:
-             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = "";
-          }   
-       }
-       else
-       {
-          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = this.getUserProperty("owncloud_zimlet_ask_folder_each_time");
-       } 
          
        //Set default value in case no owncloud_zimlet_use_numbers is set
        if(!this.getUserProperty("owncloud_zimlet_use_numbers"))
@@ -376,92 +357,62 @@ ownCloudZimlet.saveAttachment =
     }
  
     var zimletCtxt = appCtxt.getZimletMgr().getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-    zimletCtxt.saveAttachment(url, label);
+    zimletCtxt.targetFolderPicker(url, label);
   };
 
 /**
- * Save an attachment to OwnCloud.
- * @param {string} mid The message id
- * @param {string} part The part of the message.
- * @param {string} label The label (usually the file name)
+ * Ask the user where to store the file
  */
-ownCloudZimlet.prototype.saveAttachment =
+ownCloudZimlet.prototype.targetFolderPicker =
   function(url, label) {
-    this.createFolder(
-      new AjxCallback(this,this.saveAttachmentDoIt,[url,label]), this._defaultPropfindErrCbk);
-  };
-
-ownCloudZimlet.prototype.saveAttachmentDoIt =
-  function(url, label) {
-    var propfindCbk = new AjxCallback(
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   zimletInstance._folderPickerDialog = new ZmDialog({
+      title: ZmMsg.chooseFolder,
+      parent: zimletInstance.getShell(),
+      standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
+      disposeOnPopDown: true
+   });
+   var html = "<div style='width:500px; height: 450px;'><div id='ownCloudZimletFolderPicker'><small></div>";
+   
+   zimletInstance._folderPickerDialog.setContent(html);
+   zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance,zimletInstance._saveAttachment,[url,label]));
+   zimletInstance._folderPickerDialog.setEnterListener();
+   zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelFolderPicker));
+   zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[1].__internalId));
+   zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[2].__internalId));
+   zimletInstance._folderPickerDialog._baseTabGroupSize = 2;        
+   
+   zimletInstance.OwnCloudFolderPicker = new OwnCloudFolderPicker(
+      zimletInstance._folderPickerDialog,
       this,
-      this._saveAttachmentPropfindCbk,
-      [url, label]
-    );
-    
-    this._davConnector.propfind(
-      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
-      1,
-      propfindCbk,
-      this._defaultPropfindErrCbk
-    );   
+      this._davConnector,
+      this._ownCloudConnector,
+      new OwnCloudCommons(this._davConnector, this._ownCloudConnector)
+   );   
+   
+   zimletInstance.OwnCloudFolderPicker.reparentHtmlElement(document.getElementById('ownCloudZimletFolderPicker'));
+   //If user clicks OK without a selection, we upload to root
+   zimletInstance.OwnCloudFolderPicker.selectedDavResource = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
+   zimletInstance._folderPickerDialog.popup();  
+   
   };
-/**
- * Save an attachment to OwnCloud.
- * @param {string} mid The message id
- * @param {string} part The part of the message.
- * @param {string} fileName The file name
- * @private
- */
-ownCloudZimlet.prototype._saveAttachmentPropfindCbk =
-  function(url, fileName, result) {
-    if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] == 'true')
-    {
-       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-       zimletInstance.displayDialog(3, ZmMsg.noTargetFolder, [url, fileName, result]);
-       return;
-    }
-    this.status(ZmMsg.uploading + ' ' + fileName, ZmStatusView.LEVEL_INFO);
 
-   var xmlHttp = null;   
-   xmlHttp = new XMLHttpRequest();
-   xmlHttp.open( "GET", url, true );        
-   xmlHttp.responseType = "blob";
-   xmlHttp.send( null );
-  
-   xmlHttp.onload = function(e) 
-   {
-      form = new FormData(),
-      request = new XMLHttpRequest();
-      form.append("uploadFile",xmlHttp.response, ownCloudZimlet.prototype.sanitizeFileName(fileName));
-      form.append("password", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
-      request.open(
-      "POST",
-      "/service/extension/dav_upload/?path="+ tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
-      true
-      );
-      request.send(form);
-   }
+ownCloudZimlet.prototype.cancelFolderPicker = function() {
+var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+zimletInstance._folderPickerDialog.popdown();
 };
 
 /**
- * Save an attachment to OwnCloud after user selects the target folder, relative to the default folder.
+ * Save an attachment to OwnCloud.
  * @param {string} mid The message id
  * @param {string} part The part of the message.
  * @param {string} fileName The file name
  * @private
  */
-ownCloudZimlet.prototype._okBtnFolderSelect =
+ownCloudZimlet.prototype._saveAttachment =
   function(url, fileName, result) {
-    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-    var selectedTargetFolder = document.getElementById("ownCloudZimletfolderSelector").value;
-    if(!selectedTargetFolder)
-    {       
-       zimletInstance.cancelBtn();
-       return;
-    }
-    
-    this.status(ZmMsg.uploading + ' ' + fileName, ZmStatusView.LEVEL_INFO);
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   this.status(ZmMsg.uploading + ' ' + fileName, ZmStatusView.LEVEL_INFO);
 
    var xmlHttp = null;   
    xmlHttp = new XMLHttpRequest();
@@ -471,21 +422,25 @@ ownCloudZimlet.prototype._okBtnFolderSelect =
   
    xmlHttp.onload = function(e) 
    {
-
+      try{
+         var path = zimletInstance.OwnCloudFolderPicker.selectedDavResource.getHref();
+      } catch(err)
+      {
+         var path = zimletInstance.OwnCloudFolderPicker.selectedDavResource;
+      }
       form = new FormData(),
       request = new XMLHttpRequest();
       form.append("uploadFile",xmlHttp.response, ownCloudZimlet.prototype.sanitizeFileName(fileName));
       form.append("password", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']);
       request.open(
       "POST",
-      "/service/extension/dav_upload/?path="+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+selectedTargetFolder,
+      "/service/extension/dav_upload/?path="+ path,
       true
       );
       request.send(form);
+      zimletInstance._folderPickerDialog.popdown();
    }
-    zimletInstance.cancelBtn();
-  };
-
+};
 
 ownCloudZimlet.prototype._saveAttachmentOkCbk =
   function(mid, part, fileName, status) {
@@ -1499,7 +1454,6 @@ ownCloudZimlet.prototype.displayDialog =
           "<td style='min-width:200px'>"+ZmMsg.def + " " + (ZmMsg.folder).toLowerCase() + ":</td>" +
           "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']+"'></td>" +
           "</tr>" +
-          "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.importErrorMissingFolder.replace(/\./,'')+":&nbsp;</td><td><table><tr class='oc_userprefs'><td><input type='checkbox' id='owncloud_zimlet_ask_folder_each_time' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
           "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.usePrefix + " " + (ZmMsg.number).toLowerCase()+":&nbsp;</td><td><table><tr class='oc_userprefs'><td><input type='checkbox' id='owncloud_zimlet_use_numbers' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
           "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.template+":&nbsp;</td><td style='min-width:400px'><textarea placeholder='"+ZmMsg.clickToAdd+"' onclick='ownCloudZimlet.prototype.setTemplate()' rows='6' id='owncloud_zimlet_template'>" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] +"</textarea></td></tr>" +
           "<tr><td colspan=2><br><br><small>"+ZmMsg.versionLabel+" "+ownCloudZimlet.version +"</small></td></tr>"
@@ -1518,12 +1472,11 @@ ownCloudZimlet.prototype.displayDialog =
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_path'),5);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_oc_folder'),6);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_default_folder'),7);
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_ask_folder_each_time'),8);
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_use_numbers'),9);
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_template'),10);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_use_numbers'),8);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_template'),9);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[1].__internalId));
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[2].__internalId));
-        zimletInstance._dialog._baseTabGroupSize = 10;        
+        zimletInstance._dialog._baseTabGroupSize = 9;        
         break;
    case 2:
       //Default dialog
@@ -1531,62 +1484,6 @@ ownCloudZimlet.prototype.displayDialog =
       zimletInstance._dialog.setContent(message);
       zimletInstance._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelBtn));
       break;        
-      case 3:
-        //select folder to drop attachment to, relative to default folder
-        zimletInstance._dialog = new ZmDialog({
-          title: title,
-          parent: zimletInstance.getShell(),
-          standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
-          disposeOnPopDown: true
-        });
-  
-        var folders = [];
-        folders.push(message[2][0]._href);
-        
-        for(var x=0; x < message[2][0]._children.length; x++)
-        {
-           
-           if(message[2][0]._children[x]._contentType == "httpd/unix-directory")
-           {
-              folders.push(message[2][0]._children[x]._href);
-           }
-        }
-        folders.sort();
-        var folderSelector = "";
-        for(var x=0; x < folders.length; x++)
-        {
-           var displayName = folders[x].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],'');
-           if (displayName == '')
-           {
-              displayName = '/';
-           }
-           folderSelector = folderSelector + '<input type="radio" name="ownCloudZimletfolderSelector" onclick="document.getElementById(\'ownCloudZimletfolderSelector\').value=\''+displayName+'\'">'+displayName+'<br>';
-        }
-        
-        html = "<div style='width:500px; height: 250px; overflow-y:scroll; overflow-x:hidden'>" +
-          "<form>" +
-          folderSelector +
-          "<input type=\"hidden\" id=\"ownCloudZimletfolderSelector\" value=\"\"</form>" +
-          "</div>";
-        zimletInstance._dialog.setContent(html);
-
-        zimletInstance._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, zimletInstance._okBtnFolderSelect, [message[0],message[1],message[2],message[3]]));
-        zimletInstance._dialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelBtn));
-        
-        for(var x=0; x < folders.length; x++)
-        {
-           var displayName = folders[x].replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],'').replace(/\"|\//g,'');
-           if (displayName == '')
-           {
-              displayName = '/';
-           }           
-           zimletInstance._dialog._tabGroup.addMember(document.getElementById('ownCloudZimlet'+displayName),x);
-        }
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[1].__internalId));
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[2].__internalId));
-        
-        zimletInstance._dialog._baseTabGroupSize = 2 + folders.length;
-        break;      
     }
     zimletInstance._dialog._setAllowSelection();
     if(id == 1)
@@ -1721,17 +1618,6 @@ ownCloudZimlet.prototype.prefSaveBtn = function()
       this.setUserProperty("owncloud_zimlet_password", "", false);
    }
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('owncloud_zimlet_password').value;
-
-   if(document.getElementById("owncloud_zimlet_ask_folder_each_time").checked)
-   {
-      this.setUserProperty("owncloud_zimlet_ask_folder_each_time", "true", false);
-      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = "true";
-   }
-   else
-   {
-      this.setUserProperty("owncloud_zimlet_ask_folder_each_time", "false", false);
-      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_ask_folder_each_time'] = "false";
-   }
 
    if(document.getElementById("owncloud_zimlet_use_numbers").checked)
    {

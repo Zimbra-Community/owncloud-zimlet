@@ -238,7 +238,6 @@ owncloud_zimlet_server_port=
 owncloud_zimlet_server_path=/nextcloud/remote.php/webdav/
 owncloud_zimlet_oc_folder=/nextcloud
 owncloud_zimlet_default_folder=
-owncloud_zimlet_ask_folder_each_time=false
 owncloud_zimlet_disable_rename_delete_new_folder=false
 owncloud_zimlet_extra_toolbar_button_title=Go to Nextcloud
 owncloud_zimlet_extra_toolbar_button_url=owncloud_zimlet_oc_folder

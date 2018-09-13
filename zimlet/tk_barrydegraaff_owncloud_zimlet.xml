@@ -28,6 +28,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
         label="WebDAV"
         description="Attach from and save to WebDAV">
     <include>markdown/purify.js</include>
+    <include>OwnCloudFolderPicker.js</include>
     <include>DavConnector.js</include>
     <include>OwnCloudApp.js</include>
     <include>OwnCloudCommons.js</include>
@@ -53,7 +54,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
       <property type="string" label="" name="owncloud_zimlet_server_path" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_default_folder" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_oc_folder" rows="1"/>
-      <property type="string" label="" name="owncloud_zimlet_ask_folder_each_time" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_use_numbers" rows="1"/>
       <property type="string" label="" name="owncloud_zimlet_template" rows="1"/>
    </userProperties>
