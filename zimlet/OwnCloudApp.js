@@ -276,8 +276,10 @@ OwnCloudApp.prototype.setDimensions = function() {
 };
 
 OwnCloudApp.prototype.appActive = function(active) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    if(active)
    { 
+        document.title = 'Zimbra: ' + zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
         this._shareLinkClickedHandler(); 
    } 
 };

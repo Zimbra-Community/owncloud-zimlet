@@ -1,6 +1,6 @@
 /*
  This file is part of the Zimbra ownCloud Zimlet project.
- Copyright (C) 2015-2017  Barry de Graaff
+ Copyright (C) 2015-2018  Barry de Graaff
 
  Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 
@@ -21,7 +21,7 @@
 function tk_barrydegraaff_owncloud_zimlet_HandlerObject() {
   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings = {};
   this._appView = void 0;
-}
+};
 
 tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype = new ZmZimletBase();
 tk_barrydegraaff_owncloud_zimlet_HandlerObject.prototype.constructor = tk_barrydegraaff_owncloud_zimlet_HandlerObject;
@@ -512,16 +512,6 @@ ownCloudZimlet.prototype.showAttachmentDialog =
   };
 
 /**
- * Handle the propfind request to list the files.
- * @param {DavResource[]} resourceList
- * @private
- */
-ownCloudZimlet.prototype._propfindShowAttDlgCbk =
-  function(resourceList) {
-
-  };
-
-/**
  * Called when the matched url is clicked.
  */
 ownCloudZimlet.prototype.clicked =
@@ -559,7 +549,7 @@ ownCloudZimlet.prototype.setDialogButton = function(dialog, buttonId, text, list
    var button = dialog.getButton(buttonId);
    button.setText(text);
    if(listener) dialog.setButtonListener(buttonId, listener);
-}
+};
 
 ownCloudZimlet.prototype.makeDlg = function(title, size, content, standardButtons) {
    //Create the frame
@@ -865,7 +855,7 @@ ownCloudZimlet.prototype._addShareLinkCbk = function (fileName, editor, data) {
       }
       editor.setContent(content);
    }
-}
+};
 
 // Add "Send to WebDAV" option in items contextual menu for mail.
 ownCloudZimlet.prototype.onParticipantActionMenuInitialized = function (controller , menu) {
@@ -941,7 +931,7 @@ ownCloudZimlet.prototype.doDrop =
       zmObjects[i++] = dropObject.srcObj;
    });
   zimletInstance.targetFolderPicker(zimletInstance._doDropPropfindCbk,[zmObjects]);
-}
+};
 
 /**
  * Send a list of ZmObjects to OwnCloud.
@@ -1033,7 +1023,7 @@ ownCloudZimlet.prototype._doDropFetch = function (items, form)
          ownCloudZimlet.prototype._doDropFetch(items, form);
       }   
    }
-}
+};
 
 ownCloudZimlet.prototype._doDropUpload = function (form)
 {      
@@ -1053,7 +1043,7 @@ ownCloudZimlet.prototype._doDropUpload = function (form)
    );
    request.send(form);
    zimletInstance._folderPickerDialog.popdown();
-}
+};
 
 ownCloudZimlet.prototype._getItemNameByType =
   function(zmItem) {
@@ -1193,7 +1183,7 @@ ownCloudZimlet.prototype.onSelectApp = function (appName) {
          }
       }
    }
-}
+};
 
 ownCloudZimlet.prototype.realLaunch =
   function(appName) {
@@ -1328,37 +1318,6 @@ ownCloudZimlet.prototype.onShowView =
       };
       currentView.isOwncloudModified = true;
   }
-};
-
-/* Work-around 8.7.7 regression
- * Bug: https://bugzilla.zimbra.com/show_bug.cgi?id=107013
-*  Fix: https://github.com/Zimbra/zm-ajax/pull/5
-*/ 
-DwtControl.prototype._position =
-function(loc) {
-      this._checkState();
-      var sizeShell = this.shell.getSize();
-      var sizeThis = this.getSize();
-      var x, y;
-      if(sizeThis)
-      {
-         if (!loc) {
-            // if no location, go for the middle
-            x = Math.round((sizeShell.x - sizeThis.x) / 2);
-            y = Math.round((sizeShell.y - sizeThis.y) / 2);
-         } else {
-            x = loc.x;
-            y = loc.y;
-         }
-         // try to stay within shell boundaries
-         if ((x + sizeThis.x) > sizeShell.x) {
-            x = sizeShell.x - sizeThis.x;
-         }
-         if ((y + sizeThis.y) > sizeShell.y) {
-            y = sizeShell.y - sizeThis.y;
-         }
-         this.setLocation(x, y);
-      }
 };
 
 /**
@@ -1551,7 +1510,7 @@ ownCloudZimlet.prototype.toggle_password = function (target) {
    {
       tag.setAttribute('type', 'password');   
    }
-}
+};
 
 /* This method is called when the dialog "CANCEL" button is clicked
  */
@@ -1682,18 +1641,6 @@ ownCloudZimlet.prototype._saveUserProperties =
     }
 
     if(!!callback && !!callback.run) { callback.run(); }
-  };
-
-ownCloudZimlet.prototype._openOwnCloudTab =
-  function() {
-
-  };
-
-ownCloudZimlet.prototype.runAppFunction =
-  function(functionName) {
-    if (functionName === "runRefresh") {
-      // A refresh is requested
-    }
   };
 
 //Sanitize file names so they are allowed in Windows and add %, &, @ , !, ', [, ], (, ), ;, =, +, $, ,, #
