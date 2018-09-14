@@ -106,9 +106,6 @@ else
     read YNONLYOFFICE;
 fi
 
-#disabled, since is still in development
-YNONLYOFFICE="N"
-
 echo ""
 echo "Do you want to enable experimental LibreOffice document preview (odt,ods,odp) (tested on CentOS 7 and Ubuntu 14.04)? y/N:"
 
