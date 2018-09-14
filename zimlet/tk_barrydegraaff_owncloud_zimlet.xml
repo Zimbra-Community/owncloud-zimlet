@@ -1,6 +1,6 @@
 <!--
 
-Zimbra Nextcloud Client
+Zimbra WebDAV Client
 
    https://github.com/barrydegraaff/owncloud-zimlet
 
@@ -25,8 +25,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
         version="1.1.0"
         target="main compose-window view-window"
-        label="Nextcloud"
-        description="Attach from and save to Nextcloud">
+        label="WebDAV"
+        description="Attach from and save to WebDAV">
     <include>markdown/purify.js</include>
     <include>OwnCloudFolderPicker.js</include>
     <include>DavConnector.js</include>
@@ -41,7 +41,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
     <include>mime.js</include>
     <include>ZmOwnCloudController.js</include>
     <includeCSS>tk_barrydegraaff_owncloud_zimlet.css</includeCSS>
-    <zimletPanelItem label="Nextcloud" icon="ownCloud-panelIcon">
+    <zimletPanelItem label="WebDAV" icon="ownCloud-panelIcon">
       <dragSource type="ZmConv" />
 		<dragSource type="ZmMailMsg" />
    </zimletPanelItem>
