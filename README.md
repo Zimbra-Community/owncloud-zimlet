@@ -120,7 +120,6 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_server_port  |   | Port number for your WebDAV/ownCloud server. Example: 443 | ((location.protocol === 'https:') ? 443 : 80)  |
 | owncloud_zimlet_server_path  | /nextcloud/remote.php/webdav/   | Part of the URL where server handles WebDAV protocol without protocol and hostname. |   |
 | owncloud_zimlet_oc_folder  | /nextcloud  | Location where ownCloud/nextCloud is installed without protocol and hostname.  |    |
-| owncloud_zimlet_default_folder  |   | Default location where to upload files from Zimbra to WebDAV.  |   |
 | owncloud_zimlet_disable_rename_delete_new_folder  | false  | When true, rename folder, new folder and delete folder operations are hidden from the UI. To avoid bugs in ownCloud 8 with external storage.  |   |
 | owncloud_zimlet_extra_toolbar_button_title  | Go to Nextcloud  | If a value is set, show an additional button in the WebDAV tab to open in a new browser window the url set in owncloud_zimlet_extra_toolbar_button_url.  |   |
 | owncloud_zimlet_extra_toolbar_button_url  | owncloud_zimlet_oc_folder  | URL to open when `Go to Nextcloud` is clicked. Instead of a URL you can set it to `owncloud_zimlet_server_name` it opens the URL set in owncloud_zimlet_server_name (may be set by user). When set to `owncloud_zimlet_oc_folder` it opens the URL set in owncloud_zimlet_server_name combined with owncloud_zimlet_oc_folder (maybe set by user).  See: owncloud_zimlet_extra_toolbar_button_title |   |

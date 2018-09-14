@@ -161,26 +161,7 @@ ownCloudZimlet.prototype.init =
        {
           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = this.getUserProperty("owncloud_zimlet_oc_folder");
        }   
-   
-       //Set default value in case no owncloud_zimlet_default_folder is set
-       if(!this.getUserProperty("owncloud_zimlet_default_folder"))
-       {
-          if(this._zimletContext.getConfig("owncloud_zimlet_default_folder"))
-          {
-             //Did the admin specify one? Use that:
-             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this._zimletContext.getConfig("owncloud_zimlet_default_folder");
-          }
-          else
-          {     
-             //Seems like the admins wants to clear this field, do it:
-             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = "";
-          }   
-       }
-       else
-       {
-          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = this.getUserProperty("owncloud_zimlet_default_folder");
-       }   
-         
+          
        //Set default value in case no owncloud_zimlet_use_numbers is set
        if(!this.getUserProperty("owncloud_zimlet_use_numbers"))
        {
@@ -569,6 +550,7 @@ ownCloudZimlet.prototype.makeDlg = function(title, size, content, standardButton
 
 // Ask user to use ownCloud for upload
 ownCloudZimlet.prototype.popUseOwncloudDlg = function(files) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    var i = 0;
    var tabLabel = [];
    tabLabel[i++] = (this.getMessage('useOwncloudDlgLabel1').indexOf('???') == 0) ? '<span>Attachments larger than' : this.getMessage('useOwncloudDlgLabel1');
@@ -625,7 +607,7 @@ ownCloudZimlet.prototype.popUseOwncloudDlg = function(files) {
             dialog.dispose();
             
             //Start upload
-            this.uploadFilesFromForm(files);
+            zimletInstance.targetFolderPicker(zimletInstance.uploadFilesFromForm,[files]);
          }
       }, dialog)
    );
@@ -707,23 +689,9 @@ ownCloudZimlet.prototype.abortUpload = function (progressId) {
    }
 };
 
-ownCloudZimlet.prototype.uploadFilesFromForm = function (files) {
-   var propfindCbk = new AjxCallback(
-      this,
-      this._uploadFilesFromFormCbk,
-      [files]
-   );
-   
-   this._davConnector.propfind(
-      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
-      1,
-      propfindCbk,
-      this._defaultPropfindErrCbk
-   );
-};
-
-ownCloudZimlet.prototype._uploadFilesFromFormCbk = function (files , response) {
-
+ownCloudZimlet.prototype.uploadFilesFromForm = function (files , response) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   zimletInstance._folderPickerDialog.popdown();
    var editor = appCtxt.getCurrentView().getHtmlEditor();
    var statusLabel = (this.getMessage('savingToOwncloud').indexOf('???') == 0) ? 'Saving to ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('savingToOwncloud') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
    this.status(statusLabel, ZmStatusView.LEVEL_INFO);
@@ -735,7 +703,12 @@ ownCloudZimlet.prototype._uploadFilesFromFormCbk = function (files , response) {
       var file = files[j];
 
       var fileName = ownCloudZimletInstance.sanitizeFileName(file.name);
-      var path = ownCloudZimlet.settings['owncloud_zimlet_default_folder'];
+      try{
+         var path = zimletInstance.OwnCloudFolderPicker.selectedDavResource.getHref();
+      } catch(err)
+      {
+         var path = zimletInstance.OwnCloudFolderPicker.selectedDavResource;
+      }
       var progressId = listProgressBar[fileName];
       var putUrl = UploadToDavDialog.UPLOAD_URL + "?path=" + path;
 
@@ -809,7 +782,7 @@ ownCloudZimlet.prototype.addShareLinks = function (editor) {
          path = "";
       }
       path = path + fileName;
-      
+          
       internalCallback = new AjxCallback(
          this,
          this._addShareLinkCbk,
@@ -817,7 +790,7 @@ ownCloudZimlet.prototype.addShareLinks = function (editor) {
       );
 
       this._ownCloudConnector.createShare(         
-         tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'] + path,
+         path,
          3,
          void 0,
          false,
@@ -1087,69 +1060,6 @@ ownCloudZimlet.prototype._handlePropfindError =
     }
   };
 
-/**
- * Create the 'Documents' folder (or the user defined one).
- * @param {ZmZimletContext=} zimlet Context of the zimlet.
- * @param {AjxCallback=} callback Callback invoked with the result.
- * @param {AjxCallback=} errorCallback Callback invoked when an error occurs.
- */
-ownCloudZimlet.prototype.createFolder =
-  function(callback, errorCallback) {
-    /*Create default folder if the user has one set, it should always be set.
-    In case it is set to / (default) do not create it, as it throws an error 400 Bad request,
-    as the root should always be there.*/
-    if((tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']) && 
-    (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']!=="/"))
-    {
-       this._davConnector.mkcol(
-         tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'],
-         new AjxCallback(
-           this,
-           this._createFolderCallback,
-           [callback, errorCallback]
-         )
-       );
-    }
-    else
-    {
-       //Go on without folder creation
-       if(callback)
-       {
-          callback.run(200);
-       }   
-    }
-};
-
-/**
- * Callback invoked when a folder is created.
- * @param {AjxCallback=} callback
- * @param {AjxCallback=} errorCallback
- * @param {number} statusCode The return code for the DAV action.
- * @private
- */
-ownCloudZimlet.prototype._createFolderCallback =
-  function(callback, errorCallback, statusCode) {
-    if (statusCode === 201 || statusCode === 405) {
-      // 201 == created
-      // 405 == already there
-      if (!!callback) callback.run(statusCode);
-    } else {
-      // Other status codes are not a good sign
-      if (!!errorCallback) errorCallback.run(statusCode);
-    }
-  };
-
-/**
- * Open the tab with the App, the frame point directly to the extension proxy,
- * the proxy will handle the requests and redirect them to the correct url.
- * @param appName
- */
-ownCloudZimlet.prototype.appLaunch =
-  function(appName) {
-  
-};
-
-	
 ownCloudZimlet.prototype.onSelectApp = function (appName) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    if(appName == zimletInstance.ownCloudTab)
@@ -1215,12 +1125,10 @@ ownCloudZimlet.prototype._okPassListen =
          this.setUserProperty("owncloud_zimlet_password", "", false);
       }
 
-      this.setUserProperty("owncloud_zimlet_default_folder", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'], false);
       this.setUserProperty("owncloud_zimlet_oc_folder", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'], false);
       this.setUserProperty("owncloud_zimlet_server_name", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'], false);
       this.setUserProperty("owncloud_zimlet_server_path", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], false);
       this.setUserProperty("owncloud_zimlet_username", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'], false);
-      this.setUserProperty("owncloud_zimlet_default_folder", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'], false);
       this.setUserProperty("owncloud_zimlet_server_port", tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port'], true);
         
       this.passDialog.popdown();
@@ -1298,18 +1206,7 @@ ownCloudZimlet.prototype.onShowView =
             // Check if max exceeded
             var max_size = appCtxt.get(ZmSetting.MESSAGE_SIZE_LIMIT);
             if((max_size != -1 /* means unlimited */) && (size > max_size)) {
-               var firstUse = ownCloudZimletInstance.getUserProperty("owncloud_zimlet_first_use");
-               if(!ownCloudZimlet.settings['owncloud_zimlet_password'] || firstUse != "false")
-               {
-                  ownCloudZimletInstance.popUseOwncloudDlg(files);
-                  if(firstUse != "false") {
-                     ownCloudZimletInstance.setUserProperty("owncloud_zimlet_first_use", "false", true)
-                  }
-               }
-               else {
-                  //Start upload
-                  ownCloudZimletInstance.uploadFilesFromForm(files);
-               }
+               ownCloudZimletInstance.popUseOwncloudDlg(files);
             }
             else {
                currentView._submitMyComputerAttachmentsOrig(files, node, isInline);
@@ -1381,10 +1278,6 @@ ownCloudZimlet.prototype.displayDialog =
           "<td style='min-width:200px'>"+ZmMsg.location+"&nbsp;ownCloud/Nextcloud:&nbsp;</td>" +
           "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"'></td>" +
           "</tr>" +
-          "<tr class='owncloud_zimlet_userprefs'>" +          
-          "<td style='min-width:200px'>"+ZmMsg.def + " " + (ZmMsg.folder).toLowerCase() + ":</td>" +
-          "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_default_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder']+"'></td>" +
-          "</tr>" +
           "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.usePrefix + " " + (ZmMsg.number).toLowerCase()+":&nbsp;</td><td><table><tr class='oc_userprefs'><td><input type='checkbox' id='owncloud_zimlet_use_numbers' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
           "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.template+":&nbsp;</td><td style='min-width:400px'><textarea placeholder='"+ZmMsg.clickToAdd+"' onclick='ownCloudZimlet.prototype.setTemplate()' rows='6' id='owncloud_zimlet_template'>" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] +"</textarea></td></tr>" +
           "<tr><td colspan=2><br><br><small>"+ZmMsg.versionLabel+" "+ownCloudZimlet.version +"</small></td></tr>"
@@ -1402,12 +1295,11 @@ ownCloudZimlet.prototype.displayDialog =
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_port'),4);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_path'),5);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_oc_folder'),6);
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_default_folder'),7);
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_use_numbers'),8);
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_template'),9);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_use_numbers'),7);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_template'),8);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[1].__internalId));
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[2].__internalId));
-        zimletInstance._dialog._baseTabGroupSize = 9;        
+        zimletInstance._dialog._baseTabGroupSize = 8;
         break;
    case 2:
       //Default dialog
@@ -1531,12 +1423,6 @@ ownCloudZimlet.prototype.prefSaveBtn = function()
 {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    var serverName = document.getElementById('owncloud_zimlet_server_name').value;
-   if (document.getElementById('owncloud_zimlet_default_folder').value.substr(-1) != '/') document.getElementById('owncloud_zimlet_default_folder').value += '/';
-   if (/\/$/.test(serverName)) {
-     // Trim the unwanted ending of the server name like
-     // https://oc.example.com/ turns into https://oc.example.com
-     serverName = serverName.substring(0, serverName.length - 1);
-   }
    if(document.getElementById("owncloud_zimlet_store_pass").checked)
    {
       if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
@@ -1573,9 +1459,6 @@ ownCloudZimlet.prototype.prefSaveBtn = function()
    this.setUserProperty("owncloud_zimlet_username", document.getElementById('owncloud_zimlet_username').value, false);
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = document.getElementById('owncloud_zimlet_username').value;
 
-   this.setUserProperty("owncloud_zimlet_default_folder", document.getElementById('owncloud_zimlet_default_folder').value, false);
-   tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_default_folder'] = document.getElementById('owncloud_zimlet_default_folder').value;
-
    this.setUserProperty("owncloud_zimlet_oc_folder", document.getElementById('owncloud_zimlet_oc_folder').value, true);
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = document.getElementById('owncloud_zimlet_oc_folder').value;
 
@@ -1587,7 +1470,6 @@ ownCloudZimlet.prototype.prefSaveBtn = function()
      new AjxCallback(
        this,
        function () {
-         this.createFolder();
          this.cancelBtn();
        }
      )
