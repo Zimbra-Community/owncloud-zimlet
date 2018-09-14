@@ -309,10 +309,9 @@ ownCloudZimlet._addOwnCloudLink =
       "</a>";
       
      if ((zimletInstance._zimletContext.getConfig("owncloud_zimlet_enable_onlyoffice") == 'true') &&
-        (attachment.ct=='application/vnd.openxmlformats-officedocument.wordprocessingml.document')||
+        ((attachment.ct=='application/vnd.openxmlformats-officedocument.wordprocessingml.document')||
         (attachment.ct=='application/vnd.openxmlformats-officedocument.presentationml.presentation')||
-        (attachment.ct=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-     )
+        (attachment.ct=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')))
      { 
       linkHtml += " | <a href='#' class='AttLink' style='text-decoration:underline;' " +
       "onClick=\"" +
@@ -435,15 +434,12 @@ ownCloudZimlet.prototype._saveAttachment =
       true
       );
       request.send(form);
-           
-      
-      zimletInstance.edit = edit;
       
       request.onload = function(e)
       {
          var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;         
          zimletInstance._folderPickerDialog.popdown();     
-         if(zimletInstance.edit==true)
+         if(edit==true)
          {
             try {
                zimletInstance.docEditor.destroyEditor();
