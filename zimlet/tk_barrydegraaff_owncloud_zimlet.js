@@ -317,7 +317,7 @@ ownCloudZimlet._addOwnCloudLink =
       "onClick=\"" +
       "window.tk_barrydegraaff_owncloud_zimlet_HandlerObject.saveAttachment('" + attachment.url + "','" + ownCloudZimlet.prototype.sanitizeFileName(attachment.label) + "',true)" +
       "\">"+
-      "OnlyOffice" +
+      ZmMsg.edit +
       "</a>" ;
      }
       
