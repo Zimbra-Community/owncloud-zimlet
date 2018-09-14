@@ -678,6 +678,10 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
    }  
   
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+  try {
+     document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'none';         
+  } catch(err){}
+  
   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&inline=true";
 
   /* OnlyOffice Integration
