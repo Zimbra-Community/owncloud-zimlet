@@ -412,10 +412,17 @@ ownCloudZimlet.prototype._saveAttachment =
    xmlHttp.open( "GET", url, true );        
    xmlHttp.responseType = "blob";
    xmlHttp.send( null );
-   zimletInstance._folderPickerDialog.setContent('<div style="width:100%; text-align:center"><img src="'+zimletInstance.getResource('progressround.gif')+'"></div>');
-   zimletInstance._folderPickerDialog.setTitle(ZmMsg.loading);
-   zimletInstance._folderPickerDialog.setButtonVisible(DwtDialog.OK_BUTTON, false);
-   zimletInstance._folderPickerDialog.setButtonVisible(DwtDialog.CANCEL_BUTTON, false);
+   if(edit==true)
+   { 
+      zimletInstance._folderPickerDialog.setContent('<div style="width:100%; text-align:center"><img src="'+zimletInstance.getResource('progressround.gif')+'"></div>');
+      zimletInstance._folderPickerDialog.setTitle(ZmMsg.loading);
+      zimletInstance._folderPickerDialog.setButtonVisible(DwtDialog.OK_BUTTON, false);
+      zimletInstance._folderPickerDialog.setButtonVisible(DwtDialog.CANCEL_BUTTON, false);
+   }
+   else
+   {
+      zimletInstance._folderPickerDialog.popdown();
+   }
    xmlHttp.onload = function(e) 
    {
       try{
@@ -437,10 +444,10 @@ ownCloudZimlet.prototype._saveAttachment =
       
       request.onload = function(e)
       {
-         var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;         
-         zimletInstance._folderPickerDialog.popdown();     
+         var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;                       
          if(edit==true)
          {
+            zimletInstance._folderPickerDialog.popdown();
             try {
                zimletInstance.docEditor.destroyEditor();
             } catch(err){}              
