@@ -6,6 +6,7 @@ zimlet: clean
 		help/*.* \
 		ViewerJS/* \
 		markdown/* \
+		newDocTemplate/* \
 
 clean:
 	rm -f tk_barrydegraaff_owncloud_zimlet.zip
