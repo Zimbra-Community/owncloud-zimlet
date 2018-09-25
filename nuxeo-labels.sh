@@ -1,7 +1,9 @@
 #!/bin/bash
 
-wget https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/zimlet/nuxeo.png -O /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/icon.png
-sed -i "s^WebDAV^Nuxeo^g" /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/tk_barrydegraaff_owncloud_zimlet.xml
+#wget https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/zimlet/nuxeo.png -O /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/icon.png
+wget https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/zimlet/nuxeo.png -O /opt/zimbra/zimlets-deployed/tk_barrydegraaff_owncloud_zimlet/icon.png
+#sed -i "s^WebDAV^Nuxeo^g" /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/tk_barrydegraaff_owncloud_zimlet.xml
+sed -i "s^WebDAV^Nuxeo^g" /opt/zimbra/zimlets-deployed/tk_barrydegraaff_owncloud_zimlet/tk_barrydegraaff_owncloud_zimlet.xml
 sed -i "s^WebDAV^Nuxeo^g" /opt/zimbra/lib/ext/ownCloud/config.properties
 
 wget https://raw.githubusercontent.com/Zimbra-Community/prop2xml/master/set-java-path.sh -O /tmp/set-java-path.sh
