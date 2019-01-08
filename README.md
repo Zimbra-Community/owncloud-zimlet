@@ -9,11 +9,9 @@ Demo video: https://www.youtube.com/watch?v=8pVMoXkNt8c
 
 User manual : https://barrydegraaff.github.io/owncloud/
 
-Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 13, Alfresco Enterprise - 5.2.0 and:
-- Windows: Internet Explorer 11, Microsoft Edge, Google Chrome, Firefox
-- Linux: Google Chrome, Firefox
+Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 14-15, Alfresco Enterprise - 5.2.0 and Nuxeo.
 
-Supported Zimbra versions 8.7.11 and 8.8.8.
+Supported Zimbra versions 8.8.10.
 
 Zimbra Desktop is not supported and does not work. Ubuntu 12.04 is not supported (https://github.com/Zimbra-Community/owncloud-zimlet/issues/117)
 
@@ -141,7 +139,15 @@ After changing config.properties run the following:
     wget https://github.com/Zimbra-Community/prop2xml/raw/master/out/artifacts/prop2xml_jar/prop2xml.jar -O /tmp/prop2xml.jar
     chmod +rx /tmp/set-java-path.sh
     source /tmp/set-java-path.sh
+
+(Development mode):
+
     java -jar /tmp/prop2xml.jar tk_barrydegraaff_owncloud_zimlet /opt/zimbra/lib/ext/ownCloud/config.properties /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/config_template.xml
+
+(Production mode):
+
+    zmzimletctl configure /opt/zimbra/zimlets-deployed/tk_barrydegraaff_owncloud_zimlet/config_template.xml
+    zmcontrol restart
 
 ### Restrict allowed DAV Servers
 
