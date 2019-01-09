@@ -125,7 +125,14 @@ OwnCloudListView.prototype._getCellContents = function (htmlArr, idx, item, fiel
 
   } else if (field === ZmItem.F_NAME) {
 
-    htmlArr[idx++] = AjxStringUtil.htmlEncode(item.getName());
+    if(item.getName().length > 30)
+    {
+       htmlArr[idx++] = "<span title=\""+AjxStringUtil.htmlEncode(item.getName())+"\">" + AjxStringUtil.htmlEncode(item.getName()) + "</span>";
+    }
+    else
+    {
+       htmlArr[idx++] = AjxStringUtil.htmlEncode(item.getName());
+    }   
 
   } else if (field === ZmItem.F_FILE_TYPE) {
 
