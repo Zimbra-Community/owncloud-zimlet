@@ -190,7 +190,7 @@ https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting#example
 
 ### License
 
-Copyright (C) 2015-2018  Barry de Graaff [Zeta Alliance](http://www.zetalliance.org/), Michele Olivo [ZeXtras](https://www.zextras.com/)
+Copyright (C) 2015-2019  Barry de Graaff A [Zeta Alliance](https://zetalliance.org/) Zimlet, Michele Olivo [ZeXtras](https://www.zextras.com/)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

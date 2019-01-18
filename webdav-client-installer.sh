@@ -364,30 +364,7 @@ else
    #here one could optionally support mysql by using jdbc:mysql://, ssl is disabled as this is a local connection
    echo "db_connect_string=jdbc:mariadb://127.0.0.1:7306/onlyoffice_db?user=ad-onlyoffice_db&password=$ONLYOFFICE_PWD" >> ${OWNCLOUD_EXTENSION_PATH}/config.properties
 
-# creating a user, just to make sure we have one (for mysql on CentOS 6, so we can execute the next mysql queries w/o errors)
-ONLYOFFICE_DBCREATE="$(mktemp /tmp/onlyoffice-dbcreate.XXXXXXXX.sql)"
-cat <<EOF > "${ONLYOFFICE_DBCREATE}"
-CREATE DATABASE onlyoffice_db CHARACTER SET 'UTF8'; 
-CREATE USER 'ad-onlyoffice_db'@'127.0.0.1' IDENTIFIED BY '${ONLYOFFICE_PWD}'; 
-GRANT ALL PRIVILEGES ON onlyoffice_db . * TO 'ad-onlyoffice_db'@'127.0.0.1' WITH GRANT OPTION; 
-FLUSH PRIVILEGES ; 
-EOF
-
-   /opt/zimbra/bin/mysql --force < "${ONLYOFFICE_DBCREATE}" > /dev/null 2>&1
-   
-   # creating a user, just to make sure we have one (for mysql on CentOS 6, so we can execute the next mysql queries w/o errors)
    ONLYOFFICE_DBCREATE="$(mktemp /tmp/onlyoffice-dbcreate.XXXXXXXX.sql)"
-   cat <<EOF > "${ONLYOFFICE_DBCREATE}"
-DROP USER 'ad-onlyoffice_db'@'127.0.0.1';
-DROP DATABASE onlyoffice_db;   
-CREATE DATABASE onlyoffice_db CHARACTER SET 'UTF8'; 
-CREATE USER 'ad-onlyoffice_db'@'127.0.0.1' IDENTIFIED BY '${ONLYOFFICE_PWD}'; 
-GRANT ALL PRIVILEGES ON onlyoffice_db . * TO 'ad-onlyoffice_db'@'127.0.0.1' WITH GRANT OPTION; 
-FLUSH PRIVILEGES ; 
-EOF
-
-/opt/zimbra/bin/mysql --force < "${ONLYOFFICE_DBCREATE}" > /dev/null 2>&1
-
 cat <<EOF > "${ONLYOFFICE_DBCREATE}"
 DROP USER 'ad-onlyoffice_db'@'127.0.0.1';
 DROP DATABASE onlyoffice_db;
@@ -398,7 +375,7 @@ FLUSH PRIVILEGES ;
 EOF
 
    echo "Creating database and user"
-   /opt/zimbra/bin/mysql < "${ONLYOFFICE_DBCREATE}"
+   /opt/zimbra/bin/mysql --force < "${ONLYOFFICE_DBCREATE}"
    
    echo "Populating onlyoffice_db please wait..."
    /opt/zimbra/bin/mysql onlyoffice_db < $TMPFOLDER/owncloud-zimlet/onlyoffice/ddl.sql   
@@ -415,10 +392,14 @@ chmod +rx /etc/cron.daily/onlyoffice-backup
 fi
 
 echo "Restoring config.properties"
+set +e
 cd $TMPFOLDER/upgrade/
 wget --no-cache "${PROPMIGR_JAR_URL}"
 cat $TMPFOLDER/upgrade/config.properties | grep -v db_connect_string > $TMPFOLDER/upgrade/config1.properties
 java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config1.properties ${OWNCLOUD_EXTENSION_PATH}/config.properties
+set -e
+
+
 echo "Generating config_template.xml"
 wget --no-cache "${PROP2XML_JAR_URL}"
 if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
@@ -442,8 +423,6 @@ else
    then
       chown zimbra:zimbra $TMPFOLDER -R
       su - zimbra -c "zmzimletctl configure ${OWNCLOUD_ZIMLET_PATH}/config_template.xml"
-   else
-      :
    fi
 fi
 
