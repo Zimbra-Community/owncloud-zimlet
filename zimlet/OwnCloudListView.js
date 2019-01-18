@@ -1055,12 +1055,12 @@ OwnCloudListView.prototype._moveListener = function() {
       standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
       disposeOnPopDown: true
    });
-   var html = "<div class=\"ImgFolder\"></div><div id='ownCloudZimletFolderPicker'></div>";
+   var html = "<div id=\"moveFolderRoot\" onclick=\"OwnCloudListView.prototype.selectRoot();OwnCloudListView.prototype.displayRootSelect()\" class=\"DwtTreeItem-Control\" role=\"treeitem\" style=\"position: static; overflow: visible;\"><div class=\"DwtTreeItem\"><table role=\"presentation\"  style=\"width:100%\"><tbody><tr><td style=\"width: 16px; height: 16px; min-width: 16px;\" align=\"center\" nowrap=\"\" ></td><td style=\"width:20px\" nowrap=\"\" class=\"imageCell\"><div class=\"ImgFolder\"></div></td><td nowrap=\"\" class=\"DwtTreeItem-Text\" >"+ZmMsg.rootFolder+"</td><td class=\"DwtTreeItem-ExtraImg\"><div class=\"ImgBlank_16\"></div></td></tr></tbody></table></div></div><div onclick='OwnCloudListView.prototype.unDisplayRootSelect()' id='ownCloudZimletFolderPicker'></div>";
    
    zimletInstance._folderPickerDialog.setContent(html);
    zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, this._moveCallback, file));
    zimletInstance._folderPickerDialog.setEnterListener(new AjxListener(zimletInstance, this._moveCallback, file));
-   zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelBtn));
+   zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, this.cancelBtn));
    zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[1].__internalId));
    zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[2].__internalId));
    zimletInstance._folderPickerDialog._baseTabGroupSize = 2;        
@@ -1077,13 +1077,51 @@ OwnCloudListView.prototype._moveListener = function() {
    zimletInstance._folderPickerDialog.popup();
 };
 
+OwnCloudListView.prototype.cancelBtn = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   zimletInstance._folderPickerDialog.popdown();
+};
+
+OwnCloudListView.prototype.selectRoot = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   zimletInstance.OwnCloudFolderPicker.selectedDavResource = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
+};
+
+OwnCloudListView.prototype.displayRootSelect = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   document.getElementById('moveFolderRoot').style.minWidth = "100%";
+   document.getElementById('moveFolderRoot').style.backgroundColor = "#99cae7";
+   zimletInstance.OwnCloudFolderPicker._tree.deselectAll();
+};
+
+OwnCloudListView.prototype.unDisplayRootSelect = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   document.getElementById('moveFolderRoot').style.minWidth = "100%";
+   document.getElementById('moveFolderRoot').style.backgroundColor = "transparent";
+};
+
 OwnCloudListView.prototype._moveCallback = function(file) {
   //file is the DAV resource at it's original location
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
 
+  var destHref = "";
+  if(typeof zimletInstance.OwnCloudFolderPicker.selectedDavResource === 'string')
+  {
+     destHref = zimletInstance.OwnCloudFolderPicker.selectedDavResource;
+  }
+  else
+  {
+     try {
+     destHref = zimletInstance.OwnCloudFolderPicker.selectedDavResource.getHref();
+     } catch(err)
+     {
+        return;
+     }
+  }
+
   this._davConnector.move(
     file.getHref(),
-    zimletInstance.OwnCloudFolderPicker.selectedDavResource.getHref()+file.getName(),
+    destHref+file.getName(),
     false,
     new AjxCallback(this, function(dialog, result) {
       zimletInstance._appView.refreshViewPropfind();
