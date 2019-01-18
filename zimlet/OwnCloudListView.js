@@ -1159,6 +1159,12 @@ OwnCloudListView.prototype._renameFileListener = function() {
   renameFileDialog._tabGroup.addMemberBefore(input,renameFileDialog._tabGroup.getFirstMember());
   renameFileDialog._tabGroup.setFocusMember(input);  
   renameFileDialog.popup();
+
+  //try and pre-select file name
+  try{
+     document.getElementById(renameFileDialog.__internalId).getElementsByTagName('input')[0].setSelectionRange(0, document.getElementById(renameFileDialog.__internalId).getElementsByTagName('input')[0].value.lastIndexOf("."));
+     document.getElementById(renameFileDialog.__internalId).getElementsByTagName('input')[0].style.width = "95%";
+  } catch(err){}
 };
 
 OwnCloudListView.prototype._renameFileCallback = function(file, input, dialog, ev) {
