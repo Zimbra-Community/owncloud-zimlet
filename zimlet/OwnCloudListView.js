@@ -37,6 +37,7 @@ function OwnCloudListView(
   this._listeners[ZmOperation.SAVE_FILE]        = (function(_this) { return function() {_this._saveFileListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.EDIT_FILE]        = (function(_this) { return function() {_this._editFileListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.EDIT_PROPS]        = (function(_this) { return function() {_this._itemPropertiesListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.MOVE]    = (function(_this) { return function() {_this._moveListener.apply(_this, arguments); }; })(this);
 
   this.addActionListener(new AjxListener(this, this._listActionListener));
   this.addSelectionListener(new AjxListener(this, this._onItemSelected));
@@ -199,6 +200,9 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(false);
   parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(false);
 
+  parent.getMenuItem(ZmOperation.MOVE).setText(ZmMsg.move);
+  parent.getMenuItem(ZmOperation.MOVE).setVisible(false);
+
   parent.getMenuItem(ZmOperation.EDIT_PROPS).setText(ZmMsg.properties);
   parent.getMenuItem(ZmOperation.EDIT_PROPS).setEnabled(true);
 
@@ -210,6 +214,7 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   }
 
   operationsEnabled = [
+    ZmOperation.MOVE,
     ZmOperation.SEND_FILE,
     ZmOperation.SEND_FILE_AS_ATT,
     ZmOperation.DELETE
@@ -220,6 +225,7 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
       if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_rename_delete_new_folder")=='true')
       {
+         parent.getMenuItem(ZmOperation.MOVE).setVisible(false); 
          parent.getMenuItem(ZmOperation.DELETE).setVisible(false);   
          operationsEnabled.push(ZmOperation.RENAME_FOLDER);
          parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(false);
@@ -228,6 +234,7 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
       }
       else
       {
+         parent.getMenuItem(ZmOperation.MOVE).setVisible(false); 
          parent.getMenuItem(ZmOperation.DELETE).setVisible(true);   
          operationsEnabled.push(ZmOperation.RENAME_FOLDER);
          parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(true);
@@ -235,6 +242,7 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
          parent.getMenuItem(ZmOperation.NEW_FOLDER).setVisible(true);      
       }
     } else {
+      parent.getMenuItem(ZmOperation.MOVE).setVisible(true); 
       parent.getMenuItem(ZmOperation.DELETE).setVisible(true);   
       operationsEnabled.push(ZmOperation.RENAME_FILE);
       operationsEnabled.push(ZmOperation.SAVE_FILE);
@@ -325,17 +333,18 @@ OwnCloudListView.prototype._addMenuListeners = function (menu) {
 
 OwnCloudListView.prototype._getActionMenuOps = function() {  
   return [
-    ZmOperation.EDIT_FILE,
+    ZmOperation.EDIT_FILE,    
     ZmOperation.SAVE_FILE,
     ZmOperation.RENAME_FILE,
     ZmOperation.RENAME_FOLDER,
+    ZmOperation.MOVE,    
     ZmOperation.NEW_FOLDER,
     ZmOperation.DELETE,
     ZmOperation.SEP,
     ZmOperation.SEND_FILE,
     ZmOperation.SEND_FILE_AS_ATT,
     ZmOperation.SEP,
-    ZmOperation.EDIT_PROPS,    
+    ZmOperation.EDIT_PROPS,
   ];
 };
 
@@ -1035,6 +1044,56 @@ OwnCloudListView.prototype._deleteCallback = function(davResource, dialog) {
       zimletInstance._appView.refreshViewPropfind();      
     }, [davResource, dialog])
   );
+};
+
+OwnCloudListView.prototype._moveListener = function() {
+   var file = this.getSelection()[0];
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   zimletInstance._folderPickerDialog = new ZmDialog({
+      title: ZmMsg.chooseFolder,
+      parent: zimletInstance.getShell(),
+      standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
+      disposeOnPopDown: true
+   });
+   var html = "<div class=\"ImgFolder\"></div><div id='ownCloudZimletFolderPicker'></div>";
+   
+   zimletInstance._folderPickerDialog.setContent(html);
+   zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, this._moveCallback, file));
+   zimletInstance._folderPickerDialog.setEnterListener(new AjxListener(zimletInstance, this._moveCallback, file));
+   zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelBtn));
+   zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[1].__internalId));
+   zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[2].__internalId));
+   zimletInstance._folderPickerDialog._baseTabGroupSize = 2;        
+   
+   zimletInstance.OwnCloudFolderPicker = new OwnCloudFolderPicker(
+      zimletInstance._folderPickerDialog,
+      this,
+      this._davConnector,
+      this._ownCloudConnector,
+      new OwnCloudCommons(this._davConnector, this._ownCloudConnector)
+   );   
+   
+   zimletInstance.OwnCloudFolderPicker.reparentHtmlElement(document.getElementById('ownCloudZimletFolderPicker'));
+   zimletInstance._folderPickerDialog.popup();
+};
+
+OwnCloudListView.prototype._moveCallback = function(file) {
+  //file is the DAV resource at it's original location
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+
+  this._davConnector.move(
+    file.getHref(),
+    zimletInstance.OwnCloudFolderPicker.selectedDavResource.getHref()+file.getName(),
+    false,
+    new AjxCallback(this, function(dialog, result) {
+      zimletInstance._appView.refreshViewPropfind();
+      zimletInstance._folderPickerDialog.popdown();
+      if (result === true) {
+      } else {
+      }
+    })
+  );
+
 };
 
 OwnCloudListView.prototype._renameFileListener = function() {
