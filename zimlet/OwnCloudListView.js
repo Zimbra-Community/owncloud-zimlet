@@ -1217,6 +1217,10 @@ OwnCloudListView.prototype._renameFolderListener = function(ev) {
   renameFolderDialog._tabGroup.addMemberBefore(input,	renameFolderDialog._tabGroup.getFirstMember());
   renameFolderDialog._tabGroup.setFocusMember(input);  
   renameFolderDialog.popup();
+  
+  try{
+     document.getElementById(renameFolderDialog.__internalId).getElementsByTagName('input')[0].style.width = "95%";
+  } catch(err){}  
 };
 
 OwnCloudListView.prototype._renameFolderCallback = function(folder, input, dialog, ev) {
