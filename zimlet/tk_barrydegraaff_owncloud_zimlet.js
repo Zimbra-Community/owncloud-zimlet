@@ -1079,24 +1079,43 @@ ownCloudZimlet.prototype._getItemNameByType =
  * @param {{}} error
  * @private
  */
-ownCloudZimlet.prototype._handlePropfindError =
-  function(statusCode, error)
-  {
-    if(error.message == 'Unexpected response (401 Unauthorized)')
-    {
-      this.status(ZmMsg.password + ' ' + ZmMsg.error, ZmStatusView.LEVEL_CRITICAL);
-      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['errorstatus']='401';
-      this.displayDialog(1, ZmMsg.preferences, null);
-    }
-    else
-    {
-      this.status('DAV ' + ZmMsg.errorCap + ' ' + error.message, ZmStatusView.LEVEL_CRITICAL);
-      if((error.message.indexOf('SunCertPathBuilderException') > -1) || (error.message.indexOf('SSLProtocolException') > -1))
+ownCloudZimlet.prototype._handlePropfindError = function(statusCode, error)
+{
+   if (typeof statusCode.code !== 'undefined') {
+      if(statusCode.code == 'service.UNKNOWN_DOCUMENT')
       {
-         this.displayDialog(2, ZmMsg.goToHelp, '<button target="_blank" onclick="window.open(\'https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting#zal-soap-unknown-exception-javaxnetsslsslprotocolexception-handshake-alert-unrecognized_name\')">Troubleshooting guide for administrators.</button>'); 
+        this.status('SOAP ' + ZmMsg.errorCap + ' extension not loaded', ZmStatusView.LEVEL_CRITICAL);
+        this.displayDialog(2, ZmMsg.errorCap, 'Contact administrator<br>You must restart mailbox (su zimbra -c "/opt/zimbra/bin/zmmailboxdctl restart") or re-run the installer.');    
+        return;
       }
-    }
-  };
+      else
+      {
+        this.status('SOAP ' + ZmMsg.errorCap, ZmStatusView.LEVEL_CRITICAL);
+        this.displayDialog(2, ZmMsg.errorCap, statusCode.msg);    
+        return;         
+      }
+   }
+
+   if (typeof error.message !== 'undefined') {
+      if(error.message == 'Unexpected response (401 Unauthorized)')
+      {
+        this.status(ZmMsg.password + ' ' + ZmMsg.error, ZmStatusView.LEVEL_CRITICAL);
+        tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['errorstatus']='401';
+        this.displayDialog(1, ZmMsg.preferences, null);
+        return;          
+      }
+      else
+      {
+        this.status('DAV ' + ZmMsg.errorCap + ' ' + error.message, ZmStatusView.LEVEL_CRITICAL);
+        if((error.message.indexOf('SunCertPathBuilderException') > -1) || (error.message.indexOf('SSLProtocolException') > -1))
+        {
+           this.displayDialog(2, ZmMsg.goToHelp, '<button target="_blank" onclick="window.open(\'https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting#zal-soap-unknown-exception-javaxnetsslsslprotocolexception-handshake-alert-unrecognized_name\')">Troubleshooting guide for administrators.</button>'); 
+        }
+        return;  
+      }
+   }
+   this.status('DAV ' + ZmMsg.errorCap + ' ' + ZmMsg.errorApplication, ZmStatusView.LEVEL_CRITICAL);
+};
 
 ownCloudZimlet.prototype.onSelectApp = function (appName) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
