@@ -53,8 +53,8 @@ The zimlet and extensions must be installed on all of your mailbox servers (refe
 
 Non interactive mode does not enable experimental Libreoffice document preview, automatically installs the Zimlet (in production mode) and force enables it in all COS'es. It also installs public link sharing.
 
-### Only Office online document editing
-Using Zimbra WebDAV Client you can preview and *edit* docx,xlsx and pptx directly from the Zimbra UI using the power of OnlyOffice by configuring your OnlyOffice Document Server API url in owncloud_zimlet_onlyoffice_api_url. See owncloud_zimlet_enable_onlyoffice below.
+### Online document editing (OnlyOffice)
+Using Zimbra WebDAV Client you can preview and *edit* docx,xlsx,pptx,txt and md directly from the Zimbra UI using the power of OnlyOffice by configuring your OnlyOffice Document Server API url in owncloud_zimlet_onlyoffice_api_url. See owncloud_zimlet_enable_onlyoffice below.
 
 In order to make sure OnlyOffice integration works, specially in muti server ZCS clusters, make sure that all of your domains have defined:
 
@@ -74,7 +74,7 @@ values which can be found at:
 
 ### Document preview
 Zimbra WebDAV Client uses OnlyOffice, LibreOffice and jsPDF to display previews of your documents. To enable LibreOffice preview, re-run the installer and choose Y when asked to install LibreOffice Document Preview.
-Previews are supported for the following file types: pdf,jpg,jpeg,png,txt,md (markdown rendering). Video playback *results may be poor* supported types: mp4 and webm. If you enabled the optional LibreOffice conversion in the installer, these file types are previewed as well: docx,doc,xlsx,xls,pptx,ppt,odt,ods,odp. On CentOS 7 only (see extras folder): djvu. On top of that the Zimbra WebDAV Client supports editing and redering plain/text and markdown documents.
+Previews are supported for the following file types: pdf,jpg,jpeg,png,txt,md (markdown rendering). Video playback *results may be poor* supported types: mp4 and webm. If you enabled the optional LibreOffice conversion in the installer, these file types are previewed as well: docx,doc,xlsx,xls,pptx,ppt,odt,ods,odp. On CentOS 7 only (see extras folder): djvu. On top of that the Zimbra WebDAV Client supports editing and redering plain/text and markdown documents. If you install both OnlyOffice and LibreOffice, docx,xlsx and pptx will be renderered using OnlyOffice and odt,ods and odp using LibreOffice.
 
 ### Configure bruteforce protection
 Zimbra WebDAV Client sends all requests to Nextcloud with an X-Forwarded-For HTTP header. You must configure Zimbra and Nextcloud properly to avoid problems with Nextcloud's bruteforce protection mechanism.
