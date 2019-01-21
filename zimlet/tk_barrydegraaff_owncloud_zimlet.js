@@ -920,6 +920,7 @@ ownCloudZimlet.prototype._menuButtonListener = function (controller) {
  */
 ownCloudZimlet.prototype.doDrop =
   function(dropObjects) {
+     /*
     var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
     {       
@@ -928,9 +929,9 @@ ownCloudZimlet.prototype.doDrop =
        return;
     }
         
-   /* Single selects result in an object passed,
-   Multi selects results in an array of objects passed.
-   Always make it an array */    
+   // Single selects result in an object passed,
+   //Multi selects results in an array of objects passed.
+   //Always make it an array
    if(!dropObjects[0])
    {
       dropObjects = [dropObjects];
@@ -942,6 +943,7 @@ ownCloudZimlet.prototype.doDrop =
       zmObjects[i++] = dropObject.srcObj;
    });
   zimletInstance.targetFolderPicker(zimletInstance._doDropPropfindCbk,[zmObjects]);
+  */
 };
 
 /**

@@ -23,7 +23,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
-        version="1.1.1"
+        version="1.1.2"
         target="main compose-window view-window"
         label="WebDAV"
         description="Attach from and save to WebDAV">
@@ -42,8 +42,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
     <include>ZmOwnCloudController.js</include>
     <includeCSS>tk_barrydegraaff_owncloud_zimlet.css</includeCSS>
     <zimletPanelItem label="WebDAV" icon="ownCloud-panelIcon">
-      <dragSource type="ZmConv" />
-		<dragSource type="ZmMailMsg" />
    </zimletPanelItem>
    <handlerObject>tk_barrydegraaff_owncloud_zimlet_HandlerObject</handlerObject>
    <userProperties>
