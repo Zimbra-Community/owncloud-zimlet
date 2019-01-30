@@ -167,7 +167,7 @@ When the user stores the Nexctloud password on the Zimlet, that password is stor
 
 If you use WebDAV Client to connect to Nextcloud (most of us do) you can do a trick to use the  Nextcloud logo and name in the Zimbra UI. From your Zimbra server as root:
 
-        git clone https://github.com/Zimbra-Community/owncloud-zimlet
+	git clone https://github.com/Zimbra-Community/owncloud-zimlet
 	cd owncloud-zimlet
 	./nextcloud-labels.sh
 
