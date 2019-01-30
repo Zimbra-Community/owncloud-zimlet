@@ -163,6 +163,14 @@ No service restart is needed after changing this file.
 
 When the user stores the Nexctloud password on the Zimlet, that password is stored unencrypted in the Zimbra LDAP. As an admin you can either disable the storing of the password OR let your users use an `app password` or `device password` see https://docs.nextcloud.com/server/stable/user_manual/session_management.html#managing-devices.
 
+### Use the Nextcloud logo and name in the Zimbra UI
+
+If you use WebDAV Client to connect to Nextcloud (most of us do) you can do a trick to use the  Nextcloud logo and name in the Zimbra UI. From your Zimbra server as root:
+
+        git clone https://github.com/Zimbra-Community/owncloud-zimlet
+	cd owncloud-zimlet
+	./nextcloud-labels.sh
+
 ### Un-installing (For both production and development mode)
 
 	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
