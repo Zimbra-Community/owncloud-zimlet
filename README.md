@@ -159,6 +159,10 @@ Your clients **can connect to all dav servers by default**,  you can restrict th
 
 No service restart is needed after changing this file.
 
+### Storing your password in the Zimlet?
+
+When the user stores the Nexctloud password on the Zimlet, that password is stored unencrypted in the Zimbra LDAP. As an admin you can either disable the storing of the password OR let your users use an `app password` or `device password` see https://docs.nextcloud.com/server/stable/user_manual/session_management.html#managing-devices.
+
 ### Un-installing (For both production and development mode)
 
 	rm -Rf /opt/zimbra/zimlets-deployed/_dev/tk_barrydegraaff_owncloud_zimlet/
