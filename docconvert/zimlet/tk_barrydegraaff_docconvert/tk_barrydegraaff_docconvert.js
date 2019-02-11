@@ -73,7 +73,7 @@ docConvertZimlet.prototype.addDocConvertLink =
 function(attachment) {
 	var html =
 			"<a href='#' class='AttLink' style='text-decoration:underline;' " +
-					"onClick=\"docConvertZimlet.prototype.saveAttachment('" + attachment.label + "','" + attachment.url + "')\">"+
+					"onClick=\"docConvertZimlet.prototype.saveAttachment(&quot;" + attachment.label + "&quot;,&quot;" + attachment.url + "&quot;)\">"+
 					"PDF" +
 					"</a>";
                
@@ -114,18 +114,6 @@ function(name, url) {
 };
 
 docConvertZimlet.prototype.downloadBlob = function (filename, type, blob) {
-   if (!window.navigator.msSaveOrOpenBlob)
-   {       
-      var a = document.createElement("a");
-      document.body.appendChild(a);
-      a.style = "display: none";
       url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = filename;
-      a.click();     
-   }
-   else
-   {
-      window.navigator.msSaveOrOpenBlob(blob, filename);
-   }
+      window.open(url,'_blank');
 }
