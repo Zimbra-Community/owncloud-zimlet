@@ -73,7 +73,7 @@ docConvertZimlet.prototype.addDocConvertLink =
 function(attachment) {
 	var html =
 			"<a href='#' class='AttLink' style='text-decoration:underline;' " +
-					"onClick=\"docConvertZimlet.prototype.saveAttachment('" + attachment.label + "','" + attachment.url + "')\">"+
+					"onClick=\"docConvertZimlet.prototype.saveAttachment(&quot;" + attachment.label + "&quot;,&quot;" + attachment.url + "&quot;)\">"+
 					"PDF" +
 					"</a>";
                
