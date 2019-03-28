@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2016-2018  Barry de Graaff
+# Copyright (C) 2016-2019  Barry de Graaff
 # 
 # Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 # 
@@ -86,7 +86,7 @@ else
     exit 1
 fi
 
-echo "Automated Zimbra WebDAV Client installer for single-server Zimbra 8.6+ on CentOS 6 or 7 (Ubuntu untested)
+echo "Automated Zimbra WebDAV Client installer for single-server Zimbra
 - Installs ant and git, the WebDAV Client server extension and Zimlet."
 
 # Make sure only root can run our script
