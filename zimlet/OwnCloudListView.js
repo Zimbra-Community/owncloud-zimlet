@@ -598,17 +598,17 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
      zimletInstance.onlyOfficeToken = dav_download_options[1];
      if(dav_download_options[0] == 'true')
      {
-        var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.md$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i;
+        var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.scad$|\.md$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i;
      }
      else
      {
         if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_onlyoffice_api_url"))
         {
-           var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.md$|\.docx$|\.xlsx$|\.pptx$/i;
+           var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.scad$|\.md$|\.docx$|\.xlsx$|\.pptx$/i;
         }
         else
         {
-           var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.md$/i;
+           var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.scad$|\.md$/i;
         }
      }
      if(!item.isDirectory() && davResource._href.match(regex))
@@ -665,6 +665,9 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
           contentType = 'image/png';
        break;
      case (davResource._href.match(/\.txt$/i) || {}).input:
+          contentType = 'text/plain';
+       break;
+     case (davResource._href.match(/\.scad$/i) || {}).input:
           contentType = 'text/plain';
        break;
      case (davResource._href.match(/\.md$/i) || {}).input:
@@ -860,7 +863,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
      //see also function OwnCloudApp
      document.getElementById('WebDAVPreviewContainer').innerHTML='<iframe id="WebDAVPreview" src="" style="width:'+(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px; height:'+  zimletInstance.appHeight +'px; border:0px">';
 
-     if(davResource._href.match(/\.txt$/i))
+     if(davResource._href.match(/\.txt$|\.scad$/i))
      {
         document.getElementById('WebDAVPreview').src=href;
      }
@@ -938,8 +941,9 @@ OwnCloudListView.prototype._itemPropertiesListener = function(ev) {
 
    var content = "<table>";
    var location = "/"+(davResource.getHref()).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], "");
-   content += "<tr><td style='width:100px'>"+ ZmMsg.path + ": </td><td style='width:550px;'><input id='props_owncloud_zimlet_server_path' readonly style='width:98%;color:black;border:0;' value='"+location+"'></td></tr>";
-   content += "<tr><td style='width:100px'>"+ ZmMsg.type + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+davResource.getContentType()+"'></td></tr>";
+
+   content += "<tr><td style='width:100px'>"+ ZmMsg.path + ": </td><td style='width:550px;'><input id='props_owncloud_zimlet_server_path' readonly style='width:98%;color:black;border:0;'></td></tr>";
+   content += "<tr><td style='width:100px'>"+ ZmMsg.type + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+davResource.getContentType()+"'></td></tr>";   
    if(!davResource.isDirectory())
    {
       content += "<tr><td style='width:100px'>"+ ZmMsg.size + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+AjxUtil.formatSize(davResource.getContentLength())+"'></td></tr>";   
@@ -949,6 +953,7 @@ OwnCloudListView.prototype._itemPropertiesListener = function(ev) {
    
    zimletInstance._propertiesdialog = new ZmDialog( { title:ZmMsg.properties, parent:zimletInstance.getShell(), standardButtons:[DwtDialog.OK_BUTTON], disposeOnPopDown:true } );
    zimletInstance._propertiesdialog.setContent('<div style=\'width:600px; height: 75px;\'>'+content+'</div>');
+   document.getElementById('props_owncloud_zimlet_server_path').value = location;
    zimletInstance._propertiesdialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.okbtnProperties,[davResource]));
    zimletInstance._propertiesdialog._setAllowSelection();
    document.getElementById(zimletInstance._propertiesdialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';

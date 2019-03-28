@@ -162,25 +162,6 @@ ownCloudZimlet.prototype.init =
           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = this.getUserProperty("owncloud_zimlet_oc_folder");
        }   
           
-       //Set default value in case no owncloud_zimlet_use_numbers is set
-       if(!this.getUserProperty("owncloud_zimlet_use_numbers"))
-       {
-          if(this._zimletContext.getConfig("owncloud_zimlet_use_numbers"))
-          {
-             //Did the admin specify one? Use that:
-             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = this._zimletContext.getConfig("owncloud_zimlet_use_numbers");
-          }
-          else
-          {     
-             //Seems like the admins wants to clear this field, do it:
-             tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = "";
-          }   
-       }
-       else
-       {
-          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = this.getUserProperty("owncloud_zimlet_use_numbers");
-       }         
-
        //Set default value
        if(!this.getUserProperty("owncloud_zimlet_template"))
        {
@@ -1337,7 +1318,6 @@ ownCloudZimlet.prototype.displayDialog =
           "<td style='min-width:200px'>"+ZmMsg.location+"&nbsp;ownCloud/Nextcloud:&nbsp;</td>" +
           "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"'></td>" +
           "</tr>" +
-          "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.usePrefix + " " + (ZmMsg.number).toLowerCase()+":&nbsp;</td><td><table><tr class='oc_userprefs'><td><input type='checkbox' id='owncloud_zimlet_use_numbers' value='true' " + (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers']=='false' ? '' : 'checked') +"></td></tr></table></td></tr>" +
           "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.template+":&nbsp;</td><td style='min-width:400px'><textarea placeholder='"+ZmMsg.clickToAdd+"' onclick='ownCloudZimlet.prototype.setTemplate()' rows='6' id='owncloud_zimlet_template'>" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] +"</textarea></td></tr>" +
           "<tr><td colspan=2><br><br><small>"+ZmMsg.versionLabel+" "+ownCloudZimlet.version +"</small></td></tr>"
           "</table>" +
@@ -1354,11 +1334,10 @@ ownCloudZimlet.prototype.displayDialog =
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_port'),4);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_path'),5);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_oc_folder'),6);
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_use_numbers'),7);
-        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_template'),8);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_template'),7);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[1].__internalId));
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[2].__internalId));
-        zimletInstance._dialog._baseTabGroupSize = 8;
+        zimletInstance._dialog._baseTabGroupSize = 7;
         break;
    case 2:
       //Default dialog
@@ -1494,17 +1473,6 @@ ownCloudZimlet.prototype.prefSaveBtn = function()
       this.setUserProperty("owncloud_zimlet_password", "", false);
    }
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'] = document.getElementById('owncloud_zimlet_password').value;
-
-   if(document.getElementById("owncloud_zimlet_use_numbers").checked)
-   {
-      this.setUserProperty("owncloud_zimlet_use_numbers", "true", false);
-      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = "true";
-   }
-   else
-   {
-      this.setUserProperty("owncloud_zimlet_use_numbers", "false", false);
-      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_use_numbers'] = "false";
-   }
 
    this.setUserProperty("owncloud_zimlet_server_name", serverName, false);
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name'] = serverName;
