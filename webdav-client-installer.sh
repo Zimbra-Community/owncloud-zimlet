@@ -58,10 +58,7 @@ commons-io-2.6.jar \
 jackson-annotations-2.9.4.jar \
 jackson-core-2.9.4.jar \
 jackson-databind-2.9.4.jar \
-java-jwt-3.3.0.jar \
-jaxb-impl-2.4.0-b180830.0438.jar \
-jaxb-api-2.4.0-b180830.0359.jar \
-jaxb-core-2.3.0.1.jar
+java-jwt-3.3.0.jar
 "
 OWNCLOUD_DOC_URL="https\://barrydegraaff.github.io/owncloud/"
 
