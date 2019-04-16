@@ -172,6 +172,15 @@ ownCloudZimlet.prototype.init =
           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] = this.getUserProperty("owncloud_zimlet_template");   
        }
 
+       //Set default value
+       if(!this.getUserProperty("owncloud_zimlet_show_hidden"))
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_show_hidden'] = 'false';   
+       }
+       else
+       {
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_show_hidden'] = this.getUserProperty("owncloud_zimlet_show_hidden");   
+       }
     /** End load default settings for new users **/
    
    //sort by name asc by default, do we want to store this in the ldap?
@@ -1291,6 +1300,8 @@ ownCloudZimlet.prototype.displayDialog =
            hideOCSstyle = " style=\"display:none !important;\" ";
         }
 
+        var hiddenFilesString = (zimletInstance.getMessage('showHiddenFiles').indexOf('???') == 0) ? 'Show hidden files' : zimletInstance.getMessage('showHiddenFiles');
+
         html = "<div style='width:600px; height: 250px;'>" +
           "<table>"+
           "<tr class='owncloud_zimlet_connectionprefs'>" +
@@ -1319,6 +1330,7 @@ ownCloudZimlet.prototype.displayDialog =
           "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"'></td>" +
           "</tr>" +
           "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+ZmMsg.template+":&nbsp;</td><td style='min-width:400px'><textarea placeholder='"+ZmMsg.clickToAdd+"' onclick='ownCloudZimlet.prototype.setTemplate()' rows='6' id='owncloud_zimlet_template'>" + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] +"</textarea></td></tr>" +
+          "<tr class='owncloud_zimlet_userprefs'><td style='min-width:200px'>"+hiddenFilesString+":&nbsp;</td><td style='min-width:400px'><input type='checkbox'  id='owncloud_zimlet_show_hidden'  " + (zimletInstance.getUserProperty("owncloud_zimlet_show_hidden")=='true' ? 'checked' : '') +"></td></tr>" +
           "<tr><td colspan=2><br><br><small>"+ZmMsg.versionLabel+" "+ownCloudZimlet.version +"</small></td></tr>"
           "</table>" +
           "</div>";
@@ -1335,9 +1347,10 @@ ownCloudZimlet.prototype.displayDialog =
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_server_path'),5);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_oc_folder'),6);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_template'),7);
+        zimletInstance._dialog._tabGroup.addMember(document.getElementById('owncloud_zimlet_show_hidden'),7);
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[1].__internalId));
         zimletInstance._dialog._tabGroup.addMember(document.getElementById(zimletInstance._dialog._button[2].__internalId));
-        zimletInstance._dialog._baseTabGroupSize = 7;
+        zimletInstance._dialog._baseTabGroupSize = 8;
         break;
    case 2:
       //Default dialog
@@ -1486,11 +1499,22 @@ ownCloudZimlet.prototype.prefSaveBtn = function()
    this.setUserProperty("owncloud_zimlet_username", document.getElementById('owncloud_zimlet_username').value, false);
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username'] = document.getElementById('owncloud_zimlet_username').value;
 
-   this.setUserProperty("owncloud_zimlet_oc_folder", document.getElementById('owncloud_zimlet_oc_folder').value, true);
+   this.setUserProperty("owncloud_zimlet_oc_folder", document.getElementById('owncloud_zimlet_oc_folder').value, false);
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'] = document.getElementById('owncloud_zimlet_oc_folder').value;
 
-   this.setUserProperty("owncloud_zimlet_template", document.getElementById('owncloud_zimlet_template').value, true);
+   this.setUserProperty("owncloud_zimlet_template", document.getElementById('owncloud_zimlet_template').value, false);
    tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_template'] = document.getElementById('owncloud_zimlet_template').value;
+
+   if(document.getElementById("owncloud_zimlet_show_hidden").checked)
+   {
+      this.setUserProperty("owncloud_zimlet_show_hidden", "true", true);   
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_show_hidden'] = "true";
+   }
+   else
+   {
+      this.setUserProperty("owncloud_zimlet_show_hidden", "false", true);
+      tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_show_hidden'] = "false";
+   }
 
    this._saveUserProperties({
    },

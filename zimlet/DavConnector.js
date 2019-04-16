@@ -663,6 +663,12 @@
     for (i = 0; i < rawEntityArray.length; i += 1) {
       var rawEntity = rawEntityArray[i],
         resource = DavResource.fromRawResource(rawEntity);
+
+      //show/hide hidden items
+      if((resource.getName().charAt(0)==".") && (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings["owncloud_zimlet_show_hidden"] == "false"))
+      {
+         continue;
+      }
       if (resource.isDirectory()) {
         if (resource.getHref() === "/") {
           weight = 0;
