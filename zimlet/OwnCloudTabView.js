@@ -83,12 +83,6 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
      //this._shareExpiryDate._inputField.type = 'date';
      this._shareExpiryDate._inputField.placeholder="YYYY-MM-DD";
   }
-  this._checkboxi = new DwtRadioButton({ 
-    parent: this,
-    style: DwtCheckbox.TEXT_RIGHT,
-    name: 'ownCloudZimletShareTypeSelector'
-  });
-  this._checkboxi.setText(ZmMsg.shareWithUserOrGroup + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
 
   //Add a function to do a propfind on the onclick event in the tree (attach when composing)
   this._treeclick = function() {
@@ -200,54 +194,6 @@ OwnCloudTabView.prototype._renderResource =
  */
 OwnCloudTabView.prototype._attachFiles =
   function(attachmentDlg) {
-     if(this._checkboxi.getInputElement().checked)
-     {
-        var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-        var resourcesToLink = this._getSelectedItems(this._tree.getChildren());
-        attachmentDlg.popdown();
-        for (var i = 0; i < resourcesToLink.length; i+= 1) {
-            var composeView = appCtxt.getCurrentView(),
-               composeMode = composeView.getHtmlEditor().getMode(),
-               content = composeView.getHtmlEditor().getContent(),
-               sep,
-               linkData = resourcesToLink[i].getName() + " : " + 'zimbradav:/'+encodeURI(resourcesToLink[i].getHref());
-         
-             if(composeMode == 'text/plain') {
-               sep = "\r\n";
-             } else {
-               sep = "<br>";
-             }
-
-             //Try and add link above signature
-             if(content.indexOf(linkData) < 0)
-             {
-                if(appCtxt.getCurrentView().getSignatureContent())
-                {           
-                   //remove cr lf from begin and end of signature for regex matching, as these are not preserved in content of html composer
-                   content = content.replace(appCtxt.getCurrentView().getSignatureContent().replace(/^\s+|\s+$/g, ''), linkData + sep + appCtxt.getCurrentView().getSignatureContent());
-                }
-             } 
-         
-             //signature not matched, try this:
-             if(content.indexOf(linkData) < 0)
-             {
-         
-                if(content.indexOf('<hr id="') > 0) {
-                   content = content.replace('<hr id="', linkData + sep + '<hr id="');
-                } else if(content.indexOf('<div id="') > 0) {
-                   content = content.replace('<div id="', linkData + sep + '<div id="');
-                } else if(content.indexOf('</body') > 0) {
-                   content = content.replace('</body', linkData + sep + '</body');
-                } else if(content.indexOf('----') > 0) {
-                   content = content.replace('----', linkData + sep + '----');
-                } else {
-                   content = content + sep + linkData + sep;
-                }
-             }   
-             composeView.getHtmlEditor().setContent(content);
-        }
-        return;
-     }
     attachmentDlg.popdown();
 
     var

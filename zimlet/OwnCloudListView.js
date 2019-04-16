@@ -367,9 +367,7 @@ OwnCloudListView.prototype._sendFileListener = function(ev) {
          var expiryDateLabel = zimletInstance.getMessage('expiryDate');         
       }
       expiryDateLabel += " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")";
-      html += '<tr><td></td><td><input placeholder="YYYY-MM-DD" title="'+expiryDateLabel+'" id="tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate" type="date"></td></tr>';
-      html += "<tr><td colspan='2'><hr><br></td></tr>";
-      html += '<tr><td><input type="radio" name="ownCloudZimletShareTypeSelector" value="internal"></td><td>'+ZmMsg.shareWithUserOrGroup+'</td></tr></table></form>';
+      html += '<tr><td></td><td><input placeholder="YYYY-MM-DD" title="'+expiryDateLabel+'" id="tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate" type="date"></td></tr></table></form>';
    }
    else
    {
