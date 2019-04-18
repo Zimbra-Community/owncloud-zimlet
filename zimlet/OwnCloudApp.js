@@ -188,7 +188,7 @@ OwnCloudApp.prototype._createNew =
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
    if (!input.getValue()) { return; }
    
-   var filename = input.getValue().replace(/\.docx$|\.xlsx$|\.pptx$|\.txt$/i)
+   var filename = input.getValue().replace(/\.docx$|\.xlsx$|\.pptx$|\.txt$/i, "");
      
    filename = filename + '.' + fileType;
 
