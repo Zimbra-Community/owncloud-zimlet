@@ -618,17 +618,76 @@ OwnCloudApp.prototype.extraBtnLsnr = function() {
    }   
 };
 
+OwnCloudApp.prototype.NewUploadToDavDialog = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+ 
+   zimletInstance._uploadDialog = new ZmDialog({
+      title: ZmMsg.uploadDocs,
+      parent: zimletInstance.getShell(),
+      standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
+      disposeOnPopDown: true
+   });
+   var html = "<div style='width:300px; height: 75px;'>" +
+   "<form accept-charset=\"utf-8\" method=\"POST\" id=\"ownCloudZimletUploadFiles\" enctype=\"multipart/form-data\"><table role=\"presentation\" class=\"ZPropertySheet\" cellspacing=\"6\"><tbody><tr><td>File:</td><td><input type=\"file\" multiple=\"\" name=\"uploadFile\" size=\"30\"><input type=\"hidden\" name=\"password\" value=\""+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']+"\"></td><td colspan=\"3\">&nbsp;</td></tr></tbody></table></form>" +
+   "</div>";
+   
+   zimletInstance._uploadDialog.setContent(html);
+   zimletInstance._uploadDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, OwnCloudApp.prototype.NewUploadToDavDialogOKBtn));
+   zimletInstance._uploadDialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, OwnCloudApp.prototype.NewUploadToDavDialogCancelBtn));
+   zimletInstance._uploadDialog._tabGroup.addMember(document.getElementById(zimletInstance._uploadDialog._button[1].__internalId));
+   zimletInstance._uploadDialog._tabGroup.addMember(document.getElementById(zimletInstance._uploadDialog._button[2].__internalId));
+   zimletInstance._uploadDialog._baseTabGroupSize = 2;        
+   zimletInstance._uploadDialog.popup();
+};
+
+OwnCloudApp.prototype.NewUploadToDavDialogCancelBtn = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   zimletInstance._uploadDialog.popdown();
+};
+
+OwnCloudApp.prototype.NewUploadToDavDialogOKBtn = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   if(!zimletInstance._appView._currentPath || zimletInstance._appView._currentPath=='/')
+   {
+      zimletInstance._appView._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+'/';
+   }   
+
+   var formData = new FormData(document.getElementById("ownCloudZimletUploadFiles"));   
+   zimletInstance._uploadDialog._button[2].setEnabled(false);
+   zimletInstance._uploadDialog._button[1].setText(ZmMsg.hide);
+   zimletInstance._uploadDialog.setContent("<div id=\"ownCloudZimletUploadFilesProgress\" style=\"width:300px; text-align:center;\"><img src=\""+zimletInstance.getResource("progressround.gif")+"\"></div>");
+      
+   var xhr = new XMLHttpRequest();
+   xhr.open("POST", "/service/extension/dav_upload/?path=" + zimletInstance._appView._currentPath, true); 
+   xhr.onload = function(event){ 
+      var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+      console.log("Success, server responded with: " + event.target.response);
+      OwnCloudApp.prototype.refreshViewPropfind();
+      zimletInstance._uploadDialog.popdown();
+   }; 
+   xhr.onerror = function(event){ 
+      var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+      console.log("onerror, server responded with: " + event.target.response);
+      OwnCloudApp.prototype.refreshViewPropfind();
+      zimletInstance._uploadDialog.popdown();
+   }; 
+   xhr.onabort = function(event){ 
+      var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+      console.log("onabort, server responded with: " + event.target.response);
+      OwnCloudApp.prototype.refreshViewPropfind();
+      zimletInstance._uploadDialog.popdown();
+   };       
+   
+   xhr.send(formData);   
+};
+
 OwnCloudApp.prototype._uploadBtnLsnr = function(ev) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
    if(!zimletInstance._appView._currentPath || zimletInstance._appView._currentPath=='/')
    {
       zimletInstance._appView._currentPath = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+'/';
    }
-  var dialog = new UploadToDavDialog(appCtxt.getShell());
-  dialog.popup(
-    zimletInstance._appView._currentPath,
-    new AjxCallback(this, this.refreshViewPropfind)
-  );
+  OwnCloudApp.prototype.NewUploadToDavDialog();
 };
 
 OwnCloudApp.prototype.refreshViewPropfind = function() {

@@ -738,7 +738,7 @@ ownCloudZimlet.prototype.uploadFilesFromForm = function (files , response) {
          var path = zimletInstance.OwnCloudFolderPicker.selectedDavResource;
       }
       var progressId = listProgressBar[fileName];
-      var putUrl = UploadToDavDialog.UPLOAD_URL + "?path=" + path;
+      var putUrl = "/service/extension/dav_upload/?path=" + path;
 
       function progressFunction(id, evt) {
          var progressBar = document.getElementById(id);

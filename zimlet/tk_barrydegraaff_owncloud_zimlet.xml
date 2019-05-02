@@ -23,7 +23,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
-        version="1.1.4"
+        version="1.1.5"
         target="main compose-window view-window"
         label="WebDAV"
         description="Attach from and save to WebDAV">
@@ -36,7 +36,6 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
     <include>OwnCloudListView.js</include>
     <include>OwnCloudTabView.js</include>
     <include>OwnCloudTreeController.js</include>
-    <include>UploadToDavDialog.js</include>
     <include>tk_barrydegraaff_owncloud_zimlet.js</include>
     <include>mime.js</include>
     <include>ZmOwnCloudController.js</include>
