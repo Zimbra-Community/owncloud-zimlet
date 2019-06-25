@@ -882,6 +882,7 @@ ownCloudZimlet.prototype.addMenuButton = function (controller , menu) {
          index : moveOpIndex + 1
       };
       var mi = menu.createOp (ID , params);
+      menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
       mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , controller));
    }
 };
@@ -902,6 +903,27 @@ ownCloudZimlet.prototype._menuButtonListener = function (controller) {
    }
    items = AjxUtil.toArray(items);
    zimletInstance.targetFolderPicker(zimletInstance._doDropPropfindCbk,[items]);
+};
+
+
+/**
+ * Listener called when the menu pops up, changes the buttons depending on the number of selected items
+ * @param controller
+ * @param actionMenu
+ */
+ownCloudZimlet.prototype._onRightClickMenu = function(controller, actionMenu) {
+  var menu = actionMenu.getMenuItem("ownCloudZimlet_MENU_ITEM")._menu;
+
+  /* Here you can get the number of selected items, to make the menu do different things based on single/multiselect
+   * we do not need it now, as we just want to enable the menu for all possible selections
+  var selected = controller.getListView().getDnDSelection()
+  selected = (selected instanceof Array) ? selected : [selected];
+  selected = selected.length;*/
+
+  // default behaviour is disable for more than one, changed here
+  actionMenu.enable("ownCloudZimlet_MENU_ITEM", true);
+
+  
 };
 
 /**
@@ -967,12 +989,12 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
          msgObj  = msgObj.getFirstHotMsg();
          tmpObj.id = msgObj.id;
          type = 'MESSAGE';
-         fileName = (tmpObj.subject ? tmpObj.subject + '.eml' : tmpObj.id + '.eml');
+         fileName = (tmpObj.subject ? tmpObj.subject + ' ' + tmpObj.id + '.eml' : tmpObj.id + '.eml');
       }
       
       if(tmpObj.type ==='MSG')
       {
-         fileName = (tmpObj.subject ? tmpObj.subject + '.eml' : tmpObj.id + '.eml');
+         fileName = (tmpObj.subject ? tmpObj.subject  + ' ' + tmpObj.id + '.eml' : tmpObj.id + '.eml');
       }
 
       if (tmpObj.id < 0) {
