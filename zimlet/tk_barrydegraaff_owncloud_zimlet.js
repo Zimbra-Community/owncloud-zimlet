@@ -351,15 +351,21 @@ ownCloudZimlet.saveAttachment =
 ownCloudZimlet.prototype.targetFolderPicker =
   function(method, args) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   
+	var newFolderBtnId = Dwt.getNextId();
+	var newFolderBtn = new DwtDialog_ButtonDescriptor(newFolderBtnId, ZmMsg.newFolder, DwtDialog.ALIGN_LEFT);
+   
    zimletInstance._folderPickerDialog = new ZmDialog({
       title: ZmMsg.chooseFolder,
       parent: zimletInstance.getShell(),
       standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
+      extraButtons : [newFolderBtn],
       disposeOnPopDown: true
    });
    var html = "<div id=\"moveFolderRoot\" onclick=\"OwnCloudListView.prototype.selectRoot();OwnCloudListView.prototype.displayRootSelect()\" class=\"DwtTreeItem-Control\" role=\"treeitem\" style=\"position: static; overflow: visible; margin-left:-15px !important\"><div class=\"DwtTreeItem\"><table role=\"presentation\"  style=\"width:100%\"><tbody><tr><td style=\"width: 16px; height: 16px; min-width: 16px;\" align=\"center\" nowrap=\"\" ></td><td style=\"width:20px\" nowrap=\"\" class=\"imageCell\"><div class=\"ImgFolder\"></div></td><td nowrap=\"\" class=\"DwtTreeItem-Text\" >"+ZmMsg.rootFolder+"</td><td class=\"DwtTreeItem-ExtraImg\"><div class=\"ImgBlank_16\"></div></td></tr></tbody></table></div></div><div onclick='OwnCloudListView.prototype.unDisplayRootSelect()' id='ownCloudZimletFolderPicker'></div>";
 
    zimletInstance._folderPickerDialog.setContent(html);
+   zimletInstance._folderPickerDialog.setButtonListener(newFolderBtnId, new AjxListener(zimletInstance, zimletInstance.newFolderInFolderPicker));
    zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, method, args));
    zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelFolderPicker));
    zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[1].__internalId));
@@ -381,10 +387,77 @@ ownCloudZimlet.prototype.targetFolderPicker =
    
   };
 
+ownCloudZimlet.prototype.newFolderInFolderPicker = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+
+  var newFolderDialog = new DwtDialog({parent: appCtxt.getShell()}),
+    folder = zimletInstance.OwnCloudFolderPicker.selectedDavResource,
+    composite = new DwtComposite({ parent: newFolderDialog }),
+    label,
+    input;
+
+  newFolderDialog.setView(composite);
+
+  label = new DwtLabel({
+    parent: composite
+  });
+  label.setText(ZmMsg.newFolder + ":");
+
+  input = new DwtInputField({
+    parent: composite
+  });
+  newFolderDialog.setTitle(ZmMsg.newFolder);
+  newFolderDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._newFolderCallback, [folder, input, newFolderDialog]));
+  newFolderDialog.addEnterListener(new AjxListener(this, this._newFolderCallback, [folder, input, newFolderDialog]));
+
+  //add tab group and focus on the input field
+  newFolderDialog._tabGroup.addMemberBefore(input,	newFolderDialog._tabGroup.getFirstMember());
+  newFolderDialog._tabGroup.setFocusMember(input);
+  newFolderDialog.popup();
+};
+
 ownCloudZimlet.prototype.cancelFolderPicker = function() {
 var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
 zimletInstance._folderPickerDialog.popdown();
 };
+
+
+ownCloudZimlet.prototype._newFolderCallback = function(folder, input, dialog, ev) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+  var inputValue = ownCloudZimlet.prototype.sanitizeFileName(input.getValue());
+  
+  var folderHref;
+  if(typeof folder === 'string')
+  {
+     folderHref = folder
+  }
+  else
+  {
+     folderHref = folder.getHref();
+  }   
+  
+  
+  dialog.getButton(DwtDialog.OK_BUTTON).setEnabled(false);
+  dialog.getButton(DwtDialog.CANCEL_BUTTON).setEnabled(false);
+
+  this._davConnector.mkcol(
+    "/"+(folderHref + inputValue).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], ""),
+    new AjxCallback(this, function(dialog, result) {
+      dialog.popdown();
+
+   zimletInstance.OwnCloudFolderPicker = new OwnCloudFolderPicker(
+      zimletInstance._folderPickerDialog,
+      zimletInstance,
+      zimletInstance._davConnector,
+      zimletInstance._ownCloudConnector,
+      new OwnCloudCommons(zimletInstance._davConnector, zimletInstance._ownCloudConnector)
+   );
+   document.getElementById('ownCloudZimletFolderPicker').innerHTML = "";
+   zimletInstance.OwnCloudFolderPicker.reparentHtmlElement(document.getElementById('ownCloudZimletFolderPicker'));
+    }, [dialog])
+  );  
+};
+
 
 /**
  * Save an attachment to OwnCloud.
