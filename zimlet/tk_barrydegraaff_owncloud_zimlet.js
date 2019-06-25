@@ -357,7 +357,8 @@ ownCloudZimlet.prototype.targetFolderPicker =
       standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
       disposeOnPopDown: true
    });
-   var html = "<div style='width:500px; height: 450px;'><div id='ownCloudZimletFolderPicker'><small></div>";
+   var html = "<div id=\"moveFolderRoot\" onclick=\"OwnCloudListView.prototype.selectRoot();OwnCloudListView.prototype.displayRootSelect()\" class=\"DwtTreeItem-Control\" role=\"treeitem\" style=\"position: static; overflow: visible; margin-left:-15px !important\"><div class=\"DwtTreeItem\"><table role=\"presentation\"  style=\"width:100%\"><tbody><tr><td style=\"width: 16px; height: 16px; min-width: 16px;\" align=\"center\" nowrap=\"\" ></td><td style=\"width:20px\" nowrap=\"\" class=\"imageCell\"><div class=\"ImgFolder\"></div></td><td nowrap=\"\" class=\"DwtTreeItem-Text\" >"+ZmMsg.rootFolder+"</td><td class=\"DwtTreeItem-ExtraImg\"><div class=\"ImgBlank_16\"></div></td></tr></tbody></table></div></div><div onclick='OwnCloudListView.prototype.unDisplayRootSelect()' id='ownCloudZimletFolderPicker'></div>";
+
    zimletInstance._folderPickerDialog.setContent(html);
    zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, method, args));
    zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, zimletInstance.cancelFolderPicker));

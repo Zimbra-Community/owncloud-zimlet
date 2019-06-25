@@ -88,3 +88,7 @@ display: none;
     border: 1px solid #ccc;
     border-top: none;
 }
+
+#ownCloudZimletFolderPicker [aria-level="2"] {
+margin-left:15px !important;
+}
