@@ -1073,12 +1073,12 @@ OwnCloudListView.prototype.batchDeleter = function() {
   }
 
   var davResource = OwnCloudListView.deleteBatch[0];
+  OwnCloudListView.deleteBatch.shift();
   zimletInstance._davConnector.rm(
     davResource.getHref(),
     new AjxCallback(this, this.batchDeleter),
     new AjxCallback(this, this.batchDeleter)
-  );
-  OwnCloudListView.deleteBatch.shift();
+  );  
 };
 
 OwnCloudListView.prototype.popDownDeleteDialog = function() {
