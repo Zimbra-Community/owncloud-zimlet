@@ -272,7 +272,14 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   }
   else
   {
-     parent.getMenuItem(ZmOperation.DELETE).setVisible(true);
+     if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_rename_delete_new_folder")=='true')
+     {
+        parent.getMenuItem(ZmOperation.DELETE).setVisible(false);
+     }
+     else
+     {
+        parent.getMenuItem(ZmOperation.DELETE).setVisible(true);
+     }   
      parent.getMenuItem(ZmOperation.EDIT_PROPS).setVisible(false);
   }
 
