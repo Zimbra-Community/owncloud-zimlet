@@ -1091,6 +1091,8 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
          fileName = tmpObj.name + '.ics'
       }
       
+      //in case we upload a lot of small files, the toaster takes longer than the upload. So dismiss any existing toaster.
+      appCtxt.getAppController().dismissStatusMsg(true);
       this.status(ZmMsg.uploading, ZmStatusView.LEVEL_INFO);
       var item = [];
       item[0]=id;
