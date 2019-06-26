@@ -1307,7 +1307,6 @@ ownCloudZimlet.prototype.onShowView =
        document.getElementById('zti__main_Tasks__'+zimletInstance._zimletContext._id+'_textCell').innerHTML = zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
        document.getElementById('zti__main_Briefcase__'+zimletInstance._zimletContext._id+'_textCell').innerHTML = zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
     } catch (err) {}
-    
   // Add "Send to WebDAV" option in items contextual menu for contacts, appointements, tasks and files in the briefcase.
   var controller = appCtxt.getCurrentController();
   if(controller) {
@@ -1330,6 +1329,15 @@ ownCloudZimlet.prototype.onShowView =
       }
     }
   }
+   //It is our APP.
+   if(view.indexOf('tk_barrydegraaff_owncloud_zimlet') == 0)
+   {
+      try{
+         //make sure the file list is up to date
+         zimletInstance._appView.refreshViewPropfind();
+      }catch(err){}
+   }
+  
    // Nothing to do except for mail compose view
    if(view.indexOf(ZmId.VIEW_COMPOSE) < 0) return;
    if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_auto_upload_on_exceed")=="true")

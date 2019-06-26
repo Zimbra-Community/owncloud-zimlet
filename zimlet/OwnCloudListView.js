@@ -272,7 +272,7 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   }
   else
   {
-     parent.getMenuItem(ZmOperation.DELETE).setVisible(false);
+     parent.getMenuItem(ZmOperation.DELETE).setVisible(true);
      parent.getMenuItem(ZmOperation.EDIT_PROPS).setVisible(false);
   }
 
@@ -1019,34 +1019,64 @@ OwnCloudListView.prototype._saveFileListener = function(ev) {
 };
 
 OwnCloudListView.prototype._deleteListener = function(ev) {
-  var davResource = this.getSelection()[0],
-    deleteDialog = new DwtMessageDialog({
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+  var fileName = ""; 
+  if(this.getSelection().length > 1)
+  {
+     fileName = this.getSelection().length + " " + ZmMsg.items.toLowerCase();
+  }
+  else
+  {
+     fileName = this.getSelection()[0].getName();
+  } 
+
+  zimletInstance.deleteDialog = new DwtMessageDialog({
       parent: appCtxt.getShell(),
       buttons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON]
     });
-  deleteDialog.setMessage(
+  zimletInstance.deleteDialog.setMessage(
     (ZmMsg.confirmDeleteForever).replace(/{0,.*,1#|\|2#.*\}/g,""),
     DwtMessageDialog.WARNING_STYLE,
-    ZmMsg.remove + " " + davResource.getName()
+    ZmMsg.remove + " " + fileName
   );
-  deleteDialog.setButtonListener(DwtDialog.YES_BUTTON, new AjxListener(this, this._deleteCallback, [davResource, deleteDialog]));
-  deleteDialog.addEnterListener(new AjxListener(this, this._deleteCallback, [davResource, deleteDialog]));
-  deleteDialog.popup();
+  zimletInstance.deleteDialog.setButtonListener(DwtDialog.YES_BUTTON, new AjxListener(this, this._deleteCallback, [this.getSelection()]));
+  zimletInstance.deleteDialog.addEnterListener(new AjxListener(this, this._deleteCallback, [this.getSelection()]));
+  zimletInstance.deleteDialog.popup();
 };
 
-OwnCloudListView.prototype._deleteCallback = function(davResource, dialog) {
+OwnCloudListView.prototype._deleteCallback = function(davResources) {
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-  this._davConnector.rm(
+  zimletInstance.deleteDialog.getButton(DwtDialog.YES_BUTTON).setVisibility(false);
+  zimletInstance.deleteDialog.getButton(DwtDialog.NO_BUTTON).setVisibility(false);
+  zimletInstance.deleteDialog.setContent("<div id=\"ownCloudZimletUploadFilesProgress\" style=\"width:300px; text-align:center;\"><img src=\""+zimletInstance.getResource("progressround.gif")+"\"></div>");
+  zimletInstance.deleteDialog.setEnterListener(new AjxListener(this, new function(){}));
+  OwnCloudListView.deleteBatch = davResources;
+  OwnCloudListView.prototype.batchDeleter();
+};
+
+OwnCloudListView.prototype.batchDeleter = function() {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;  
+
+  //all is deleted
+  if(OwnCloudListView.deleteBatch.length == 0)
+  {
+     zimletInstance.deleteDialog.popdown();
+     zimletInstance._appView.refreshViewPropfind();
+     return;
+  }
+
+  var davResource = OwnCloudListView.deleteBatch[0];
+  zimletInstance._davConnector.rm(
     davResource.getHref(),
-    new AjxCallback(this, function(davResource, dialog, response) {
-      dialog.popdown();
-      zimletInstance._appView.refreshViewPropfind();           
-    }, [davResource, dialog]),
-    new AjxCallback(this, function(davResource, dialog, response) {
-      dialog.popdown();
-      zimletInstance._appView.refreshViewPropfind();      
-    }, [davResource, dialog])
+    new AjxCallback(this, this.batchDeleter),
+    new AjxCallback(this, this.batchDeleter)
   );
+  OwnCloudListView.deleteBatch.shift();
+};
+
+OwnCloudListView.prototype.popDownDeleteDialog = function() {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   zimletInstance.deleteDialog.popdown();
 };
 
 OwnCloudListView.prototype._moveListener = function() {
