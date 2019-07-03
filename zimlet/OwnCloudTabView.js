@@ -172,14 +172,15 @@ OwnCloudTabView.prototype._renderResource =
         parent: parent,
         text: resource.getName(),
         imageInfo: 'Folder',
-        selectable: true
+        selectable: true,
+        className: 'tk_barrydegraaff_OwnCloudTabView_tree'
       });
     } else {
-      //indentation = resource.getHref().split('/').length - 2;
       treeItem = new DwtTreeItem({
         parent: parent,
         text: resource.getName(),
-        imageInfo: ZmMimeTable.getInfo(resource._contentType).image
+        imageInfo: ZmMimeTable.getInfo(resource._contentType).image,
+        className: 'tk_barrydegraaff_OwnCloudTabView_tree'
       });
     }
     treeItem.setData('DavResource', resource);

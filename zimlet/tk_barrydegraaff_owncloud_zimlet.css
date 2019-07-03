@@ -89,6 +89,13 @@ display: none;
     border-top: none;
 }
 
-#ownCloudZimletFolderPicker [aria-level="2"] {
-margin-left:15px !important;
+/* First one in the WebDAV app, second one in the attach mail tab */
+#ownCloudZimletFolderPicker [aria-level="2"], [aria-level="2"] .tk_barrydegraaff_OwnCloudTabView_tree
+{
+   margin-left:15px !important;
+}
+
+.tk_barrydegraaff_OwnCloudTabView_tree
+{
+   padding:2px;
 }
