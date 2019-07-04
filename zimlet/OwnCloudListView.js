@@ -234,7 +234,7 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
       }
       else
       {
-         parent.getMenuItem(ZmOperation.MOVE).setVisible(false); 
+         parent.getMenuItem(ZmOperation.MOVE).setVisible(true); 
          parent.getMenuItem(ZmOperation.DELETE).setVisible(true);   
          operationsEnabled.push(ZmOperation.RENAME_FOLDER);
          parent.getMenuItem(ZmOperation.RENAME_FOLDER).setVisible(true);
@@ -275,10 +275,12 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
      if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_rename_delete_new_folder")=='true')
      {
         parent.getMenuItem(ZmOperation.DELETE).setVisible(false);
+        parent.getMenuItem(ZmOperation.MOVE).setVisible(false);
      }
      else
      {
         parent.getMenuItem(ZmOperation.DELETE).setVisible(true);
+        parent.getMenuItem(ZmOperation.MOVE).setVisible(true);
      }   
      parent.getMenuItem(ZmOperation.EDIT_PROPS).setVisible(false);
   }
@@ -1086,20 +1088,26 @@ OwnCloudListView.prototype.popDownDeleteDialog = function() {
    zimletInstance.deleteDialog.popdown();
 };
 
-OwnCloudListView.prototype._moveListener = function() {
-   var file = this.getSelection()[0];
+OwnCloudListView.prototype._moveListener = function() { 
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+
+	var newFolderBtnId = Dwt.getNextId();
+	var newFolderBtn = new DwtDialog_ButtonDescriptor(newFolderBtnId, ZmMsg.newFolder, DwtDialog.ALIGN_LEFT);
+   
    zimletInstance._folderPickerDialog = new ZmDialog({
       title: ZmMsg.chooseFolder,
       parent: zimletInstance.getShell(),
       standardButtons: [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON],
+      extraButtons : [newFolderBtn],      
       disposeOnPopDown: true
    });
    var html = "<div id=\"moveFolderRoot\" onclick=\"OwnCloudListView.prototype.selectRoot();OwnCloudListView.prototype.displayRootSelect()\" class=\"DwtTreeItem-Control\" role=\"treeitem\" style=\"position: static; overflow: visible; margin-left:-15px !important\"><div class=\"DwtTreeItem\"><table role=\"presentation\"  style=\"width:100%\"><tbody><tr><td style=\"width: 16px; height: 16px; min-width: 16px;\" align=\"center\" nowrap=\"\" ></td><td style=\"width:20px\" nowrap=\"\" class=\"imageCell\"><div class=\"ImgFolder\"></div></td><td nowrap=\"\" class=\"DwtTreeItem-Text\" >"+ZmMsg.rootFolder+"</td><td class=\"DwtTreeItem-ExtraImg\"><div class=\"ImgBlank_16\"></div></td></tr></tbody></table></div></div><div onclick='OwnCloudListView.prototype.unDisplayRootSelect()' id='ownCloudZimletFolderPicker'></div>";
+
+   zimletInstance._folderPickerDialog.setContent(html);   
+   zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, this._moveCallback, [this.getSelection()]));
+   zimletInstance._folderPickerDialog.setEnterListener(new AjxListener(zimletInstance, this._moveCallback, [this.getSelection()]));
+   zimletInstance._folderPickerDialog.setButtonListener(newFolderBtnId, new AjxListener(zimletInstance, zimletInstance.newFolderInFolderPicker));
    
-   zimletInstance._folderPickerDialog.setContent(html);
-   zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(zimletInstance, this._moveCallback, file));
-   zimletInstance._folderPickerDialog.setEnterListener(new AjxListener(zimletInstance, this._moveCallback, file));
    zimletInstance._folderPickerDialog.setButtonListener(DwtDialog.CANCEL_BUTTON, new AjxListener(zimletInstance, this.cancelBtn));
    zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[1].__internalId));
    zimletInstance._folderPickerDialog._tabGroup.addMember(document.getElementById(zimletInstance._folderPickerDialog._button[2].__internalId));
@@ -1115,6 +1123,8 @@ OwnCloudListView.prototype._moveListener = function() {
    
    zimletInstance.OwnCloudFolderPicker.reparentHtmlElement(document.getElementById('ownCloudZimletFolderPicker'));
    zimletInstance._folderPickerDialog.popup();
+   OwnCloudListView.prototype.selectRoot();
+   OwnCloudListView.prototype.displayRootSelect();
 };
 
 OwnCloudListView.prototype.cancelBtn = function() {
@@ -1140,9 +1150,9 @@ OwnCloudListView.prototype.unDisplayRootSelect = function() {
    document.getElementById('moveFolderRoot').style.backgroundColor = "transparent";
 };
 
-OwnCloudListView.prototype._moveCallback = function(file) {
-  //file is the DAV resource at it's original location
-  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+OwnCloudListView.prototype._moveCallback = function(davResources) {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+  OwnCloudListView.moveBatch = davResources;
 
   var destHref = "";
   if(typeof zimletInstance.OwnCloudFolderPicker.selectedDavResource === 'string')
@@ -1158,20 +1168,36 @@ OwnCloudListView.prototype._moveCallback = function(file) {
         return;
      }
   }
+  OwnCloudListView.moveBatchDestHref = destHref;
+  OwnCloudListView.prototype.batchMover();
+};
 
-  this._davConnector.move(
-    file.getHref(),
-    destHref+file.getName(),
+OwnCloudListView.prototype.batchMover = function() {
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;  
+
+  zimletInstance._folderPickerDialog.getButton(DwtDialog.OK_BUTTON).setVisibility(false);
+  zimletInstance._folderPickerDialog.getButton(DwtDialog.CANCEL_BUTTON).setVisibility(false);
+  zimletInstance._folderPickerDialog.setTitle(ZmMsg.loading);
+  zimletInstance._folderPickerDialog.setContent("<div id=\"ownCloudZimletUploadFilesProgress\" style=\"width:300px; text-align:center;\"><img src=\""+zimletInstance.getResource("progressround.gif")+"\"></div>");
+
+  //all is moved
+  if(OwnCloudListView.moveBatch.length == 0)
+  {
+     zimletInstance._folderPickerDialog.popdown();
+     zimletInstance._appView.refreshViewPropfind();
+     return;
+  }
+
+  var davResource = OwnCloudListView.moveBatch[0];
+  OwnCloudListView.moveBatch.shift();
+
+  zimletInstance._davConnector.move(
+    davResource.getHref(),
+    OwnCloudListView.moveBatchDestHref+davResource.getName(),
     false,
-    new AjxCallback(this, function(dialog, result) {
-      zimletInstance._appView.refreshViewPropfind();
-      zimletInstance._folderPickerDialog.popdown();
-      if (result === true) {
-      } else {
-      }
-    })
+    new AjxCallback(this, this.batchMover),
+    new AjxCallback(this, this.batchMover)
   );
-
 };
 
 OwnCloudListView.prototype._renameFileListener = function() {
