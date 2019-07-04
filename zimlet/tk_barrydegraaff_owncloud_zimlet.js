@@ -383,7 +383,9 @@ ownCloudZimlet.prototype.targetFolderPicker =
    zimletInstance.OwnCloudFolderPicker.reparentHtmlElement(document.getElementById('ownCloudZimletFolderPicker'));
    //If user clicks OK without a selection, we upload to root
    zimletInstance.OwnCloudFolderPicker.selectedDavResource = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'];
-   zimletInstance._folderPickerDialog.popup();  
+   zimletInstance._folderPickerDialog.popup();
+   OwnCloudListView.prototype.selectRoot();
+   OwnCloudListView.prototype.displayRootSelect();   
    
   };
 
