@@ -81,6 +81,13 @@ OwnCloudListView.prototype._getHeaderList = function () {
     width: 110,
     sortable: ZmItem.F_DATE
   }));
+
+  headers.push(new DwtListHeaderItem({
+    field: "MENU",
+    text: "",
+    width: 18,
+  }));
+
   return headers;
 };
 
@@ -178,7 +185,11 @@ OwnCloudListView.prototype._getCellContents = function (htmlArr, idx, item, fiel
       htmlArr[idx++] = "";
     }
 
-  } else {
+  } else if (field === "MENU") {
+
+    htmlArr[idx++] = "&#9776;";
+  }
+   else {
 
     htmlArr[idx++] = item.toString ? item.toString() : item;
 
@@ -590,6 +601,14 @@ OwnCloudListView.prototype._sendFilesListCbk = function(resNames, urls, idsToAtt
 
 OwnCloudListView.prototype._onItemSelected = function(ev) {
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+
+  //ipad menu
+  if(ev.target.innerHTML=="&#9776;" || ev.target.innerHTML=="☰")
+  {
+     this._listActionListener(ev);
+     return;
+  }
+
   var item = ev.item;
 
   var davResource = this.getSelection()[0];
