@@ -190,6 +190,7 @@ The Zimbra WebDAV Client uses built-in language strings from Zimbra, as such it 
 3. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
 4. Running a WebDAV server behind and NGINX reverse proxy (from CentOS or Debian) won't work, it will work when proper options are enabled (as for example with zimbra-proxy, also based on NGINX).
 5. Delay of 30 seconds in response from Nextcloud, the brute force login protection has kicked in. Configure X-Forwarded-For see above! Or and this is not recommended: set in your Nextcloud the preference `'auth.bruteforce.protection.enabled' => false,` and issue `truncate table bruteforce_attempts;`
+6. Download menu option does not work on Safari on iPad, solution: disable pop-up blocker
 
 See:
 https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting
