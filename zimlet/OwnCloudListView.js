@@ -1377,8 +1377,7 @@ OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, 
 
 OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
    var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
-
-   if(!document.getElementById('OwnCloudListViewhiddenDownloader'))
+   /*if(!document.getElementById('OwnCloudListViewhiddenDownloader'))
    {
       var iframe = document.createElement('iframe');
       iframe.id = "OwnCloudListViewhiddenDownloader";
@@ -1387,5 +1386,6 @@ OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
       iframe.style.height = '0px';  
       document.body.appendChild(iframe);
    }
-   document.getElementById('OwnCloudListViewhiddenDownloader').src=href;
+   document.getElementById('OwnCloudListViewhiddenDownloader').src=href;*/
+   window.open(href,'_blank');
 };

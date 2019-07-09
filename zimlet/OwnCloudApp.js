@@ -87,7 +87,7 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
 
       toolbar._buttons.OC_DUMMY.setVisibility(false);   
       toolbar._buttons.OC_DUMMY.setSize(0,0);
-      searchField.focus();
+      //searchField.focus();
       
       document.getElementById("owncloud_zimlet_search").addEventListener("keyup", function(event) 
       {
