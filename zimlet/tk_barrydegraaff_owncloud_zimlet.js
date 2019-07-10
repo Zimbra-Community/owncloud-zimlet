@@ -447,15 +447,28 @@ ownCloudZimlet.prototype._newFolderCallback = function(folder, input, dialog, ev
     new AjxCallback(this, function(dialog, result) {
       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;   
 
-      zimletInstance.OwnCloudFolderPicker._davConnector.propfind(
-        zimletInstance.OwnCloudFolderPicker.selectedDavResource.getHref(),
-        1,
-        new AjxCallback(
-          zimletInstance.OwnCloudFolderPicker,
-          zimletInstance.OwnCloudFolderPicker._renderPropFind,
-          [zimletInstance.OwnCloudFolderPicker.selectedDavResource.getHref(), zimletInstance.OwnCloudFolderPicker.selectedTreeObj]
-        ), zimletInstance.OwnCloudFolderPicker._zimletCtxt._defaultPropfindErrCbk 
-      );
+      try {
+        zimletInstance.OwnCloudFolderPicker._davConnector.propfind(
+          zimletInstance.OwnCloudFolderPicker.selectedDavResource.getHref(),
+          1,
+          new AjxCallback(
+            zimletInstance.OwnCloudFolderPicker,
+            zimletInstance.OwnCloudFolderPicker._renderPropFind,
+            [zimletInstance.OwnCloudFolderPicker.selectedDavResource.getHref(), zimletInstance.OwnCloudFolderPicker.selectedTreeObj]
+          ), zimletInstance.OwnCloudFolderPicker._zimletCtxt._defaultPropfindErrCbk 
+        );
+      } catch(err)
+      {
+         zimletInstance.OwnCloudFolderPicker = new OwnCloudFolderPicker(
+            zimletInstance._folderPickerDialog,
+            zimletInstance,
+            zimletInstance._davConnector,
+            zimletInstance._ownCloudConnector,
+            new OwnCloudCommons(zimletInstance._davConnector, zimletInstance._ownCloudConnector)
+         );
+         document.getElementById('ownCloudZimletFolderPicker').innerHTML = "";
+         zimletInstance.OwnCloudFolderPicker.reparentHtmlElement(document.getElementById('ownCloudZimletFolderPicker'));         
+      }  
 
       dialog.popdown();
     }, [dialog])
