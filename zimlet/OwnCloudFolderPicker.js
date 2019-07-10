@@ -75,6 +75,7 @@ function OwnCloudFolderPicker(parent, zimletCtxt, davConnector, ownCloudConnecto
   if(arguments[1].dwtObj)
   {
     zimletInstance.OwnCloudFolderPicker.selectedDavResource = arguments[1].dwtObj._data.DavResource;
+    zimletInstance.OwnCloudFolderPicker.selectedTreeObj = arguments[1].dwtObj;
     this._davConnector.propfind(
       arguments[1].dwtObj._data.DavResource.getHref(),
       1,
