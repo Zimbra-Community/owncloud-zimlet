@@ -430,39 +430,19 @@ OwnCloudListView.prototype._okSharePassListen = function(ev) {
   var resNames = [];
     
   this.sharePassDialog.popdown();  
-  if(ownCloudZimletShareType)
-  {  
-     for (var i = 0; i < resourcesToLink.length; i+= 1) {
-       resNames.push(resourcesToLink[i].getName());
-     }
-     this._ocCommons.getAttachments(
-       resourcesToLink,
-       resourcesToAttach,
-       new AjxCallback(
-         this,
-         this._sendFilesListCbk,
-         [resNames]
-       ), this.sharedLinkPass,
-       this.sharedLinkExpiryDate
-     ); 
+  for (var i = 0; i < resourcesToLink.length; i+= 1) {
+    resNames.push(resourcesToLink[i].getName());
   }
-  else{
-     var cc = AjxDispatcher.run("GetComposeController"),
-       htmlCompose = appCtxt.get(ZmSetting.COMPOSE_AS_FORMAT) === ZmSetting.COMPOSE_HTML,
-       extraBodyText = [];
-   
-     for (var i = 0; i < resourcesToLink.length; i+= 1) {
-       extraBodyText.push(resourcesToLink[i].getName() + " : " + 'zimbradav:/'+encodeURI(resourcesToLink[i].getHref()));
-     }
-   
-     cc._setView({
-       action: ZmOperation.NEW_MESSAGE,
-       inNewWindow: false,
-       msg: new ZmMailMsg(),
-       subjOverride: zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title") + " " + ZmMsg.share,
-       extraBodyText: extraBodyText.join(htmlCompose ? "<br>" : "\n")
-     });
-  }
+  this._ocCommons.getAttachments(
+    resourcesToLink,
+    resourcesToAttach,
+    new AjxCallback(
+      this,
+      this._sendFilesListCbk,
+      [resNames]
+    ), this.sharedLinkPass,
+    this.sharedLinkExpiryDate
+  ); 
 }
 
 OwnCloudListView.prototype._sendFileAsAttachmentListener = function(ev) {
@@ -900,13 +880,6 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
      else if (davResource._href.match(/\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i))
      {
         document.getElementById('WebDAVPreview').src=zimletInstance.getResource('/ViewerJS')+'/?zoom=page-width#'+href;
-     }
-     else
-     {
-        //This condition occurs only when clicking internal user shares
-        var regexp = /.*name=(.*?)&contentType.*$/g;
-        var match = regexp.exec(href);
-        document.getElementById('WebDAVPreview').contentDocument.write('<button onclick="+window.location.assign(\''+href+'\');this.parentNode.removeChild(this);">'+ZmMsg.download + " " + decodeURIComponent(match[1])+'</button>');
      }
   }
 };

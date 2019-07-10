@@ -314,6 +314,40 @@ ownCloudZimlet._addOwnCloudLink =
       return linkHtml;
   };
 
+/**Called when a message is viewed
+ * */
+ownCloudZimlet.prototype.onMsgView = function (msg, oldMsg, msgView) {
+   try {
+      //We add an download all to dav link if the message has attachments
+      var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;   
+      var div = document.createElement('div');
+      div.id = 'ownCloudZimlet-msgViewActions'+msg.id;
+      div.innerHTML = '<img style="vertical-align:middle" src="'+zimletInstance.getResource('icon.png')+'"> <a style="text-decoration:underline" class="FakeAnchor">' +
+      ((zimletInstance.getMessage('saveAllTo').indexOf('???') == 0) ? 'Save all to' : zimletInstance.getMessage('saveAllTo')) + ' ' + zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title") + '</a>';
+      if(document.getElementById('zv__CLV__main_MSGC'+msg.id+'_attLinks'))
+      {
+         //conversation view, top item
+         document.getElementById('zv__CLV__main_MSGC'+msg.id+'_attLinks').appendChild(div);
+      }
+      else
+      {
+         //by message view, conversation view expanded item
+         document.getElementById(appCtxt.getCurrentView()._itemView._attLinksId).appendChild(div);
+      }      
+      div.onclick = AjxCallback.simpleClosure(zimletInstance.saveAll, zimletInstance, msg);
+   } catch(err){}   
+}
+
+/**
+ * Called when save all to webdav link is clicked in mailview
+ * */
+ownCloudZimlet.prototype.saveAll =
+  function(msg) {
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+    zimletInstance.saveAllBatch = msg._attInfo;
+    ownCloudZimlet.saveAttachment(zimletInstance.saveAllBatch[0].url,  zimletInstance.sanitizeFileName(zimletInstance.saveAllBatch[0].label),true);
+  };
+
 /**
  * Show a Zimbra Status message (toast notification).
  * @param {string} text The message.
@@ -327,9 +361,6 @@ ownCloudZimlet.prototype.status =
 
 /**
  * Save an attachment to OwnCloud.
- * @param {string} mid The message id
- * @param {string} part The part of the message.
- * @param {string} label The label (usually the file name)
  * @static
  */
 ownCloudZimlet.saveAttachment =
@@ -352,7 +383,7 @@ ownCloudZimlet.prototype.targetFolderPicker =
   function(method, args) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    
-	var newFolderBtnId = Dwt.getNextId();
+	var newFolderBtnId = 'ownCloudZimletNewFolderBtn';
 	var newFolderBtn = new DwtDialog_ButtonDescriptor(newFolderBtnId, ZmMsg.newFolder, DwtDialog.ALIGN_LEFT);
    
    zimletInstance._folderPickerDialog = new ZmDialog({
@@ -499,6 +530,7 @@ ownCloudZimlet.prototype._saveAttachment =
       zimletInstance._folderPickerDialog.setTitle(ZmMsg.loading);
       zimletInstance._folderPickerDialog.setButtonVisible(DwtDialog.OK_BUTTON, false);
       zimletInstance._folderPickerDialog.setButtonVisible(DwtDialog.CANCEL_BUTTON, false);
+      zimletInstance._folderPickerDialog.setButtonVisible('ownCloudZimletNewFolderBtn', false);
    }
    else
    {
@@ -528,12 +560,19 @@ ownCloudZimlet.prototype._saveAttachment =
          var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;                       
          if(edit==true)
          {
-            zimletInstance._folderPickerDialog.popdown();
-            try {
-               zimletInstance.docEditor.destroyEditor();
-            } catch(err){}              
+            if(zimletInstance.saveAllBatch.length > 1)
+            {
+               zimletInstance.saveAllBatch.shift();
+               zimletInstance._saveAttachment(zimletInstance.saveAllBatch[0].url,  zimletInstance.sanitizeFileName(zimletInstance.saveAllBatch[0].label),true);
+            }
+            else
+            {            
+               zimletInstance._folderPickerDialog.popdown();
+               try {
+                  zimletInstance.docEditor.destroyEditor();
+               } catch(err){}              
                zimletInstance.editenable = true;
-               ownCloudZimlet.prototype.clicked(null, 'zimbradav:/'+path+ownCloudZimlet.prototype.sanitizeFileName(fileName));
+            }   
          }
       }      
    }
@@ -1015,38 +1054,6 @@ ownCloudZimlet.prototype._onRightClickMenu = function(controller, actionMenu) {
   actionMenu.enable("ownCloudZimlet_MENU_ITEM", true);
 
   
-};
-
-/**
- * Handle the action 'drop' on the Zimlet Menu Item.
- * @param {ZmItem[]} zmObjects Objects dropped on the Zimlet Menu Item.
- */
-ownCloudZimlet.prototype.doDrop =
-  function(dropObjects) {
-     /*
-    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-    if(!tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password'])
-    {       
-       zimletInstance.status(ZmMsg.requiredLabel + ' ' + ZmMsg.password, ZmStatusView.LEVEL_INFO);
-       zimletInstance.displayDialog(1, ZmMsg.preferences, null);
-       return;
-    }
-        
-   // Single selects result in an object passed,
-   //Multi selects results in an array of objects passed.
-   //Always make it an array
-   if(!dropObjects[0])
-   {
-      dropObjects = [dropObjects];
-   }
-   var i = 0;
-   var zmObjects = [];
-   dropObjects.forEach(function(dropObject)
-   {
-      zmObjects[i++] = dropObject.srcObj;
-   });
-  zimletInstance.targetFolderPicker(zimletInstance._doDropPropfindCbk,[zmObjects]);
-  */
 };
 
 /**
