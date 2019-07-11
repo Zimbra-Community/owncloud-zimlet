@@ -354,8 +354,8 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
          tooltip: (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title"),
          enabled: false
 		};
-		if(!toolbar.getOp(ownCloudZimlet.toolbar)) {
-			var button = toolbar.createZimletOp(ownCloudZimlet.toolbar, buttonArgs);
+		if(!toolbar.getOp('ownCloudZimletOp')) {
+			var button = toolbar.createZimletOp('ownCloudZimletOp', buttonArgs);
 			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller]));
 		}
 	}
