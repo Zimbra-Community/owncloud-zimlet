@@ -336,7 +336,30 @@ ownCloudZimlet.prototype.onMsgView = function (msg, oldMsg, msgView) {
       }      
       div.onclick = AjxCallback.simpleClosure(zimletInstance.saveAll, zimletInstance, msg);
    } catch(err){}   
-}
+};
+
+/**
+ * Adds toolbar button, in case there is no right-click (ipad)
+ *@see ZmZimletBase
+ */
+ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, view) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   view = appCtxt.getViewTypeFromId(view);
+	if (view == ZmId.VIEW_CONVLIST || view == ZmId.VIEW_CONV || view == ZmId.VIEW_TRAD || view == "CNS" || view == "CLD" || view == "BDLV" || view == "TKL") {
+		var buttonArgs = {
+			text	: zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title"),
+			image: "ownCloud-panelIcon",
+         showImageInToolbar: true,
+         showTextInToolbar: false,
+         tooltip: (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title"),
+         enabled: false
+		};
+		if(!toolbar.getOp(ownCloudZimlet.toolbar)) {
+			var button = toolbar.createZimletOp(ownCloudZimlet.toolbar, buttonArgs);
+			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller]));
+		}
+	}
+};
 
 /**
  * Called when save all to webdav link is clicked in mailview
@@ -1019,20 +1042,23 @@ ownCloudZimlet.prototype.addMenuButton = function (controller , menu) {
 
 //Retrieve the right click item and start the upload to WebDAV
 ownCloudZimlet.prototype._menuButtonListener = function (controller) {
-   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-   var listView = controller._listView[controller._currentView];
-   var items;
-   if(listView) {
-      items = listView.getSelection();
-      if (items == "") {
+   //in calendar view it is possible to have an enabled button but no selection
+   try {
+      var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+      var listView = controller._listView[controller._currentView];
+      var items;
+      if(listView) {
+         items = listView.getSelection();
+         if (items == "") {
+            items = controller._actionEv.item;
+         }
+      }
+      else {
          items = controller._actionEv.item;
       }
-   }
-   else {
-      items = controller._actionEv.item;
-   }
-   items = AjxUtil.toArray(items);
-   zimletInstance.targetFolderPicker(zimletInstance._doDropPropfindCbk,[items]);
+      items = AjxUtil.toArray(items);
+      zimletInstance.targetFolderPicker(zimletInstance._doDropPropfindCbk,[items]);
+   } catch (err) {}
 };
 
 
