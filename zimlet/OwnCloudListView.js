@@ -1083,7 +1083,7 @@ OwnCloudListView.prototype.popDownDeleteDialog = function() {
 OwnCloudListView.prototype._moveListener = function() { 
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
 
-	var newFolderBtnId = Dwt.getNextId();
+	var newFolderBtnId = 'ownCloudZimletNewFolderBtn';
 	var newFolderBtn = new DwtDialog_ButtonDescriptor(newFolderBtnId, ZmMsg.newFolder, DwtDialog.ALIGN_LEFT);
    
    zimletInstance._folderPickerDialog = new ZmDialog({
@@ -1169,6 +1169,7 @@ OwnCloudListView.prototype.batchMover = function() {
 
   zimletInstance._folderPickerDialog.getButton(DwtDialog.OK_BUTTON).setVisibility(false);
   zimletInstance._folderPickerDialog.getButton(DwtDialog.CANCEL_BUTTON).setVisibility(false);
+  zimletInstance._folderPickerDialog.getButton('ownCloudZimletNewFolderBtn').setVisibility(false);
   zimletInstance._folderPickerDialog.setTitle(ZmMsg.loading);
   zimletInstance._folderPickerDialog.setContent("<div id=\"ownCloudZimletUploadFilesProgress\" style=\"width:300px; text-align:center;\"><img src=\""+zimletInstance.getResource("progressround.gif")+"\"></div>");
 
