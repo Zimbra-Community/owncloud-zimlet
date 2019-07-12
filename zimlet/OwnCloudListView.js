@@ -1351,15 +1351,30 @@ OwnCloudListView.prototype._newFolderCallback = function(folder, input, dialog, 
 
 OwnCloudListView.prototype.downloadFromLink = function(davResource, token) {
    var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
-   /*if(!document.getElementById('OwnCloudListViewhiddenDownloader'))
+   
+   /*Safari on IOS does not respect server side headers for force download.
+   detect IOS, if so, download into a new tab/window (requires pop-up blocker to be disabled)
+   */
+   try 
    {
-      var iframe = document.createElement('iframe');
-      iframe.id = "OwnCloudListViewhiddenDownloader";
-      iframe.style.visibility = 'hidden';  
-      iframe.style.width = '0px';
-      iframe.style.height = '0px';  
-      document.body.appendChild(iframe);
+      if(!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))
+      {
+         window.open(href,'_blank');
+      }
+      else
+      {
+         if(!document.getElementById('OwnCloudListViewhiddenDownloader'))
+         {
+            var iframe = document.createElement('iframe');
+            iframe.id = "OwnCloudListViewhiddenDownloader";
+            iframe.style.visibility = 'hidden';  
+            iframe.style.width = '0px';
+            iframe.style.height = '0px';  
+            document.body.appendChild(iframe);
+         }
+         document.getElementById('OwnCloudListViewhiddenDownloader').src=href;
+      }
+   } catch (err) {
+      window.open(href,'_blank');
    }
-   document.getElementById('OwnCloudListViewhiddenDownloader').src=href;*/
-   window.open(href,'_blank');
 };
