@@ -391,7 +391,7 @@ OwnCloudListView.prototype._sendFileListener = function(ev) {
    }
    else
    {
-      html += '<tr><td><input type="radio" checked name="ownCloudZimletShareTypeSelector" value="internal"></td><td>'+ZmMsg.shareWithUserOrGroup+'</td></tr></table></form>';
+      return;
    }
    this.sharePassView.getHtmlElement().innerHTML = html;
    this.sharePassDialog = new ZmDialog({title: ZmMsg.sendLink, view:this.sharePassView, parent:appCtxt.getShell(),  standardButtons:[DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON], disposeOnPopDown: true});
@@ -941,18 +941,17 @@ OwnCloudListView.prototype._itemPropertiesListener = function(ev) {
    var content = "<table>";
    var location = "/"+(davResource.getHref()).replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'], "");
 
-   content += "<tr><td style='width:100px'>"+ ZmMsg.path + ": </td><td style='width:550px;'><input id='props_owncloud_zimlet_server_path' readonly style='width:98%;color:black;border:0;'></td></tr>";
-   content += "<tr><td style='width:100px'>"+ ZmMsg.type + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+davResource.getContentType()+"'></td></tr>";   
+   content += "<tr><td style='width:100px;padding:2px'>"+ ZmMsg.path + ": </td><td style='width:550px;padding:2px'>"+location+"</td></tr>";
+   content += "<tr><td style='width:100px;padding:2px'>"+ ZmMsg.type + ": </td><td style='width:550px;padding:2px'>"+davResource.getContentType()+"</td></tr>";   
    if(!davResource.isDirectory())
    {
-      content += "<tr><td style='width:100px'>"+ ZmMsg.size + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+AjxUtil.formatSize(davResource.getContentLength())+"'></td></tr>";   
+      content += "<tr><td style='width:100px;padding:2px'>"+ ZmMsg.size + ": </td><td style='width:550px;padding:2px'>"+AjxUtil.formatSize(davResource.getContentLength())+"</td></tr>";   
    }
-   content += "<tr><td style='width:100px'>"+ ZmMsg.modified + ": </td><td style='width:550px;'><input readonly style='width:98%;color:black;border:0;' value='"+davResource.getModified()+"'></td></tr>";
+   content += "<tr><td style='width:100px;padding:2px'>"+ ZmMsg.modified + ": </td><td style='width:550px;padding:2px'>"+davResource.getModified()+"</td></tr>";
    content += "</table><br>";
    
    zimletInstance._propertiesdialog = new ZmDialog( { title:ZmMsg.properties, parent:zimletInstance.getShell(), standardButtons:[DwtDialog.OK_BUTTON], disposeOnPopDown:true } );
-   zimletInstance._propertiesdialog.setContent('<div style=\'width:600px; height: 75px;\'>'+content+'</div>');
-   document.getElementById('props_owncloud_zimlet_server_path').value = location;
+   zimletInstance._propertiesdialog.setContent('<div style=\'width:600px; height: 125px;\'>'+content+'</div>');
    zimletInstance._propertiesdialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this.okbtnProperties,[davResource]));
    zimletInstance._propertiesdialog._setAllowSelection();
    document.getElementById(zimletInstance._propertiesdialog.__internalId+'_handle').style.backgroundColor = '#eeeeee';
