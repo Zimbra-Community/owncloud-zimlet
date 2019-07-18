@@ -33,10 +33,11 @@ function OwnCloudListView(
   this._listeners[ZmOperation.DELETE]           = (function(_this) { return function() {_this._deleteListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.RENAME_FILE]      = (function(_this) { return function() {_this._renameFileListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.RENAME_FOLDER]    = (function(_this) { return function() {_this._renameFolderListener.apply(_this, arguments); }; })(this);
-  this._listeners[ZmOperation.NEW_FOLDER]    = (function(_this) { return function() {_this._newFolderListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.NEW_FOLDER]       = (function(_this) { return function() {_this._newFolderListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.SAVE_FILE]        = (function(_this) { return function() {_this._saveFileListener.apply(_this, arguments); }; })(this);
+  this._listeners['SAVE_AS_PDF']                = (function(_this) { return function() {_this._saveFileAsPDFListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.EDIT_FILE]        = (function(_this) { return function() {_this._editFileListener.apply(_this, arguments); }; })(this);
-  this._listeners[ZmOperation.EDIT_PROPS]        = (function(_this) { return function() {_this._itemPropertiesListener.apply(_this, arguments); }; })(this);
+  this._listeners[ZmOperation.EDIT_PROPS]       = (function(_this) { return function() {_this._itemPropertiesListener.apply(_this, arguments); }; })(this);
   this._listeners[ZmOperation.MOVE]    = (function(_this) { return function() {_this._moveListener.apply(_this, arguments); }; })(this);
 
   this.addActionListener(new AjxListener(this, this._listActionListener));
@@ -210,6 +211,9 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   parent.getMenuItem(ZmOperation.NEW_FOLDER).setVisible(false);
   parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(false);
   parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(false);
+  parent.getMenuItem('SAVE_AS_PDF').setVisible(false);
+  parent.getMenuItem('SAVE_AS_PDF').setText(ZmMsg.download + ' PDF');
+  parent.getMenuItem('SAVE_AS_PDF').setImage('PDFDoc');
 
   parent.getMenuItem(ZmOperation.MOVE).setText(ZmMsg.move);
   parent.getMenuItem(ZmOperation.MOVE).setVisible(false);
@@ -257,8 +261,10 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
       parent.getMenuItem(ZmOperation.DELETE).setVisible(true);   
       operationsEnabled.push(ZmOperation.RENAME_FILE);
       operationsEnabled.push(ZmOperation.SAVE_FILE);
+      operationsEnabled.push('SAVE_AS_PDF');
       parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(true);
       parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(true);
+      parent.getMenuItem('SAVE_AS_PDF').setVisible(true);
     }
     if(resource._contentType == 'text/plain')
     {
@@ -295,6 +301,32 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
      }   
      parent.getMenuItem(ZmOperation.EDIT_PROPS).setVisible(false);
   }
+
+   try 
+   {
+      if(
+       (docConvertZimlet.prototype.toString() == "tk_barrydegraaff_docconvert_HandlerObject") &&
+       ((resource._contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
+       (resource._contentType =='application/vnd.openxmlformats-officedocument.presentationml.presentation') ||
+       (resource._contentType =='application/vnd.openxmlformats-officedocument.wordprocessingml.document') ||
+       (resource._contentType == 'application/vnd.ms-excel') ||
+       (resource._contentType == 'application/vnd.ms-powerpoint') ||
+       (resource._contentType == 'application/msword') ||
+       (resource._contentType == 'application/vnd.oasis.opendocument.presentation') ||
+       (resource._contentType == 'application/vnd.oasis.opendocument.spreadsheet') ||
+       (resource._contentType == 'application/vnd.oasis.opendocument.text')))
+       {       
+          parent.getMenuItem('SAVE_AS_PDF').setVisible(true);
+       }
+      else
+      {
+         parent.getMenuItem('SAVE_AS_PDF').setVisible(false);       
+      }
+   }   
+   catch(err)
+   {
+      parent.getMenuItem('SAVE_AS_PDF').setVisible(false);       
+   }     
 
   parent.enable(operationsEnabled, true);
 
@@ -355,6 +387,7 @@ OwnCloudListView.prototype._getActionMenuOps = function() {
   return [
     ZmOperation.EDIT_FILE,    
     ZmOperation.SAVE_FILE,
+    'SAVE_AS_PDF',
     ZmOperation.RENAME_FILE,
     ZmOperation.RENAME_FOLDER,
     ZmOperation.MOVE,    
@@ -1017,6 +1050,19 @@ OwnCloudListView.prototype._saveFileListener = function(ev) {
     new AjxCallback(this, this.downloadFromLink, [davResource])
   );
 };
+
+OwnCloudListView.prototype._saveFileAsPDFListener = function(ev) {
+  var davResource = this.getSelection()[0];
+  this._davConnector.getDownloadLink(
+    davResource.getHref(),
+    new AjxCallback(this, this._saveFileAsPDF, [davResource])
+  );
+};
+
+OwnCloudListView.prototype._saveFileAsPDF = function(davResource, token) {
+   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + davResource.getContentType();
+   docConvertZimlet.prototype.saveAttachment(encodeURIComponent(davResource.getName()), href);
+};   
 
 OwnCloudListView.prototype._deleteListener = function(ev) {
   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
