@@ -5,6 +5,11 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
   OwnCloudApp.prototype.setDimensions();
   //see also OwnCloudApp.prototype._resize and `Implements dynamic sizing` below
   app.setContent('<table><tr><td id="WebDAVListView" style="vertical-align:top"></td><td id="WebDAVPreviewContainer" style="vertical-align:top"><iframe id="WebDAVPreview" src="'+zimletInstance.getConfig("owncloud_zimlet_welcome_url")+'" style="width:'+(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px; height:'+  zimletInstance.appHeight +'px; border:0px"></td></tr></table>');
+  //Disable preview pane on iPad
+  if(!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))
+  {
+     document.getElementById('WebDAVPreviewContainer').style.display = "none";
+  }
   this._settings = settings;
   this._davConnector = davConnector;
   this._ownCloudConnector = ownCloudConnector;

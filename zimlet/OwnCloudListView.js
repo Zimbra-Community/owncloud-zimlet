@@ -670,6 +670,12 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
 };
 
 OwnCloudListView.prototype.preview = function(davResource, token) {
+  //Disable preview pane on iPad
+  if(!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))
+  {
+     document.getElementById('WebDAVPreviewContainer').style.display = "none";
+     return;
+  }
   var contentType = ""
    //Not all dav servers implement content/type correctly, so use them accoring to extension
    switch (davResource._href) {
