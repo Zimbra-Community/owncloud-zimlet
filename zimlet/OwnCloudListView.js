@@ -741,11 +741,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
        break;
    }  
   
-  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-  try {
-     document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'none';         
-  } catch(err){}
-  
+  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;  
   var href = token + "&name=" + encodeURIComponent(davResource.getName()) + "&contentType=" + contentType + "&inline=true";
 
   /* OnlyOffice Integration
@@ -835,10 +831,8 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
          }
       }
 
-
       if(zimletInstance.editenable == true)
-      {
-         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'block';
+      {         
          zimletInstance.editenable = false;
          var onlyOfficeParams = 
          {

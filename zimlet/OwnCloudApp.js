@@ -101,17 +101,14 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
          }
       });     
       
-      if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_onlyoffice_api_url"))
-      {
-         toolbar.createButton("SaveDocument", {text: ZmMsg.close});
-         toolbar.addSelectionListener("SaveDocument", new AjxListener(this, this._OnlyOfficeSaveDocument));         
-         zimletInstance.OnlyOfficeSaveID = toolbar._buttons.SaveDocument.__internalId;
-         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.position = 'absolute';
-         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.right = '3px';
-         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.width = '48px';
-         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.top = '0px';
-         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'none';         
-      }
+      toolbar.createButton("SaveDocument", {text: ZmMsg.close});
+      toolbar.addSelectionListener("SaveDocument", new AjxListener(this, this._OnlyOfficeSaveDocument));         
+      zimletInstance.OnlyOfficeSaveID = toolbar._buttons.SaveDocument.__internalId;
+      document.getElementById(zimletInstance.OnlyOfficeSaveID).style.position = 'absolute';
+      document.getElementById(zimletInstance.OnlyOfficeSaveID).style.right = '3px';
+      document.getElementById(zimletInstance.OnlyOfficeSaveID).style.width = '48px';
+      document.getElementById(zimletInstance.OnlyOfficeSaveID).style.top = '0px';
+      document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'block';         
 
    }   
   this._parentTreeItem = new DwtHeaderTreeItem({
@@ -253,19 +250,14 @@ OwnCloudApp.TREE_ID = "OC_TREE_VIEW";
 
 OwnCloudApp.prototype._OnlyOfficeSaveDocument = function() {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
-   document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'none';
-   zimletInstance.docEditor.destroyEditor();
-   document.getElementById('WebDAVPreviewContainer').innerHTML = '<iframe id="WebDAVPreview" src="'+zimletInstance.getConfig("owncloud_zimlet_welcome_url")+'" style="width:'+(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px; height:'+  zimletInstance.appHeight +'px; border:0px">';
-
-   if(zimletInstance.getMessage('onlyofficeSave').indexOf('???') == 0)
+   try {
+      zimletInstance.docEditor.destroyEditor();
+      document.getElementById('WebDAVPreviewContainer').innerHTML = '<iframe id="WebDAVPreview" src="'+zimletInstance.getConfig("owncloud_zimlet_welcome_url")+'" style="width:'+(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px; height:'+  zimletInstance.appHeight +'px; border:0px">';
+   } catch(err)
    {
-      var savingMessage = 'Saving... it can take up to 10 seconds.';
+      //This probably was not an onlyoffice document
+      document.getElementById('WebDAVPreviewContainer').innerHTML = '<iframe id="WebDAVPreview" src="'+zimletInstance.getConfig("owncloud_zimlet_welcome_url")+'" style="width:'+(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px; height:'+  zimletInstance.appHeight +'px; border:0px">';
    }
-   else
-   {
-      var savingMessage = zimletInstance.getMessage('onlyofficeSave');         
-   }
-   zimletInstance.status(savingMessage, ZmStatusView.LEVEL_INFO);
 };
 
 OwnCloudApp.prototype.setDimensions = function() {
