@@ -144,6 +144,7 @@ public class DocConvert extends ExtensionHttpHandler {
             case "ods":
             case "odp":
             case "odt":
+            case "eml":
                 //continue with conversion, avoided use of regex for security audit reasons
                 extension = paramsMap.get("extension");
                 break;
@@ -172,8 +173,13 @@ public class DocConvert extends ExtensionHttpHandler {
 
                         fi.write(file);
 
-                        this.runCommand("/usr/local/sbin/docconvert " + tmpFileName + "." + extension);
-
+                        switch (extension) {
+                            case "eml":
+                                this.runCommand("/usr/local/sbin/eml2pdf " + tmpFileName + "." + extension + " " + tmpFileName + ".pdf");
+                                break;
+                            default:
+                                this.runCommand("/usr/local/sbin/docconvert " + tmpFileName + "." + extension);
+                        }
                         resp.addHeader("Content-Type", "application/pdf");
                         resp.addHeader("Content-Disposition", "attachment; filename=\"" + paramsMap.get("name") + ".pdf\"");
                         resp.addHeader("Accept-Ranges", "none");

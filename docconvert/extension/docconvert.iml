@@ -8,6 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="../../extension/lib" level="project" />
-    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="ant-1.7.0-ziputil-patched" level="project" />
   </component>
 </module>

@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c115c445-e872-49c2-8b62-acec5c2df472" name="Default" comment="" />
+    <list default="true" id="c115c445-e872-49c2-8b62-acec5c2df472" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/../.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/copyright/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/docconvert.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docconvert.iml" beforeDir="false" afterPath="$PROJECT_DIR$/docconvert.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/docconvert/tk/barrydegraaff/docconvert/DocConvert.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/docconvert/tk/barrydegraaff/docconvert/DocConvertExtension.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../webdav-client-installer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../webdav-client-installer.sh" afterDir="false" />
+    </list>
     <ignored path="docconvert.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -18,9 +32,20 @@
     <session id="1119287080">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="1" />
+          <entry key="project.closed" value="3" />
+          <entry key="project.open.time.0" value="2" />
           <entry key="project.open.time.1" value="1" />
-          <entry key="project.opened" value="1" />
+          <entry key="project.opened" value="3" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="java" value="22" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="JAVA" value="22" />
         </counts>
       </usages-collector>
     </session>
@@ -30,11 +55,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="702">
-              <caret line="94" column="56" selection-start-line="94" selection-start-column="47" selection-end-line="94" selection-end-column="66" />
+            <state relative-caret-position="236">
+              <caret line="143" column="23" selection-start-line="143" selection-start-column="23" selection-end-line="143" selection-end-column="23" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -42,11 +67,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvertExtension.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="32" column="66" lean-forward="true" selection-start-line="32" selection-start-column="66" selection-end-line="32" selection-end-column="66" />
+            <state relative-caret-position="544">
+              <caret line="32" column="66" selection-start-line="32" selection-start-column="66" selection-end-line="32" selection-end-column="66" />
               <folding>
                 <element signature="e#0#1690#0" expanded="true" />
                 <element signature="imports" expanded="true" />
@@ -69,7 +94,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-6" />
     <option name="width" value="1932" />
     <option name="height" value="1054" />
@@ -80,13 +105,40 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="extension" type="b2602c69:ProjectViewProjectNode" />
+              <item name="extension" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="extension" type="b2602c69:ProjectViewProjectNode" />
+              <item name="extension" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="extension" type="b2602c69:ProjectViewProjectNode" />
+              <item name="extension" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="extension" type="b2602c69:ProjectViewProjectNode" />
+              <item name="extension" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="docconvert" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1563876827487" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../account-history/extension/lib/zookeeper-3.4.5.jar!/" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -253,10 +305,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-6" y="0" width="1932" height="1054" extended-state="0" />
+    <frame x="0" y="0" width="1920" height="1048" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25267094" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.257754" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="UI Designer" order="3" />
@@ -272,9 +324,9 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5090812" side_tool="true" visible="true" weight="0.24782608" />
+      <window_info active="true" anchor="bottom" id="Event Log" order="8" sideWeight="0.5053476" side_tool="true" visible="true" weight="0.37971953" />
       <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Messages" order="10" sideWeight="0.49581152" weight="0.16473073" />
+      <window_info anchor="bottom" id="Messages" order="10" sideWeight="0.49465242" visible="true" weight="0.37971953" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -297,126 +349,6 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>146</line>
-          <properties />
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>109</line>
-          <properties />
-          <option name="timeStamp" value="27" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>110</line>
-          <properties />
-          <option name="timeStamp" value="28" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>111</line>
-          <properties />
-          <option name="timeStamp" value="29" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>112</line>
-          <properties />
-          <option name="timeStamp" value="30" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>114</line>
-          <properties />
-          <option name="timeStamp" value="31" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>115</line>
-          <properties />
-          <option name="timeStamp" value="32" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>113</line>
-          <properties />
-          <option name="timeStamp" value="33" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>116</line>
-          <properties />
-          <option name="timeStamp" value="34" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>118</line>
-          <properties />
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>119</line>
-          <properties />
-          <option name="timeStamp" value="36" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>120</line>
-          <properties />
-          <option name="timeStamp" value="37" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>121</line>
-          <properties />
-          <option name="timeStamp" value="38" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>122</line>
-          <properties />
-          <option name="timeStamp" value="39" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>123</line>
-          <properties />
-          <option name="timeStamp" value="40" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>97</line>
-          <properties />
-          <option name="timeStamp" value="41" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>99</line>
-          <properties />
-          <option name="timeStamp" value="43" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>101</line>
-          <properties />
-          <option name="timeStamp" value="45" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java</url>
-          <line>103</line>
-          <properties />
-          <option name="timeStamp" value="46" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
@@ -426,8 +358,8 @@
     <entry file="jar://$PROJECT_DIR$/lib/zimbrastore.jar!/com/zimbra/cs/extension/ExtensionHttpHandler.class" />
     <entry file="file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="702">
-          <caret line="94" column="56" selection-start-line="94" selection-start-column="47" selection-end-line="94" selection-end-column="66" />
+        <state relative-caret-position="236">
+          <caret line="143" column="23" selection-start-line="143" selection-start-column="23" selection-end-line="143" selection-end-column="23" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -436,8 +368,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvertExtension.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="32" column="66" lean-forward="true" selection-start-line="32" selection-start-column="66" selection-end-line="32" selection-end-column="66" />
+        <state relative-caret-position="544">
+          <caret line="32" column="66" selection-start-line="32" selection-start-column="66" selection-end-line="32" selection-end-column="66" />
           <folding>
             <element signature="e#0#1690#0" expanded="true" />
             <element signature="imports" expanded="true" />
@@ -504,7 +436,6 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
@@ -512,7 +443,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>lib</last-edited>
+          <last-edited>ant-1.7.0-ziputil-patched</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

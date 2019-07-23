@@ -294,11 +294,13 @@ if [[ "$YNDOCPREV" == 'Y' || "$YNDOCPREV" == 'y' ]];
 then
    echo "Install LibreOffice."
    cp -v $TMPFOLDER/owncloud-zimlet/bin/* /usr/local/sbin/   
+   cp -v $TMPFOLDER/owncloud-zimlet/docconvert/java-wkhtmltopdf-wrapper-1.1.11-RELEASE.jar /usr/local/sbin/
 
    if [[ ! -z $YUM_CMD ]]; then
-      yum install -y libreoffice-headless libreoffice
+      yum install -y epel-release
+      yum install -y libreoffice-headless libreoffice wkhtmltopdf
    else
-      apt-get install -y libreoffice
+      apt-get install -y libreoffice wkhtmltopdf
    fi
    
    echo "Configure docconvert user and set up sudo in /etc/sudoers.d/99_zimbra-docconvert"
