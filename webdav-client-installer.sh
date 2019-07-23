@@ -297,19 +297,17 @@ then
    cp -v $TMPFOLDER/owncloud-zimlet/docconvert/emailconverter-2.0.1-all.jar /usr/local/sbin/
 
    if [[ ! -z $YUM_CMD ]]; then
-      yum install -y epel-release
-      yum install -y libreoffice-headless libreoffice wkhtmltopdf
+      yum install -y libreoffice-headless libreoffice
    else
       apt-get install -y libreoffice
-      
-      echo "Manual installation step required,"
-      echo "If you want to be able to convert EML to PDF files, follow instructions at:"
-      echo "https://github.com/Zimbra-Community/owncloud-zimlet/wiki/eml2pdf-manual-install-steps"
-      echo "any key to continue..."
-      read dummy
-      
    fi
-   
+
+   echo "Manual installation step required,"
+   echo "If you want to be able to convert EML to PDF files, follow instructions at:"
+   echo "https://github.com/Zimbra-Community/owncloud-zimlet/wiki/eml2pdf-manual-install-steps"
+   echo "any key to continue..."
+   read dummy
+
    echo "Configure docconvert user and set up sudo in /etc/sudoers.d/99_zimbra-docconvert"
    set +e
    

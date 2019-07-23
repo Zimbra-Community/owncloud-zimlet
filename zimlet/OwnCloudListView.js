@@ -303,7 +303,7 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   }
 
    try 
-   {
+   {     
       if(
        (docConvertZimlet.prototype.toString() == "tk_barrydegraaff_docconvert_HandlerObject") &&
        ((resource._contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
@@ -314,7 +314,9 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
        (resource._contentType == 'application/msword') ||
        (resource._contentType == 'application/vnd.oasis.opendocument.presentation') ||
        (resource._contentType == 'application/vnd.oasis.opendocument.spreadsheet') ||
-       (resource._contentType == 'application/vnd.oasis.opendocument.text')))
+       (resource._contentType == 'application/vnd.oasis.opendocument.text') ||
+       (resource.getName().match(/^.*\.eml$/i))
+       ))
        {       
           parent.getMenuItem('SAVE_AS_PDF').setVisible(true);
        }
