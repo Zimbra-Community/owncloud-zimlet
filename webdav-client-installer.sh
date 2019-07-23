@@ -107,7 +107,7 @@ else
 fi
 
 echo ""
-echo "Do you want to enable experimental LibreOffice document preview (odt,ods,odp) (tested on CentOS 7 and Ubuntu 14.04)? y/N:"
+echo "Do you want to enable experimental LibreOffice document preview (odt,ods,odp) and document convertion from Office and EML files to PDF (tested on CentOS 7 and Ubuntu 14.04)? y/N:"
 
 if [[ "${IS_AUTO}" == 'YES' ]]
 then
