@@ -62,7 +62,9 @@ docConvertZimlet.prototype.addAttachmentHandler = function(mime)
       (mimeType == 'application/msword') ||
       (mimeType == 'application/vnd.oasis.opendocument.presentation') ||
       (mimeType == 'application/vnd.oasis.opendocument.spreadsheet') ||
-      (mimeType == 'application/vnd.oasis.opendocument.text'))
+      (mimeType == 'application/vnd.oasis.opendocument.text') ||
+      (mimeType == 'message/rfc822')
+      )
       {
          this._msgController._listView[viewType].addAttachmentLinkHandler(mimeType,"PDF",this.addDocConvertLink);
       }

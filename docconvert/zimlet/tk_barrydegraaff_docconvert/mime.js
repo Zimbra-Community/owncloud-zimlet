@@ -26,5 +26,6 @@ docConvertZimlet.mime = [
 'application/vnd.oasis.opendocument.presentation',
 'application/vnd.oasis.opendocument.spreadsheet',
 'application/vnd.oasis.opendocument.text',
+'message/rfc822'
 ];
 }

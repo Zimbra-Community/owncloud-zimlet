@@ -292,7 +292,7 @@ fi
 
 if [[ "$YNDOCPREV" == 'Y' || "$YNDOCPREV" == 'y' ]];
 then
-   echo "Install LibreOffice."
+   echo "Install LibreOffice and document convertion features"
    cp -v $TMPFOLDER/owncloud-zimlet/bin/* /usr/local/sbin/   
    cp -v $TMPFOLDER/owncloud-zimlet/docconvert/emailconverter-2.0.1-all.jar /usr/local/sbin/
 
@@ -300,7 +300,14 @@ then
       yum install -y epel-release
       yum install -y libreoffice-headless libreoffice wkhtmltopdf
    else
-      apt-get install -y libreoffice wkhtmltopdf
+      apt-get install -y libreoffice
+      
+      echo "Manual installation step required,"
+      echo "If you want to be able to convert EML to PDF files, follow instructions at:"
+      echo "https://github.com/Zimbra-Community/owncloud-zimlet/wiki/eml2pdf-manual-install-steps"
+      echo "any key to continue..."
+      read dummy
+      
    fi
    
    echo "Configure docconvert user and set up sudo in /etc/sudoers.d/99_zimbra-docconvert"
