@@ -1,21 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c115c445-e872-49c2-8b62-acec5c2df472" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/copyright/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/docconvert.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docconvert.iml" beforeDir="false" afterPath="$PROJECT_DIR$/docconvert.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/docconvert/tk/barrydegraaff/docconvert/DocConvert.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/docconvert/tk/barrydegraaff/docconvert/DocConvertExtension.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../webdav-client-installer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../webdav-client-installer.sh" afterDir="false" />
-    </list>
+    <list default="true" id="c115c445-e872-49c2-8b62-acec5c2df472" name="Default" comment="" />
     <ignored path="docconvert.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -35,7 +21,8 @@
           <entry key="project.closed" value="3" />
           <entry key="project.open.time.0" value="2" />
           <entry key="project.open.time.1" value="1" />
-          <entry key="project.opened" value="3" />
+          <entry key="project.open.time.6" value="1" />
+          <entry key="project.opened" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -58,8 +45,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="236">
-              <caret line="143" column="23" selection-start-line="143" selection-start-column="23" selection-end-line="143" selection-end-column="23" />
+            <state relative-caret-position="627">
+              <caret line="208" column="12" lean-forward="true" selection-start-line="208" selection-start-column="12" selection-end-line="208" selection-end-column="12" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -70,7 +57,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvertExtension.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="544">
+            <state relative-caret-position="221">
               <caret line="32" column="66" selection-start-line="32" selection-start-column="66" selection-end-line="32" selection-end-column="66" />
               <folding>
                 <element signature="e#0#1690#0" expanded="true" />
@@ -94,7 +81,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-6" />
     <option name="width" value="1932" />
     <option name="height" value="1054" />
@@ -105,17 +92,14 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="extension" type="b2602c69:ProjectViewProjectNode" />
               <item name="extension" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="extension" type="b2602c69:ProjectViewProjectNode" />
-              <item name="extension" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="extension" type="b2602c69:ProjectViewProjectNode" />
@@ -132,8 +116,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -261,12 +243,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="myzimbra.com" type="Remote" factoryName="Remote">
+    <configuration name="beta.zetalliance.org" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
       <option name="SHMEM_ADDRESS" />
-      <option name="HOST" value="zimbradev.barrydegraaff.tk" />
-      <option name="PORT" value="5005" />
+      <option name="HOST" value="beta.zetalliance.org" />
+      <option name="PORT" value="9071" />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="5005" />
         <option name="LOCAL" value="false" />
@@ -308,7 +290,7 @@
     <frame x="0" y="0" width="1920" height="1048" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.257754" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2604278" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info id="UI Designer" order="3" />
@@ -358,8 +340,8 @@
     <entry file="jar://$PROJECT_DIR$/lib/zimbrastore.jar!/com/zimbra/cs/extension/ExtensionHttpHandler.class" />
     <entry file="file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvert.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="143" column="23" selection-start-line="143" selection-start-column="23" selection-end-line="143" selection-end-column="23" />
+        <state relative-caret-position="627">
+          <caret line="208" column="12" lean-forward="true" selection-start-line="208" selection-start-column="12" selection-end-line="208" selection-end-column="12" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -368,7 +350,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/tk/barrydegraaff/docconvert/DocConvertExtension.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
+        <state relative-caret-position="221">
           <caret line="32" column="66" selection-start-line="32" selection-start-column="66" selection-end-line="32" selection-end-column="66" />
           <folding>
             <element signature="e#0#1690#0" expanded="true" />

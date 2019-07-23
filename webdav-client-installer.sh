@@ -294,7 +294,7 @@ if [[ "$YNDOCPREV" == 'Y' || "$YNDOCPREV" == 'y' ]];
 then
    echo "Install LibreOffice."
    cp -v $TMPFOLDER/owncloud-zimlet/bin/* /usr/local/sbin/   
-   cp -v $TMPFOLDER/owncloud-zimlet/docconvert/java-wkhtmltopdf-wrapper-1.1.11-RELEASE.jar /usr/local/sbin/
+   cp -v $TMPFOLDER/owncloud-zimlet/docconvert/emailconverter-2.0.1-all.jar /usr/local/sbin/
 
    if [[ ! -z $YUM_CMD ]]; then
       yum install -y epel-release
