@@ -345,9 +345,40 @@ ownCloudZimlet.prototype.onMsgView = function (msg, oldMsg, msgView) {
 ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, view) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    view = appCtxt.getViewTypeFromId(view);
-	if (view == ZmId.VIEW_CONVLIST || view == ZmId.VIEW_CONV || view == ZmId.VIEW_TRAD || view == "CNS" || view == "CLD" || view == "BDLV" || view == "TKL") {
+	if (view == ZmId.VIEW_CONVLIST || view == ZmId.VIEW_CONV || view == ZmId.VIEW_TRAD) {
 		var buttonArgs = {
-			text	: zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title"),
+			text	: "Eml",
+			image: "ownCloud-panelIcon",
+         showImageInToolbar: true,
+         showTextInToolbar: true,
+         tooltip: (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title"),
+         enabled: false
+		};
+		if(!toolbar.getOp('ownCloudZimletOp')) {
+			var button = toolbar.createZimletOp('ownCloudZimletOp', buttonArgs);
+			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller]));
+		}
+
+      if(docConvertZimlet.prototype.toString() == "tk_barrydegraaff_docconvert_HandlerObject")
+      {
+         var buttonArgs = {
+            text	: "Pdf",
+            image: "ownCloud-panelIcon",
+            showImageInToolbar: true,
+            showTextInToolbar: true,
+            tooltip: (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title"),
+            enabled: false
+         };
+         if(!toolbar.getOp('ownCloudZimletOpPdf')) {
+            var button = toolbar.createZimletOp('ownCloudZimletOpPdf', buttonArgs);
+            //hierzo to-do button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller]));
+         }
+      }     
+	}
+   
+   if (view == "CNS" || view == "CLD" || view == "BDLV" || view == "TKL") {
+		var buttonArgs = {
+			text	: this._zimletContext.getConfig("owncloud_zimlet_app_title"),
 			image: "ownCloud-panelIcon",
          showImageInToolbar: true,
          showTextInToolbar: false,
@@ -357,8 +388,8 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
 		if(!toolbar.getOp('ownCloudZimletOp')) {
 			var button = toolbar.createZimletOp('ownCloudZimletOp', buttonArgs);
 			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller]));
-		}
-	}
+		}      
+   }
    
    //enable on multi selection, is there an API for this?
    try{
@@ -366,6 +397,13 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
       setTimeout(function(){ appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOp");}, 1000);
    } catch(err){      
    }
+
+   try{
+      appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOpPdf");
+      setTimeout(function(){ appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOpPdf");}, 1000);
+   } catch(err){      
+   }
+
 };
 
 /**
@@ -1028,22 +1066,66 @@ ownCloudZimlet.prototype.onActionMenuInitialized = function (controller , menu) 
 };
 
 ownCloudZimlet.prototype.addMenuButton = function (controller , menu) {
-   //WebDAV button is added after the move button
-   var ID = "ownCloudZimlet_MENU_ITEM";
-   if(!menu.getMenuItem (ID)) {
-      var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
-      var moveOpIndex = menu.getItemIndex(moveOp);
-      var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
-      var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
-      var params = {
-         text : textLabel ,
-         tooltip : tooltipLabel ,
-         image : "ownCloud-panelIcon" ,
-         index : moveOpIndex + 1
-      };
-      var mi = menu.createOp (ID , params);
-      menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
-      mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , controller));
+   var view = appCtxt.getViewTypeFromId(controller.viewId);
+
+   if((docConvertZimlet.prototype.toString() == "tk_barrydegraaff_docconvert_HandlerObject") &&
+   ((view == ZmId.VIEW_CONVLIST || view == ZmId.VIEW_CONV || view == ZmId.VIEW_TRAD)) )
+   {   
+   
+      //WebDAV button is added after the move button
+      var ID = "ownCloudZimlet_MENU_ITEM";
+      if(!menu.getMenuItem (ID)) {
+         var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
+         var moveOpIndex = menu.getItemIndex(moveOp);
+         var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)";
+         var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)" : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)";
+         var params = {
+            text : textLabel ,
+            tooltip : tooltipLabel ,
+            image : "ownCloud-panelIcon" ,
+            index : moveOpIndex + 1
+         };
+         var mi = menu.createOp (ID , params);
+         menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
+         mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , controller));
+      }
+
+      var ID = "ownCloudZimlet_MENU_ITEM_PDF";
+      if(!menu.getMenuItem (ID)) {
+         var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
+         var moveOpIndex = menu.getItemIndex(moveOp);
+         var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)";
+         var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)" : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)";
+         var params = {
+            text : textLabel ,
+            tooltip : tooltipLabel ,
+            image : "ownCloud-panelIcon" ,
+            index : moveOpIndex + 1
+         };
+         var mi = menu.createOp (ID , params);
+         menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
+         //hierzo to-do mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , controller));
+      }
+   }
+   else
+   {
+      //WebDAV button is added after the move button
+      var ID = "ownCloudZimlet_MENU_ITEM";
+      if(!menu.getMenuItem (ID)) {
+         var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
+         var moveOpIndex = menu.getItemIndex(moveOp);
+         var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+         var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title");
+         var params = {
+            text : textLabel ,
+            tooltip : tooltipLabel ,
+            image : "ownCloud-panelIcon" ,
+            index : moveOpIndex + 1
+         };
+         var mi = menu.createOp (ID , params);
+         menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
+         mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , controller));
+      }      
    }
 };
 
@@ -1085,6 +1167,7 @@ ownCloudZimlet.prototype._onRightClickMenu = function(controller, actionMenu) {
 
   // default behaviour is disable for more than one, changed here
   actionMenu.enable("ownCloudZimlet_MENU_ITEM", true);
+  actionMenu.enable("ownCloudZimlet_MENU_ITEM_PDF", true);
 
   
 };
