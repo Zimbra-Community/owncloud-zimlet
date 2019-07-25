@@ -359,6 +359,13 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
 			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller]));
 		}
 	}
+   
+   //enable on multi selection, is there an API for this?
+   try{
+      appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOp");
+      setTimeout(function(){ appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOp");}, 1000);
+   } catch(err){      
+   }
 };
 
 /**
