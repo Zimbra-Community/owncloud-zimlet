@@ -356,7 +356,7 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
 		};
 		if(!toolbar.getOp('ownCloudZimletOp')) {
 			var button = toolbar.createZimletOp('ownCloudZimletOp', buttonArgs);
-			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller]));
+			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, false]));
 		}
 
       if(docConvertZimlet.prototype.toString() == "tk_barrydegraaff_docconvert_HandlerObject")
@@ -371,7 +371,7 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
          };
          if(!toolbar.getOp('ownCloudZimletOpPdf')) {
             var button = toolbar.createZimletOp('ownCloudZimletOpPdf', buttonArgs);
-            //hierzo to-do button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller]));
+            button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, true]));
          }
       }     
 	}
@@ -387,7 +387,7 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
 		};
 		if(!toolbar.getOp('ownCloudZimletOp')) {
 			var button = toolbar.createZimletOp('ownCloudZimletOp', buttonArgs);
-			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller]));
+			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, false]));
 		}      
    }
    
@@ -1087,7 +1087,7 @@ ownCloudZimlet.prototype.addMenuButton = function (controller , menu) {
          };
          var mi = menu.createOp (ID , params);
          menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
-         mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , controller));
+         mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , [controller, false]));
       }
 
       var ID = "ownCloudZimlet_MENU_ITEM_PDF";
@@ -1104,7 +1104,7 @@ ownCloudZimlet.prototype.addMenuButton = function (controller , menu) {
          };
          var mi = menu.createOp (ID , params);
          menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
-         //hierzo to-do mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , controller));
+         mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , [controller, true]));
       }
    }
    else
@@ -1124,13 +1124,14 @@ ownCloudZimlet.prototype.addMenuButton = function (controller , menu) {
          };
          var mi = menu.createOp (ID , params);
          menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
-         mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , controller));
+         mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , [controller, false]));
       }      
    }
 };
 
 //Retrieve the right click item and start the upload to WebDAV
-ownCloudZimlet.prototype._menuButtonListener = function (controller) {
+ownCloudZimlet.prototype._menuButtonListener = function (controller, options) {
+   
    //in calendar view it is possible to have an enabled button but no selection
    try {
       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
@@ -1146,6 +1147,10 @@ ownCloudZimlet.prototype._menuButtonListener = function (controller) {
          items = controller._actionEv.item;
       }
       items = AjxUtil.toArray(items);
+
+      for (var i = 0; i < items.length; i++) {
+         items[i].doConvertToPDF = options;
+      }
       zimletInstance.targetFolderPicker(zimletInstance._doDropPropfindCbk,[items]);
    } catch (err) {}
 };
@@ -1237,6 +1242,7 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
       var item = [];
       item[0]=id;
       item[1]=fileName;
+      item[2]=tmpObj.doConvertToPDF;
       items[index]=item;
       index++;
    }
@@ -1245,24 +1251,67 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
 
 ownCloudZimlet.prototype._doDropFetch = function (items, form)
 {
-   var xmlHttp = null;   
-   xmlHttp = new XMLHttpRequest();
-   xmlHttp.open( "GET", "/home/"+AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name)+"/message.txt?fmt=txt&id="+items[0][0], true );        
-   xmlHttp.responseType = "blob";
-   xmlHttp.send( null );
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+   zimletInstance._folderPickerDialog.setContent('<div style="width:100%; text-align:center"><img src="'+zimletInstance.getResource('progressround.gif')+'"></div>');
+   zimletInstance._folderPickerDialog.setTitle(ZmMsg.loading);
+   zimletInstance._folderPickerDialog.setButtonVisible(DwtDialog.OK_BUTTON, false);
+   zimletInstance._folderPickerDialog.setButtonVisible(DwtDialog.CANCEL_BUTTON, false);
+   zimletInstance._folderPickerDialog.setButtonVisible('ownCloudZimletNewFolderBtn', false);
    
-   xmlHttp.onload = function(e) 
+   if(!items[0][2])
    {
-      form.append("uploadFile"+items.length,xmlHttp.response, ownCloudZimlet.prototype.sanitizeFileName(items[0][1]));
-      items.shift();
-      if(items.length < 1)
+      var xmlHttp = null;   
+      xmlHttp = new XMLHttpRequest();
+      xmlHttp.open( "GET", "/home/"+AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name)+"/message.txt?fmt=txt&id="+items[0][0], true );
+      xmlHttp.responseType = "blob";
+      xmlHttp.send( null );
+      xmlHttp.onload = function(e) 
       {
-         ownCloudZimlet.prototype._doDropUpload(form);
+         form.append("uploadFile"+items.length,xmlHttp.response, ownCloudZimlet.prototype.sanitizeFileName(items[0][1]));
+         items.shift();
+         if(items.length < 1)
+         {
+            ownCloudZimlet.prototype._doDropUpload(form);
+         }
+         else
+         {
+            ownCloudZimlet.prototype._doDropFetch(items, form);
+         }   
       }
-      else
+   }
+   else
+   {
+      //convert eml to pdf
+      var xmlHttp = null;   
+      xmlHttp = new XMLHttpRequest();
+      xmlHttp.open( "GET", "/home/"+AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name)+"/message.txt?fmt=txt&id="+items[0][0], true );
+      xmlHttp.responseType = "blob";
+      xmlHttp.send( null );
+     
+      xmlHttp.onload = function(e) 
       {
-         ownCloudZimlet.prototype._doDropFetch(items, form);
-      }   
+         var formData = new FormData();
+         formData.append("myFile", xmlHttp.response);
+          
+         var name = ownCloudZimlet.prototype.sanitizeFileName(items[0][1]);
+         var xhr = new XMLHttpRequest();
+         xhr.open("POST", '/service/extension/docconvert/?extension='+name.split('.').pop()+'&name='+encodeURIComponent(name), true);
+         xhr.responseType = "blob";
+         xhr.send(formData);
+         xhr.onload = function(e) 
+         {
+            form.append("uploadFile"+xhr.response.length,xhr.response, ownCloudZimlet.prototype.sanitizeFileName(items[0][1]).split('.').shift()+".pdf");
+            items.shift();
+            if(items.length < 1)
+            {
+               ownCloudZimlet.prototype._doDropUpload(form);
+            }
+            else
+            {
+               ownCloudZimlet.prototype._doDropFetch(items, form);
+            }
+         }
+      };    
    }
 };
 
