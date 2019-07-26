@@ -394,13 +394,13 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
    //enable on multi selection, is there an API for this?
    try{
       appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOp");
-      setTimeout(function(){ appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOp");}, 1000);
+      setTimeout(function(){ try { appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOp");} catch (err){}}, 1000);
    } catch(err){      
    }
 
    try{
       appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOpPdf");
-      setTimeout(function(){ appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOpPdf");}, 1000);
+      setTimeout(function(){ try { appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOpPdf");} catch (err){}}, 1000);
    } catch(err){      
    }
 
