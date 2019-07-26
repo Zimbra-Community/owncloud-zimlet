@@ -209,7 +209,7 @@ ownCloudZimlet.prototype.init =
     );
 
     try {
-      this.ownCloudTab = this.createApp(this._zimletContext.getConfig("owncloud_zimlet_app_title"), "", "WebDAV");
+      this.ownCloudTab = this.createApp(this._zimletContext.getConfig("owncloud_zimlet_app_title"), "", "");
 
       //Hide New button in zimlet app
       var app = appCtxt.getApp(this.ownCloudTab);
