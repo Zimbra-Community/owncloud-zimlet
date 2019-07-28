@@ -230,13 +230,13 @@ ownCloudZimlet.prototype.init =
            var callbacks = {};
    
            // create app view
-           this._app.createView({	viewId:	this.getDefaultViewType(),
-               elements:		elements,
-               controller:		this,
-               callbacks:		callbacks,
-               isAppView:		true,
-               isTransient:	true,
-               hide:				ZmAppViewMgr.C_NEW_BUTTON});
+           this._app.createView({   viewId:   this.getDefaultViewType(),
+               elements:      elements,
+               controller:      this,
+               callbacks:      callbacks,
+               isAppView:      true,
+               isTransient:   true,
+               hide:            ZmAppViewMgr.C_NEW_BUTTON});
            }
            return this._view;
        };
@@ -345,50 +345,56 @@ ownCloudZimlet.prototype.onMsgView = function (msg, oldMsg, msgView) {
 ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, view) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    view = appCtxt.getViewTypeFromId(view);
-	if (view == ZmId.VIEW_CONVLIST || view == ZmId.VIEW_CONV || view == ZmId.VIEW_TRAD) {
-		var buttonArgs = {
-			text	: "Eml",
-			image: "ownCloud-panelIcon",
+   if (view == ZmId.VIEW_CONVLIST || view == ZmId.VIEW_CONV || view == ZmId.VIEW_TRAD) {
+      var button = toolbar.createButton("ownCloudZimletOp", {image: "ownCloud-panelIcon", showImageInToolbar: true, showTextInToolbar: false, index:10, enabled:false});
+      var menu = new ZmPopupMenu(button); //create menu
+      button.setMenu(menu);//add menu to button
+      button.noMenuBar = true;
+      button.removeAllListeners();
+      button.removeDropDownSelectionListener();
+   
+      var buttonArgs = {
+         text   : (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)",
+         image: "ownCloud-panelIcon",
          showImageInToolbar: true,
          showTextInToolbar: true,
          tooltip: (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title"),
-         enabled: false
-		};
-		if(!toolbar.getOp('ownCloudZimletOp')) {
-			var button = toolbar.createZimletOp('ownCloudZimletOp', buttonArgs);
-			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, false]));
-		}
-
+         enabled: true
+      };
+   
+      var mi = menu.createMenuItem(Dwt.getNextId(), buttonArgs);
+      mi.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, false]));
+   
       if(docConvertZimlet.prototype.toString() == "tk_barrydegraaff_docconvert_HandlerObject")
       {
          var buttonArgs = {
-            text	: "Pdf",
+            text   : (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)",
             image: "ownCloud-panelIcon",
             showImageInToolbar: true,
             showTextInToolbar: true,
             tooltip: (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title"),
-            enabled: false
+            enabled: true
          };
-         if(!toolbar.getOp('ownCloudZimletOpPdf')) {
-            var button = toolbar.createZimletOp('ownCloudZimletOpPdf', buttonArgs);
-            button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, true]));
-         }
-      }     
-	}
+         
+         var mi = menu.createMenuItem(Dwt.getNextId(), buttonArgs);
+         mi.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, true]));
+   
+      }  
+   }
    
    if (view == "CNS" || view == "CLD" || view == "BDLV" || view == "TKL") {
-		var buttonArgs = {
-			text	: this._zimletContext.getConfig("owncloud_zimlet_app_title"),
-			image: "ownCloud-panelIcon",
+      var buttonArgs = {
+         text   : this._zimletContext.getConfig("owncloud_zimlet_app_title"),
+         image: "ownCloud-panelIcon",
          showImageInToolbar: true,
          showTextInToolbar: false,
          tooltip: (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title"),
          enabled: false
-		};
-		if(!toolbar.getOp('ownCloudZimletOp')) {
-			var button = toolbar.createZimletOp('ownCloudZimletOp', buttonArgs);
-			button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, false]));
-		}      
+      };
+      if(!toolbar.getOp('ownCloudZimletOp')) {
+         var button = toolbar.createZimletOp('ownCloudZimletOp', buttonArgs);
+         button.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, false]));
+      }      
    }
    
    //enable on multi selection, is there an API for this?
@@ -397,13 +403,6 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
       setTimeout(function(){ try { appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOp");} catch (err){}}, 1000);
    } catch(err){      
    }
-
-   try{
-      appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOpPdf");
-      setTimeout(function(){ try { appCtxt.getCurrentController().operationsToEnableOnMultiSelection.push("ownCloudZimletOpPdf");} catch (err){}}, 1000);
-   } catch(err){      
-   }
-
 };
 
 /**
@@ -451,8 +450,8 @@ ownCloudZimlet.prototype.targetFolderPicker =
   function(method, args) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
    
-	var newFolderBtnId = 'ownCloudZimletNewFolderBtn';
-	var newFolderBtn = new DwtDialog_ButtonDescriptor(newFolderBtnId, ZmMsg.newFolder, DwtDialog.ALIGN_LEFT);
+   var newFolderBtnId = 'ownCloudZimletNewFolderBtn';
+   var newFolderBtn = new DwtDialog_ButtonDescriptor(newFolderBtnId, ZmMsg.newFolder, DwtDialog.ALIGN_LEFT);
    
    zimletInstance._folderPickerDialog = new ZmDialog({
       title: ZmMsg.chooseFolder,
@@ -512,7 +511,7 @@ ownCloudZimlet.prototype.newFolderInFolderPicker = function() {
   newFolderDialog.addEnterListener(new AjxListener(this, this._newFolderCallback, [folder, input, newFolderDialog]));
 
   //add tab group and focus on the input field
-  newFolderDialog._tabGroup.addMemberBefore(input,	newFolderDialog._tabGroup.getFirstMember());
+  newFolderDialog._tabGroup.addMemberBefore(input,   newFolderDialog._tabGroup.getFirstMember());
   newFolderDialog._tabGroup.setFocusMember(input);
   newFolderDialog.popup();
 };
@@ -1300,7 +1299,7 @@ ownCloudZimlet.prototype._doDropFetch = function (items, form)
          xhr.send(formData);
          xhr.onload = function(e) 
          {
-            form.append("uploadFile"+xhr.response.length,xhr.response, ownCloudZimlet.prototype.sanitizeFileName(items[0][1]).split('.').shift()+".pdf");
+            form.append("uploadFile"+xhr.response.length,xhr.response, ownCloudZimlet.prototype.sanitizeFileName(items[0][1]).replace(/\.[^/.]+$/, "")+".pdf");
             items.shift();
             if(items.length < 1)
             {
@@ -1474,8 +1473,8 @@ ownCloudZimlet.prototype._okPassListen =
 /**
  * This method gets called by the Zimlet framework each time the application is opened or closed.
  *
- * @param	{String}	appName		the application name
- * @param	{boolean}	active		if true, the application status is open; otherwise, false
+ * @param   {String}   appName      the application name
+ * @param   {boolean}   active      if true, the application status is open; otherwise, false
  */
 ownCloudZimlet.prototype.appActive =
   function(appName, active) {
