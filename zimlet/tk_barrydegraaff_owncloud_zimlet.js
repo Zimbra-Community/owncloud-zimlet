@@ -334,7 +334,7 @@ ownCloudZimlet.prototype.onMsgView = function (msg, oldMsg, msgView) {
          //by message view, conversation view expanded item
          document.getElementById(appCtxt.getCurrentView()._itemView._attLinksId).appendChild(div);
       }      
-      div.onclick = AjxCallback.simpleClosure(zimletInstance.saveAll, zimletInstance, msg);
+      div.onclick = AjxCallback.simpleClosure(zimletInstance.saveAll, zimletInstance, msg, false);
    } catch(err){}   
 };
 
@@ -409,10 +409,19 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
  * Called when save all to webdav link is clicked in mailview
  * */
 ownCloudZimlet.prototype.saveAll =
-  function(msg) {
+  function(msg, skipPicker) {
     var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     zimletInstance.saveAllBatch = msg._attInfo;
-    ownCloudZimlet.saveAttachment(zimletInstance.saveAllBatch[0].url,  zimletInstance.sanitizeFileName(zimletInstance.saveAllBatch[0].label),true);
+    if(skipPicker)
+    {  
+       //assumes folderPicker dialog already completed, used in save as PDF feature 
+       ownCloudZimlet.prototype._saveAttachment(zimletInstance.saveAllBatch[0].url,  zimletInstance.sanitizeFileName(zimletInstance.saveAllBatch[0].label),true);
+    }
+    else  
+    {
+       //will prompt a folderPicker, for AML saving and other use cases
+       ownCloudZimlet.saveAttachment(zimletInstance.saveAllBatch[0].url,  zimletInstance.sanitizeFileName(zimletInstance.saveAllBatch[0].label),true);
+    }   
   };
 
 /**
@@ -584,6 +593,9 @@ ownCloudZimlet.prototype._newFolderCallback = function(folder, input, dialog, ev
 ownCloudZimlet.prototype._saveAttachment =
   function(url, fileName, edit) {
    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
+
+   //in case we upload a lot of small files, the toaster takes longer than the upload. So dismiss any existing toaster.
+   appCtxt.getAppController().dismissStatusMsg(true);
    this.status(ZmMsg.uploading + ' ' + fileName, ZmStatusView.LEVEL_INFO);
 
    var xmlHttp = null;   
@@ -1178,7 +1190,6 @@ ownCloudZimlet.prototype._onRightClickMenu = function(controller, actionMenu) {
 
 /**
  * Send a list of ZmObjects to OwnCloud.
- * The real copy will be made on the server, this optimization will avoid to saturate the user bandwidth.
  * @param {ZmItem[]} zmObjects Objects to send to OwnCloud.
  * @param {AjxCallback=} callback Callback invoked with the result.
  * @param {AjxCallback=} errorCallback Callback invoked when an error occurs.
@@ -1242,6 +1253,7 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
       item[0]=id;
       item[1]=fileName;
       item[2]=tmpObj.doConvertToPDF;
+      item[3]=tmpObj;
       items[index]=item;
       index++;
    }
@@ -1281,6 +1293,16 @@ ownCloudZimlet.prototype._doDropFetch = function (items, form)
    else
    {
       //convert eml to pdf
+      
+      //Store all attachments of email separately
+      //saveAll is asynchronous need to check max heapspace and also need a better feedback to the user or make it synchronous again
+      //is this documented somewhere Zimbra? I need to call ZmMailMsg.getAttachmentInfo explictly to get the object attInfo populated fully.
+      items[0][3].getAttachmentInfo();
+      if(items[0][3]._attInfo.length > 0)
+      {
+         ownCloudZimlet.prototype.saveAll(items[0][3], true);
+      }   
+      
       var xmlHttp = null;   
       xmlHttp = new XMLHttpRequest();
       xmlHttp.open( "GET", "/home/"+AjxStringUtil.urlComponentEncode(appCtxt.getActiveAccount().name)+"/message.txt?fmt=txt&id="+items[0][0], true );
