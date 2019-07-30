@@ -108,7 +108,12 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
       document.getElementById(zimletInstance.OnlyOfficeSaveID).style.right = '3px';
       document.getElementById(zimletInstance.OnlyOfficeSaveID).style.width = '48px';
       document.getElementById(zimletInstance.OnlyOfficeSaveID).style.top = '0px';
-      document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'block';         
+      document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'block';
+
+      if(!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))
+      {
+         document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'none';
+      }
 
    }   
   this._parentTreeItem = new DwtHeaderTreeItem({
