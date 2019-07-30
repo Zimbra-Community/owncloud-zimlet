@@ -1336,6 +1336,10 @@ ownCloudZimlet.prototype._doDropFetch = function (items, form)
       //Store all attachments of email separately
       //saveAll is asynchronous need to check max heapspace and also need a better feedback to the user or make it synchronous again
       //is this documented somewhere Zimbra? I need to call ZmMailMsg.getAttachmentInfo explictly to get the object attInfo populated fully.
+      if (items[0][3].type == "CONV") {
+         items[0][3] = items[0][3].getFirstHotMsg();
+      }
+   
       items[0][3].getAttachmentInfo();
       if(items[0][3]._attInfo.length > 0)
       {
