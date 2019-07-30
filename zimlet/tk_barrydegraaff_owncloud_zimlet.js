@@ -1,6 +1,6 @@
 /*
  This file is part of the Zimbra ownCloud Zimlet project.
- Copyright (C) 2015-2018  Barry de Graaff
+ Copyright (C) 2015-2019  Barry de Graaff
 
  Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 
@@ -428,9 +428,21 @@ ownCloudZimlet.prototype.saveAll =
   function(msg, skipPicker) {
     var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
     zimletInstance.saveAllBatch = msg._attInfo;
+       
     if(skipPicker)
     {  
        //assumes folderPicker dialog already completed, used in save as PDF feature 
+       
+       //rename attachments for archiving purposes
+       var dateEmail = ownCloudZimlet.prototype.timeConverter(msg.date);
+       fileName = dateEmail + " " + (msg.subject ? msg.subject : '') + ' ';
+       for (var i = 0; i < zimletInstance.saveAllBatch.length; i++) {
+          if(zimletInstance.saveAllBatch[i].label.indexOf(fileName)<0)
+          {
+             zimletInstance.saveAllBatch[i].label = fileName + zimletInstance.saveAllBatch[i].label;
+          }   
+       }
+       
        ownCloudZimlet.prototype._saveAttachment(zimletInstance.saveAllBatch[0].url,  zimletInstance.sanitizeFileName(zimletInstance.saveAllBatch[0].label),true);
     }
     else  
@@ -1231,6 +1243,7 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
    for (iObj = 0; iObj < zmObjects.length; iObj += 1) {
       tmpObj = zmObjects[iObj];
 
+      var dateEmail = ownCloudZimlet.prototype.timeConverter(tmpObj.date);
       var fileName = "";
       //if its a conversation i.e. 'ZmConv' object, get the first loaded message 'ZmMailMsg' object within that.
       if (tmpObj.type == "CONV") {
@@ -1238,12 +1251,12 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
          msgObj  = msgObj.getFirstHotMsg();
          tmpObj.id = msgObj.id;
          type = 'MESSAGE';
-         fileName = (tmpObj.subject ? tmpObj.subject + ' ' + tmpObj.id + '.eml' : tmpObj.id + '.eml');
+         fileName = dateEmail + " " + (tmpObj.subject ? tmpObj.subject + '.eml' : dateEmail + tmpObj.id + '.eml');
       }
       
       if(tmpObj.type ==='MSG')
       {
-         fileName = (tmpObj.subject ? tmpObj.subject  + ' ' + tmpObj.id + '.eml' : tmpObj.id + '.eml');
+         fileName = dateEmail + " " + (tmpObj.subject ? tmpObj.subject  + '.eml' : dateEmail + tmpObj.id + '.eml');
       }
 
       if (tmpObj.id < 0) {
@@ -1278,6 +1291,12 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
       index++;
    }
    ownCloudZimlet.prototype._doDropFetch(items, form);
+};
+
+ownCloudZimlet.prototype.timeConverter = function (UNIX_timestamp) {
+  var d = new Date(UNIX_timestamp); 
+  return d.getFullYear() + "" + ("0"+(d.getMonth()+1)).slice(-2) + "" +
+    d.getDate() + "-" + ("0" + d.getHours()).slice(-2) + "" + ("0" + d.getMinutes()).slice(-2)+ "" + ("0" + d.getSeconds()).slice(-2);
 };
 
 ownCloudZimlet.prototype._doDropFetch = function (items, form)
