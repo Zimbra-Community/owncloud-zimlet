@@ -130,6 +130,7 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_enable_onlyoffice | false | When true, enable right-click menu action and edit in Nextcloud/ownCloud OnlyOffice app. | | 
 | owncloud_zimlet_onlyoffice_api_url |  | Set to Document Server API URL to enable OnlyOffice preview of docx,xlsx,pptx: https://server.example.com:443/web-apps/apps/api/documents/api.js | | 
 | owncloud_zimlet_onlyoffice_secret |  |  If configured, a token is send to Only Office Document server allowing you to restrict access to DS to only trusted users. https://api.onlyoffice.com/editors/security https://github.com/Zimbra-Community/owncloud-zimlet/issues/151 (WebDAV Client currently does not sign parameters) | |
+| owncloud_zimlet_disable_eml_export | false | If configured to false will disable EML export feature in the UI, in case you want to use the PDF export exclusively. (requires docconvert Zimlet deployed) |  |
 
 After changing config.properties run the following: 
 

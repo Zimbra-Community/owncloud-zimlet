@@ -181,6 +181,19 @@ ownCloudZimlet.prototype.init =
        {
           tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_show_hidden'] = this.getUserProperty("owncloud_zimlet_show_hidden");   
        }
+
+       //Set default value in case no owncloud_zimlet_disable_eml_export is set
+       if(this._zimletContext.getConfig("owncloud_zimlet_disable_eml_export"))
+       {
+          //Did the admin specify one? By default we do so use that:
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_disable_eml_export'] = this._zimletContext.getConfig("owncloud_zimlet_disable_eml_export");
+       }
+       else
+       {     
+          //set the default
+          tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_disable_eml_export'] = "false";
+       }   
+       
     /** End load default settings for new users **/
    
    //sort by name asc by default, do we want to store this in the ldap?
@@ -353,19 +366,22 @@ ownCloudZimlet.prototype.initializeToolbar = function(app, toolbar, controller, 
       button.removeAllListeners();
       button.removeDropDownSelectionListener();
    
-      var buttonArgs = {
-         text   : (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)",
-         image: "ownCloud-panelIcon",
-         showImageInToolbar: true,
-         showTextInToolbar: true,
-         tooltip: (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title"),
-         enabled: true
-      };
-   
-      var mi = menu.createMenuItem(Dwt.getNextId(), buttonArgs);
-      mi.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, false]));
-   
-      if(docConvertZimlet.prototype.toString() == "tk_barrydegraaff_docconvert_HandlerObject")
+      if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_disable_eml_export'] == "false")
+      {
+         var buttonArgs = {
+            text   : (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)",
+            image: "ownCloud-panelIcon",
+            showImageInToolbar: true,
+            showTextInToolbar: true,
+            tooltip: (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title"),
+            enabled: true
+         };
+            
+         var mi = menu.createMenuItem(Dwt.getNextId(), buttonArgs);
+         mi.addSelectionListener(new AjxListener(this, this._menuButtonListener, [controller, false]));
+      }   
+      
+      if(typeof(docConvertZimlet)!=="undefined")
       {
          var buttonArgs = {
             text   : (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)",
@@ -1078,44 +1094,48 @@ ownCloudZimlet.prototype.onActionMenuInitialized = function (controller , menu) 
 
 ownCloudZimlet.prototype.addMenuButton = function (controller , menu) {
    var view = appCtxt.getViewTypeFromId(controller.viewId);
-
-   if((docConvertZimlet.prototype.toString() == "tk_barrydegraaff_docconvert_HandlerObject") &&
-   ((view == ZmId.VIEW_CONVLIST || view == ZmId.VIEW_CONV || view == ZmId.VIEW_TRAD)) )
-   {   
    
+   if((view == ZmId.VIEW_CONVLIST || view == ZmId.VIEW_CONV || view == ZmId.VIEW_TRAD)) 
+   {      
       //WebDAV button is added after the move button
-      var ID = "ownCloudZimlet_MENU_ITEM";
-      if(!menu.getMenuItem (ID)) {
-         var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
-         var moveOpIndex = menu.getItemIndex(moveOp);
-         var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)";
-         var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)" : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)";
-         var params = {
-            text : textLabel ,
-            tooltip : tooltipLabel ,
-            image : "ownCloud-panelIcon" ,
-            index : moveOpIndex + 1
-         };
-         var mi = menu.createOp (ID , params);
-         menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
-         mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , [controller, false]));
-      }
+      if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_disable_eml_export']=="false")
+      {
+         var ID = "ownCloudZimlet_MENU_ITEM";
+         if(!menu.getMenuItem (ID)) {
+            var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
+            var moveOpIndex = menu.getItemIndex(moveOp);
+            var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)";
+            var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)" : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (eml)";
+            var params = {
+               text : textLabel ,
+               tooltip : tooltipLabel ,
+               image : "ownCloud-panelIcon" ,
+               index : moveOpIndex + 1
+            };
+            var mi = menu.createOp (ID , params);
+            menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
+            mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , [controller, false]));
+         }
+      }   
 
-      var ID = "ownCloudZimlet_MENU_ITEM_PDF";
-      if(!menu.getMenuItem (ID)) {
-         var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
-         var moveOpIndex = menu.getItemIndex(moveOp);
-         var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)";
-         var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)" : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)";
-         var params = {
-            text : textLabel ,
-            tooltip : tooltipLabel ,
-            image : "ownCloud-panelIcon" ,
-            index : moveOpIndex + 1
-         };
-         var mi = menu.createOp (ID , params);
-         menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
-         mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , [controller, true]));
+      if(typeof(docConvertZimlet)!=="undefined")
+      {
+         var ID = "ownCloudZimlet_MENU_ITEM_PDF";
+         if(!menu.getMenuItem (ID)) {
+            var moveOp = menu.getMenuItem (ZmId.OP_MOVE);
+            var moveOpIndex = menu.getItemIndex(moveOp);
+            var textLabel = (this.getMessage('menuLabel').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)" : this.getMessage('menuLabel') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)";
+            var tooltipLabel = (this.getMessage('menuTooltip').indexOf('???') == 0) ? ZmMsg.saveIn + ' ' + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)" : this.getMessage('menuTooltip') + " " + this._zimletContext.getConfig("owncloud_zimlet_app_title") + " (pdf)";
+            var params = {
+               text : textLabel ,
+               tooltip : tooltipLabel ,
+               image : "ownCloud-panelIcon" ,
+               index : moveOpIndex + 1
+            };
+            var mi = menu.createOp (ID , params);
+            menu.addPopupListener(new AjxListener(this, this._onRightClickMenu, [controller, menu]));
+            mi.addSelectionListener (new AjxListener (this , this._menuButtonListener , [controller, true]));
+         }
       }
    }
    else
@@ -1173,19 +1193,19 @@ ownCloudZimlet.prototype._menuButtonListener = function (controller, options) {
  * @param actionMenu
  */
 ownCloudZimlet.prototype._onRightClickMenu = function(controller, actionMenu) {
-  var menu = actionMenu.getMenuItem("ownCloudZimlet_MENU_ITEM")._menu;
-
-  /* Here you can get the number of selected items, to make the menu do different things based on single/multiselect
-   * we do not need it now, as we just want to enable the menu for all possible selections
-  var selected = controller.getListView().getDnDSelection()
-  selected = (selected instanceof Array) ? selected : [selected];
-  selected = selected.length;*/
-
-  // default behaviour is disable for more than one, changed here
-  actionMenu.enable("ownCloudZimlet_MENU_ITEM", true);
-  actionMenu.enable("ownCloudZimlet_MENU_ITEM_PDF", true);
-
-  
+   try{
+      var menu = actionMenu.getMenuItem("ownCloudZimlet_MENU_ITEM")._menu;
+   
+      /* Here you can get the number of selected items, to make the menu do different things based on single/multiselect
+       * we do not need it now, as we just want to enable the menu for all possible selections
+      var selected = controller.getListView().getDnDSelection()
+      selected = (selected instanceof Array) ? selected : [selected];
+      selected = selected.length;*/
+   
+      // default behaviour is disable for more than one, changed here
+      actionMenu.enable("ownCloudZimlet_MENU_ITEM", true);
+      actionMenu.enable("ownCloudZimlet_MENU_ITEM_PDF", true);
+   } catch(err){}
 };
 
 /**

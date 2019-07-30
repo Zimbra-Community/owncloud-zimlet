@@ -246,6 +246,7 @@ owncloud_zimlet_onlyoffice_api_url=
 owncloud_zimlet_onlyoffice_secret=
 encryption_password_secret=${ENC_PWD}
 encryption_salt_secret=${ENC_SALT}
+owncloud_zimlet_disable_eml_export=false
 " > ${OWNCLOUD_EXTENSION_PATH}/config.properties
 
 #There has to be a better way to get the contents of zimbraMailTrustedIP but
