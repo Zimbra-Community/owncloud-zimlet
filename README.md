@@ -177,7 +177,8 @@ If you use WebDAV Client to connect to Nextcloud (most of us do) you can do a tr
 	rm -Rf /opt/zimbra/lib/ext/ownCloud/
 	rm -Rf /opt/zimbra/lib/ext/OCS
 	rm -Rf /opt/zimbra/lib/ext/DocConvert/
-	zmzimletctl undeploy tk_barrydegraaff_owncloud_zimlet
+	su - zimbra -c "zmzimletctl -l undeploy tk_barrydegraaff_owncloud_zimlet"
+	su - zimbra -c "zmzimletctl -l undeploy tk_barrydegraaff_docconvert"
 	# It's ok if zmzimlet uninstall fails in development mode
 	[zimbra@server zimbra]$ zmmailboxdctl restart
 ### Translations
