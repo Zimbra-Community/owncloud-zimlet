@@ -758,24 +758,6 @@ ownCloudZimlet.prototype.showAttachmentDialog =
   };
 
 /**
- * Called when the matched url is clicked.
- */
-ownCloudZimlet.prototype.clicked =
-  function(spanElement, contentObjText, matchContent, event) {
-      var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-      contentObjText.substring
-      zimletInstance.shareLinkClicked = contentObjText.substring(11);
-      var app = appCtxt.getApp(zimletInstance.ownCloudTab);
-      app.launch();
-      zimletInstance.onSelectApp(zimletInstance.ownCloudTab);
-  };
-
-ownCloudZimlet.prototype.toolTipPoppedUp =
-function(spanElement, obj, context, canvas) {
-   canvas.innerHTML=ZmMsg.mountFolder + '/' + ZmMsg.file;
-};
-
-/**
  * Called when the panel is double-clicked.
  */
 ownCloudZimlet.prototype.doubleClicked =
