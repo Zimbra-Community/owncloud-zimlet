@@ -127,7 +127,7 @@ echo "If you have trouble or are unsure, choose Y. Y/n:"
 
 if [[ "${IS_AUTO}" == 'YES' ]]
 then
-    DEPLOYTODEV="Y"
+    DEPLOYTODEV="N"
 else
     read DEPLOYTODEV;
 fi
