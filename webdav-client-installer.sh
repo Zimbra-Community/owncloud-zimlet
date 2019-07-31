@@ -284,11 +284,22 @@ then
       apt-get install -y libreoffice
    fi
 
-   echo "Manual installation step required,"
-   echo "If you want to be able to convert EML to PDF files, follow instructions at:"
-   echo "https://github.com/Zimbra-Community/owncloud-zimlet/wiki/eml2pdf-manual-install-steps"
-   echo "any key to continue..."
-   read dummy
+   CENTOS=$(cat /etc/redhat-release | grep "CentOS Linux release 8" | wc -l)
+   if [ $CENTOS -eq 1 ]
+   then
+      yum -y remove wkhtmltopdf
+      yum -y install xorg-x11-fonts-75dpi
+      wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox-0.12.5-1.centos7.x86_64.rpm -O /tmp/wkhtmltox-0.12.5-1.centos7.x86_64.rpm
+      rpm -i /tmp/wkhtmltox-0.12.5-1.centos7.x86_64.rpm
+      rm -f /tmp/wkhtmltox-0.12.5-1.centos7.x86_64.rpm
+      ln -s -f /usr/local/bin/wkhtmltopdf /bin/wkhtmltopdf
+   else
+      echo "Manual installation step required,"
+      echo "If you want to be able to convert EML to PDF files, follow instructions at:"
+      echo "https://github.com/Zimbra-Community/owncloud-zimlet/wiki/eml2pdf-manual-install-steps"
+      echo "any key to continue..."
+      read dummy
+   fi
 
    echo "Configure docconvert user and set up sudo in /etc/sudoers.d/99_zimbra-docconvert"
    set +e
