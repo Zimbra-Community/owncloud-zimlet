@@ -284,7 +284,7 @@ then
       apt-get install -y libreoffice
    fi
 
-   CENTOS=$(cat /etc/redhat-release | grep "CentOS Linux release 8" | wc -l)
+   CENTOS=$(cat /etc/redhat-release | grep "CentOS Linux release 7" | wc -l)
    if [ $CENTOS -eq 1 ]
    then
       yum -y remove wkhtmltopdf
