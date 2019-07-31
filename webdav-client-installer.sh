@@ -290,7 +290,9 @@ then
       yum -y remove wkhtmltopdf
       yum -y install xorg-x11-fonts-75dpi
       wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox-0.12.5-1.centos7.x86_64.rpm -O /tmp/wkhtmltox-0.12.5-1.centos7.x86_64.rpm
+      set +e
       rpm -i /tmp/wkhtmltox-0.12.5-1.centos7.x86_64.rpm
+      set -e
       rm -f /tmp/wkhtmltox-0.12.5-1.centos7.x86_64.rpm
       ln -s -f /usr/local/bin/wkhtmltopdf /bin/wkhtmltopdf
    else
@@ -402,10 +404,11 @@ set -e
 
 echo "Configuring Zimlet."
 wget --no-cache "${PROP2XML_JAR_URL}"
+chown zimbra:zimbra $TMPFOLDER -R
 if [[ "$DEPLOYTODEV" == 'N' || "$DEPLOYTODEV" == 'n' ]];
 then
-   chown zimbra:zimbra $TMPFOLDER -R
    su - zimbra -c "zmzimletctl -l deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"   
+   java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet ${OWNCLOUD_EXTENSION_PATH}/config.properties ${OWNCLOUD_ZIMLET_PATH}/config_template.xml
    su - zimbra -c "zmzimletctl configure ${OWNCLOUD_ZIMLET_PATH}/config_template.xml"
 else
    java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet ${OWNCLOUD_EXTENSION_PATH}/config.properties ${OWNCLOUD_ZIMLET_PATH}/config_template.xml
