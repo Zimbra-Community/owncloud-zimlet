@@ -44,12 +44,10 @@ The zimlet and extensions must be installed on all of your mailbox servers (refe
 #### Use the automated installer (Interactive mode):
 
     /tmp/webdav-client-installer.sh 
-    [zimbra@server zimbra]$ zmmailboxdctl restart
 
 #### Use the automated installer (Non interactive mode):
 
     /tmp/webdav-client-installer.sh --auto
-    [zimbra@server zimbra]$ zmmailboxdctl restart
 
 Non interactive mode does not enable experimental Libreoffice document preview, automatically installs the Zimlet (in production mode) and force enables it in all COS'es. It also installs public link sharing.
 
