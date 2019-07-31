@@ -117,29 +117,21 @@ else
 fi
 
 echo ""
-echo "Do you want to automatically install Zimlet and force enable it in all COS'es?"
-echo "If you choose n you have to run zmzimletctl, configuration COS and set config_template.xml manually."
-echo "If you have trouble or are unsure, choose Y. Y/n:"
-
-if [[ "${IS_AUTO}" == 'YES' ]]
-then
-    YNZIMLETDEV="Y"
-else
-    read YNZIMLETDEV;
-fi
-
-
+echo "There are two ways you can deploy the Zimlet"
+echo "You can have the installer do `zmzimletctl deploy`, this way you can enable/disable the Zimlet per user/cos."
+echo "Or you can have the installer install the Zimlet to /opt/zimbra/zimlets-deployed/_dev that way you will have"
+echo "less cache issues on updates of the Zimlet and it is also easier if you want to rebrand the Zimlet."
 echo ""
-echo "Do you want to install the zimlet in easy mode?"
-echo "This way you don't need to setup and configure the zimlet on your own?"
+echo "Do you want to deploy to /opt/zimbra/zimlets-deployed/_dev ? "
 echo "If you have trouble or are unsure, choose Y. Y/n:"
 
 if [[ "${IS_AUTO}" == 'YES' ]]
 then
-    YNZIMLETISNOTPRODUCTION="N"
+    DEPLOYTODEV="Y"
 else
-    read YNZIMLETISNOTPRODUCTION;
+    read DEPLOYTODEV;
 fi
+
 
 echo ""
 echo "Do you want to install public link sharing?"
@@ -170,7 +162,7 @@ if [[ -z $GIT_CMD ]] || [[ -z $ANT_CMD ]] || [[ -z $ZIP_CMD ]]; then
    fi
 fi
 
-if [[ "$YNZIMLETISNOTPRODUCTION" == 'N' || "$YNZIMLETISNOTPRODUCTION" == 'n' ]];
+if [[ "$DEPLOYTODEV" == 'N' || "$DEPLOYTODEV" == 'n' ]];
 then
    echo "Using Production path per user request"
    OWNCLOUD_ZIMLET_PATH="${OWNCLOUD_ZIMLET_PRODUCTION_PATH}"
@@ -179,7 +171,6 @@ else
    echo "Using Development path per user request"
    OWNCLOUD_ZIMLET_PATH="${OWNCLOUD_ZIMLET_DEV_PATH}"
    DOCCONVERT_ZIMLET_PATH="${DOCCONVERT_ZIMLET_DEV_PATH}"
-
 fi
 
 echo "Remove old versions of Zimlet."
@@ -188,12 +179,8 @@ rm -Rf ${DOCCONVERT_ZIMLET_DEV_PATH}/
 rm -Rf ${OWNCLOUD_ZIMLET_PRODUCTION_PATH}/
 rm -Rf ${DOCCONVERT_ZIMLET_PRODUCTION_PATH}/
 
-if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
-then
-   echo "Not touching COS per user request."
-else
-   su - zimbra -c "zmzimletctl -l undeploy tk_barrydegraaff_owncloud_zimlet"
-fi
+su - zimbra -c "zmzimletctl -l undeploy tk_barrydegraaff_owncloud_zimlet"
+su - zimbra -c "zmzimletctl -l undeploy tk_barrydegraaff_docconvert"
 
 TMPFOLDER="$(mktemp -d /tmp/webdav-client-installer.XXXXXXXX)"
 echo "Saving existing configuration to $TMPFOLDER/upgrade"
@@ -208,7 +195,6 @@ fi
 echo "Download WebDAV Client to $TMPFOLDER"
 cd $TMPFOLDER
 git clone --depth=1 -b ${OWNCLOUD_ZIMLET_CLONE_BRANCH} ${OWNCLOUD_ZIMLET_CLONE_URL}
-#cp -r /root/owncloud-zimlet $TMPFOLDER
 
 echo "Compiling WebDAV Client."
 cd owncloud-zimlet
@@ -277,18 +263,13 @@ fi
 ls -hal ${OWNCLOUD_EXTENSION_PATH}/
 
 echo "Installing Zimlet."
-if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
+if [[ "$DEPLOYTODEV" == 'N' || "$DEPLOYTODEV" == 'n' ]];
 then
-   echo "Skipped per user request."
+   chown zimbra:zimbra $TMPFOLDER -R
+   su - zimbra -c "zmzimletctl -l deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"
 else
-   if [[ "$YNZIMLETISNOTPRODUCTION" == 'N' || "$YNZIMLETISNOTPRODUCTION" == 'n' ]];
-   then
-      chown zimbra:zimbra $TMPFOLDER -R
-      su - zimbra -c "zmzimletctl -l deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"
-   else
-      mkdir -p ${OWNCLOUD_ZIMLET_PATH}/
-      unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d ${OWNCLOUD_ZIMLET_PATH}/
-   fi
+   mkdir -p ${OWNCLOUD_ZIMLET_PATH}/
+   unzip $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip -d ${OWNCLOUD_ZIMLET_PATH}/
 fi
 
 if [[ "$YNDOCPREV" == 'Y' || "$YNDOCPREV" == 'y' ]];
@@ -331,9 +312,11 @@ then
    cp -v $TMPFOLDER/owncloud-zimlet/docconvert/extension/out/artifacts/DocConvert/DocConvert.jar ${DOCCONVERT_EXTENSION_PATH}/DocConvert.jar
 
    echo "Installing DocConvert Zimlet."
-   if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
+   if [[ "$DEPLOYTODEV" == 'N' || "$DEPLOYTODEV" == 'n' ]];
    then
-      echo "Skipped per user request."
+      cd $TMPFOLDER/owncloud-zimlet/docconvert/zimlet/tk_barrydegraaff_docconvert/
+      make
+      su - zimbra -c "zmzimletctl -l deploy $TMPFOLDER/owncloud-zimlet/docconvert/zimlet/tk_barrydegraaff_docconvert/tk_barrydegraaff_docconvert.zip"
    else
       mkdir -p ${DOCCONVERT_ZIMLET_PATH}/
       cp -v $TMPFOLDER/owncloud-zimlet/docconvert/zimlet/tk_barrydegraaff_docconvert/* ${DOCCONVERT_ZIMLET_PATH}/
@@ -406,11 +389,13 @@ java -jar $TMPFOLDER/upgrade/propmigr.jar $TMPFOLDER/upgrade/config1.properties 
 set -e
 
 
-echo "Generating config_template.xml"
+echo "Configuring Zimlet."
 wget --no-cache "${PROP2XML_JAR_URL}"
-if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
+if [[ "$DEPLOYTODEV" == 'N' || "$DEPLOYTODEV" == 'n' ]];
 then
-   echo "Skip config_template.xml generation by user request."
+   chown zimbra:zimbra $TMPFOLDER -R
+   su - zimbra -c "zmzimletctl -l deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"   
+   su - zimbra -c "zmzimletctl configure ${OWNCLOUD_ZIMLET_PATH}/config_template.xml"
 else
    java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet ${OWNCLOUD_EXTENSION_PATH}/config.properties ${OWNCLOUD_ZIMLET_PATH}/config_template.xml
    chown zimbra:zimbra ${OWNCLOUD_ZIMLET_PATH}/config_template.xml
@@ -420,30 +405,14 @@ fi
 chown zimbra:zimbra ${OWNCLOUD_EXTENSION_PATH}/config.properties
 chmod u+rw ${OWNCLOUD_EXTENSION_PATH}/config.properties
 
-echo "Configuring Zimlet."
-if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
-then
-   echo "Skipped per user request."
-else
-   if [[ "$YNZIMLETISNOTPRODUCTION" == 'N' || "$YNZIMLETISNOTPRODUCTION" == 'n' ]];
-   then
-      chown zimbra:zimbra $TMPFOLDER -R
-      su - zimbra -c "zmzimletctl configure ${OWNCLOUD_ZIMLET_PATH}/config_template.xml"
-   fi
-fi
-
 echo "Flushing Zimlet Cache."
 su - zimbra -c "zmprov fc all"
+su - zimbra -c "zmmailboxdctl restart"
 
 echo ""
 echo ""
 echo "--------------------------------------------------------------------------------------------------------------
 Zimbra WebDAV Client installed successful.
-
-To load the extension:
-
-su zimbra
-zmmailboxdctl restart
 
   Your clients CAN CONNECT TO ALL DAV SERVERS BY DEFAULT,
   you can restrict the allowed DAV servers to connect to in:
@@ -455,11 +424,10 @@ zmmailboxdctl restart
 
 "
 
-if [[ "$YNZIMLETDEV" == 'N' || "$YNZIMLETDEV" == 'n' ]];
+if [[ "$DEPLOYTODEV" == 'N' || "$DEPLOYTODEV" == 'n' ]];
 then
    chown zimbra:zimbra $TMPFOLDER -R
-   echo "To install Zimlet run as user Zimbra:"
-   echo "zmzimletctl -l deploy $TMPFOLDER/owncloud-zimlet/zimlet/tk_barrydegraaff_owncloud_zimlet.zip"
+   echo "To configure Zimlet run as user Zimbra:"
    echo "java -jar $TMPFOLDER/upgrade/prop2xml.jar tk_barrydegraaff_owncloud_zimlet ${OWNCLOUD_EXTENSION_PATH}/config.properties ${OWNCLOUD_ZIMLET_PATH}/config_template.xml"
    echo "zmzimletctl configure ${OWNCLOUD_ZIMLET_PATH}/config_template.xml"
    echo "zmprov fc all"
