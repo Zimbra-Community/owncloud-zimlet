@@ -1188,7 +1188,7 @@ ownCloudZimlet.prototype._menuButtonListener = function (controller, options) {
  */
 ownCloudZimlet.prototype._onRightClickMenu = function(controller, actionMenu) {
    try{
-      var menu = actionMenu.getMenuItem("ownCloudZimlet_MENU_ITEM")._menu;
+      //var menu = actionMenu.getMenuItem("ownCloudZimlet_MENU_ITEM")._menu;
    
       /* Here you can get the number of selected items, to make the menu do different things based on single/multiselect
        * we do not need it now, as we just want to enable the menu for all possible selections
@@ -1198,6 +1198,9 @@ ownCloudZimlet.prototype._onRightClickMenu = function(controller, actionMenu) {
    
       // default behaviour is disable for more than one, changed here
       actionMenu.enable("ownCloudZimlet_MENU_ITEM", true);
+   } catch(err){}
+   
+   try{
       actionMenu.enable("ownCloudZimlet_MENU_ITEM_PDF", true);
    } catch(err){}
 };
