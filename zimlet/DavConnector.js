@@ -377,9 +377,41 @@
    * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.rm = function(path, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
-    DavConnector._sendRequest(DavAction.DELETE, soapDoc, callback, errorCallback);
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+    var testpath = path.replace(/\/\//g, "/");
+    testpath = testpath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
+    testpath = testpath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");
+    console.log(path);
+    console.log(testpath);
+    if((zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true') && (testpath.match(/\//g).length==1))
+    {
+      path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
+      path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");
+      path = path.replace(/\//g, "");
+      path = encodeURIComponent(path).replace(/%2F/g,'');
+      var soapDoc = AjxSoapDoc.create("OCS", "urn:OCS", null);
+      var params = {
+         soapDoc: soapDoc,
+         asyncMode: true,
+         callback: callback
+      };
+      soapDoc.getMethod().setAttribute("action", "deleteLibrary");
+      soapDoc.getMethod().setAttribute("name", path);
+      soapDoc.set('owncloud_zimlet_password', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']));
+      soapDoc.set('owncloud_zimlet_username', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']));
+      soapDoc.set('owncloud_zimlet_server_name', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']);
+      soapDoc.set('owncloud_zimlet_server_port', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']);
+      soapDoc.set('owncloud_zimlet_server_path', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']);
+      soapDoc.set('owncloud_zimlet_oc_folder', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']);
+      
+      appCtxt.getAppController().sendRequest(params);             
+    }
+    else
+    {
+       var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+       soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
+       DavConnector._sendRequest(DavAction.DELETE, soapDoc, callback, errorCallback);
+    }
   };
 
   /**
@@ -416,9 +448,35 @@
    * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.mkcol = function(path, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
-    DavConnector._sendRequest(DavAction.MKCOL, soapDoc, callback, errorCallback);
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+    var testpath = path.replace(/\/\//g, "/");
+    if((zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true') && (testpath.match(/\//g).length==1))
+    {
+      path = path.replace(/\//g, "");
+      path = encodeURIComponent(path).replace(/%2F/g,'');
+      var soapDoc = AjxSoapDoc.create("OCS", "urn:OCS", null);
+      var params = {
+         soapDoc: soapDoc,
+         asyncMode: true,
+         callback: callback
+      };
+      soapDoc.getMethod().setAttribute("action", "createLibrary");
+      soapDoc.getMethod().setAttribute("name", path);
+      soapDoc.set('owncloud_zimlet_password', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']));
+      soapDoc.set('owncloud_zimlet_username', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']));
+      soapDoc.set('owncloud_zimlet_server_name', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']);
+      soapDoc.set('owncloud_zimlet_server_port', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']);
+      soapDoc.set('owncloud_zimlet_server_path', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']);
+      soapDoc.set('owncloud_zimlet_oc_folder', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']);
+      
+      appCtxt.getAppController().sendRequest(params);             
+    }
+    else
+    {
+       var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+       soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
+       DavConnector._sendRequest(DavAction.MKCOL, soapDoc, callback, errorCallback);
+    }
   };
 
   /**
@@ -431,12 +489,50 @@
    * @param {AjxCallback=} errorCallback
    */
   DavConnector.prototype.move = function(path, destPath, overwrite, callback, errorCallback) {
-    var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
-    soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
-    soapDoc.set('destPath', encodeURIComponent(destPath).replace(/%2F/g,'/'));
-    soapDoc.set('overwrite', 'false');
-    if (overwrite === true) soapDoc.set('overwrite', 'true');
-    DavConnector._sendRequest(DavAction.MOVE, soapDoc, callback, errorCallback);
+    var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+    var testpath = path.replace(/\/\//g, "/");
+    testpath = testpath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
+    testpath = testpath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");    
+    var testDestPath = destPath.replace(/\/\//g, "/");
+    testDestPath = testDestPath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
+    testDestPath = testDestPath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");
+    if((zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true') && (testpath.match(/\//g).length==1) && (testDestPath.match(/\//g).length==1))
+    {
+      path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
+      path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");    
+      path = path.replace(/\//g, "");
+      path = encodeURIComponent(path).replace(/%2F/g,'');
+      destPath = destPath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
+      destPath = destPath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");    
+      destPath = destPath.replace(/\//g, "");
+      destPath = encodeURIComponent(destPath).replace(/%2F/g,'');
+      var soapDoc = AjxSoapDoc.create("OCS", "urn:OCS", null);
+      var params = {
+         soapDoc: soapDoc,
+         asyncMode: true,
+         callback: callback
+      };
+      soapDoc.getMethod().setAttribute("action", "renameLibrary");
+      soapDoc.getMethod().setAttribute("oldName", path);
+      soapDoc.getMethod().setAttribute("newName", destPath);
+      soapDoc.set('owncloud_zimlet_password', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']));
+      soapDoc.set('owncloud_zimlet_username', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']));
+      soapDoc.set('owncloud_zimlet_server_name', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']);
+      soapDoc.set('owncloud_zimlet_server_port', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']);
+      soapDoc.set('owncloud_zimlet_server_path', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']);
+      soapDoc.set('owncloud_zimlet_oc_folder', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']);
+      
+      appCtxt.getAppController().sendRequest(params);             
+    }
+    else
+    {     
+       var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
+       soapDoc.set('path', encodeURIComponent(path).replace(/%2F/g,'/'));
+       soapDoc.set('destPath', encodeURIComponent(destPath).replace(/%2F/g,'/'));
+       soapDoc.set('overwrite', 'false');
+       if (overwrite === true) soapDoc.set('overwrite', 'true');
+       DavConnector._sendRequest(DavAction.MOVE, soapDoc, callback, errorCallback);
+    }
   };
 
   /**
