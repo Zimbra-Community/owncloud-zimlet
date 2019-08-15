@@ -71,14 +71,14 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
          
          if((zimletInstance._zimletContext.getConfig("owncloud_zimlet_enable_onlyoffice") == 'true'))
          {         
-            var mi = menu.createMenuItem(Dwt.getNextId(), {image:'MSWordDoc',text:ZmMsg.briefcaseCreateNewDocument});
+            var mi = menu.createMenuItem("oc_zimlet_new_docx", {image:'MSWordDoc',text:ZmMsg.briefcaseCreateNewDocument});
             mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['docx',ZmMsg.briefcaseCreateNewDocument]));
-            var mi = menu.createMenuItem(Dwt.getNextId(), {image:'MSExcelDoc',text:ZmMsg.briefcaseCreateNewSpreadsheet});
+            var mi = menu.createMenuItem("oc_zimlet_new_xlsx", {image:'MSExcelDoc',text:ZmMsg.briefcaseCreateNewSpreadsheet});
             mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['xlsx',ZmMsg.briefcaseCreateNewSpreadsheet]));
-            var mi = menu.createMenuItem(Dwt.getNextId(), {image:'MSPowerpointDoc',text:ZmMsg.briefcaseCreateNewPresentation});
+            var mi = menu.createMenuItem("oc_zimlet_new_pptx", {image:'MSPowerpointDoc',text:ZmMsg.briefcaseCreateNewPresentation});
             mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['pptx',ZmMsg.briefcaseCreateNewPresentation]));         
          }
-         var mi = menu.createMenuItem(Dwt.getNextId(), {image:'GenericDoc',text:ZmMsg._new + ' ' + ZmMsg.plainText});
+         var mi = menu.createMenuItem("oc_zimlet_new_txt", {image:'GenericDoc',text:ZmMsg._new + ' ' + ZmMsg.plainText});
          mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['txt',ZmMsg._new + ' ' + ZmMsg.plainText]));  
       }
       
@@ -248,6 +248,30 @@ var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_ownclo
         document.getElementById('WebDAVPreview').style.height=zimletInstance.appHeight+'px';
      } catch (err) {}
      var act = this._resizeAction = new AjxTimedAction(this, OwnCloudApp.prototype._resize, [this]);
+
+     if(zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true')
+     {
+         try {
+           if((zimletInstance._appView._currentPath == '/') || (zimletInstance._appView._currentPath == tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']))
+           {
+              //hierzo
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FILE").setVisible(false);
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_docx",false);
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_pptx",false);
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_xlsx",false);
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_txt",false);
+           }
+           else
+           {
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FILE").setVisible(true);
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FILE").setItemVisible("oc_zimlet_new_docx",true);
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_docx",true);
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_pptx",true);
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_xlsx",true);
+              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_txt",true);
+           }
+        } catch(err)  {}        
+     }
      AjxTimedAction.scheduleAction(act, 200);  
 };
 
@@ -282,7 +306,6 @@ OwnCloudApp.prototype.appActive = function(active) {
    if(active)
    { 
         document.title = 'Zimbra: ' + zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title");
-        this._shareLinkClickedHandler(); 
    } 
 };
 
@@ -498,56 +521,6 @@ OwnCloudApp.prototype._handleRootPropfind = function(resources) {
   this._showFolderData(resources);
   this.appActive(true);
 };
-
-OwnCloudApp.prototype._shareLinkClickedHandler = function() {
-  var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
-  if(zimletInstance.shareLinkClicked)
-  {
-     //needed for upload and new folder button, otherwise uploads and new folders end in / (root) after clicking internal user shared link zimbradav://
-     zimletInstance._appView._currentPath = decodeURIComponent(zimletInstance.shareLinkClicked.substr(0, zimletInstance.shareLinkClicked.lastIndexOf("/"))) + "/";
-     
-     //issue: https://github.com/Zimbra-Community/owncloud-zimlet/issues/141
-     zimletInstance.shareLinkClicked = decodeURIComponent(zimletInstance.shareLinkClicked);
-     this._davConnector.propfind(
-         zimletInstance.shareLinkClicked,
-         1,
-         new AjxCallback(
-           this,
-           this._shareLinkClickedHandlerCbk
-         ),
-         this._zimletCtxt._defaultPropfindErrCbk
-       );
-
-     zimletInstance.shareLinkClicked = '';
-  }  
-};  
-
-OwnCloudApp.prototype._shareLinkClickedHandlerCbk = function(davResource)
-{
-   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
-   if(davResource[0].isDirectory())
-   {
-      this._showFolderData(davResource);
-   }
-   else
-   {
-       //call _shareLinkClickedHandler on the folder of the shared file, so the browser shows that too
-       this._davConnector.propfind(
-         davResource[0].getHref().substring(0, davResource[0].getHref().lastIndexOf("/"))+'/',
-         1,
-         new AjxCallback(
-           this,
-           this._shareLinkClickedHandlerCbk
-         ),
-         this._zimletCtxt._defaultPropfindErrCbk
-       );
-
-       this._davConnector.getDownloadLink(
-       davResource[0].getHref(),
-       new AjxCallback(this._listView, this._listView.preview, [davResource[0]])
-     );
-   }   
-}
 
 /**
  * Get the folder tree item by his href.
