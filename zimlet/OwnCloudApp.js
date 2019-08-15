@@ -254,7 +254,6 @@ var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_ownclo
          try {
            if((zimletInstance._appView._currentPath == '/') || (zimletInstance._appView._currentPath == tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']))
            {
-              //hierzo
               appCtxt.getCurrentApp().getToolbar().getButton("NEW_FILE").setVisible(false);
               appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_docx",false);
               appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_pptx",false);
@@ -264,7 +263,6 @@ var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_ownclo
            else
            {
               appCtxt.getCurrentApp().getToolbar().getButton("NEW_FILE").setVisible(true);
-              appCtxt.getCurrentApp().getToolbar().getButton("NEW_FILE").setItemVisible("oc_zimlet_new_docx",true);
               appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_docx",true);
               appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_pptx",true);
               appCtxt.getCurrentApp().getToolbar().getButton("NEW_FOLDER")._menu.setItemVisible("oc_zimlet_new_xlsx",true);
