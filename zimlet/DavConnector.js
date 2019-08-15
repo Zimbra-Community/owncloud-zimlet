@@ -490,11 +490,11 @@
     var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
     var testpath = path.replace(/\/\//g, "/");
     testpath = testpath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
-    testpath = testpath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");    
+    testpath = testpath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");
     var testDestPath = destPath.replace(/\/\//g, "/");
     testDestPath = testDestPath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
-    testDestPath = testDestPath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");
-    if((zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true') && (testpath.match(/\//g).length==1) && (testDestPath.match(/\//g).length==1))
+    testDestPath = testDestPath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");    
+    if((zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true') && (testpath.match(/\//g).length==1) && (testDestPath.match(/\//g).length==1) && testpath.substr(-1) == "/")
     {
       path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
       path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");    
@@ -522,6 +522,33 @@
       
       appCtxt.getAppController().sendRequest(params);             
     }
+    else if((zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true') && (DavConnector.prototype.stripFileName(path) !== DavConnector.prototype.stripFileName(destPath)))
+    {
+       //this is a file move operation
+      path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
+      path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");    
+      path = encodeURIComponent(path).replace(/%2F/g,'/');
+      destPath = destPath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
+      destPath = destPath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");    
+      destPath = encodeURIComponent(destPath).replace(/%2F/g,'/');
+      var soapDoc = AjxSoapDoc.create("OCS", "urn:OCS", null);
+      var params = {
+         soapDoc: soapDoc,
+         asyncMode: true,
+         callback: callback
+      };
+      soapDoc.getMethod().setAttribute("action", "moveFile");
+      soapDoc.getMethod().setAttribute("oldPath", "/"+path);
+      soapDoc.getMethod().setAttribute("newPath", "/"+destPath);
+      soapDoc.set('owncloud_zimlet_password', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']));
+      soapDoc.set('owncloud_zimlet_username', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']));
+      soapDoc.set('owncloud_zimlet_server_name', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']);
+      soapDoc.set('owncloud_zimlet_server_port', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']);
+      soapDoc.set('owncloud_zimlet_server_path', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']);
+      soapDoc.set('owncloud_zimlet_oc_folder', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']);
+      
+      appCtxt.getAppController().sendRequest(params);        
+    }
     else
     {     
        var soapDoc = AjxSoapDoc.create(HANDLER_NAME, URN);
@@ -531,6 +558,14 @@
        if (overwrite === true) soapDoc.set('overwrite', 'true');
        DavConnector._sendRequest(DavAction.MOVE, soapDoc, callback, errorCallback);
     }
+  };
+
+  DavConnector.prototype.stripFileName = function(path) {
+     if(path.substr(-1) == "/")
+     {
+        path = path.substring(0, path.length - 1);
+     }
+     return path.substring(0, path.lastIndexOf("/"));
   };
 
   /**

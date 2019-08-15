@@ -341,7 +341,7 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
    if(zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true')
    {
      try {
-        if((zimletInstance._appView._currentPath == '/') || (zimletInstance._appView._currentPath == tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']))
+        if(resource.isDirectory())
         {
            parent.getMenuItem(ZmOperation.MOVE).setVisible(false);             
         }
