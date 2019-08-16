@@ -1281,7 +1281,7 @@ ownCloudZimlet.prototype._doDropPropfindCbk = function(zmObjects, callback, erro
 ownCloudZimlet.prototype.timeConverter = function (UNIX_timestamp) {
   var d = new Date(UNIX_timestamp); 
   return d.getFullYear() + "" + ("0"+(d.getMonth()+1)).slice(-2) + "" +
-    d.getDate() + "-" + ("0" + d.getHours()).slice(-2) + "" + ("0" + d.getMinutes()).slice(-2)+ "" + ("0" + d.getSeconds()).slice(-2);
+    ("0" + d.getDate()).slice(-2) + "-" + ("0" + d.getHours()).slice(-2) + "" + ("0" + d.getMinutes()).slice(-2)+ "" + ("0" + d.getSeconds()).slice(-2);
 };
 
 ownCloudZimlet.prototype._doDropFetch = function (items, form)
