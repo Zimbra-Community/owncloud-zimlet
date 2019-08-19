@@ -9,9 +9,9 @@ Demo video: https://www.youtube.com/watch?v=8pVMoXkNt8c
 
 User manual : https://barrydegraaff.github.io/owncloud/
 
-Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 15-16, Alfresco Enterprise - 5.2.0 and Nuxeo.
+Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 15-16, Seafile 7.0.7, Alfresco Enterprise - 5.2.0 and Nuxeo.
 
-Supported Zimbra versions 8.8.12.
+Supported Zimbra versions 8.8.15.
 
 Zimbra Desktop is not supported and does not work. Ubuntu 12.04 is not supported (https://github.com/Zimbra-Community/owncloud-zimlet/issues/117) If you have trouble installing on Ubuntu see below on the known issues.
 
@@ -179,18 +179,22 @@ If you use WebDAV Client to connect to Nextcloud (most of us do) you can do a tr
 	su - zimbra -c "zmzimletctl -l undeploy tk_barrydegraaff_docconvert"
 	# It's ok if zmzimlet uninstall fails in development mode
 	[zimbra@server zimbra]$ zmmailboxdctl restart
+
 ### Translations
 
 The Zimbra WebDAV Client uses built-in language strings from Zimbra, as such it is translated for all languages that are supported by Zimbra. 
 
+### Seafile support
+
+This Zimlet offers support for Seafile. Read more https://github.com/Zimbra-Community/seafile
+
 ### Known issues and troubleshooting:
 
 1. Installer does not work on Ubuntu fails to get the sources from git. This is a suspected cache issue, try again after 10 minutes, if that does not work open the `webdav-client-installer.sh` and change OWNCLOUD_ZIMLET_CLONE_URL to https://github.com/Zimbra-Community/owncloud-zimlet or http://github.com/Zimbra-Community/owncloud-zimlet or git://github.com/Zimbra-Community/owncloud-zimlet.
-2. _Passwords with characters like @ will not work, try to install this using a simple account and password (A-Za-z0-9)._ fixed in 0.6.2.
-3. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
-4. Running a WebDAV server behind and NGINX reverse proxy (from CentOS or Debian) won't work, it will work when proper options are enabled (as for example with zimbra-proxy, also based on NGINX).
-5. Delay of 30 seconds in response from Nextcloud, the brute force login protection has kicked in. Configure X-Forwarded-For see above! Or and this is not recommended: set in your Nextcloud the preference `'auth.bruteforce.protection.enabled' => false,` and issue `truncate table bruteforce_attempts;`
-6. Download menu option does not work on Safari on iPad, solution: disable pop-up blocker
+2. Error 500 but some features work, if you use ownCloud external storage, make sure it is available and marked `green`.
+3. Running a WebDAV server behind and NGINX reverse proxy (from CentOS or Debian) won't work, it will work when proper options are enabled (as for example with zimbra-proxy, also based on NGINX).
+4. Delay of 30 seconds in response from Nextcloud, the brute force login protection has kicked in. Configure X-Forwarded-For see above! Or and this is not recommended: set in your Nextcloud the preference `'auth.bruteforce.protection.enabled' => false,` and issue `truncate table bruteforce_attempts;`
+5. Download menu option does not work on Safari on iPad, solution: disable pop-up blocker
 
 See:
 https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting

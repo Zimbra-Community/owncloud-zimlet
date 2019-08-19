@@ -45,10 +45,6 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
       // Create toolbar buttons
       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
 
-      //dummy button to catch the enter event and do nothing, dunno what the correct way is of not having an enter-key listener on zmtoolbar.
-      //want it in the search text input.
-      toolbar.createButton('OC_DUMMY', {});
-
       if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title"))
       {
          toolbar.createButton(ZmOperation.OP_OPEN_IN_TAB, {text: zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title")});
@@ -82,24 +78,23 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
          mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['txt',ZmMsg._new + ' ' + ZmMsg.plainText]));  
       }
       
-      var searchField = new DwtInputField({
-         parent: toolbar,
-         hint: ZmMsg.search.toLowerCase() + '...',
-         id: 'owncloud_zimlet_searchDWT',
-         inputId: 'owncloud_zimlet_search'
-      });  
-      toolbar.addChild(searchField);   
-
-      toolbar._buttons.OC_DUMMY.setVisibility(false);   
-      toolbar._buttons.OC_DUMMY.setSize(0,0);
-      //searchField.focus();
-      
-      document.getElementById("owncloud_zimlet_search").addEventListener("keyup", function(event) 
+      if(!zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true')
       {
-         if (event.keyCode === 13) {
-            OwnCloudApp.prototype._searchFieldListener();
-         }
-      });     
+         var searchField = new DwtInputField({
+            parent: toolbar,
+            hint: ZmMsg.search.toLowerCase() + '...',
+            id: 'owncloud_zimlet_searchDWT',
+            inputId: 'owncloud_zimlet_search'
+         });  
+         toolbar.addChild(searchField);   
+        
+         document.getElementById("owncloud_zimlet_search").addEventListener("keyup", function(event) 
+         {
+            if (event.keyCode === 13) {
+               OwnCloudApp.prototype._searchFieldListener();
+            }
+         });
+      }
       
       toolbar.createButton("SaveDocument", {text: ZmMsg.close});
       toolbar.addSelectionListener("SaveDocument", new AjxListener(this, this._OnlyOfficeSaveDocument));         
