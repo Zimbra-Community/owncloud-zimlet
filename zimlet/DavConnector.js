@@ -381,7 +381,7 @@
     var testpath = path.replace(/\/\//g, "/");
     testpath = testpath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
     testpath = testpath.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");
-    if((zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true') && (testpath.match(/\//g).length==1))
+    if((zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true') && (testpath.match(/\//g).length==1) && (testpath.substr(-1) == "/"))
     {
       path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
       path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");
