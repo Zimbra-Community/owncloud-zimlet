@@ -433,7 +433,17 @@ OwnCloudListView.prototype._sendFileListener = function(ev) {
          var expiryDateLabel = zimletInstance.getMessage('expiryDate');         
       }
       expiryDateLabel += " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")";
-      html += '<tr><td></td><td><input placeholder="YYYY-MM-DD" title="'+expiryDateLabel+'" id="tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate" type="date"></td></tr></table></form>';
+      //prevent selection of day in the past
+      try {
+      var dt = new Date();
+      dt.setTime(dt.getTime() + (24 * 60 * 60 * 1000));
+      var minDate = 'min="'+dt.toISOString().slice(0,10)+'"';
+      } catch(err)
+      {
+         var minDate = "";
+      }
+      
+      html += '<tr><td></td><td><input placeholder="YYYY-MM-DD" title="'+expiryDateLabel+'" id="tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate" type="date" '+minDate+' ></td></tr></table></form>';
    }
    else
    {
