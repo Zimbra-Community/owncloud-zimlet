@@ -78,7 +78,12 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
          mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['txt',ZmMsg._new + ' ' + ZmMsg.plainText]));  
       }
       
-      if(!zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true')
+      //in case it is undefined...
+      if(zimletInstance._zimletContext.getConfig("enable_seafile_patches")=='true')
+      {
+         //to do implement search API in Seafile   
+      } 
+      else
       {
          var searchField = new DwtInputField({
             parent: toolbar,
