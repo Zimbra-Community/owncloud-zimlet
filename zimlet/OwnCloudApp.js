@@ -45,6 +45,10 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
       // Create toolbar buttons
       var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
 
+      //dummy button to catch the enter event and do nothing, dunno what the correct way is of not having an enter-key listener on zmtoolbar.
+      //want it in the search text input.
+      toolbar.createButton('OC_DUMMY', {});
+
       if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title"))
       {
          toolbar.createButton(ZmOperation.OP_OPEN_IN_TAB, {text: zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title")});
@@ -100,6 +104,10 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
             }
          });
       }
+
+      toolbar._buttons.OC_DUMMY.setVisibility(false);
+      toolbar._buttons.OC_DUMMY.setSize(0,0);
+      //searchField.focus();
       
       toolbar.createButton("SaveDocument", {text: ZmMsg.close});
       toolbar.addSelectionListener("SaveDocument", new AjxListener(this, this._OnlyOfficeSaveDocument));         
