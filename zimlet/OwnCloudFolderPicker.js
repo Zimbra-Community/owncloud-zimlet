@@ -88,6 +88,9 @@ function OwnCloudFolderPicker(parent, zimletCtxt, davConnector, ownCloudConnecto
   };
   this._tree.addSelectionListener(new AjxListener(this, this._treeclick, {}));
   
+  /* Some funky stuff happens when users double click on TreeItems and the DwtSelection, we disable this 'feature'. See DwtTree.prototype._itemDblClicked */
+  this._tree._itemDblClicked = function(){};
+  
   this._populateTree();
 }
 
