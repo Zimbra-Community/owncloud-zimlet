@@ -51,7 +51,13 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
 
       if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title"))
       {
-         toolbar.createButton(ZmOperation.OP_OPEN_IN_TAB, {text: zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title")});
+         var buttonTxt = zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_title");
+         if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_url")=='seafile')
+         {
+		    buttonTxt = ZmMsg.goToUrl.replace("{0}","SeaFile"); 
+		 }
+         
+         toolbar.createButton(ZmOperation.OP_OPEN_IN_TAB, {text: buttonTxt});
          toolbar.addSelectionListener(ZmOperation.OP_OPEN_IN_TAB, new AjxListener(this, this.extraBtnLsnr));
       }
      
