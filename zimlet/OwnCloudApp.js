@@ -592,11 +592,40 @@ OwnCloudApp.prototype.extraBtnLsnr = function() {
       //this is the default since version 1.0.5
       window.open(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']);
    }
+   else if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_url")=='seafile')
+   {
+     var soapDoc = AjxSoapDoc.create("OCS", "urn:OCS", null);
+     var params = {
+     soapDoc: soapDoc,
+     asyncMode: true,
+     callback: this.goToSeaFile
+     };
+     soapDoc.getMethod().setAttribute("action", "loginRedirect");
+
+     var path = zimletInstance._appView._currentPath;
+     path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path'],"");
+     path = path.replace(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder'],"");
+      
+     soapDoc.getMethod().setAttribute("path", path);
+     soapDoc.set('owncloud_zimlet_password', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']));
+     soapDoc.set('owncloud_zimlet_username', encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']));
+     soapDoc.set('owncloud_zimlet_server_name', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_name']);
+     soapDoc.set('owncloud_zimlet_server_port', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_port']);
+     soapDoc.set('owncloud_zimlet_server_path', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']);
+     soapDoc.set('owncloud_zimlet_oc_folder', tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']);
+
+     appCtxt.getAppController().sendRequest(params);      
+   }
    else
    {
       //this was the default in versions < 1.0.5
       window.open(zimletInstance._zimletContext.getConfig("owncloud_zimlet_extra_toolbar_button_url"))
    }   
+};
+
+OwnCloudApp.prototype.goToSeaFile = function(result) {
+   var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject; 
+   window.open(result._data.response.loginRedirect);
 };
 
 OwnCloudApp.prototype.NewUploadToDavDialog = function() {
