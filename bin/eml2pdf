@@ -14,6 +14,6 @@ fi
 
 HOME=/tmp
 cd /tmp
-sudo -u docconvert /opt/zimbra/common/bin/java -jar /usr/local/sbin/emailconverter-2.0.1-all.jar $1 $2
+sudo -u docconvert /opt/zimbra/common/bin/java -jar /usr/local/sbin/emailconverter-2.0.1-all.jar $1
 sudo -u docconvert chmod ugo+rwx /tmp/docconvert*.pdf
 
