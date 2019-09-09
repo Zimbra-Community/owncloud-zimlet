@@ -277,6 +277,7 @@ if [[ "$YNDOCPREV" == 'Y' || "$YNDOCPREV" == 'y' ]];
 then
    echo "Install LibreOffice and document convertion features"
    cp -v $TMPFOLDER/owncloud-zimlet/bin/* /usr/local/sbin/   
+   rm -f /usr/local/sbin/emailconverter-2.0.1-all.jar
    cp -v $TMPFOLDER/owncloud-zimlet/docconvert/emailconverter-2.0.1-all.jar /usr/local/sbin/
 
    if [[ ! -z $YUM_CMD ]]; then
