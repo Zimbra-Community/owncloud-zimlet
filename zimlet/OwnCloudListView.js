@@ -660,17 +660,17 @@ OwnCloudListView.prototype._onItemSelected = function(ev) {
      zimletInstance.onlyOfficeToken = dav_download_options[1];
      if(dav_download_options[0] == 'true')
      {
-        var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.scad$|\.md$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i;
+        var regex = /\.pdf$|\.odt$|\.ods$|\.odp$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.scad$|\.ino$|\.h$|\.c$|\.md$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.ppt$|\.pptx$|\.djvu$/i;
      }
      else
      {
         if(zimletInstance._zimletContext.getConfig("owncloud_zimlet_onlyoffice_api_url"))
         {
-           var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.scad$|\.md$|\.docx$|\.xlsx$|\.pptx$/i;
+           var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.scad$|\.ino$|\.h$|\.c$|\.md$|\.docx$|\.xlsx$|\.pptx$/i;
         }
         else
         {
-           var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.scad$|\.md$/i;
+           var regex = /\.pdf$|\.mp4$|\.webm$|\.jpg$|\.jpeg$|\.png$|\.txt$|\.scad$|\.ino$|\.h$|\.c$|\.md$/i;
         }
      }
      if(!item.isDirectory() && davResource._href.match(regex))
@@ -738,6 +738,15 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
      case (davResource._href.match(/\.scad$/i) || {}).input:
           contentType = 'text/plain';
        break;
+     case (davResource._href.match(/\.ino$/i) || {}).input:
+          contentType = 'text/plain';
+       break;
+     case (davResource._href.match(/\.h$/i) || {}).input:
+          contentType = 'text/plain';
+       break;
+     case (davResource._href.match(/\.c$/i) || {}).input:
+          contentType = 'text/plain';
+       break;              
      case (davResource._href.match(/\.md$/i) || {}).input:
           contentType = 'text/plain';
        break;       
@@ -925,7 +934,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
      //see also function OwnCloudApp
      document.getElementById('WebDAVPreviewContainer').innerHTML='<iframe id="WebDAVPreview" src="" style="width:'+(zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px; height:'+  zimletInstance.appHeight +'px; border:0px">';
 
-     if(davResource._href.match(/\.txt$|\.scad$/i))
+     if(davResource._href.match(/\.txt$|\.scad$|\.ino$|\.h$|\.c$/i))
      {
         document.getElementById('WebDAVPreview').src=href;
      }
