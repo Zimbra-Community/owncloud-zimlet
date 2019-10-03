@@ -134,7 +134,7 @@ public class DocConvert extends ExtensionHttpHandler {
             return;
         }
         String extension;
-        switch (paramsMap.get("extension")) {
+        switch (paramsMap.get("extension").toLowerCase()) {
             case "doc":
             case "docx":
             case "xlsx":
@@ -146,7 +146,7 @@ public class DocConvert extends ExtensionHttpHandler {
             case "odt":
             case "eml":
                 //continue with conversion, avoided use of regex for security audit reasons
-                extension = paramsMap.get("extension");
+                extension = paramsMap.get("extension").toLowerCase();
                 break;
             default:
                 //do nothing
