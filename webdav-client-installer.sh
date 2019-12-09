@@ -118,7 +118,7 @@ fi
 
 echo ""
 echo "There are two ways you can deploy the Zimlet"
-echo "You can have the installer do `zmzimletctl deploy`, this way you can enable/disable the Zimlet per user/cos."
+echo "You can have the installer do zmzimletctl deploy, this way you can enable/disable the Zimlet per user/cos."
 echo "Or you can have the installer install the Zimlet to /opt/zimbra/zimlets-deployed/_dev that way you will have"
 echo "less cache issues on updates of the Zimlet and it is also easier if you want to rebrand the Zimlet."
 echo ""
