@@ -11,7 +11,7 @@ User manual : https://barrydegraaff.github.io/owncloud/
 
 Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 15-16, Seafile 7.0.7, Alfresco Enterprise - 5.2.0 and Nuxeo.
 
-Supported Zimbra versions 8.8.15.
+Supported Zimbra versions 8.8.15 ***not yet compatible with 8.8.15 patch 5!! See https://github.com/Zimbra-Community/owncloud-zimlet/issues/229 ***
 
 Zimbra Desktop is not supported and does not work. Ubuntu 12.04 is not supported (https://github.com/Zimbra-Community/owncloud-zimlet/issues/117) If you have trouble installing on Ubuntu see below on the known issues.
 
