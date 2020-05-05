@@ -72,7 +72,10 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
          button.noMenuBar = true;
          button.removeAllListeners();
          button.removeDropDownSelectionListener();
-         var mi = menu.createMenuItem(Dwt.getNextId(), {image:'Folder',text:ZmMsg.newFolder});
+         var mi = menu.createMenuItem(Dwt.getNextId(), {image:'Folder',
+            text:(zimletInstance.getMessage('newFolderGenCase') != '' ?
+            zimletInstance.getMessage('newFolderGenCase')
+            : ZmMsg.newFolder)});
          mi.addSelectionListener(new AjxListener(this, this._newFolderListener));
          
          if((zimletInstance._zimletContext.getConfig("owncloud_zimlet_enable_onlyoffice") == 'true'))
@@ -84,8 +87,14 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
             var mi = menu.createMenuItem("oc_zimlet_new_pptx", {image:'MSPowerpointDoc',text:ZmMsg.briefcaseCreateNewPresentation});
             mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['pptx',ZmMsg.briefcaseCreateNewPresentation]));         
          }
-         var mi = menu.createMenuItem("oc_zimlet_new_txt", {image:'GenericDoc',text:ZmMsg._new + ' ' + ZmMsg.plainText});
-         mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['txt',ZmMsg._new + ' ' + ZmMsg.plainText]));  
+         var mi = menu.createMenuItem("oc_zimlet_new_txt", {image:'GenericDoc',text:
+            zimletInstance.getMessage('newPlainText') != '' ?
+                zimletInstance.getMessage('newPlainText')
+                : ZmMsg._new + ' ' + ZmMsg.plainText});
+         mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['txt',
+            zimletInstance.getMessage('newPlainText') != '' ?
+                zimletInstance.getMessage('newPlainText')
+                : ZmMsg._new + ' ' + ZmMsg.plainText]));
       }
       
       //in case it is undefined...
@@ -644,7 +653,11 @@ OwnCloudApp.prototype.NewUploadToDavDialog = function() {
       disposeOnPopDown: true
    });
    var html = "<div style='width:300px; height: 75px;'>" +
-   "<form accept-charset=\"utf-8\" method=\"POST\" id=\"ownCloudZimletUploadFiles\" enctype=\"multipart/form-data\"><table role=\"presentation\" class=\"ZPropertySheet\" cellspacing=\"6\"><tbody><tr><td>File:</td><td><input type=\"file\" multiple=\"\" name=\"uploadFile\" size=\"30\"><input type=\"hidden\" name=\"password\" value=\""+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']+"\"></td><td colspan=\"3\">&nbsp;</td></tr></tbody></table></form>" +
+   "<form accept-charset=\"utf-8\" method=\"POST\" id=\"ownCloudZimletUploadFiles\" enctype=\"multipart/form-data\">"
+   + "<table role=\"presentation\" class=\"ZPropertySheet\" cellspacing=\"6\"><tbody><tr><td>" + ZmMsg.fileLabel + "</td><td>"
+   + "<input type=\"file\" multiple=\"\" name=\"uploadFile\" size=\"30\"><input type=\"hidden\" name=\"password\" value=\""
+   + tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']+"\"></td><td colspan=\"3\">&nbsp;"
+   + "</td></tr></tbody></table></form>" +
    "</div>";
    
    zimletInstance._uploadDialog.setContent(html);

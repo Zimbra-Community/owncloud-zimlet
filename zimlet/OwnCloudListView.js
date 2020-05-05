@@ -211,6 +211,9 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   parent.getMenuItem(ZmOperation.NEW_FOLDER).setVisible(false);
   parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(false);
   parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(false);
+  if (zimletInstance.getMessage('download') != '') {
+    parent.getMenuItem(ZmOperation.SAVE_FILE).setText(zimletInstance.getMessage('download'));
+  }
   parent.getMenuItem('SAVE_AS_PDF').setVisible(false);
   parent.getMenuItem('SAVE_AS_PDF').setText(ZmMsg.download + ' PDF');
   parent.getMenuItem('SAVE_AS_PDF').setImage('PDFDoc');
@@ -422,17 +425,40 @@ OwnCloudListView.prototype._sendFileListener = function(ev) {
    var html = "<div style='width:450px; height: 125px; overflow-x: hidden; overflow-y: hidden;'><form id=\"ownCloudZimletShareTypeSelectorFrm\"><table style='width:100%'>";
    if(owncloud_zimlet_disable_ocs_public_link_shares != 'true')
    {
-      html += '<tr><td><input type="radio" checked name="ownCloudZimletShareTypeSelector" id="ownCloudZimletShareTypeSelectorPublic" value="public"></td><td>'+ZmMsg.shareWithPublic+'</td></tr>';
-      html += '<tr><td></td><td><input placeholder="'+ (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase()+'" id="tk_barrydegraaff_owncloud_zimlet-sharedLinkPass" type="sharePassword"></td></tr>';
-      if(zimletInstance.getMessage('expiryDate').indexOf('???') == 0)
+      html += '<tr><td><input type="radio" checked name="ownCloudZimletShareTypeSelector" id="ownCloudZimletShareTypeSelectorPublic" value="public"></td><td>'
+        +(zimletInstance.getMessage('publicLinkFileFolder') != '' ?
+        zimletInstance.getMessage('publicLinkFileFolder')
+        : ZmMsg.shareWithPublic)
+        +'</td></tr>';
+      var passwordPlaceholder = '';
+      if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_password'] == 'true')
       {
-         var expiryDateLabel = 'expiration date';
+          passwordPlaceholder = zimletInstance.getMessage('requiredPassword') != '' ?
+            zimletInstance.getMessage('requiredPassword')
+            : (ZmMsg.requiredLabel).toLowerCase() + ' ' + (ZmMsg.password).toLowerCase();
       }
       else
       {
-         var expiryDateLabel = zimletInstance.getMessage('expiryDate');         
+          passwordPlaceholder = zimletInstance.getMessage('optionalPassword') != '' ?
+            zimletInstance.getMessage('optionalPassword')
+            : (ZmMsg.optionalInvitees).toLowerCase() + ' ' + (ZmMsg.password).toLowerCase();
       }
-      expiryDateLabel += " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")";
+      html += '<tr><td></td><td><input placeholder="'+passwordPlaceholder+'" id="tk_barrydegraaff_owncloud_zimlet-sharedLinkPass" type="sharePassword"></td></tr>';
+
+      var expiryDateLabel = '';
+      if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_date'] == 'true')
+      {
+          expiryDateLabel = zimletInstance.getMessage('requiredExpiryDate') != '' ?
+            zimletInstance.getMessage('requiredExpiryDate')
+            : zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.requiredLabel.toLowerCase().replace(":","")+")";
+      }
+      else
+      {
+          expiryDateLabel = zimletInstance.getMessage('optionalExpiryDate') != '' ?
+            zimletInstance.getMessage('optionalExpiryDate')
+            : zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")";
+      }
+
       //prevent selection of day in the past
       try {
       var dt = new Date();
@@ -442,9 +468,19 @@ OwnCloudListView.prototype._sendFileListener = function(ev) {
       {
          var minDate = "";
       }
-      
-      html += '<tr><td></td><td><input placeholder="YYYY-MM-DD" title="'+expiryDateLabel+'" id="tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate" type="date" '+minDate+' ></td></tr></table></form>';
-   }
+
+      var expiryValue = '';
+      if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_expiry_days'] != '')
+      {
+          var expiryDays = tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_expiry_days'];
+          expiryDays = parseInt(expiryDays,10);
+          if(expiryDays >= 0)
+              expiryValue = ' value="'+(new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000)).toISOString().slice(0,10)+'"';
+      }
+      html += '<tr><td></td><td><input placeholder="' + zimletInstance.getMessage('datePlaceholder')
+        + '" title="'+expiryDateLabel+'" id="tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate" type="date" '
+        +minDate+expiryValue+' ></td></tr></table></form>';
+  }
    else
    {
       return;
@@ -480,6 +516,29 @@ OwnCloudListView.prototype._okSharePassListen = function(ev) {
  {
     this.sharedLinkExpiryDate = "";
  } 
+
+ /* validation */
+ var validate = true;
+ if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_password'] == 'true' && this.sharedLinkPass == '')
+ {
+    validate = false;
+    document.getElementById('tk_barrydegraaff_owncloud_zimlet-sharedLinkPass').style.border = '1px red solid';
+ }
+ else
+ {
+    document.getElementById('tk_barrydegraaff_owncloud_zimlet-sharedLinkPass').style.border = '1px black solid';
+ }
+ if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_date'] == 'true' && this.sharedLinkExpiryDate == '')
+ {
+    validate = false;
+    document.getElementById('tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate').style.border = '1px red solid';
+ }
+ else
+ {
+    document.getElementById('tk_barrydegraaff_owncloud_zimlet-sharedExpiryDate').style.border = '1px black solid';
+ }
+ if (!validate)
+     return;
 
   var resourcesToLink = this.getSelection();
   var resourcesToAttach = [];
