@@ -33,7 +33,9 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
     checked: true,
     name: 'ownCloudZimletShareTypeSelector'
   });
-  this._checkboxf.setText(ZmMsg.attach.charAt(0).toUpperCase() + ZmMsg.attach.slice(1)  + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
+  this._checkboxf.setText(zimletInstance.getMessage('attachFileFolder') != '' ?
+        zimletInstance.getMessage('attachFileFolder')
+        : ZmMsg.attach.charAt(0).toUpperCase() + ZmMsg.attach.slice(1)  + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
 
   this._tree = new DwtTree({
     parent: this,
@@ -51,7 +53,9 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
        style: DwtCheckbox.TEXT_RIGHT,
        name: 'ownCloudZimletShareTypeSelector'
      });
-     this._checkbox.setText(ZmMsg.shareWithPublic + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
+     this._checkbox.setText(zimletInstance.getMessage('publicLinkFileFolder') != '' ?
+        zimletInstance.getMessage('publicLinkFileFolder') :
+        ZmMsg.shareWithPublic + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
    
      this._sharePasswordTxt =  new DwtText({ 
        parent: this,
@@ -61,17 +65,32 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
        parent: this,
      });
      this._sharePassword.setHtmlElementId('owncloudSharePassword');
-     this._sharePassword._inputField.placeholder = (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase();
-
-     if(zimletInstance.getMessage('expiryDate').indexOf('???') == 0)
+     if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_password'] == 'true')
      {
-        var expiryDateLabel = 'expiration date';
+         this._sharePassword._inputField.placeholder = zimletInstance.getMessage('requiredPassword') != '' ?
+          zimletInstance.getMessage('requiredPassword')
+          : (ZmMsg.requiredLabel).toLowerCase() + ' ' + (ZmMsg.password).toLowerCase();
      }
      else
      {
-        var expiryDateLabel = zimletInstance.getMessage('expiryDate');         
+         this._sharePassword._inputField.placeholder = zimletInstance.getMessage('optionalPassword') != '' ?
+            zimletInstance.getMessage('optionalPassword')
+            : (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase();
      }
-     expiryDateLabel += " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")";
+
+     var expiryDateLabel = '';
+     if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_date'] == 'true')
+     {
+         expiryDateLabel = zimletInstance.getMessage('requiredExpiryDate') != '' ?
+          zimletInstance.getMessage('requiredExpiryDate')
+          : zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.requiredLabel.toLowerCase().replace(":","")+")";
+     }
+     else
+     {
+         expiryDateLabel = zimletInstance.getMessage('optionalExpiryDate') != '' ?
+          zimletInstance.getMessage('optionalExpiryDate')
+          : zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")";
+     }
 
      this._shareExpiryDate = new DwtInputField({ 
        parent: this,
@@ -81,7 +100,15 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
      //Internet Explorer 11 does not like `.type = 'date'`, if
      //we drop support for IE11, we can enable a date picker here
      //this._shareExpiryDate._inputField.type = 'date';
-     this._shareExpiryDate._inputField.placeholder="YYYY-MM-DD";
+     this._shareExpiryDate._inputField.placeholder = zimletInstance.getMessage('datePlaceholder');
+
+     var expiryDays = '';
+     if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_expiry_days'] != '')
+     {
+         expiryDays = parseInt(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_expiry_days'],10);
+         if (expiryDays >= 0)
+            this._shareExpiryDate._inputField.value=(new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000)).toISOString().slice(0,10);
+     }
   }
 
   //Add a function to do a propfind on the onclick event in the tree (attach when composing)
@@ -195,21 +222,68 @@ OwnCloudTabView.prototype._renderResource =
  */
 OwnCloudTabView.prototype._attachFiles =
   function(attachmentDlg) {
-    attachmentDlg.popdown();
+
+    if(this._sharePassword)
+    {
+      var sharepassword = this._sharePassword._inputField.value;
+    }
+    else
+    {
+      var sharepassword = "";
+    }
+
+    if(this._shareExpiryDate)
+    {
+      var shareExpiryDate = this._shareExpiryDate._inputField.value;
+    }
+    else
+    {
+      var shareExpiryDate = "";
+    }
+
+    try {
+      var attachLinks = this._checkbox.getInputElement().checked;
+    }
+    catch (err)
+    {
+      var attachLinks = false;
+    }
+
+    // validation
+    var validate = true;
+
+    // Do validation only for a link attachment, not for a file attachment
+    if (attachLinks)
+    {
+
+      if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_password'] == 'true' && sharepassword == '')
+      {
+        validate = false;
+        this._sharePassword._inputField.style.border = '1px red solid';
+      }
+      else
+      {
+        this._sharePassword._inputField.style.border = '1px black solid';
+      }
+
+      if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_date'] == 'true' && shareExpiryDate == '')
+      {
+        validate = false;
+        this._shareExpiryDate._inputField.style.border = '1px red solid';
+      }
+      else
+      {
+        this._shareExpiryDate._inputField.style.border = '1px black solid';
+      }
+    }
+    if (!validate)
+      return;
 
     var
       /** @type {DavResource[]} */ selectedResources = this._getSelectedItems(this._tree.getChildren()),
       /** @type {DavResource[]} */ resourcesToLink = [],
       /** @type {DavResource[]} */ resourcesToAttach = [],
       /** @type {number[]} */ ids = [];
-      
-      try {
-         var attachLinks = this._checkbox.getInputElement().checked;
-      }
-      catch (err)
-      {
-         var attachLinks = false;
-      }
 
     for (var i = 0; i < selectedResources.length; i += 1) {
       if (attachLinks || selectedResources[i].isDirectory()) {
@@ -219,23 +293,7 @@ OwnCloudTabView.prototype._attachFiles =
       }
     }
 
-   if(this._sharePassword)
-   {
-      var sharepassword = this._sharePassword._inputField.value;
-   }
-   else
-   {
-      var sharepassword = "";
-   }   
-
-   if(this._shareExpiryDate)
-   {
-      var shareExpiryDate = this._shareExpiryDate._inputField.value;
-   }
-   else
-   {
-      var shareExpiryDate = "";
-   } 
+    attachmentDlg.popdown();
 
     this._ocCommons.getAttachments(
       resourcesToLink,

@@ -129,6 +129,9 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_onlyoffice_api_url |  | Set to Document Server API URL to enable OnlyOffice preview of docx,xlsx,pptx: https://server.example.com:443/web-apps/apps/api/documents/api.js | | 
 | owncloud_zimlet_onlyoffice_secret |  |  If configured, a token is send to Only Office Document server allowing you to restrict access to DS to only trusted users. https://api.onlyoffice.com/editors/security https://github.com/Zimbra-Community/owncloud-zimlet/issues/151 (WebDAV Client currently does not sign parameters) | |
 | owncloud_zimlet_disable_eml_export | false | If configured to false will disable EML export feature in the UI, in case you want to use the PDF export exclusively. (requires docconvert Zimlet deployed) |  |
+| owncloud_zimlet_link_expiry_days |  | If set to a non-zero interger value, the suggested link expiration date for new Nextcloud/Owncloud public links will be set for a specified number of days more than the current date. If not configured, new public links will not have the suggested expiration date. Zero ("0") is a potentially possible value, but really it is not acceptable by Nextcloud, so this value should not be used. |  |
+| owncloud_zimlet_link_enforce_date | false | If configured to true, the link expiration date will be required for all new Nextcloud/Owncloud public links. | |
+| owncloud_zimlet_link_enforce_password | false  | If configured to true, a password will be required for all new Nextcloud/Owncloud public links. | |
 
 After changing config.properties run the following: 
 
