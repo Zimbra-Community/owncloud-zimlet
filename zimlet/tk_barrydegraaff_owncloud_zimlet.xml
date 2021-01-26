@@ -4,7 +4,7 @@ Zimbra Nextcloud Client
 
    https://github.com/barrydegraaff/owncloud-zimlet
 
-Copyright (C) 2015-2020  Barry de Graaff, Michele Olivo
+Copyright (C) 2015-2021  Barry de Graaff, Michele Olivo
 
 Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 
@@ -23,7 +23,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 -->
 <zimlet name="tk_barrydegraaff_owncloud_zimlet"
-        version="1.4.1"
+        version="1.4.2"
         target="main compose-window view-window"
         label="Nextcloud"
         description="Attach from and save to Nextcloud">
