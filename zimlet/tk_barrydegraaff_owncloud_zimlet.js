@@ -1,6 +1,6 @@
 /*
  This file is part of the Zimbra ownCloud Zimlet project.
- Copyright (C) 2015-2019  Barry de Graaff
+ Copyright (C) 2015-2021  Barry de Graaff
 
  Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 
@@ -1663,12 +1663,12 @@ ownCloudZimlet.prototype.displayDialog =
         if(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['disable_password_storing']=="false")
         {
            passwHtml += "<tr class='owncloud_zimlet_connectionprefs'><td style='min-width:200px'>"+ZmMsg.save+" " +(ZmMsg.password).toLowerCase()+":</td><td><table><tr class='owncloud_zimlet_connectionprefs'><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true' " + (zimletInstance.getUserProperty("owncloud_zimlet_store_pass")=='false' ? '' : 'checked') +"></td><td><small>"
-            + zimletInstance.getMessage('passwordStoredComment') + "</small></td></tr></table></td></tr>";
+            + (zimletInstance.getMessage('passwordStoredComment').indexOf('???') == 0 ? "If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.": zimletInstance.getMessage('passwordStoredComment')) + "</small></td></tr></table></td></tr>";
         }
         else
         {
            passwHtml += "<tr class='owncloud_zimlet_connectionprefs'><td style='min-width:200px; color:#888888'>"+ZmMsg.save+" " +ZmMsg.password+":</td><td><table><tr class='owncloud_zimlet_connectionprefs'><td><input type='checkbox' id='owncloud_zimlet_store_pass' value='true'  disabled></td><td><small style='color:#888888'>"
-            + zimletInstance.getMessage('passwordStoredComment') + "</small></td></tr></table></td></tr>";
+            + (zimletInstance.getMessage('passwordStoredComment').indexOf('???') == 0 ? "If checked, the password is stored in plain text in Zimbra LDAP. <br>If not checked you have to provide password for each session.": zimletInstance.getMessage('passwordStoredComment')) + "</small></td></tr></table></td></tr>";
         }     
   
         var owncloud_zimlet_disable_ocs_public_link_shares = zimletInstance._zimletContext.getConfig("owncloud_zimlet_disable_ocs_public_link_shares");
@@ -1701,17 +1701,13 @@ ownCloudZimlet.prototype.displayDialog =
           "<tr class='owncloud_zimlet_connectionprefs'>" +
           "<tr class='owncloud_zimlet_connectionprefs' " + hideOCSstyle + ">" +
           "<td style='min-width:200px'>"+
-            (zimletInstance.getMessage('cloudPathLabel') != '' ?
-            zimletInstance.getMessage('cloudPathLabel')
-            : ZmMsg.location+"&nbsp;ownCloud/Nextcloud:")
+            (zimletInstance.getMessage('cloudPathLabel').indexOf('???') == 0 ? ZmMsg.location+"&nbsp;ownCloud/Nextcloud:" : zimletInstance.getMessage('cloudPathLabel'))
             +"&nbsp;</td>" +
           "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_oc_folder' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_oc_folder']+"'></td>" +
           "</tr>" +
           "<tr class='owncloud_zimlet_connectionprefs'>" +
           "<td style='min-width:200px'>"+
-            (zimletInstance.getMessage('davPathLabel') != '' ?
-            zimletInstance.getMessage('davPathLabel')
-            : "DAV "+(ZmMsg.path).toLowerCase())
+            (zimletInstance.getMessage('davPathLabel').indexOf('???') == 0 ? "DAV "+ZmMsg.path.toLowerCase()+": " : zimletInstance.getMessage('davPathLabel'))
             +"</td>" +
           "<td style='min-width:400px'><input style='width:98%' type='text' id='owncloud_zimlet_server_path' value='"+tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']+"'></td>" +
           "</tr>" +

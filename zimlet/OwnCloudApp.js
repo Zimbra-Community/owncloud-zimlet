@@ -73,9 +73,7 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
          button.removeAllListeners();
          button.removeDropDownSelectionListener();
          var mi = menu.createMenuItem(Dwt.getNextId(), {image:'Folder',
-            text:(zimletInstance.getMessage('newFolderGenCase') != '' ?
-            zimletInstance.getMessage('newFolderGenCase')
-            : ZmMsg.newFolder)});
+            text:(zimletInstance.getMessage('newFolderGenCase').indexOf('???') == 0 ? ZmMsg.newFolder : zimletInstance.getMessage('newFolderGenCase'))});
          mi.addSelectionListener(new AjxListener(this, this._newFolderListener));
          
          if((zimletInstance._zimletContext.getConfig("owncloud_zimlet_enable_onlyoffice") == 'true'))
@@ -88,9 +86,7 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
             mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['pptx',ZmMsg.briefcaseCreateNewPresentation]));         
          }
          var mi = menu.createMenuItem("oc_zimlet_new_txt", {image:'GenericDoc',text:
-            zimletInstance.getMessage('newPlainText') != '' ?
-                zimletInstance.getMessage('newPlainText')
-                : ZmMsg._new + ' ' + ZmMsg.plainText});
+            zimletInstance.getMessage('newPlainText').indexOf('???') == 0 ? ZmMsg._new + ' ' + ZmMsg.plainText : zimletInstance.getMessage('newPlainText')});
          mi.addSelectionListener(new AjxListener(this, this._newFileListener, ['txt',
             zimletInstance.getMessage('newPlainText') != '' ?
                 zimletInstance.getMessage('newPlainText')

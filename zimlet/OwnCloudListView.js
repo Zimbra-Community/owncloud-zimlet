@@ -211,8 +211,12 @@ OwnCloudListView.prototype._resetOperations = function (parent, resource, resour
   parent.getMenuItem(ZmOperation.NEW_FOLDER).setVisible(false);
   parent.getMenuItem(ZmOperation.RENAME_FILE).setVisible(false);
   parent.getMenuItem(ZmOperation.SAVE_FILE).setVisible(false);
-  if (zimletInstance.getMessage('download') != '') {
-    parent.getMenuItem(ZmOperation.SAVE_FILE).setText(zimletInstance.getMessage('download'));
+  if (zimletInstance.getMessage('download').indexOf('???') == 0) {
+    parent.getMenuItem(ZmOperation.SAVE_FILE).setText('Download');
+  }
+  else
+  {
+     parent.getMenuItem(ZmOperation.SAVE_FILE).setText(zimletInstance.getMessage('download'));
   }
   parent.getMenuItem('SAVE_AS_PDF').setVisible(false);
   parent.getMenuItem('SAVE_AS_PDF').setText(ZmMsg.download + ' PDF');
