@@ -430,37 +430,33 @@ OwnCloudListView.prototype._sendFileListener = function(ev) {
    if(owncloud_zimlet_disable_ocs_public_link_shares != 'true')
    {
       html += '<tr><td><input type="radio" checked name="ownCloudZimletShareTypeSelector" id="ownCloudZimletShareTypeSelectorPublic" value="public"></td><td>'
-        +(zimletInstance.getMessage('publicLinkFileFolder') != '' ?
-        zimletInstance.getMessage('publicLinkFileFolder')
-        : ZmMsg.shareWithPublic)
+        +(zimletInstance.getMessage('publicLinkFileFolder').indexOf('???') == 0 ?
+        ZmMsg.shareWithPublic :zimletInstance.getMessage('publicLinkFileFolder')
+        )
         +'</td></tr>';
       var passwordPlaceholder = '';
       if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_password'] == 'true')
       {
-          passwordPlaceholder = zimletInstance.getMessage('requiredPassword') != '' ?
-            zimletInstance.getMessage('requiredPassword')
-            : (ZmMsg.requiredLabel).toLowerCase() + ' ' + (ZmMsg.password).toLowerCase();
+          passwordPlaceholder = zimletInstance.getMessage('requiredPassword').indexOf('???') == 0 ?
+            (ZmMsg.requiredLabel).toLowerCase() + ' ' + (ZmMsg.password).toLowerCase() : zimletInstance.getMessage('requiredPassword');
       }
       else
       {
-          passwordPlaceholder = zimletInstance.getMessage('optionalPassword') != '' ?
-            zimletInstance.getMessage('optionalPassword')
-            : (ZmMsg.optionalInvitees).toLowerCase() + ' ' + (ZmMsg.password).toLowerCase();
+          passwordPlaceholder = zimletInstance.getMessage('optionalPassword').indexOf('???') == 0 ?
+            (ZmMsg.optionalInvitees).toLowerCase() + ' ' + (ZmMsg.password).toLowerCase() : zimletInstance.getMessage('optionalPassword');
       }
       html += '<tr><td></td><td><input placeholder="'+passwordPlaceholder+'" id="tk_barrydegraaff_owncloud_zimlet-sharedLinkPass" type="sharePassword"></td></tr>';
 
       var expiryDateLabel = '';
       if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_date'] == 'true')
       {
-          expiryDateLabel = zimletInstance.getMessage('requiredExpiryDate') != '' ?
-            zimletInstance.getMessage('requiredExpiryDate')
-            : zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.requiredLabel.toLowerCase().replace(":","")+")";
+          expiryDateLabel = zimletInstance.getMessage('requiredExpiryDate').indexOf('???') == 0 ?
+            zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.requiredLabel.toLowerCase().replace(":","")+")" : zimletInstance.getMessage('requiredExpiryDate');
       }
       else
       {
-          expiryDateLabel = zimletInstance.getMessage('optionalExpiryDate') != '' ?
-            zimletInstance.getMessage('optionalExpiryDate')
-            : zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")";
+          expiryDateLabel = zimletInstance.getMessage('optionalExpiryDate').indexOf('???') == 0 ?
+            zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")" : zimletInstance.getMessage('optionalExpiryDate');
       }
 
       //prevent selection of day in the past

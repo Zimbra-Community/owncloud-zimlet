@@ -33,9 +33,8 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
     checked: true,
     name: 'ownCloudZimletShareTypeSelector'
   });
-  this._checkboxf.setText(zimletInstance.getMessage('attachFileFolder') != '' ?
-        zimletInstance.getMessage('attachFileFolder')
-        : ZmMsg.attach.charAt(0).toUpperCase() + ZmMsg.attach.slice(1)  + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
+  this._checkboxf.setText(zimletInstance.getMessage('attachFileFolder').indexOf('???') == 0 ?
+        ZmMsg.attach.charAt(0).toUpperCase() + ZmMsg.attach.slice(1)  + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase() : zimletInstance.getMessage('attachFileFolder'));
 
   this._tree = new DwtTree({
     parent: this,
@@ -53,9 +52,9 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
        style: DwtCheckbox.TEXT_RIGHT,
        name: 'ownCloudZimletShareTypeSelector'
      });
-     this._checkbox.setText(zimletInstance.getMessage('publicLinkFileFolder') != '' ?
-        zimletInstance.getMessage('publicLinkFileFolder') :
-        ZmMsg.shareWithPublic + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase());
+     this._checkbox.setText(zimletInstance.getMessage('publicLinkFileFolder').indexOf('???') == 0 ?
+        ZmMsg.shareWithPublic + " " + (ZmMsg.linkTo).toLowerCase() + " " + (ZmMsg.file).toLowerCase() + "/" + (ZmMsg.folder).toLowerCase() : zimletInstance.getMessage('publicLinkFileFolder'));
+        
    
      this._sharePasswordTxt =  new DwtText({ 
        parent: this,
@@ -73,23 +72,20 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
      }
      else
      {
-         this._sharePassword._inputField.placeholder = zimletInstance.getMessage('optionalPassword') != '' ?
-            zimletInstance.getMessage('optionalPassword')
-            : (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase();
+         this._sharePassword._inputField.placeholder = zimletInstance.getMessage('optionalPassword').indexOf('???') == 0 ?
+            (ZmMsg.optionalInvitees).toLowerCase() + " " + (ZmMsg.password).toLowerCase() : zimletInstance.getMessage('optionalPassword');
      }
 
      var expiryDateLabel = '';
      if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_enforce_date'] == 'true')
      {
-         expiryDateLabel = zimletInstance.getMessage('requiredExpiryDate') != '' ?
-          zimletInstance.getMessage('requiredExpiryDate')
-          : zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.requiredLabel.toLowerCase().replace(":","")+")";
+         expiryDateLabel = zimletInstance.getMessage('requiredExpiryDate').indexOf('???') == 0 ?
+          zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.requiredLabel.toLowerCase().replace(":","")+")" : zimletInstance.getMessage('requiredExpiryDate');
      }
      else
      {
-         expiryDateLabel = zimletInstance.getMessage('optionalExpiryDate') != '' ?
-          zimletInstance.getMessage('optionalExpiryDate')
-          : zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")";
+         expiryDateLabel = zimletInstance.getMessage('optionalExpiryDate').indexOf('???') == 0 ?
+          zimletInstance.getMessage('expiryDate') + " ("+ZmMsg.optionalLabel.toLowerCase().replace(":","")+")" : zimletInstance.getMessage('optionalExpiryDate');
      }
 
      this._shareExpiryDate = new DwtInputField({ 
@@ -100,7 +96,7 @@ function OwnCloudTabView(parent, zimletCtxt, davConnector, ownCloudConnector, oc
      //Internet Explorer 11 does not like `.type = 'date'`, if
      //we drop support for IE11, we can enable a date picker here
      //this._shareExpiryDate._inputField.type = 'date';
-     this._shareExpiryDate._inputField.placeholder = zimletInstance.getMessage('datePlaceholder');
+     this._shareExpiryDate._inputField.placeholder = zimletInstance.getMessage('datePlaceholder').indexOf('???') == 0 ? "YYYY-MM-DD" : zimletInstance.getMessage('datePlaceholder');
 
      var expiryDays = '';
      if (tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_link_expiry_days'] != '')

@@ -198,6 +198,7 @@ This Zimlet offers support for Seafile. Read more https://github.com/Zimbra-Comm
 3. Running a WebDAV server behind and NGINX reverse proxy (from CentOS or Debian) won't work, it will work when proper options are enabled (as for example with zimbra-proxy, also based on NGINX).
 4. Delay of 30 seconds in response from Nextcloud, the brute force login protection has kicked in. Configure X-Forwarded-For see above! Or and this is not recommended: set in your Nextcloud the preference `'auth.bruteforce.protection.enabled' => false,` and issue `truncate table bruteforce_attempts;`
 5. Download menu option does not work on Safari on iPad, solution: disable pop-up blocker
+6. Public link sharing does not work. Install the `File sharing` app on Nextcloud and disable Password Policy (if needed). Also you must have (re)sharing rights in Nextcloud for public link share to work.
 
 See:
 https://github.com/Zimbra-Community/owncloud-zimlet/wiki/Troubleshooting

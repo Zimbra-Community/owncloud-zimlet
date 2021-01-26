@@ -1,6 +1,6 @@
 /*
  This file is part of the Zimbra ownCloud Zimlet project.
- Copyright (C) 2015-2021  Barry de Graaff
+ Copyright (C) 2015-2019  Barry de Graaff
 
  Bugs and feedback: https://github.com/barrydegraaff/owncloud-zimlet/issues
 
@@ -761,10 +761,7 @@ ownCloudZimlet.prototype.showAttachmentDialog =
   function() {
     var attachDialog = this._attachDialog = appCtxt.getAttachDialog();
     var zimletInstance = appCtxt._zimletMgr.getZimletByName('tk_barrydegraaff_owncloud_zimlet').handlerObject;
-    attachDialog.setTitle(zimletInstance.getMessage('attachFrom') != '' ?
-        AjxMessageFormat.format(zimletInstance.getMessage('attachFrom'),
-            [zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title")])
-        : ZmMsg.attach + ' ' + (ZmMsg.from).toLowerCase() + ' ' +  zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title"));
+    attachDialog.setTitle(zimletInstance._zimletContext.getConfig("owncloud_zimlet_app_title"));
     this.removePrevAttDialogContent(attachDialog._getContentDiv().firstChild);
 
     if (!this.AttachContactsView || !this.AttachContactsView.attachDialog){
