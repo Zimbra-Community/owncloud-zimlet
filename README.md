@@ -7,7 +7,7 @@ If you find Zimbra WebDAV Client useful and want to support its continued develo
 
 Demo video: https://www.youtube.com/watch?v=8pVMoXkNt8c
 
-User manual : https://barrydegraaff.github.io/owncloud/
+User manual : https://zetalliance.org/owncloud-zimlet/
 
 Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 20, Seafile 7.0.7, Alfresco Enterprise - 5.2.0 and Nuxeo.
 
@@ -122,7 +122,7 @@ Please note that a preference set by the user has priority over a preference set
 | owncloud_zimlet_app_title  | Nextcloud  | Change this if you want to rebrand WebDAV Client for your users. For example: ownCloud. |   |
 | owncloud_zimlet_max_upload_size  | 104857600  (100MB) | Maximum upload size for upload dialog MB * 1024 * 1024. The back-end has a hardcoded maximum of 1048576000 (1GB). |   |
 | owncloud_zimlet_disable_ocs_public_link_shares  | false | Controls if users can share items with a public link. Set this to true if you use a DAV server that is not ownCloud/Nextcloud or if you want to disable  public link sharing. |   |
-| owncloud_zimlet_welcome_url | https://barrydegraaff.github.io/owncloud/ | Page to load in the preview window when then the tab is clicked. |   |
+| owncloud_zimlet_welcome_url | https://zetalliance.org/owncloud-zimlet/ | Page to load in the preview window when then the tab is clicked. |   |
 | owncloud_zimlet_accountname_with_domain | false | When false the username field in settings dialog is set to `username`, when true it is set to `username@domain.com` |   |
 | owncloud_zimlet_disable_auto_upload_on_exceed | false | When true, the user will not be asked to use WebDAV if attachment size exceeds Zimbra limit. This feature is for compatibility with other Zimlets (RMail) | | 
 | owncloud_zimlet_enable_onlyoffice | false | When true, enable right-click menu action and edit in Nextcloud/ownCloud OnlyOffice app. | | 

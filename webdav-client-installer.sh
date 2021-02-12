@@ -60,7 +60,7 @@ jackson-core-2.9.4.jar \
 jackson-databind-2.9.4.jar \
 java-jwt-3.3.0.jar
 "
-OWNCLOUD_DOC_URL="https\://barrydegraaff.github.io/owncloud/"
+OWNCLOUD_DOC_URL="https\://zetalliance.org/owncloud-zimlet/"
 
 IS_AUTO="NO"
 
