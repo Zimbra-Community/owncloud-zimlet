@@ -5,8 +5,6 @@ If you find Zimbra WebDAV Client useful and want to support its continued develo
 - PayPal: info@barrydegraaff.tk
 - Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A
 
-Demo video: https://www.youtube.com/watch?v=8pVMoXkNt8c
-
 User manual : https://zetalliance.org/owncloud-zimlet/
 
 Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 20, Seafile 7.0.7, Alfresco Enterprise - 5.2.0 and Nuxeo.
