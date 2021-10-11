@@ -101,7 +101,7 @@ echo "You must configure owncloud_zimlet_onlyoffice_api_url after the installer 
 
 if [[ "${IS_AUTO}" == 'YES' ]]
 then
-    YNONLYOFFICE="N"
+    YNONLYOFFICE="Y"
 else
     read YNONLYOFFICE;
 fi
