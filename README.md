@@ -2,14 +2,14 @@ Zimbra WebDAV Client
 ==========
 
 If you find Zimbra WebDAV Client useful and want to support its continued development, you can make donations via:
-- PayPal: info@barrydegraaff.tk
+- PayPal: info@barrydegraaff.nl
 - Bank transfer: IBAN NL55ABNA0623226413 ; BIC ABNANL2A
 
 User manual : https://zetalliance.org/owncloud-zimlet/
 
-Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 20, Seafile 7.0.7, Alfresco Enterprise - 5.2.0 and Nuxeo.
+Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 21, Seafile 7.0.7, Alfresco Enterprise - 5.2.0 and Nuxeo.
 
-Supported Zimbra versions 8.8.15 ***if you are upgrading to 8.8.15 patch 5, rerun the installer or follow: https://github.com/Zimbra-Community/owncloud-zimlet/issues/229***
+Supported Zimbra versions 8.8.15, Zimbra 9.0
 
 Zimbra Desktop is not supported and does not work. Ubuntu 18 is minimal supported version. If you have trouble installing on Ubuntu see below on the known issues.
 
