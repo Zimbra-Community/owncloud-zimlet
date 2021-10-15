@@ -210,8 +210,8 @@ for njarfile in ${OWNCLOUD_EXTENSION_JAR_FILES} ; do
    cp ${njarfile} ${OWNCLOUD_EXTENSION_PATH}/
 done
 
-ENC_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-24};echo;)
-ENC_SALT=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-24};echo;)
+ENC_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c 24)
+ENC_SALT=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c 24)
 
 # Here we set the template for config.properties, if upgrading we alter it further down
 echo "allowdomains=*
@@ -366,7 +366,7 @@ else
    cp $TMPFOLDER/owncloud-zimlet/onlyoffice/out/artifacts/onlyoffice_jar/onlyoffice.jar "${ONLYOFFICE_EXTENSION_PATH}"
    cp $TMPFOLDER/owncloud-zimlet/onlyoffice/lib/zcs-lib-json-simple.jar "${ONLYOFFICE_EXTENSION_PATH}"
    
-   ONLYOFFICE_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-10};echo;)
+   ONLYOFFICE_PWD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c 10)
    
    #here one could optionally support mysql by using jdbc:mysql://, ssl is disabled as this is a local connection
    echo "db_connect_string=jdbc:mariadb://127.0.0.1:7306/onlyoffice_db?user=ad-onlyoffice_db&password=$ONLYOFFICE_PWD" >> ${OWNCLOUD_EXTENSION_PATH}/config.properties
