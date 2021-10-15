@@ -11,8 +11,6 @@ Zimbra Desktop is not supported and does not work. Ubuntu 18 is minimal supporte
 
 Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 
-Report security issues to info@barrydegraaff.tk (PGP fingerprint: 97f4694a1d9aedad012533db725ddd156d36a2d0)
-
 ![Nextcloud Tab in Zimbra](https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/docs/Nextcloud-tab.png "Nextcloud Tab in Zimbra")
 ![Preferences Dialog](https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/docs/Nextcloud-prefs.png "Preferences Dialog")
 ![Attach from Nextcloud](https://raw.githubusercontent.com/Zimbra-Community/owncloud-zimlet/soapServiceBarry/docs/Nextcloud-attach.png "Attach from Nextcloud")
