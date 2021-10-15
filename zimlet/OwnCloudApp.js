@@ -124,7 +124,7 @@ function OwnCloudApp(zimletCtxt, app, settings, davConnector, ownCloudConnector)
       toolbar.addSelectionListener("SaveDocument", new AjxListener(this, this._OnlyOfficeSaveDocument));         
       zimletInstance.OnlyOfficeSaveID = toolbar._buttons.SaveDocument.__internalId;
       document.getElementById(zimletInstance.OnlyOfficeSaveID).style.position = 'absolute';
-      document.getElementById(zimletInstance.OnlyOfficeSaveID).style.right = '3px';
+      document.getElementById(zimletInstance.OnlyOfficeSaveID).style.right = '35px';
       document.getElementById(zimletInstance.OnlyOfficeSaveID).style.width = '48px';
       document.getElementById(zimletInstance.OnlyOfficeSaveID).style.top = '0px';
       document.getElementById(zimletInstance.OnlyOfficeSaveID).style.display = 'block';
