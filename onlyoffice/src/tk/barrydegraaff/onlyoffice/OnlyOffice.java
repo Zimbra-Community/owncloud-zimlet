@@ -26,11 +26,13 @@ See also:https://api.onlyoffice.com/editors/save
 package tk.barrydegraaff.onlyoffice;
 
 
+import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.account.Account;
 import com.zimbra.cs.account.AuthToken;
 import com.zimbra.cs.account.Cos;
 import com.zimbra.cs.account.Provisioning;
 import com.zimbra.cs.extension.ExtensionHttpHandler;
+import com.zimbra.cs.httpclient.URLUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -51,6 +53,11 @@ import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.HttpResponse;
 
 public class OnlyOffice extends ExtensionHttpHandler {
 
@@ -99,6 +106,24 @@ public class OnlyOffice extends ExtensionHttpHandler {
             }
             final Map<String, String> paramsMap = new HashMap<String, String>();
 
+            String query = req.getQueryString();
+            if (query == null) {
+                query = "";
+            }
+            String accountStr = "";
+            boolean isLocalAccount = false;
+            accountStr = req.getParameter("account");
+            Account account = null;
+            if ((accountStr == "") || (accountStr == null)) {
+                isLocalAccount = true;
+            } else {
+                account = Provisioning.getInstance().getAccountByName(accountStr);
+                isLocalAccount = account.getServer().isLocalServer();
+            }
+
+            if (!(isLocalAccount)) {
+                redirectPOSTRequestToRemoteServer(account, query, req, resp);
+            } else {
             if (req.getParameter("filekey") != null) {
 
                 /*Make sure the user is authenticated*/
@@ -277,6 +302,7 @@ public class OnlyOffice extends ExtensionHttpHandler {
                     dbconnection.close();
                 }
             }
+            }
         } catch (
                 Exception e) {
             e.printStackTrace();
@@ -395,6 +421,34 @@ public class OnlyOffice extends ExtensionHttpHandler {
             e.printStackTrace();
             return "";
         }
+    }
+
+    /** This function was inspired from redirectRequestToRemoteServer function
+    * which can be found at:
+    * zimbra-extension/src/com/zextras/zimbradrive/NcUserZimbraBackendHttpHandler.java
+    * file from ZimbraDrive extension.
+    **/
+    private void redirectPOSTRequestToRemoteServer(
+        Account account,
+        String query,
+        HttpServletRequest httpServletRequest,
+        HttpServletResponse httpServletResponse)
+        throws IOException, ServiceException
+    {
+
+        String onlyofficeExtensionUrl = URLUtil.getServiceURL(account.getServer(), "/service/extension/" + getPath() + "/?" + query, false);
+
+        HttpPost post = new HttpPost(onlyofficeExtensionUrl);
+        InputStreamEntity httpServletRequestEntity = new InputStreamEntity(httpServletRequest.getInputStream());
+        post.setEntity(httpServletRequestEntity);
+        HttpClient client = HttpClientBuilder.create().build();
+
+        HttpResponse response = client.execute(post);
+        try (OutputStream responseOutputStream = httpServletResponse.getOutputStream())
+        {
+            response.getEntity().writeTo(responseOutputStream);
+        }
+
     }
 
 
