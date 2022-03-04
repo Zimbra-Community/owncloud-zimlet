@@ -1,0 +1,80 @@
+<project name="onlyoffice-extension" default="jar" basedir=".">
+    <description>
+        Build file for the Zimbra OnlyOffice Extension.
+    </description>
+
+    <!--
+        In order to build the extension, is not necessary the target zimbra version,
+        any version of the target jar is good for the build. Be sure to install the
+        correct version at runtime.
+    -->
+    <property name="zimbra-version"       value="8.7.7"/>
+
+    <property name="lib"   value="lib/"/>
+    <property name="build" value="out/production/"/>
+    <property name="src"   value="src/"/>
+    <property name="jar"   value="out/artifacts/onlyoffice_jar/onlyoffice.jar"/>
+
+    <path id="libraries">
+        <fileset dir="${lib}" >
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="/opt/zimbra/lib/jars" >
+            <include name="jaxb-api-2.3.1.jar"/>
+            <include name="httpclient-4.5.8.jar"/>
+            <include name="httpcore-4.4.11.jar"/>
+        </fileset>
+    </path>
+
+    <target name="clean">
+      <delete dir="${build}"/>
+      <mkdir dir="${build}"/>
+    </target>
+
+    <target name="compile"
+            depends="clean">
+        <javac srcdir="${src}"
+               destdir="${build}"
+               includeantruntime="false"
+               debug="true"
+               debuglevel="lines,vars,source"
+               target="13"
+               source="13">
+            <classpath>
+                <path refid="libraries" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="jar"
+            depends="compile">
+        <jar jarfile="${jar}"
+             compress="false"
+             basedir="${build}">
+            <manifest>
+                <attribute name="Zimbra-Extension-Class" value="tk.barrydegraaff.onlyoffice.OnlyOfficeExtension" />
+            </manifest>
+            <fileset dir="${build}" />
+        </jar>
+    </target>
+
+    <target name="doc">
+        <javadoc
+            destdir="docs"
+            author="true"
+            version="true"
+            use="true"
+            windowtitle="Zimbra OnlyOffice Extension">
+
+            <packageset dir="src" defaultexcludes="yes">
+                <include name="**"/>
+            </packageset>
+            <!--<doctitle><![CDATA[<h1>Test</h1>]]></doctitle>-->
+            <!--<bottom><![CDATA[<i>Copyright &#169; 2000 Dummy Corp. All Rights Reserved.</i>]]></bottom>-->
+            <tag name="todo" scope="all" description="To do:"/>
+            <!--<link offline="true" href="http://docs.oracle.com/javase/7/docs/api/" packagelistLoc="C:\tmp"/>-->
+            <!--<link href="http://docs.oracle.com/javase/7/docs/api/"/>-->
+        </javadoc>
+    </target>
+
+</project>

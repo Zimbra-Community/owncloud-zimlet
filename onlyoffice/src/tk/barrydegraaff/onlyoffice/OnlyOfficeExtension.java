@@ -36,7 +36,7 @@ public class OnlyOfficeExtension implements ZimbraExtension {
      * @return extension name
      */
     public String getName() {
-        return "httpHandlerExtn";
+        return "zetaOnlyOffice";
     }
 
     /**

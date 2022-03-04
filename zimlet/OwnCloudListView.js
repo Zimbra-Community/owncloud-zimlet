@@ -889,6 +889,9 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
          zurl[i++] = port;
       }
       zurl[i++] = "/service/extension/onlyoffice";
+      zurl[i++] = "/?";
+      zurl[i++] = "account=";
+      zurl[i++] = encodeURIComponent(appCtxt.getActiveAccount().name);
       var zimbraUrl = zurl.join("");
       var key = OwnCloudListView.prototype.keygen();
 
@@ -900,6 +903,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
          var xhr = new XMLHttpRequest();
          var data = "filekey=" + key +
          "&path=" + encodeURIComponent(davResource.getHref()) +
+         "&account=" + encodeURIComponent(appCtxt.getActiveAccount().name) +
          "&owncloud_zimlet_server_path=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_server_path']) +         
          "&owncloud_zimlet_password=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_password']) +
          "&owncloud_zimlet_username=" + encodeURIComponent(tk_barrydegraaff_owncloud_zimlet_HandlerObject.settings['owncloud_zimlet_username']) +
