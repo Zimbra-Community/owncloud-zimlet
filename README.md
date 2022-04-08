@@ -3,7 +3,7 @@ Zimbra WebDAV Client
 
 User manual : https://zetalliance.org/owncloud-zimlet/
 
-Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 21, Seafile 7.0.7, Alfresco Enterprise - 5.2.0 and Nuxeo.
+Integrate any WebDAV server in Zimbra Collaboration, currently tested with ownCloud 9.1, Nextcloud 22, Seafile 7.0.7, Alfresco Enterprise - 5.2.0 and Nuxeo.
 
 Supported Zimbra versions 8.8.15, Zimbra 9.0
 
