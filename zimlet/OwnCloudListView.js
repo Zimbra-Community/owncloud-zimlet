@@ -949,6 +949,7 @@ OwnCloudListView.prototype.preview = function(davResource, token) {
            "width": (zimletInstance.appWidth/2+zimletInstance.appWidthCorrection)+'px',
            "token": zimletInstance.onlyOfficeToken,
            "editorConfig": {
+              "lang": appCtxt.getActiveAccount().settings.get('LOCALE_NAME').split("_")[0],
               "callbackUrl": zimbraUrl,
                 "customization": {
                     "chat": false,
