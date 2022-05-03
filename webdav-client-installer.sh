@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2016-2019  Barry de Graaff
+# Copyright (C) 2016-2022  Barry de Graaff
 # 
 # Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 # 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This file is part of the Zimbra ownCloud Zimlet project.
-# Copyright (C) 2015-2017  Barry de Graaff
+# Copyright (C) 2015-2022  Barry de Graaff
 # 
 # Bugs and feedback: https://github.com/Zimbra-Community/owncloud-zimlet/issues
 # 
