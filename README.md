@@ -1,4 +1,6 @@
-Zimbra WebDAV Client
+~Zimbra WebDAV Client~
+
+**This Zimlet is deprecated and will not be supported on Zimbra versions beyond 9.0**
 ==========
 
 User manual : https://zetalliance.org/owncloud-zimlet/
